@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Indicador de HSE</title>
+		<style>
+			:root{
+			--sidebar-width:340px;
+				--bg:#ffffff;
+				--muted:#7a869a;
+				--accent:#2b6cb0;
+				--border:#e6edf3;
+			}
+
+			*{box-sizing:border-box}
+			body{margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--bg); color:#12263f}
+
+			/* Layout */
+			.app{
+				display:flex;
+				min-height:100vh;
+			}
+
+			/* Sidebar */
+			.sidebar{
+				width:var(--sidebar-width);
+				border-right:1px solid var(--border);
+				padding:28px 18px;
+				background:linear-gradient(180deg,#fbfdff 0%, #f6fbff 100%);
+				position:sticky;
+				top:0;
+				align-self:flex-start;
+			}
+
+			.brand{
+				display:flex;gap:12px;align-items:center;margin-bottom:28px
+			}
+
+			.brand .logo{
+				width:44px;height:44px;background:var(--accent);border-radius:8px;display:inline-grid;place-items:center;color:#fff;font-weight:700
+			}
+
+			.brand .title{font-weight:700}
+			.brand .subtitle{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+
+			.section-title{font-size:12px;color:var(--muted);margin:18px 0 8px}
+
+			.nav{list-style:none;padding:0;margin:0}
+			.nav li{margin:6px 0}
+			.nav a{
+				display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;color:#102a43;text-decoration:none;font-size:15px
+			}
+			.nav a .icon{width:18px;height:18px;display:inline-block;flex:0 0 18px;color:var(--muted)}
+
+			.nav a:hover{background:#f0f6fb}
+
+			/* content placeholder */
+			.main{
+				flex:1;padding:28px
+			}
+
+			/* responsive: collapse sidebar under 720px */
+			@media (max-width:720px){
+				:root{--sidebar-width:80px}
+				.sidebar{width:var(--sidebar-width);padding:18px}
+				.brand .title,.brand .subtitle,.section-title{display:none}
+				.nav a{justify-content:center}
+				.nav a span.label{display:none}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="app" id="app-sistema">
+			<aside class="sidebar" aria-label="Barra lateral">
+				<div class="brand">
+					<div class="logo">HSE</div>
+					<div>
+						<div class="title">Indicador de HSE</div>
+						<div class="subtitle">Gestão de Ferramentas</div>
+					</div>
+				</div>
+				<div class="section">
+					<div class="section-title">PRINCIPAL</div>
+					<ul class="nav">
+						<li><a href="#dashboard"><span class="icon" aria-hidden="true">📊</span><span class="label">Dashboard</span></a></li>
+						<li><a href="#relatorios"><span class="icon" aria-hidden="true">📄</span><span class="label">Relatórios</span></a></li>
+						<li><a href="#frequencia"><span class="icon" aria-hidden="true">🔎</span><span class="label">Frequência</span></a></li>
+						<li><a href="#funcionarios"><span class="icon" aria-hidden="true">👥</span><span class="label">Funcionários</span></a></li>
+						<li><a href="#usuario"><span class="icon" aria-hidden="true">👤</span><span class="label">Usuário</span></a></li>
+					</ul>
+				</div>
+				<div class="section">
+					<div class="section-title">FERRAMENTAS</div>
+					<ul class="nav">
+						<li><a href="#ras"><span class="icon" aria-hidden="true">➕</span><span class="label">RAS</span></a></li>
+						<li><a href="#cpt"><span class="icon" aria-hidden="true">👥</span><span class="label">CPT</span></a></li>
+						<li><a href="#inspecao"><span class="icon" aria-hidden="true">🔍</span><span class="label">Inspeção de HSE</span></a></li>
+						<li><a href="#moc"><span class="icon" aria-hidden="true">🛠️</span><span class="label">WOC MDHO</span></a></li>
+						<li><a href="#melhorias"><span class="icon" aria-hidden="true">⚡</span><span class="label">Melhorias</span></a></li>
+						<li><a href="#reuniao"><span class="icon" aria-hidden="true">📅</span><span class="label">Reunião Mensal</span></a></li>
+					</ul>
+				</div>
+			</aside>
+			<main class="main">
+				<div id="conteudo-principal"></div>
+				<div id="nova-ras" style="display:none;max-width:700px;margin:0 auto;">
+					<h2 style="margin-top:24px;font-size:1.6rem;font-weight:700;color:#222">Nova RAS</h2>
+					<div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança · Etapa 1 de 6</div>
+					<div style="font-size:1.05rem;margin-bottom:18px;color:#888">Informações Básicas</div>
+					<form id="form-ras" autocomplete="off" style="background:#fff;border-radius:12px;padding:24px 24px 16px 24px;box-shadow:0 2px 8px #0001;border:1px solid #e6edf3">
+						<div style="text-align:center;margin-bottom:18px">
+							<div style="font-size:1.3rem;font-weight:700;">Informações Básicas</div>
+							<div style="color:#888;font-size:1rem;">Preencha os dados principais da reunião</div>
+						</div>
+						<div style="margin-bottom:18px">
+							<label style="font-weight:600;display:block;margin-bottom:4px">Empresa</label>
+							<select id="ras-empresa" required style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
+								<option value="">Selecione a empresa</option>
+								<option>Empresa 1</option>
+								<option>Empresa 2</option>
+								<option>Empresa 3</option>
+							</select>
+						</div>
+						<div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+							<div style="flex:1 1 120px">
+								<label style="font-weight:600;display:block;margin-bottom:4px">Data</label>
+								<input type="date" id="ras-data" required style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
+							</div>
+							<div style="flex:1 1 100px">
+								<label style="font-weight:600;display:block;margin-bottom:4px">Início</label>
+								<input type="time" id="ras-inicio" required style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
+							</div>
+							<div style="flex:1 1 100px">
+								<label style="font-weight:600;display:block;margin-bottom:4px">Término</label>
+								<input type="time" id="ras-termino" required style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
+							</div>
+						</div>
+						<div style="margin-bottom:18px">
+							<label style="font-weight:600;display:block;margin-bottom:4px">Efetivo</label>
+							<input type="number" id="ras-efetivo" min="0" required style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
+						</div>
+						<div style="margin-bottom:18px;border:1px solid #fbb4b4;background:#fff7f7;border-radius:8px;padding:12px">
+							<label style="font-weight:600;display:block;margin-bottom:4px;color:#d32f2f">⚠️ Tarefa de Alto Risco</label>
+							<textarea id="ras-alto-risco" required rows="2" style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb" placeholder="Descreva as tarefas de alto risco identificadas..."></textarea>
+						</div>
+						<div style="margin-bottom:18px;border:1px solid #fbb4b4;background:#fff7f7;border-radius:8px;padding:12px;display:flex;align-items:center;justify-content:space-between">
+							<div>
+								<label style="font-weight:600;display:block;margin-bottom:2px;color:#d32f2f">⚠️ TARD-C</label>
+								<span style="color:#b77;font-size:0.98rem">Ative se houver Tarefa de Alto Risco Crítica</span>
+							</div>
+							<input type="checkbox" id="ras-tardc" style="width:22px;height:22px">
+						</div>
+						<div style="margin-bottom:18px;border:1px solid #b4e2fb;background:#f7fbff;border-radius:8px;padding:12px">
+							<label style="font-weight:600;display:block;margin-bottom:4px;color:#3197ab">💬 Algo a ser Compartilhado</label>
+							<textarea id="ras-compartilhar" required rows="2" style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb" placeholder="Informações importantes para compartilhar com a equipe..."></textarea>
+						</div>
+						<div style="text-align:right">
+							<button id="ras-proximo" type="button" disabled style="background:#3197ab;color:#fff;padding:10px 36px;font-size:1.1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed">Próximo →</button>
+						</div>
+					</form>
+				</div>
+				<div id="cadastro-usuario" style="display:none;max-width:400px">
+					<h2>Cadastro de Perfil de Usuário</h2>
+					<form id="form-cadastro" autocomplete="off" onsubmit="return false;">
+						<label for="nome">Nome completo</label><br>
+						<input type="text" id="nome" name="nome" required style="width:100%;margin-bottom:10px"><br>
+						<label for="perfil">Perfil</label><br>
+						<select id="perfil" name="perfil" required style="width:100%;margin-bottom:10px">
+							<option value="Administrador">Administrador</option>
+							<option value="Técnico">Técnico</option>
+						</select><br>
+						<label for="senha">Senha</label><br>
+						<input type="password" id="senha" name="senha" required style="width:100%;margin-bottom:10px"><br>
+						<button type="submit" style="margin-top:8px">Cadastrar</button>
+					</form>
+					<button id="btn-acessar-usuarios" style="margin-top:12px">Acessar usuários cadastrados</button>
+					<p style="font-size:13px;color:#7a869a;margin-top:10px">
+						<b>Login:</b> será o <b>primeiro nome</b> informado e a senha cadastrada.<br>
+						Exemplo: Nome completo "Maria Silva" → login: <b>Maria</b>
+					</p>
+					<div id="usuarios-cadastrados" style="margin-top:24px;display:block"></div>
+					<button id="btn-voltar-cadastro" style="margin-top:12px;display:none">Voltar ao cadastro</button>
+				</div>
+			</main>
+		</div>
+					<script>
+					// Alterna exibição do formulário ao clicar em "Usuário"
+						document.querySelectorAll('.nav a[href="#usuario"]').forEach(function(link){
+							link.addEventListener('click',function(e){
+								e.preventDefault();
+								document.getElementById('conteudo-principal').style.display = 'none';
+								document.getElementById('cadastro-usuario').style.display = 'block';
+								document.getElementById('nova-ras').style.display = 'none';
+							});
+						});
+					// Exibir formulário Nova RAS ao clicar em +RAS
+						document.querySelectorAll('.nav a[href="#ras"]').forEach(function(link){
+							link.addEventListener('click',function(e){
+								e.preventDefault();
+								document.getElementById('conteudo-principal').style.display = 'none';
+								document.getElementById('cadastro-usuario').style.display = 'none';
+								document.getElementById('nova-ras').style.display = 'block';
+							});
+						});
+					// Ocultar Nova RAS ao clicar em outros itens
+						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"])').forEach(function(link){
+							link.addEventListener('click',function(){
+								document.getElementById('nova-ras').style.display = 'none';
+								document.getElementById('cadastro-usuario').style.display = 'none';
+								document.getElementById('conteudo-principal').style.display = 'block';
+							});
+						});
+
+					// Habilitar botão Próximo só se todos os campos obrigatórios estiverem preenchidos
+					function validarRAS() {
+						var empresa = document.getElementById('ras-empresa').value;
+						var data = document.getElementById('ras-data').value;
+						var inicio = document.getElementById('ras-inicio').value;
+						var termino = document.getElementById('ras-termino').value;
+						var efetivo = document.getElementById('ras-efetivo').value;
+						var altoRisco = document.getElementById('ras-alto-risco').value.trim();
+						var compartilhar = document.getElementById('ras-compartilhar').value.trim();
+						var proximo = document.getElementById('ras-proximo');
+						if(empresa && data && inicio && termino && efetivo && altoRisco && compartilhar) {
+							proximo.disabled = false;
+							proximo.style.opacity = '1';
+							proximo.style.cursor = 'pointer';
+						} else {
+							proximo.disabled = true;
+							proximo.style.opacity = '0.5';
+							proximo.style.cursor = 'not-allowed';
+						}
+					}
+					['ras-empresa','ras-data','ras-inicio','ras-termino','ras-efetivo','ras-alto-risco','ras-compartilhar'].forEach(function(id){
+						document.getElementById(id).addEventListener('input',validarRAS);
+					});
+
+					// Cadastro de usuários com persistência em localStorage
+					var usuarios = [];
+					// Carregar do localStorage ao iniciar
+					if(localStorage.getItem('usuarios')){
+						try {
+							usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+						} catch(e){ usuarios = []; }
+					}
+					exibirUsuarios();
+
+					document.getElementById('form-cadastro').addEventListener('submit', function(){
+						var nome = document.getElementById('nome').value.trim();
+						var perfil = document.getElementById('perfil').value;
+						var senha = document.getElementById('senha').value;
+						if(!nome || !perfil || !senha) return;
+						var primeiroNome = nome.split(' ')[0];
+						usuarios.push({nome, perfil, senha, login: primeiroNome});
+						// Salvar no localStorage
+						localStorage.setItem('usuarios', JSON.stringify(usuarios));
+						document.getElementById('form-cadastro').reset();
+						exibirUsuarios();
+					});
+
+					function exibirUsuarios(){
+						var div = document.getElementById('usuarios-cadastrados');
+						if(usuarios.length === 0){
+							div.innerHTML = '';
+							return;
+						}
+						var html = '<h3>Usuários cadastrados</h3>';
+						html += '<table border="1" cellpadding="6" style="border-collapse:collapse;width:100%;font-size:14px">';
+						html += '<tr><th>Login</th><th>Nome</th><th>Perfil</th><th>Senha</th><th>Ações</th></tr>';
+						usuarios.forEach(function(u, idx){
+							html += `<tr><td>${u.login}</td><td>${u.nome}</td><td>${u.perfil}</td><td>${u.senha}</td><td><button onclick=\"excluirUsuario(${idx})\" style='color:#fff;background:#e53e3e;border:none;padding:4px 10px;border-radius:4px;cursor:pointer'>Excluir</button></td></tr>`;
+						});
+						html += '</table>';
+						div.innerHTML = html;
+					}
+
+					// Função para excluir usuário (global)
+					window.excluirUsuario = function(idx){
+						if(confirm('Deseja realmente excluir este usuário?')){
+							usuarios.splice(idx,1);
+							localStorage.setItem('usuarios', JSON.stringify(usuarios));
+							exibirUsuarios();
+						}
+					}
+					// Alternância entre cadastro e tabela de usuários
+					document.getElementById('btn-acessar-usuarios').addEventListener('click', function(){
+						document.getElementById('form-cadastro').style.display = 'none';
+						document.getElementById('btn-acessar-usuarios').style.display = 'none';
+						document.getElementById('usuarios-cadastrados').style.display = 'block';
+						document.getElementById('btn-voltar-cadastro').style.display = 'inline-block';
+					});
+					document.getElementById('btn-voltar-cadastro').addEventListener('click', function(){
+						document.getElementById('form-cadastro').style.display = 'block';
+						document.getElementById('btn-acessar-usuarios').style.display = 'inline-block';
+						document.getElementById('usuarios-cadastrados').style.display = 'block';
+						document.getElementById('btn-voltar-cadastro').style.display = 'none';
+					});
+
+					// Sistema inicializado sem login
+					</script>
