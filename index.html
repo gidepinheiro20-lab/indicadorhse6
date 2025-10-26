@@ -60,13 +60,76 @@
 				flex:1;padding:28px
 			}
 
-			/* responsive: collapse sidebar under 720px */
+			/* responsive: mobile-friendly layout */
 			@media (max-width:720px){
-				:root{--sidebar-width:80px}
-				.sidebar{width:var(--sidebar-width);padding:18px}
-				.brand .title,.brand .subtitle,.section-title{display:none}
-				.nav a{justify-content:center}
-				.nav a span.label{display:none}
+				.app{
+					flex-direction:column;
+				}
+				.sidebar{
+					width:100%;
+					position:relative;
+					padding:16px;
+					border-right:none;
+					border-bottom:1px solid var(--border);
+				}
+				.brand{
+					margin-bottom:16px;
+				}
+				.brand .logo{
+					width:36px;
+					height:36px;
+					font-size:14px;
+				}
+				.brand .title{
+					font-size:16px;
+				}
+				.brand .subtitle{
+					font-size:11px;
+				}
+				.section-title{
+					font-size:11px;
+					margin:12px 0 6px;
+				}
+				.nav{
+					display:flex;
+					flex-wrap:wrap;
+					gap:8px;
+				}
+				.nav li{
+					margin:0;
+					flex:1 1 auto;
+					min-width:140px;
+				}
+				.nav a{
+					padding:8px 12px;
+					font-size:13px;
+					justify-content:flex-start;
+					background:#fff;
+					border:1px solid var(--border);
+					border-radius:6px;
+				}
+				.nav a .icon{
+					width:16px;
+					height:16px;
+					flex:0 0 16px;
+				}
+				.nav a:hover{
+					background:#f8fafc;
+				}
+				.main{
+					padding:16px;
+				}
+			}
+			
+			/* Para telas muito pequenas (menos de 480px) */
+			@media (max-width:480px){
+				.nav li{
+					min-width:120px;
+				}
+				.nav a{
+					font-size:12px;
+					padding:6px 8px;
+				}
 			}
 		</style>
 	</head>
