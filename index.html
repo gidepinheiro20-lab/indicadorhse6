@@ -71,6 +71,10 @@
 					padding:16px;
 					border-right:none;
 					border-bottom:1px solid var(--border);
+					transition: all 0.3s ease;
+				}
+				.sidebar.hidden-mobile{
+					display:none;
 				}
 				.brand{
 					margin-bottom:16px;
@@ -107,6 +111,7 @@
 					background:#fff;
 					border:1px solid var(--border);
 					border-radius:6px;
+					transition: all 0.2s ease;
 				}
 				.nav a .icon{
 					width:16px;
@@ -118,6 +123,43 @@
 				}
 				.main{
 					padding:16px;
+				}
+				.main.full-screen-mobile{
+					padding:0;
+					position:relative;
+				}
+				.main.full-screen-mobile #nova-ras{
+					max-width:100%;
+					margin:0;
+					padding:16px;
+				}
+				.main.full-screen-mobile #cadastro-usuario{
+					max-width:100%;
+					padding:16px;
+				}
+				/* Botão para voltar ao menu principal no mobile */
+				.back-to-menu{
+					display:none;
+					position:fixed;
+					top:16px;
+					left:16px;
+					z-index:1000;
+					background:var(--accent);
+					color:#fff;
+					border:none;
+					border-radius:50%;
+					width:48px;
+					height:48px;
+					font-size:18px;
+					cursor:pointer;
+					box-shadow:0 2px 8px rgba(0,0,0,0.15);
+					transition: all 0.2s ease;
+				}
+				.back-to-menu:hover{
+					transform:scale(1.05);
+				}
+				.back-to-menu.show{
+					display:block;
 				}
 			}
 			
@@ -166,6 +208,7 @@
 				</div>
 			</aside>
 			<main class="main">
+				<button class="back-to-menu" id="back-to-menu" title="Voltar ao menu">←</button>
 				<div id="conteudo-principal"></div>
 				<div id="nova-ras" style="display:none;max-width:700px;margin:0 auto;">
 					<!-- Etapa 1: Informações Básicas -->
@@ -339,6 +382,38 @@
 			</main>
 		</div>
 					<script>
+					// Função para verificar se está no mobile
+					function isMobile() {
+						return window.innerWidth <= 720;
+					}
+
+					// Função para ocultar sidebar no mobile
+					function hideSidebarOnMobile() {
+						if (isMobile()) {
+							document.querySelector('.sidebar').classList.add('hidden-mobile');
+							document.querySelector('.main').classList.add('full-screen-mobile');
+							document.getElementById('back-to-menu').classList.add('show');
+						}
+					}
+
+					// Função para mostrar sidebar no mobile
+					function showSidebarOnMobile() {
+						document.querySelector('.sidebar').classList.remove('hidden-mobile');
+						document.querySelector('.main').classList.remove('full-screen-mobile');
+						document.getElementById('back-to-menu').classList.remove('show');
+					}
+
+					// Botão voltar ao menu
+					document.getElementById('back-to-menu').addEventListener('click', function() {
+						// Ocultar todas as seções
+						document.getElementById('conteudo-principal').style.display = 'block';
+						document.getElementById('cadastro-usuario').style.display = 'none';
+						document.getElementById('nova-ras').style.display = 'none';
+						
+						// Mostrar sidebar novamente
+						showSidebarOnMobile();
+					});
+
 					// Alterna exibição do formulário ao clicar em "Usuário"
 						document.querySelectorAll('.nav a[href="#usuario"]').forEach(function(link){
 							link.addEventListener('click',function(e){
@@ -346,6 +421,7 @@
 								document.getElementById('conteudo-principal').style.display = 'none';
 								document.getElementById('cadastro-usuario').style.display = 'block';
 								document.getElementById('nova-ras').style.display = 'none';
+								hideSidebarOnMobile();
 							});
 						});
 					// Exibir formulário Nova RAS ao clicar em +RAS
@@ -355,6 +431,7 @@
 								document.getElementById('conteudo-principal').style.display = 'none';
 								document.getElementById('cadastro-usuario').style.display = 'none';
 								document.getElementById('nova-ras').style.display = 'block';
+								hideSidebarOnMobile();
 							});
 						});
 					// Ocultar Nova RAS ao clicar em outros itens
@@ -363,6 +440,7 @@
 								document.getElementById('nova-ras').style.display = 'none';
 								document.getElementById('cadastro-usuario').style.display = 'none';
 								document.getElementById('conteudo-principal').style.display = 'block';
+								hideSidebarOnMobile();
 							});
 						});
 
