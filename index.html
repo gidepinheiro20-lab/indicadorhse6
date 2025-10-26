@@ -356,6 +356,92 @@
 							</div>
 						</form>
 					</div>
+
+					<!-- Etapa 3: Outros Participantes -->
+					<div id="ras-etapa-3" style="display:none;">
+						<h2 style="margin-top:24px;font-size:1.6rem;font-weight:700;color:#222">Nova RAS</h2>
+						<div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança · Etapa 3 de 6</div>
+						<div style="font-size:1.05rem;margin-bottom:18px;color:#888">Outros Participantes</div>
+						<form autocomplete="off" style="background:#fff;border-radius:12px;padding:24px 24px 16px 24px;box-shadow:0 2px 8px #0001;border:1px solid #e6edf3">
+							<div style="text-align:center;margin-bottom:18px">
+								<div style="font-size:1.3rem;font-weight:700;">Outros Participantes</div>
+								<div style="color:#888;font-size:1rem;">Complete com os demais envolvidos na reunião</div>
+							</div>
+							
+							<div style="margin-bottom:18px">
+								<label style="font-weight:600;display:block;margin-bottom:8px;display:flex;align-items:center;gap:8px">
+									<span style="font-size:1.2rem;">💖</span> Anjo da Semana
+								</label>
+								<select id="ras-anjo-semana" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
+									<option value="">Selecione o anjo da semana</option>
+									<option value="Carlos Mendes">Carlos Mendes</option>
+									<option value="Ana Paula">Ana Paula</option>
+									<option value="João Santos">João Santos</option>
+									<option value="Maria Silva">Maria Silva</option>
+									<option value="Pedro Costa">Pedro Costa</option>
+									<option value="Lucia Ferreira">Lucia Ferreira</option>
+									<option value="Roberto Alves">Roberto Alves</option>
+									<option value="Fernanda Lima">Fernanda Lima</option>
+								</select>
+							</div>
+
+							<div style="margin-bottom:18px">
+								<label style="font-weight:600;display:block;margin-bottom:8px;display:flex;align-items:center;gap:8px">
+									<span style="font-size:1.2rem;">🎯</span> Líder da RAS
+								</label>
+								<select id="ras-lider-ras" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
+									<option value="">Selecione o líder da ras</option>
+									<option value="Eduardo Santos">Eduardo Santos</option>
+									<option value="Mariana Costa">Mariana Costa</option>
+									<option value="Rafael Oliveira">Rafael Oliveira</option>
+									<option value="Juliana Rocha">Juliana Rocha</option>
+									<option value="Bruno Martins">Bruno Martins</option>
+									<option value="Patricia Souza">Patricia Souza</option>
+									<option value="Leonardo Silva">Leonardo Silva</option>
+									<option value="Camila Pereira">Camila Pereira</option>
+								</select>
+							</div>
+
+							<div style="margin-bottom:18px">
+								<label style="font-weight:600;display:block;margin-bottom:8px;display:flex;align-items:center;gap:8px">
+									<span style="font-size:1.2rem;">👥</span> Líder CPT
+								</label>
+								<select id="ras-lider-cpt" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
+									<option value="">Selecione o líder cpt</option>
+									<option value="Marcos Ribeiro">Marcos Ribeiro</option>
+									<option value="Cristina Mendes">Cristina Mendes</option>
+									<option value="Thiago Moreira">Thiago Moreira</option>
+									<option value="Sandra Nunes">Sandra Nunes</option>
+									<option value="Daniel Costa">Daniel Costa</option>
+									<option value="Renata Silva">Renata Silva</option>
+									<option value="Antonio Campos">Antonio Campos</option>
+									<option value="Vanessa Torres">Vanessa Torres</option>
+								</select>
+							</div>
+
+							<div style="margin-bottom:24px">
+								<label style="font-weight:600;display:block;margin-bottom:8px;display:flex;align-items:center;gap:8px">
+									<span style="font-size:1.2rem;">🚒</span> Brigada
+								</label>
+								<select id="ras-brigada" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
+									<option value="">Selecione o brigada</option>
+									<option value="Brigada Alpha">Brigada Alpha</option>
+									<option value="Brigada Bravo">Brigada Bravo</option>
+									<option value="Brigada Charlie">Brigada Charlie</option>
+									<option value="Brigada Delta">Brigada Delta</option>
+									<option value="Brigada Echo">Brigada Echo</option>
+									<option value="Brigada Foxtrot">Brigada Foxtrot</option>
+									<option value="Brigada Golf">Brigada Golf</option>
+									<option value="Brigada Hotel">Brigada Hotel</option>
+								</select>
+							</div>
+
+							<div style="display:flex;gap:12px;justify-content:space-between">
+								<button id="ras-voltar-3" type="button" style="background:#6b7280;color:#fff;padding:10px 24px;font-size:1.1rem;border:none;border-radius:6px;cursor:pointer">← Voltar</button>
+								<button id="ras-proximo-3" type="button" disabled style="background:#3197ab;color:#fff;padding:10px 36px;font-size:1.1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed">Próximo →</button>
+							</div>
+						</form>
+					</div>
 				</div>
 				<div id="cadastro-usuario" style="display:none;max-width:400px">
 					<h2>Cadastro de Perfil de Usuário</h2>
@@ -485,6 +571,25 @@
 						}
 					}
 
+					// Validação para Etapa 3 - Outros Participantes
+					function validarRASEtapa3() {
+						var anjoSemana = document.getElementById('ras-anjo-semana').value;
+						var liderRas = document.getElementById('ras-lider-ras').value;
+						var liderCpt = document.getElementById('ras-lider-cpt').value;
+						var brigada = document.getElementById('ras-brigada').value;
+						var proximo = document.getElementById('ras-proximo-3');
+						
+						if(anjoSemana && liderRas && liderCpt && brigada) {
+							proximo.disabled = false;
+							proximo.style.opacity = '1';
+							proximo.style.cursor = 'pointer';
+						} else {
+							proximo.disabled = true;
+							proximo.style.opacity = '0.5';
+							proximo.style.cursor = 'not-allowed';
+						}
+					}
+
 					// Eventos para validação da Etapa 1
 					['ras-empresa','ras-data','ras-inicio','ras-termino','ras-efetivo','ras-alto-risco','ras-compartilhar'].forEach(function(id){
 						document.getElementById(id).addEventListener('input',validarRASEtapa1);
@@ -493,6 +598,11 @@
 					// Eventos para validação da Etapa 2
 					['ras-gerente','ras-engenheiro','ras-supervisor','ras-encarregado','ras-tecnico-seguranca'].forEach(function(id){
 						document.getElementById(id).addEventListener('change',validarRASEtapa2);
+					});
+
+					// Eventos para validação da Etapa 3
+					['ras-anjo-semana','ras-lider-ras','ras-lider-cpt','ras-brigada'].forEach(function(id){
+						document.getElementById(id).addEventListener('change',validarRASEtapa3);
 					});
 
 					// Navegação entre etapas
@@ -510,8 +620,20 @@
 
 					document.getElementById('ras-proximo-2').addEventListener('click', function() {
 						if (!this.disabled) {
+							document.getElementById('ras-etapa-2').style.display = 'none';
+							document.getElementById('ras-etapa-3').style.display = 'block';
+						}
+					});
+
+					document.getElementById('ras-voltar-3').addEventListener('click', function() {
+						document.getElementById('ras-etapa-3').style.display = 'none';
+						document.getElementById('ras-etapa-2').style.display = 'block';
+					});
+
+					document.getElementById('ras-proximo-3').addEventListener('click', function() {
+						if (!this.disabled) {
 							alert('Próxima etapa em desenvolvimento...');
-							// Aqui será implementada a navegação para a etapa 3
+							// Aqui será implementada a navegação para a etapa 4
 						}
 					});
 
