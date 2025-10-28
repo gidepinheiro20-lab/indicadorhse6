@@ -449,28 +449,64 @@
 						<div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança · Etapa 4 de 6</div>
 						<div style="font-size:1.05rem;margin-bottom:18px;color:#888">Anexos</div>
 						<form autocomplete="off" style="background:#fff;border-radius:12px;padding:24px 24px 16px 24px;box-shadow:0 2px 8px #0001;border:1px solid #e6edf3">
-							<div style="text-align:center;margin-bottom:18px">
+							<div style="text-align:center;margin-bottom:24px">
 								<div style="font-size:1.3rem;font-weight:700;">Anexos</div>
-								<div style="color:#888;font-size:1rem;">Adicione documentos e imagens da reunião</div>
-								<div style="color:#e53e3e;font-size:0.9rem;margin-top:4px;font-weight:600;">Item obrigatório</div>
+								<div style="color:#888;font-size:1rem;">Adicione fotos e evidências da reunião</div>
+								<div style="color:#e53e3e;font-size:0.9rem;margin-top:4px;font-weight:600;">Itens obrigatórios</div>
 							</div>
 							
-							<!-- Área de Upload -->
-							<div style="margin-bottom:24px;border:2px dashed #d1d5db;border-radius:12px;padding:40px 20px;text-align:center;background:#f9fafb;transition:all 0.3s ease;" id="upload-area">
-								<div style="font-size:3rem;color:#9ca3af;margin-bottom:12px;">📤</div>
-								<div style="font-size:1.2rem;font-weight:600;color:#374151;margin-bottom:8px;">Carregar Documentos</div>
-								<div style="color:#6b7280;font-size:0.95rem;margin-bottom:16px;">Selecione imagens, PDFs ou outros documentos</div>
+							<!-- Seção 1: Carregar Foto da RAS -->
+							<div style="margin-bottom:24px;padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;">
+								<div style="margin-bottom:16px;">
+									<div style="font-size:1.1rem;font-weight:600;color:#374151;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+										<span style="font-size:1.3rem;">📷</span> Carregar Foto da RAS
+									</div>
+									<div style="color:#6b7280;font-size:0.9rem;">Adicione fotos da reunião (JPG, PNG)</div>
+								</div>
 								
-								<button type="button" id="select-files" style="background:#3197ab;color:#fff;padding:12px 24px;font-size:1rem;border:none;border-radius:8px;cursor:pointer;margin-bottom:8px;">Selecionar Arquivos</button>
-								<input type="file" id="file-input" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" style="display:none;">
-								
-								<div style="color:#6b7280;font-size:0.85rem;">Formatos aceitos: JPG, PNG, PDF, DOC, DOCX</div>
+								<div style="border:2px dashed #bfdbfe;border-radius:8px;padding:30px 20px;text-align:center;background:#eff6ff;transition:all 0.3s ease;" id="upload-area-fotos">
+									<div style="font-size:2.5rem;color:#60a5fa;margin-bottom:8px;">�</div>
+									<div style="font-size:1rem;font-weight:600;color:#1e40af;margin-bottom:6px;">Carregar Fotos</div>
+									<div style="color:#6b7280;font-size:0.9rem;margin-bottom:12px;">Selecione ou arraste fotos da RAS</div>
+									
+									<button type="button" id="select-fotos" style="background:#2563eb;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;margin-bottom:6px;">Selecionar Fotos</button>
+									<input type="file" id="file-input-fotos" multiple accept=".jpg,.jpeg,.png" style="display:none;">
+									
+									<div style="color:#6b7280;font-size:0.8rem;">Formatos: JPG, PNG</div>
+								</div>
+
+								<!-- Lista de Fotos Carregadas -->
+								<div id="fotos-list" style="margin-top:16px;display:none;">
+									<div style="font-weight:600;margin-bottom:8px;color:#374151;">📷 Fotos Selecionadas:</div>
+									<div id="fotos-container" style="max-height:150px;overflow-y:auto;"></div>
+								</div>
 							</div>
 
-							<!-- Lista de Arquivos Carregados -->
-							<div id="files-list" style="margin-bottom:24px;display:none;">
-								<div style="font-weight:600;margin-bottom:12px;color:#374151;">📋 Arquivos Selecionados:</div>
-								<div id="files-container" style="max-height:200px;overflow-y:auto;"></div>
+							<!-- Seção 2: Carregar Evidência da RAS -->
+							<div style="margin-bottom:24px;padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#fef2f2;">
+								<div style="margin-bottom:16px;">
+									<div style="font-size:1.1rem;font-weight:600;color:#374151;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+										<span style="font-size:1.3rem;">📋</span> Carregar Evidência da RAS
+									</div>
+									<div style="color:#6b7280;font-size:0.9rem;">Adicione documentos PDF como evidência</div>
+								</div>
+								
+								<div style="border:2px dashed #fca5a5;border-radius:8px;padding:30px 20px;text-align:center;background:#fef2f2;transition:all 0.3s ease;" id="upload-area-evidencias">
+									<div style="font-size:2.5rem;color:#f87171;margin-bottom:8px;">📄</div>
+									<div style="font-size:1rem;font-weight:600;color:#dc2626;margin-bottom:6px;">Carregar Evidências</div>
+									<div style="color:#6b7280;font-size:0.9rem;margin-bottom:12px;">Selecione ou arraste documentos PDF</div>
+									
+									<button type="button" id="select-evidencias" style="background:#dc2626;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;margin-bottom:6px;">Selecionar PDFs</button>
+									<input type="file" id="file-input-evidencias" multiple accept=".pdf" style="display:none;">
+									
+									<div style="color:#6b7280;font-size:0.8rem;">Formato: PDF</div>
+								</div>
+
+								<!-- Lista de Evidências Carregadas -->
+								<div id="evidencias-list" style="margin-top:16px;display:none;">
+									<div style="font-weight:600;margin-bottom:8px;color:#374151;">� Evidências Selecionadas:</div>
+									<div id="evidencias-container" style="max-height:150px;overflow-y:auto;"></div>
+								</div>
 							</div>
 
 							<div style="display:flex;gap:12px;justify-content:space-between">
@@ -706,14 +742,16 @@
 						}
 					}
 
-					// Variável global para armazenar arquivos carregados
-					var arquivosCarregados = [];
+					// Variáveis globais para armazenar arquivos separados
+					var fotosCarregadas = [];
+					var evidenciasCarregadas = [];
 
 					// Validação para Etapa 4 - Anexos
 					function validarRASEtapa4() {
 						var proximo = document.getElementById('ras-proximo-4');
 						
-						if(arquivosCarregados.length > 0) {
+						// Precisa ter pelo menos 1 foto E 1 evidência
+						if(fotosCarregadas.length > 0 && evidenciasCarregadas.length > 0) {
 							proximo.disabled = false;
 							proximo.style.opacity = '1';
 							proximo.style.cursor = 'pointer';
@@ -724,10 +762,15 @@
 						}
 					}
 
-					// Função para validar tipo de arquivo
-					function validarTipoArquivo(arquivo) {
-						var tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+					// Função para validar tipo de arquivo - Fotos
+					function validarTipoFoto(arquivo) {
+						var tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png'];
 						return tiposPermitidos.includes(arquivo.type);
+					}
+
+					// Função para validar tipo de arquivo - Evidências (PDF)
+					function validarTipoEvidencia(arquivo) {
+						return arquivo.type === 'application/pdf';
 					}
 
 					// Função para formatar tamanho do arquivo
@@ -739,24 +782,24 @@
 						return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + tamanhos[i];
 					}
 
-					// Função para exibir arquivos carregados
-					function exibirArquivos() {
-						var container = document.getElementById('files-container');
-						var listaArquivos = document.getElementById('files-list');
+					// Função para exibir fotos carregadas
+					function exibirFotos() {
+						var container = document.getElementById('fotos-container');
+						var listaFotos = document.getElementById('fotos-list');
 						
-						if (arquivosCarregados.length > 0) {
-							listaArquivos.style.display = 'block';
+						if (fotosCarregadas.length > 0) {
+							listaFotos.style.display = 'block';
 							container.innerHTML = '';
 							
-							arquivosCarregados.forEach(function(arquivo, index) {
+							fotosCarregadas.forEach(function(arquivo, index) {
 								var arquivoDiv = document.createElement('div');
-								arquivoDiv.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:8px 12px;margin-bottom:8px;background:#f3f4f6;border-radius:6px;border:1px solid #e5e7eb;';
+								arquivoDiv.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:8px 12px;margin-bottom:8px;background:#dbeafe;border-radius:6px;border:1px solid #93c5fd;';
 								
 								var infoArquivo = document.createElement('div');
 								infoArquivo.style.cssText = 'flex:1;';
 								
 								var nomeArquivo = document.createElement('div');
-								nomeArquivo.style.cssText = 'font-weight:600;color:#374151;font-size:0.9rem;';
+								nomeArquivo.style.cssText = 'font-weight:600;color:#1e40af;font-size:0.9rem;';
 								nomeArquivo.textContent = arquivo.name;
 								
 								var tamanhoArquivo = document.createElement('div');
@@ -767,8 +810,8 @@
 								botaoRemover.style.cssText = 'background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;';
 								botaoRemover.textContent = '✕';
 								botaoRemover.onclick = function() {
-									arquivosCarregados.splice(index, 1);
-									exibirArquivos();
+									fotosCarregadas.splice(index, 1);
+									exibirFotos();
 									validarRASEtapa4();
 								};
 								
@@ -779,15 +822,59 @@
 								container.appendChild(arquivoDiv);
 							});
 						} else {
-							listaArquivos.style.display = 'none';
+							listaFotos.style.display = 'none';
 						}
 					}
 
-					// Configurar upload de arquivos
-					function configurarUpload() {
-						var uploadArea = document.getElementById('upload-area');
-						var fileInput = document.getElementById('file-input');
-						var selectButton = document.getElementById('select-files');
+					// Função para exibir evidências carregadas
+					function exibirEvidencias() {
+						var container = document.getElementById('evidencias-container');
+						var listaEvidencias = document.getElementById('evidencias-list');
+						
+						if (evidenciasCarregadas.length > 0) {
+							listaEvidencias.style.display = 'block';
+							container.innerHTML = '';
+							
+							evidenciasCarregadas.forEach(function(arquivo, index) {
+								var arquivoDiv = document.createElement('div');
+								arquivoDiv.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:8px 12px;margin-bottom:8px;background:#fee2e2;border-radius:6px;border:1px solid #fca5a5;';
+								
+								var infoArquivo = document.createElement('div');
+								infoArquivo.style.cssText = 'flex:1;';
+								
+								var nomeArquivo = document.createElement('div');
+								nomeArquivo.style.cssText = 'font-weight:600;color:#dc2626;font-size:0.9rem;';
+								nomeArquivo.textContent = arquivo.name;
+								
+								var tamanhoArquivo = document.createElement('div');
+								tamanhoArquivo.style.cssText = 'color:#6b7280;font-size:0.8rem;';
+								tamanhoArquivo.textContent = formatarTamanho(arquivo.size);
+								
+								var botaoRemover = document.createElement('button');
+								botaoRemover.style.cssText = 'background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;';
+								botaoRemover.textContent = '✕';
+								botaoRemover.onclick = function() {
+									evidenciasCarregadas.splice(index, 1);
+									exibirEvidencias();
+									validarRASEtapa4();
+								};
+								
+								infoArquivo.appendChild(nomeArquivo);
+								infoArquivo.appendChild(tamanhoArquivo);
+								arquivoDiv.appendChild(infoArquivo);
+								arquivoDiv.appendChild(botaoRemover);
+								container.appendChild(arquivoDiv);
+							});
+						} else {
+							listaEvidencias.style.display = 'none';
+						}
+					}
+
+					// Configurar upload de fotos
+					function configurarUploadFotos() {
+						var uploadArea = document.getElementById('upload-fotos-area');
+						var fileInput = document.getElementById('fotos-input');
+						var selectButton = document.getElementById('select-fotos');
 						
 						// Clique no botão
 						selectButton.addEventListener('click', function() {
@@ -804,51 +891,132 @@
 						// Arrastar e soltar
 						uploadArea.addEventListener('dragover', function(e) {
 							e.preventDefault();
-							uploadArea.style.borderColor = '#3197ab';
+							uploadArea.style.borderColor = '#3b82f6';
 							uploadArea.style.backgroundColor = '#eff6ff';
 						});
 						
 						uploadArea.addEventListener('dragleave', function(e) {
 							e.preventDefault();
 							uploadArea.style.borderColor = '#d1d5db';
-							uploadArea.style.backgroundColor = '#f9fafb';
+							uploadArea.style.backgroundColor = '#f0f9ff';
 						});
 						
 						uploadArea.addEventListener('drop', function(e) {
 							e.preventDefault();
 							uploadArea.style.borderColor = '#d1d5db';
-							uploadArea.style.backgroundColor = '#f9fafb';
+							uploadArea.style.backgroundColor = '#f0f9ff';
 							
 							var arquivos = Array.from(e.dataTransfer.files);
-							processarArquivos(arquivos);
+							processarFotos(arquivos);
 						});
 						
 						// Seleção de arquivos
 						fileInput.addEventListener('change', function(e) {
 							var arquivos = Array.from(e.target.files);
-							processarArquivos(arquivos);
+							processarFotos(arquivos);
 						});
 					}
 
-					// Processar arquivos selecionados
-					function processarArquivos(arquivos) {
+					// Configurar upload de evidências
+					function configurarUploadEvidencias() {
+						var uploadArea = document.getElementById('upload-evidencias-area');
+						var fileInput = document.getElementById('evidencias-input');
+						var selectButton = document.getElementById('select-evidencias');
+						
+						// Clique no botão
+						selectButton.addEventListener('click', function() {
+							fileInput.click();
+						});
+						
+						// Clique na área de upload
+						uploadArea.addEventListener('click', function(e) {
+							if (e.target !== selectButton) {
+								fileInput.click();
+							}
+						});
+						
+						// Arrastar e soltar
+						uploadArea.addEventListener('dragover', function(e) {
+							e.preventDefault();
+							uploadArea.style.borderColor = '#ef4444';
+							uploadArea.style.backgroundColor = '#fef2f2';
+						});
+						
+						uploadArea.addEventListener('dragleave', function(e) {
+							e.preventDefault();
+							uploadArea.style.borderColor = '#d1d5db';
+							uploadArea.style.backgroundColor = '#fef2f2';
+						});
+						
+						uploadArea.addEventListener('drop', function(e) {
+							e.preventDefault();
+							uploadArea.style.borderColor = '#d1d5db';
+							uploadArea.style.backgroundColor = '#fef2f2';
+							
+							var arquivos = Array.from(e.dataTransfer.files);
+							processarEvidencias(arquivos);
+						});
+						
+						// Seleção de arquivos
+						fileInput.addEventListener('change', function(e) {
+							var arquivos = Array.from(e.target.files);
+							processarEvidencias(arquivos);
+						});
+					}
+
+					// Processar fotos selecionadas
+					function processarFotos(arquivos) {
 						arquivos.forEach(function(arquivo) {
-							if (validarTipoArquivo(arquivo)) {
+							if (validarTipoFoto(arquivo)) {
 								// Verificar se arquivo já foi adicionado
-								var jaExiste = arquivosCarregados.some(function(arq) {
+								var jaExiste = fotosCarregadas.some(function(arq) {
 									return arq.name === arquivo.name && arq.size === arquivo.size;
 								});
 								
 								if (!jaExiste) {
-									arquivosCarregados.push(arquivo);
+									fotosCarregadas.push(arquivo);
 								}
 							} else {
-								alert('Tipo de arquivo não permitido: ' + arquivo.name + '\nUse apenas JPG, PNG, PDF, DOC ou DOCX.');
+								alert('Tipo de arquivo não permitido para fotos: ' + arquivo.name + '\nUse apenas JPG ou PNG.');
 							}
 						});
 						
-						exibirArquivos();
+						exibirFotos();
 						validarRASEtapa4();
+					}
+
+					// Processar evidências selecionadas
+					function processarEvidencias(arquivos) {
+						arquivos.forEach(function(arquivo) {
+							if (validarTipoEvidencia(arquivo)) {
+								// Verificar se arquivo já foi adicionado
+								var jaExiste = evidenciasCarregadas.some(function(arq) {
+									return arq.name === arquivo.name && arq.size === arquivo.size;
+								});
+								
+								if (!jaExiste) {
+									evidenciasCarregadas.push(arquivo);
+								}
+							} else {
+								alert('Tipo de arquivo não permitido para evidências: ' + arquivo.name + '\nUse apenas PDF.');
+							}
+						});
+						
+						exibirEvidencias();
+						validarRASEtapa4();
+					}
+
+					// Validar tipo de arquivo para fotos
+					function validarTipoFoto(arquivo) {
+						var extensoesPermitidas = ['jpg', 'jpeg', 'png'];
+						var extensao = arquivo.name.split('.').pop().toLowerCase();
+						return extensoesPermitidas.includes(extensao);
+					}
+
+					// Validar tipo de arquivo para evidências
+					function validarTipoEvidencia(arquivo) {
+						var extensao = arquivo.name.split('.').pop().toLowerCase();
+						return extensao === 'pdf';
 					}
 
 					// Função para coletar todos os dados preenchidos
@@ -878,7 +1046,8 @@
 							brigada: document.getElementById('ras-brigada').value,
 							
 							// Etapa 4 - Anexos
-							arquivos: arquivosCarregados
+							fotos: fotosCarregadas,
+							evidencias: evidenciasCarregadas
 						};
 						
 						return dados;
@@ -916,18 +1085,39 @@
 						document.getElementById('review-brigada').textContent = dados.brigada || '-';
 						
 						// Anexos
-						var anexosCount = dados.arquivos.length;
-						document.getElementById('review-anexos-count').textContent = anexosCount;
+						var fotosCount = dados.fotos.length;
+						var evidenciasCount = dados.evidencias.length;
+						var totalAnexos = fotosCount + evidenciasCount;
+						
+						document.getElementById('review-anexos-count').textContent = totalAnexos;
 						
 						var anexosList = document.getElementById('review-anexos-list');
-						if (anexosCount > 0) {
+						if (totalAnexos > 0) {
 							var listaHTML = '';
-							dados.arquivos.forEach(function(arquivo) {
-								listaHTML += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">';
-								listaHTML += '<span style="font-size:1rem;">📄</span>';
-								listaHTML += '<span>' + arquivo.name + '</span>';
-								listaHTML += '</div>';
-							});
+							
+							// Exibir fotos
+							if (fotosCount > 0) {
+								listaHTML += '<div style="font-weight:bold;color:#3b82f6;margin-bottom:8px;">📷 Fotos da RAS (' + fotosCount + '):</div>';
+								dados.fotos.forEach(function(arquivo) {
+									listaHTML += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;margin-left:16px;">';
+									listaHTML += '<span style="font-size:1rem;">🖼️</span>';
+									listaHTML += '<span>' + arquivo.name + '</span>';
+									listaHTML += '</div>';
+								});
+							}
+							
+							// Exibir evidências
+							if (evidenciasCount > 0) {
+								if (fotosCount > 0) listaHTML += '<div style="margin:12px 0;"></div>';
+								listaHTML += '<div style="font-weight:bold;color:#ef4444;margin-bottom:8px;">📄 Evidências da RAS (' + evidenciasCount + '):</div>';
+								dados.evidencias.forEach(function(arquivo) {
+									listaHTML += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;margin-left:16px;">';
+									listaHTML += '<span style="font-size:1rem;">�</span>';
+									listaHTML += '<span>' + arquivo.name + '</span>';
+									listaHTML += '</div>';
+								});
+							}
+							
 							anexosList.innerHTML = listaHTML;
 						} else {
 							anexosList.innerHTML = '<div style="color:#6b7280;">Nenhum arquivo carregado</div>';
@@ -945,7 +1135,7 @@
 											dados.gerente && dados.engenheiro && dados.supervisor && 
 											dados.encarregado && dados.tecnicoSeguranca &&
 											dados.anjoSemana && dados.liderRas && dados.liderCpt && 
-											dados.brigada && dados.arquivos.length > 0;
+											dados.brigada && (dados.fotos.length > 0 || dados.evidencias.length > 0);
 						
 						if (dadosCompletos) {
 							botao.disabled = false;
@@ -1002,9 +1192,10 @@
 						if (!this.disabled) {
 							document.getElementById('ras-etapa-3').style.display = 'none';
 							document.getElementById('ras-etapa-4').style.display = 'block';
-							// Inicializar sistema de upload na primeira vez que entrar na etapa 4
+							// Inicializar sistemas de upload na primeira vez que entrar na etapa 4
 							if (!window.uploadInicializado) {
-								configurarUpload();
+								configurarUploadFotos();
+								configurarUploadEvidencias();
 								window.uploadInicializado = true;
 							}
 						}
