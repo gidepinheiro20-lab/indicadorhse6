@@ -479,6 +479,85 @@
 							</div>
 						</form>
 					</div>
+
+					<!-- Etapa 5: Revisar Informações -->
+					<div id="ras-etapa-5" style="display:none;">
+						<h2 style="margin-top:24px;font-size:1.6rem;font-weight:700;color:#222">Nova RAS</h2>
+						<div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança · Etapa 5 de 6</div>
+						<div style="font-size:1.05rem;margin-bottom:18px;color:#888">Revisar Informações</div>
+						
+						<div style="background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px #0001;border:1px solid #e6edf3">
+							<!-- Cabeçalho -->
+							<div style="text-align:center;margin-bottom:24px;">
+								<div style="width:60px;height:60px;background:#10b981;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+									<span style="font-size:24px;color:#fff;">✓</span>
+								</div>
+								<div style="font-size:1.4rem;font-weight:700;color:#374151;">Revisar Informações</div>
+								<div style="color:#6b7280;font-size:1rem;">Verifique os dados antes de confirmar a presença</div>
+							</div>
+
+							<!-- Informações Básicas -->
+							<div style="margin-bottom:20px;padding:16px;border:1px solid #e5e7eb;border-radius:8px;background:#f9fafb;">
+								<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+									<span style="font-size:1.2rem;">📋</span>
+									<span style="font-weight:600;color:#374151;">Informações Básicas</span>
+								</div>
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.9rem;">
+									<div><strong>Empresa:</strong> <span id="review-empresa">-</span></div>
+									<div><strong>Data:</strong> <span id="review-data">-</span></div>
+									<div><strong>Horário:</strong> <span id="review-horario">-</span></div>
+									<div><strong>Efetivo:</strong> <span id="review-efetivo">-</span> funcionários</div>
+								</div>
+								<div style="margin-top:12px;">
+									<div style="margin-bottom:8px;"><strong>⚠️ Tarefa de Alto Risco:</strong></div>
+									<div style="background:#fff7f7;padding:8px;border-radius:4px;border-left:3px solid #ef4444;font-size:0.85rem;" id="review-alto-risco">-</div>
+								</div>
+								<div style="margin-top:12px;">
+									<div style="margin-bottom:4px;"><strong>TARD-C:</strong> <span id="review-tardc">NÃO</span></div>
+								</div>
+								<div style="margin-top:12px;">
+									<div style="margin-bottom:8px;"><strong>💬 Algo a ser Compartilhado:</strong></div>
+									<div style="background:#f7fbff;padding:8px;border-radius:4px;border-left:3px solid #3197ab;font-size:0.85rem;" id="review-compartilhar">-</div>
+								</div>
+							</div>
+
+							<!-- Participantes -->
+							<div style="margin-bottom:20px;padding:16px;border:1px solid #e5e7eb;border-radius:8px;background:#f9fafb;">
+								<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+									<span style="font-size:1.2rem;">👥</span>
+									<span style="font-weight:600;color:#374151;">Participantes</span>
+								</div>
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.9rem;">
+									<div><strong>👔 Gerente:</strong> <span id="review-gerente">-</span></div>
+									<div><strong>👷 Engenheiro:</strong> <span id="review-engenheiro">-</span></div>
+									<div><strong>🔧 Supervisor/Mestre:</strong> <span id="review-supervisor">-</span></div>
+									<div><strong>👨‍🔧 Encarregado:</strong> <span id="review-encarregado">-</span></div>
+									<div><strong>🛡️ Técnico de Segurança:</strong> <span id="review-tecnico-seguranca">-</span></div>
+									<div><strong>💖 Anjo da Semana:</strong> <span id="review-anjo-semana">-</span></div>
+									<div><strong>🎯 Líder da RAS:</strong> <span id="review-lider-ras">-</span></div>
+									<div><strong>👥 Líder CPT:</strong> <span id="review-lider-cpt">-</span></div>
+									<div><strong>🚒 Brigada:</strong> <span id="review-brigada">-</span></div>
+								</div>
+							</div>
+
+							<!-- Anexos -->
+							<div style="margin-bottom:24px;padding:16px;border:1px solid #e5e7eb;border-radius:8px;background:#f9fafb;">
+								<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+									<span style="font-size:1.2rem;">📎</span>
+									<span style="font-weight:600;color:#374151;">Anexos (<span id="review-anexos-count">0</span>)</span>
+								</div>
+								<div id="review-anexos-list" style="font-size:0.9rem;">
+									<div style="color:#6b7280;">Nenhum arquivo carregado</div>
+								</div>
+							</div>
+
+							<!-- Botões -->
+							<div style="display:flex;gap:12px;justify-content:space-between">
+								<button id="ras-voltar-5" type="button" style="background:#6b7280;color:#fff;padding:10px 24px;font-size:1.1rem;border:none;border-radius:6px;cursor:pointer">← Voltar</button>
+								<button id="ras-confirmar-presenca" type="button" disabled style="background:#10b981;color:#fff;padding:10px 24px;font-size:1.1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed">Confirmar Presença →</button>
+							</div>
+						</div>
+					</div>
 				</div>
 				<div id="cadastro-usuario" style="display:none;max-width:400px">
 					<h2>Cadastro de Perfil de Usuário</h2>
@@ -772,6 +851,113 @@
 						validarRASEtapa4();
 					}
 
+					// Função para coletar todos os dados preenchidos
+					function coletarDadosRAS() {
+						var dados = {
+							// Etapa 1 - Informações Básicas
+							empresa: document.getElementById('ras-empresa').value,
+							data: document.getElementById('ras-data').value,
+							inicio: document.getElementById('ras-inicio').value,
+							termino: document.getElementById('ras-termino').value,
+							efetivo: document.getElementById('ras-efetivo').value,
+							altoRisco: document.getElementById('ras-alto-risco').value,
+							tardc: document.getElementById('ras-tardc').checked,
+							compartilhar: document.getElementById('ras-compartilhar').value,
+							
+							// Etapa 2 - Participação de Liderança
+							gerente: document.getElementById('ras-gerente').value,
+							engenheiro: document.getElementById('ras-engenheiro').value,
+							supervisor: document.getElementById('ras-supervisor').value,
+							encarregado: document.getElementById('ras-encarregado').value,
+							tecnicoSeguranca: document.getElementById('ras-tecnico-seguranca').value,
+							
+							// Etapa 3 - Outros Participantes
+							anjoSemana: document.getElementById('ras-anjo-semana').value,
+							liderRas: document.getElementById('ras-lider-ras').value,
+							liderCpt: document.getElementById('ras-lider-cpt').value,
+							brigada: document.getElementById('ras-brigada').value,
+							
+							// Etapa 4 - Anexos
+							arquivos: arquivosCarregados
+						};
+						
+						return dados;
+					}
+
+					// Função para formatar data para exibição
+					function formatarDataExibicao(dataInput) {
+						if (!dataInput) return '-';
+						var data = new Date(dataInput + 'T00:00:00');
+						return data.toLocaleDateString('pt-BR');
+					}
+
+					// Função para atualizar revisão dos dados
+					function atualizarRevisao() {
+						var dados = coletarDadosRAS();
+						
+						// Informações Básicas
+						document.getElementById('review-empresa').textContent = dados.empresa || '-';
+						document.getElementById('review-data').textContent = formatarDataExibicao(dados.data);
+						document.getElementById('review-horario').textContent = dados.inicio && dados.termino ? dados.inicio + ' às ' + dados.termino : '-';
+						document.getElementById('review-efetivo').textContent = dados.efetivo || '-';
+						document.getElementById('review-alto-risco').textContent = dados.altoRisco || '-';
+						document.getElementById('review-tardc').textContent = dados.tardc ? 'SIM' : 'NÃO';
+						document.getElementById('review-compartilhar').textContent = dados.compartilhar || '-';
+						
+						// Participantes
+						document.getElementById('review-gerente').textContent = dados.gerente || '-';
+						document.getElementById('review-engenheiro').textContent = dados.engenheiro || '-';
+						document.getElementById('review-supervisor').textContent = dados.supervisor || '-';
+						document.getElementById('review-encarregado').textContent = dados.encarregado || '-';
+						document.getElementById('review-tecnico-seguranca').textContent = dados.tecnicoSeguranca || '-';
+						document.getElementById('review-anjo-semana').textContent = dados.anjoSemana || '-';
+						document.getElementById('review-lider-ras').textContent = dados.liderRas || '-';
+						document.getElementById('review-lider-cpt').textContent = dados.liderCpt || '-';
+						document.getElementById('review-brigada').textContent = dados.brigada || '-';
+						
+						// Anexos
+						var anexosCount = dados.arquivos.length;
+						document.getElementById('review-anexos-count').textContent = anexosCount;
+						
+						var anexosList = document.getElementById('review-anexos-list');
+						if (anexosCount > 0) {
+							var listaHTML = '';
+							dados.arquivos.forEach(function(arquivo) {
+								listaHTML += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">';
+								listaHTML += '<span style="font-size:1rem;">📄</span>';
+								listaHTML += '<span>' + arquivo.name + '</span>';
+								listaHTML += '</div>';
+							});
+							anexosList.innerHTML = listaHTML;
+						} else {
+							anexosList.innerHTML = '<div style="color:#6b7280;">Nenhum arquivo carregado</div>';
+						}
+					}
+
+					// Validação para Etapa 5 - Revisar Informações
+					function validarRASEtapa5() {
+						var dados = coletarDadosRAS();
+						var botao = document.getElementById('ras-confirmar-presenca');
+						
+						// Verificar se todos os dados essenciais estão preenchidos
+						var dadosCompletos = dados.empresa && dados.data && dados.inicio && dados.termino && 
+											dados.efetivo && dados.altoRisco && dados.compartilhar &&
+											dados.gerente && dados.engenheiro && dados.supervisor && 
+											dados.encarregado && dados.tecnicoSeguranca &&
+											dados.anjoSemana && dados.liderRas && dados.liderCpt && 
+											dados.brigada && dados.arquivos.length > 0;
+						
+						if (dadosCompletos) {
+							botao.disabled = false;
+							botao.style.opacity = '1';
+							botao.style.cursor = 'pointer';
+						} else {
+							botao.disabled = true;
+							botao.style.opacity = '0.5';
+							botao.style.cursor = 'not-allowed';
+						}
+					}
+
 					// Eventos para validação da Etapa 1
 					['ras-empresa','ras-data','ras-inicio','ras-termino','ras-efetivo','ras-alto-risco','ras-compartilhar'].forEach(function(id){
 						document.getElementById(id).addEventListener('input',validarRASEtapa1);
@@ -831,8 +1017,23 @@
 
 					document.getElementById('ras-proximo-4').addEventListener('click', function() {
 						if (!this.disabled) {
-							alert('Próxima etapa em desenvolvimento...');
-							// Aqui será implementada a navegação para a etapa 5
+							document.getElementById('ras-etapa-4').style.display = 'none';
+							document.getElementById('ras-etapa-5').style.display = 'block';
+							// Atualizar revisão dos dados ao entrar na etapa 5
+							atualizarRevisao();
+							validarRASEtapa5();
+						}
+					});
+
+					document.getElementById('ras-voltar-5').addEventListener('click', function() {
+						document.getElementById('ras-etapa-5').style.display = 'none';
+						document.getElementById('ras-etapa-4').style.display = 'block';
+					});
+
+					document.getElementById('ras-confirmar-presenca').addEventListener('click', function() {
+						if (!this.disabled) {
+							alert('RAS finalizada com sucesso!\nTodos os dados foram registrados.');
+							// Aqui será implementada a navegação para a etapa 6 ou finalização
 						}
 					});
 
