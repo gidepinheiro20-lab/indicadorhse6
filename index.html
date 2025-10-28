@@ -655,6 +655,110 @@
 						</div>
 					</div>
 				</div>
+				
+				<!-- Etapa 7: Relatório Final -->
+				<div id="ras-relatorio-final" style="display:none">
+					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3;max-width:1200px;margin:0 auto">
+						<div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff;padding:20px 24px;border-radius:16px 16px 0 0;text-align:center">
+							<div style="font-size:1.4rem;font-weight:700;margin-bottom:6px">✅ RAS Finalizada</div>
+							<div style="font-size:1rem;opacity:0.9">Relatório da Reunião de Análise de Segurança</div>
+						</div>
+						
+						<div id="relatorio-conteudo" style="padding:32px 24px">
+							<div style="text-align:center;margin-bottom:32px">
+								<div style="font-size:3rem;color:#10b981;margin-bottom:12px">📊</div>
+								<div style="font-size:1.6rem;font-weight:700;color:#374151;margin-bottom:8px">Relatório Final da RAS</div>
+								<div style="color:#6b7280;font-size:1rem">Resumo completo da reunião realizada</div>
+							</div>
+							
+							<!-- Seção 1: Informações Básicas -->
+							<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:24px">
+								<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.3rem;display:flex;align-items:center;gap:8px">
+									<span>🏢</span> Informações Básicas
+								</h3>
+								<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
+									<div><strong>Empresa:</strong> <span id="rel-empresa">-</span></div>
+									<div><strong>Data:</strong> <span id="rel-data">-</span></div>
+									<div><strong>Horário:</strong> <span id="rel-horario">-</span></div>
+									<div><strong>Efetivo Total:</strong> <span id="rel-efetivo">-</span></div>
+									<div><strong>Atividade de Alto Risco:</strong> <span id="rel-alto-risco">-</span></div>
+									<div><strong>TARDC:</strong> <span id="rel-tardc">-</span></div>
+									<div style="grid-column:1/-1"><strong>Como Compartilhar:</strong> <span id="rel-compartilhar">-</span></div>
+								</div>
+							</div>
+							
+							<!-- Seção 2: Participação de Liderança -->
+							<div style="background:#f0f9ff;border:1px solid #e0f2fe;border-radius:12px;padding:24px;margin-bottom:24px">
+								<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.3rem;display:flex;align-items:center;gap:8px">
+									<span>👔</span> Participação de Liderança
+								</h3>
+								<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
+									<div><strong>Gerente:</strong> <span id="rel-gerente">-</span></div>
+									<div><strong>Engenheiro:</strong> <span id="rel-engenheiro">-</span></div>
+									<div><strong>Supervisor:</strong> <span id="rel-supervisor">-</span></div>
+									<div><strong>Encarregado:</strong> <span id="rel-encarregado">-</span></div>
+									<div><strong>Técnico de Segurança:</strong> <span id="rel-tecnico-seguranca">-</span></div>
+								</div>
+							</div>
+							
+							<!-- Seção 3: Outros Participantes -->
+							<div style="background:#fef7ff;border:1px solid #f3e8ff;border-radius:12px;padding:24px;margin-bottom:24px">
+								<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.3rem;display:flex;align-items:center;gap:8px">
+									<span>👥</span> Outros Participantes
+								</h3>
+								<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
+									<div><strong>Anjo da Semana:</strong> <span id="rel-anjo-semana">-</span></div>
+									<div><strong>Líder RAS:</strong> <span id="rel-lider-ras">-</span></div>
+									<div><strong>Líder CPT:</strong> <span id="rel-lider-cpt">-</span></div>
+									<div><strong>Brigada:</strong> <span id="rel-brigada">-</span></div>
+								</div>
+							</div>
+							
+							<!-- Seção 4: Anexos -->
+							<div style="background:#fffbeb;border:1px solid #fef3c7;border-radius:12px;padding:24px;margin-bottom:24px">
+								<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.3rem;display:flex;align-items:center;gap:8px">
+									<span>📎</span> Anexos
+								</h3>
+								
+								<!-- Fotos da RAS -->
+								<div id="rel-fotos-section" style="margin-bottom:20px">
+									<h4 style="color:#3b82f6;margin:0 0 12px 0">📷 Fotos da RAS</h4>
+									<div id="rel-fotos-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px"></div>
+								</div>
+								
+								<!-- Evidências -->
+								<div id="rel-evidencias-section">
+									<h4 style="color:#ef4444;margin:0 0 12px 0">📄 Evidências da RAS</h4>
+									<div id="rel-evidencias-container"></div>
+								</div>
+							</div>
+							
+							<!-- Seção 5: Lista de Presença -->
+							<div style="background:#f0fdf4;border:1px solid #dcfce7;border-radius:12px;padding:24px;margin-bottom:32px">
+								<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.3rem;display:flex;align-items:center;gap:8px">
+									<span>✅</span> Lista de Presença
+								</h3>
+								<div style="margin-bottom:12px">
+									<strong>Total de Presentes:</strong> <span id="rel-total-presentes" style="color:#10b981;font-weight:600">0</span> funcionário(s)
+								</div>
+								<div id="rel-presentes-lista" style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden"></div>
+							</div>
+							
+							<!-- Botões de Ação -->
+							<div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:16px">
+								<button id="btn-compartilhar-whatsapp" type="button" style="background:#25d366;color:#fff;padding:12px 24px;font-size:1rem;border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:8px">
+									<span>📱</span> Compartilhar no WhatsApp
+								</button>
+								<button id="btn-imprimir-pdf" type="button" style="background:#dc2626;color:#fff;padding:12px 24px;font-size:1rem;border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:8px">
+									<span>🖨️</span> Imprimir PDF
+								</button>
+								<button id="btn-sair-ras" type="button" style="background:#6b7280;color:#fff;padding:12px 24px;font-size:1rem;border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:8px">
+									<span>🚪</span> Sair da RAS
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div id="cadastro-usuario" style="display:none;max-width:400px">
 					<h2>Cadastro de Perfil de Usuário</h2>
 					<form id="form-cadastro" autocomplete="off" onsubmit="return false;">
@@ -1297,9 +1401,9 @@
 					});
 
 					document.getElementById('ras-finalizar').addEventListener('click', function() {
-						var presentes = coletarFuncionariosPresentes();
-						alert('RAS finalizada com sucesso!\n\nPresentes: ' + presentes.length + ' funcionário(s)\n\nTodos os dados foram registrados.');
-						// Aqui pode ser implementado envio para servidor ou reset do formulário
+						document.getElementById('ras-etapa-6').style.display = 'none';
+						document.getElementById('ras-relatorio-final').style.display = 'block';
+						gerarRelatorioFinal();
 					});
 
 					// Função para marcar/desmarcar todos os funcionários
@@ -1345,6 +1449,176 @@
 					document.addEventListener('change', function(e) {
 						if (e.target.type === 'checkbox' && e.target.closest('#lista-funcionarios')) {
 							atualizarContadorPresentes();
+						}
+					});
+
+					// Função para gerar o relatório final
+					function gerarRelatorioFinal() {
+						var dados = coletarDadosRAS();
+						var presentes = coletarFuncionariosPresentes();
+						
+						// Preencher informações básicas
+						document.getElementById('rel-empresa').textContent = dados.empresa || '-';
+						document.getElementById('rel-data').textContent = formatarDataExibicao(dados.data);
+						document.getElementById('rel-horario').textContent = dados.inicio && dados.termino ? dados.inicio + ' às ' + dados.termino : '-';
+						document.getElementById('rel-efetivo').textContent = dados.efetivo || '-';
+						document.getElementById('rel-alto-risco').textContent = dados.altoRisco || '-';
+						document.getElementById('rel-tardc').textContent = dados.tardc ? 'SIM' : 'NÃO';
+						document.getElementById('rel-compartilhar').textContent = dados.compartilhar || '-';
+						
+						// Participação de liderança
+						document.getElementById('rel-gerente').textContent = dados.gerente || '-';
+						document.getElementById('rel-engenheiro').textContent = dados.engenheiro || '-';
+						document.getElementById('rel-supervisor').textContent = dados.supervisor || '-';
+						document.getElementById('rel-encarregado').textContent = dados.encarregado || '-';
+						document.getElementById('rel-tecnico-seguranca').textContent = dados.tecnicoSeguranca || '-';
+						
+						// Outros participantes
+						document.getElementById('rel-anjo-semana').textContent = dados.anjoSemana || '-';
+						document.getElementById('rel-lider-ras').textContent = dados.liderRas || '-';
+						document.getElementById('rel-lider-cpt').textContent = dados.liderCpt || '-';
+						document.getElementById('rel-brigada').textContent = dados.brigada || '-';
+						
+						// Exibir fotos
+						exibirFotosRelatorio(dados.fotos);
+						
+						// Exibir evidências
+						exibirEvidenciasRelatorio(dados.evidencias);
+						
+						// Lista de presença
+						document.getElementById('rel-total-presentes').textContent = presentes.length;
+						exibirListaPresencaRelatorio(presentes);
+					}
+
+					// Função para exibir fotos no relatório
+					function exibirFotosRelatorio(fotos) {
+						var container = document.getElementById('rel-fotos-container');
+						var section = document.getElementById('rel-fotos-section');
+						
+						if (fotos && fotos.length > 0) {
+							section.style.display = 'block';
+							var html = '';
+							fotos.forEach(function(foto) {
+								var url = URL.createObjectURL(foto);
+								html += '<div style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;background:#fff">';
+								html += '<img src="' + url + '" style="width:100%;height:150px;object-fit:cover">';
+								html += '<div style="padding:8px;font-size:0.9rem;color:#6b7280">' + foto.name + '</div>';
+								html += '</div>';
+							});
+							container.innerHTML = html;
+						} else {
+							section.style.display = 'none';
+						}
+					}
+
+					// Função para exibir evidências no relatório
+					function exibirEvidenciasRelatorio(evidencias) {
+						var container = document.getElementById('rel-evidencias-container');
+						var section = document.getElementById('rel-evidencias-section');
+						
+						if (evidencias && evidencias.length > 0) {
+							section.style.display = 'block';
+							var html = '';
+							evidencias.forEach(function(evidencia) {
+								html += '<div style="display:flex;align-items:center;gap:8px;padding:8px;border:1px solid #e5e7eb;border-radius:6px;margin-bottom:8px;background:#fff">';
+								html += '<span style="font-size:1.2rem;">📄</span>';
+								html += '<span style="flex:1">' + evidencia.name + '</span>';
+								html += '<span style="color:#6b7280;font-size:0.8rem">' + formatarTamanho(evidencia.size) + '</span>';
+								html += '</div>';
+							});
+							container.innerHTML = html;
+						} else {
+							section.style.display = 'none';
+						}
+					}
+
+					// Função para exibir lista de presença no relatório
+					function exibirListaPresencaRelatorio(presentes) {
+						var container = document.getElementById('rel-presentes-lista');
+						
+						if (presentes.length > 0) {
+							var html = '<div style="background:#f9fafb;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:120px 1fr 1fr 1fr;gap:16px;font-weight:600;color:#374151">';
+							html += '<div>Matrícula</div><div>Nome</div><div>Empresa</div><div>Função</div></div>';
+							
+							presentes.forEach(function(pessoa) {
+								html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:120px 1fr 1fr 1fr;gap:16px">';
+								html += '<div style="font-weight:500">' + pessoa.matricula + '</div>';
+								html += '<div>' + pessoa.nome + '</div>';
+								html += '<div style="color:#6b7280">' + pessoa.empresa + '</div>';
+								html += '<div style="color:#6b7280">' + pessoa.funcao + '</div>';
+								html += '</div>';
+							});
+							
+							container.innerHTML = html;
+						} else {
+							container.innerHTML = '<div style="padding:20px;text-align:center;color:#6b7280">Nenhum funcionário marcado como presente</div>';
+						}
+					}
+
+					// Eventos dos botões do relatório
+					document.getElementById('btn-compartilhar-whatsapp').addEventListener('click', function() {
+						var dados = coletarDadosRAS();
+						var presentes = coletarFuncionariosPresentes();
+						
+						var mensagem = '🏢 *RELATÓRIO RAS - ' + (dados.empresa || 'Empresa') + '*\n\n';
+						mensagem += '📅 *Data:* ' + formatarDataExibicao(dados.data) + '\n';
+						mensagem += '⏰ *Horário:* ' + (dados.inicio && dados.termino ? dados.inicio + ' às ' + dados.termino : '-') + '\n';
+						mensagem += '👥 *Efetivo Total:* ' + (dados.efetivo || '-') + '\n';
+						mensagem += '⚠️ *Atividade Alto Risco:* ' + (dados.altoRisco || '-') + '\n';
+						mensagem += '✅ *Presentes:* ' + presentes.length + ' funcionário(s)\n\n';
+						
+						if (presentes.length > 0) {
+							mensagem += '*👥 LISTA DE PRESENÇA:*\n';
+							presentes.forEach(function(p) {
+								mensagem += '• ' + p.nome + ' (' + p.matricula + ')\n';
+							});
+						}
+						
+						mensagem += '\n📊 Relatório gerado pelo Sistema RAS';
+						
+						var url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(mensagem);
+						window.open(url, '_blank');
+					});
+
+					document.getElementById('btn-imprimir-pdf').addEventListener('click', function() {
+						// Ocultar botões antes de imprimir
+						var botoes = document.querySelector('#ras-relatorio-final .flex-wrap');
+						botoes.style.display = 'none';
+						
+						// Configurar para impressão
+						window.print();
+						
+						// Restaurar botões após impressão
+						setTimeout(function() {
+							botoes.style.display = 'flex';
+						}, 100);
+					});
+
+					document.getElementById('btn-sair-ras').addEventListener('click', function() {
+						if (confirm('Tem certeza que deseja sair da RAS?\n\nTodos os dados não salvos serão perdidos.')) {
+							// Reset do formulário
+							document.getElementById('ras-relatorio-final').style.display = 'none';
+							document.getElementById('conteudo-principal').style.display = 'block';
+							
+							// Limpar dados
+							fotosCarregadas = [];
+							evidenciasCarregadas = [];
+							
+							// Reset das etapas
+							for (var i = 1; i <= 6; i++) {
+								document.getElementById('ras-etapa-' + i).style.display = 'none';
+							}
+							
+							// Limpar formulários
+							document.querySelectorAll('#nova-ras input, #nova-ras select, #nova-ras textarea').forEach(function(campo) {
+								if (campo.type === 'checkbox') {
+									campo.checked = false;
+								} else {
+									campo.value = '';
+								}
+							});
+							
+							alert('RAS finalizada e dados limpos com sucesso!');
 						}
 					});
 
