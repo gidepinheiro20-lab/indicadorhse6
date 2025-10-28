@@ -442,6 +442,43 @@
 							</div>
 						</form>
 					</div>
+
+					<!-- Etapa 4: Anexos -->
+					<div id="ras-etapa-4" style="display:none;">
+						<h2 style="margin-top:24px;font-size:1.6rem;font-weight:700;color:#222">Nova RAS</h2>
+						<div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança · Etapa 4 de 6</div>
+						<div style="font-size:1.05rem;margin-bottom:18px;color:#888">Anexos</div>
+						<form autocomplete="off" style="background:#fff;border-radius:12px;padding:24px 24px 16px 24px;box-shadow:0 2px 8px #0001;border:1px solid #e6edf3">
+							<div style="text-align:center;margin-bottom:18px">
+								<div style="font-size:1.3rem;font-weight:700;">Anexos</div>
+								<div style="color:#888;font-size:1rem;">Adicione documentos e imagens da reunião</div>
+								<div style="color:#e53e3e;font-size:0.9rem;margin-top:4px;font-weight:600;">Item obrigatório</div>
+							</div>
+							
+							<!-- Área de Upload -->
+							<div style="margin-bottom:24px;border:2px dashed #d1d5db;border-radius:12px;padding:40px 20px;text-align:center;background:#f9fafb;transition:all 0.3s ease;" id="upload-area">
+								<div style="font-size:3rem;color:#9ca3af;margin-bottom:12px;">📤</div>
+								<div style="font-size:1.2rem;font-weight:600;color:#374151;margin-bottom:8px;">Carregar Documentos</div>
+								<div style="color:#6b7280;font-size:0.95rem;margin-bottom:16px;">Selecione imagens, PDFs ou outros documentos</div>
+								
+								<button type="button" id="select-files" style="background:#3197ab;color:#fff;padding:12px 24px;font-size:1rem;border:none;border-radius:8px;cursor:pointer;margin-bottom:8px;">Selecionar Arquivos</button>
+								<input type="file" id="file-input" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" style="display:none;">
+								
+								<div style="color:#6b7280;font-size:0.85rem;">Formatos aceitos: JPG, PNG, PDF, DOC, DOCX</div>
+							</div>
+
+							<!-- Lista de Arquivos Carregados -->
+							<div id="files-list" style="margin-bottom:24px;display:none;">
+								<div style="font-weight:600;margin-bottom:12px;color:#374151;">📋 Arquivos Selecionados:</div>
+								<div id="files-container" style="max-height:200px;overflow-y:auto;"></div>
+							</div>
+
+							<div style="display:flex;gap:12px;justify-content:space-between">
+								<button id="ras-voltar-4" type="button" style="background:#6b7280;color:#fff;padding:10px 24px;font-size:1.1rem;border:none;border-radius:6px;cursor:pointer">← Voltar</button>
+								<button id="ras-proximo-4" type="button" disabled style="background:#3197ab;color:#fff;padding:10px 36px;font-size:1.1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed">Próximo →</button>
+							</div>
+						</form>
+					</div>
 				</div>
 				<div id="cadastro-usuario" style="display:none;max-width:400px">
 					<h2>Cadastro de Perfil de Usuário</h2>
@@ -590,6 +627,151 @@
 						}
 					}
 
+					// Variável global para armazenar arquivos carregados
+					var arquivosCarregados = [];
+
+					// Validação para Etapa 4 - Anexos
+					function validarRASEtapa4() {
+						var proximo = document.getElementById('ras-proximo-4');
+						
+						if(arquivosCarregados.length > 0) {
+							proximo.disabled = false;
+							proximo.style.opacity = '1';
+							proximo.style.cursor = 'pointer';
+						} else {
+							proximo.disabled = true;
+							proximo.style.opacity = '0.5';
+							proximo.style.cursor = 'not-allowed';
+						}
+					}
+
+					// Função para validar tipo de arquivo
+					function validarTipoArquivo(arquivo) {
+						var tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+						return tiposPermitidos.includes(arquivo.type);
+					}
+
+					// Função para formatar tamanho do arquivo
+					function formatarTamanho(bytes) {
+						if (bytes === 0) return '0 Bytes';
+						var k = 1024;
+						var tamanhos = ['Bytes', 'KB', 'MB', 'GB'];
+						var i = Math.floor(Math.log(bytes) / Math.log(k));
+						return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + tamanhos[i];
+					}
+
+					// Função para exibir arquivos carregados
+					function exibirArquivos() {
+						var container = document.getElementById('files-container');
+						var listaArquivos = document.getElementById('files-list');
+						
+						if (arquivosCarregados.length > 0) {
+							listaArquivos.style.display = 'block';
+							container.innerHTML = '';
+							
+							arquivosCarregados.forEach(function(arquivo, index) {
+								var arquivoDiv = document.createElement('div');
+								arquivoDiv.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:8px 12px;margin-bottom:8px;background:#f3f4f6;border-radius:6px;border:1px solid #e5e7eb;';
+								
+								var infoArquivo = document.createElement('div');
+								infoArquivo.style.cssText = 'flex:1;';
+								
+								var nomeArquivo = document.createElement('div');
+								nomeArquivo.style.cssText = 'font-weight:600;color:#374151;font-size:0.9rem;';
+								nomeArquivo.textContent = arquivo.name;
+								
+								var tamanhoArquivo = document.createElement('div');
+								tamanhoArquivo.style.cssText = 'color:#6b7280;font-size:0.8rem;';
+								tamanhoArquivo.textContent = formatarTamanho(arquivo.size);
+								
+								var botaoRemover = document.createElement('button');
+								botaoRemover.style.cssText = 'background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;';
+								botaoRemover.textContent = '✕';
+								botaoRemover.onclick = function() {
+									arquivosCarregados.splice(index, 1);
+									exibirArquivos();
+									validarRASEtapa4();
+								};
+								
+								infoArquivo.appendChild(nomeArquivo);
+								infoArquivo.appendChild(tamanhoArquivo);
+								arquivoDiv.appendChild(infoArquivo);
+								arquivoDiv.appendChild(botaoRemover);
+								container.appendChild(arquivoDiv);
+							});
+						} else {
+							listaArquivos.style.display = 'none';
+						}
+					}
+
+					// Configurar upload de arquivos
+					function configurarUpload() {
+						var uploadArea = document.getElementById('upload-area');
+						var fileInput = document.getElementById('file-input');
+						var selectButton = document.getElementById('select-files');
+						
+						// Clique no botão
+						selectButton.addEventListener('click', function() {
+							fileInput.click();
+						});
+						
+						// Clique na área de upload
+						uploadArea.addEventListener('click', function(e) {
+							if (e.target !== selectButton) {
+								fileInput.click();
+							}
+						});
+						
+						// Arrastar e soltar
+						uploadArea.addEventListener('dragover', function(e) {
+							e.preventDefault();
+							uploadArea.style.borderColor = '#3197ab';
+							uploadArea.style.backgroundColor = '#eff6ff';
+						});
+						
+						uploadArea.addEventListener('dragleave', function(e) {
+							e.preventDefault();
+							uploadArea.style.borderColor = '#d1d5db';
+							uploadArea.style.backgroundColor = '#f9fafb';
+						});
+						
+						uploadArea.addEventListener('drop', function(e) {
+							e.preventDefault();
+							uploadArea.style.borderColor = '#d1d5db';
+							uploadArea.style.backgroundColor = '#f9fafb';
+							
+							var arquivos = Array.from(e.dataTransfer.files);
+							processarArquivos(arquivos);
+						});
+						
+						// Seleção de arquivos
+						fileInput.addEventListener('change', function(e) {
+							var arquivos = Array.from(e.target.files);
+							processarArquivos(arquivos);
+						});
+					}
+
+					// Processar arquivos selecionados
+					function processarArquivos(arquivos) {
+						arquivos.forEach(function(arquivo) {
+							if (validarTipoArquivo(arquivo)) {
+								// Verificar se arquivo já foi adicionado
+								var jaExiste = arquivosCarregados.some(function(arq) {
+									return arq.name === arquivo.name && arq.size === arquivo.size;
+								});
+								
+								if (!jaExiste) {
+									arquivosCarregados.push(arquivo);
+								}
+							} else {
+								alert('Tipo de arquivo não permitido: ' + arquivo.name + '\nUse apenas JPG, PNG, PDF, DOC ou DOCX.');
+							}
+						});
+						
+						exibirArquivos();
+						validarRASEtapa4();
+					}
+
 					// Eventos para validação da Etapa 1
 					['ras-empresa','ras-data','ras-inicio','ras-termino','ras-efetivo','ras-alto-risco','ras-compartilhar'].forEach(function(id){
 						document.getElementById(id).addEventListener('input',validarRASEtapa1);
@@ -632,8 +814,25 @@
 
 					document.getElementById('ras-proximo-3').addEventListener('click', function() {
 						if (!this.disabled) {
+							document.getElementById('ras-etapa-3').style.display = 'none';
+							document.getElementById('ras-etapa-4').style.display = 'block';
+							// Inicializar sistema de upload na primeira vez que entrar na etapa 4
+							if (!window.uploadInicializado) {
+								configurarUpload();
+								window.uploadInicializado = true;
+							}
+						}
+					});
+
+					document.getElementById('ras-voltar-4').addEventListener('click', function() {
+						document.getElementById('ras-etapa-4').style.display = 'none';
+						document.getElementById('ras-etapa-3').style.display = 'block';
+					});
+
+					document.getElementById('ras-proximo-4').addEventListener('click', function() {
+						if (!this.disabled) {
 							alert('Próxima etapa em desenvolvimento...');
-							// Aqui será implementada a navegação para a etapa 4
+							// Aqui será implementada a navegação para a etapa 5
 						}
 					});
 
