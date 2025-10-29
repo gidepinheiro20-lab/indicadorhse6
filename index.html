@@ -1562,19 +1562,7 @@
 						
 						var mensagem = '';
 						
-						// Primeira seção - participantes principais
-						mensagem += '✅ Técnico de segurança (a): ' + (dados.tecnicoSeguranca || '-') + '\n';
-						mensagem += '😊 Anjo da semana: ' + (dados.anjoSemana || '-') + '\n';
-						mensagem += '🔴 TARD-C: ' + (dados.tardc ? 'SIM' : 'NÃO') + '\n';
-						mensagem += '🚛 Brigada: ' + (dados.brigada || '-') + '\n';
-						
-						// Horário no formato do WhatsApp
-						var agora = new Date();
-						var horas = agora.getHours().toString().padStart(2, '0');
-						var minutos = agora.getMinutes().toString().padStart(2, '0');
-						mensagem += horas + ':' + minutos + ' ✅\n\n';
-						
-						// Título da RAS
+						// Título principal
 						mensagem += 'RAS - Reunião de Análise de Segurança\n\n';
 						
 						// Informações da empresa
@@ -1596,10 +1584,10 @@
 						
 						// Liderança
 						mensagem += '🎯 LIDERANÇA:\n';
-						mensagem += '- Gerente: ' + (dados.gerente || '-') + '\n';
-						mensagem += '- Engenheiro: ' + (dados.engenheiro || '-') + '\n';
-						mensagem += '- Supervisor: ' + (dados.supervisor || '-') + '\n';
-						mensagem += '- Encarregado: ' + (dados.encarregado || '-') + '\n';
+						mensagem += '• Gerente: ' + (dados.gerente || '-') + '\n';
+						mensagem += '• Engenheiro: ' + (dados.engenheiro || '-') + '\n';
+						mensagem += '• Supervisor: ' + (dados.supervisor || '-') + '\n';
+						mensagem += '• Encarregado: ' + (dados.encarregado || '-') + '\n';
 						mensagem += '________________\n\n';
 						
 						// Segunda seção de participantes
