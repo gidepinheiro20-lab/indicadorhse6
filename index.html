@@ -1557,8 +1557,14 @@
 
 					// Eventos dos botões do relatório
 					document.getElementById('btn-compartilhar-whatsapp').addEventListener('click', function() {
+						console.log('Botão WhatsApp clicado!'); // Debug
+						alert('Botão WhatsApp funcionando!'); // Teste temporário
+						
 						var dados = coletarDadosRAS();
+						console.log('Dados coletados:', dados); // Debug
+						
 						var presentes = coletarFuncionariosPresentes();
+						console.log('Presentes:', presentes); // Debug
 						
 						var mensagem = '';
 						
@@ -1596,8 +1602,8 @@
 						mensagem += '� TARD-C: ' + (dados.tardc ? 'SIM' : 'NÃO') + '\n';
 						mensagem += '🚛 Brigada: ' + (dados.brigada || '-') + '\n';
 						
-						// Horário final
-						mensagem += horas + ':' + minutos + ' ✅';
+						console.log('Dados coletados:', dados); // Debug
+						console.log('Mensagem:', mensagem); // Debug
 						
 						var url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(mensagem);
 						window.open(url, '_blank');
