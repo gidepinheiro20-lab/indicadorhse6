@@ -781,6 +781,111 @@
 					<div id="usuarios-cadastrados" style="margin-top:24px;display:block"></div>
 					<button id="btn-voltar-cadastro" style="margin-top:12px;display:none">Voltar ao cadastro</button>
 				</div>
+				
+				<!-- Seção Funcionários -->
+				<div id="funcionarios" style="display:none;max-width:1200px;margin:0 auto;">
+					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3">
+						<div style="background:linear-gradient(135deg,#3b82f6 0%,#1e40af 100%);color:#fff;padding:20px 24px;border-radius:16px 16px 0 0">
+							<div style="display:flex;justify-content:space-between;align-items:center">
+								<div>
+									<div style="font-size:1.4rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px">
+										<span>👥</span> Cadastro de Funcionários
+									</div>
+									<div style="font-size:1rem;opacity:0.9">Gerencie a equipe e importe dados de planilhas.</div>
+								</div>
+								<div style="display:flex;gap:12px">
+									<button id="btn-novo-funcionario" type="button" style="background:#fff;color:#3b82f6;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
+										<span>✨</span> Novo Funcionário
+									</button>
+									<button id="btn-importar-planilha" type="button" style="background:#10b981;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
+										<span>📊</span> Importar Planilha
+									</button>
+								</div>
+							</div>
+						</div>
+						
+						<div style="padding:24px">
+							<!-- Lista de Funcionários -->
+							<div id="lista-funcionarios-secao" style="margin-bottom:24px">
+								<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem">Lista de Funcionários</h3>
+								
+								<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">
+									<!-- Cabeçalho da tabela -->
+									<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:120px 2fr 2fr 120px 1.5fr 100px;gap:16px;font-weight:600;color:#374151">
+										<div>Matrícula</div>
+										<div>Nome</div>
+										<div>Função</div>
+										<div>Data Admissão</div>
+										<div>Empresa</div>
+										<div>Ações</div>
+									</div>
+									
+									<!-- Lista de funcionários cadastrados -->
+									<div id="funcionarios-lista">
+										<!-- Funcionário exemplo -->
+										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:120px 2fr 2fr 120px 1.5fr 100px;gap:16px;align-items:center">
+											<div style="color:#374151;font-weight:500">28853</div>
+											<div style="color:#374151">Ademilcio Ferreira Caldas</div>
+											<div style="color:#6b7280">Encarregado de obras II</div>
+											<div style="color:#6b7280">10/10/2025</div>
+											<div style="color:#6b7280">RS Construções</div>
+											<div>
+												<button onclick="editarFuncionario('28853')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;margin-right:4px">✏️</button>
+												<button onclick="excluirFuncionario('28853')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer">🗑️</button>
+											</div>
+										</div>
+									</div>
+								</div>
+								
+								<div style="margin-top:16px;text-align:center;color:#6b7280">
+									Total de Funcionários: <span id="total-funcionarios" style="font-weight:600;color:#3b82f6">1</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Modal Novo Funcionário -->
+				<div id="modal-funcionario" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center">
+					<div style="background:#fff;border-radius:12px;padding:24px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto">
+						<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+							<h3 style="margin:0;color:#374151">👤 Novo Funcionário</h3>
+							<button id="fechar-modal" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#6b7280">×</button>
+						</div>
+						
+						<form id="form-funcionario" style="display:grid;gap:16px">
+							<div>
+								<label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Matrícula *</label>
+								<input type="text" id="func-matricula" required style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
+							</div>
+							
+							<div>
+								<label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Nome Completo *</label>
+								<input type="text" id="func-nome" required style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
+							</div>
+							
+							<div>
+								<label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Função *</label>
+								<input type="text" id="func-funcao" required style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
+							</div>
+							
+							<div>
+								<label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Data de Admissão *</label>
+								<input type="date" id="func-admissao" required style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
+							</div>
+							
+							<div>
+								<label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Empresa *</label>
+								<input type="text" id="func-empresa" required style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
+							</div>
+							
+							<div style="display:flex;gap:12px;margin-top:8px">
+								<button type="button" id="cancelar-funcionario" style="flex:1;background:#6b7280;color:#fff;padding:10px;border:none;border-radius:6px;cursor:pointer">Cancelar</button>
+								<button type="submit" style="flex:1;background:#3b82f6;color:#fff;padding:10px;border:none;border-radius:6px;cursor:pointer">Salvar Funcionário</button>
+							</div>
+						</form>
+					</div>
+				</div>
 			</main>
 		</div>
 					<script>
@@ -1713,4 +1818,137 @@
 					});
 
 					// Sistema inicializado sem login
+
+					// ===== SISTEMA DE FUNCIONÁRIOS =====
+					var funcionarios = [];
+					
+					// Carregar funcionários do localStorage
+					if(localStorage.getItem('funcionarios')){
+						try {
+							funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
+						} catch(e){ funcionarios = []; }
+					}
+					
+					// Salvar funcionários no localStorage
+					function salvarFuncionarios() {
+						localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
+					}
+					
+					// Exibir lista de funcionários
+					function exibirFuncionarios() {
+						var container = document.getElementById('funcionarios-lista');
+						var total = document.getElementById('total-funcionarios');
+						
+						if (funcionarios.length === 0) {
+							container.innerHTML = '<div style="padding:20px;text-align:center;color:#6b7280">Nenhum funcionário cadastrado</div>';
+							total.textContent = '0';
+							return;
+						}
+						
+						var html = '';
+						funcionarios.forEach(function(func) {
+							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:120px 2fr 2fr 120px 1.5fr 100px;gap:16px;align-items:center">';
+							html += '<div style="color:#374151;font-weight:500">' + func.matricula + '</div>';
+							html += '<div style="color:#374151">' + func.nome + '</div>';
+							html += '<div style="color:#6b7280">' + func.funcao + '</div>';
+							html += '<div style="color:#6b7280">' + formatarDataBR(func.admissao) + '</div>';
+							html += '<div style="color:#6b7280">' + func.empresa + '</div>';
+							html += '<div>';
+							html += '<button onclick="editarFuncionario(\'' + func.matricula + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;margin-right:4px">✏️</button>';
+							html += '<button onclick="excluirFuncionario(\'' + func.matricula + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer">🗑️</button>';
+							html += '</div>';
+							html += '</div>';
+						});
+						
+						container.innerHTML = html;
+						total.textContent = funcionarios.length;
+					}
+					
+					// Formatar data para exibição brasileira
+					function formatarDataBR(data) {
+						if (!data) return '-';
+						var partes = data.split('-');
+						return partes[2] + '/' + partes[1] + '/' + partes[0];
+					}
+					
+					// Abrir modal novo funcionário
+					document.getElementById('btn-novo-funcionario').addEventListener('click', function() {
+						document.getElementById('modal-funcionario').style.display = 'flex';
+						document.getElementById('form-funcionario').reset();
+					});
+					
+					// Fechar modal
+					document.getElementById('fechar-modal').addEventListener('click', function() {
+						document.getElementById('modal-funcionario').style.display = 'none';
+					});
+					
+					document.getElementById('cancelar-funcionario').addEventListener('click', function() {
+						document.getElementById('modal-funcionario').style.display = 'none';
+					});
+					
+					// Cadastrar funcionário
+					document.getElementById('form-funcionario').addEventListener('submit', function(e) {
+						e.preventDefault();
+						
+						var matricula = document.getElementById('func-matricula').value;
+						var nome = document.getElementById('func-nome').value;
+						var funcao = document.getElementById('func-funcao').value;
+						var admissao = document.getElementById('func-admissao').value;
+						var empresa = document.getElementById('func-empresa').value;
+						
+						// Verificar se matrícula já existe
+						var existe = funcionarios.find(function(f) { return f.matricula === matricula; });
+						if (existe) {
+							alert('Matrícula já existe! Use uma matrícula diferente.');
+							return;
+						}
+						
+						// Adicionar funcionário
+						funcionarios.push({
+							matricula: matricula,
+							nome: nome,
+							funcao: funcao,
+							admissao: admissao,
+							empresa: empresa
+						});
+						
+						salvarFuncionarios();
+						exibirFuncionarios();
+						document.getElementById('modal-funcionario').style.display = 'none';
+						alert('Funcionário cadastrado com sucesso!');
+					});
+					
+					// Excluir funcionário
+					function excluirFuncionario(matricula) {
+						if (confirm('Tem certeza que deseja excluir este funcionário?')) {
+							funcionarios = funcionarios.filter(function(f) { return f.matricula !== matricula; });
+							salvarFuncionarios();
+							exibirFuncionarios();
+							alert('Funcionário excluído com sucesso!');
+						}
+					}
+					
+					// Editar funcionário (função simples por enquanto)
+					function editarFuncionario(matricula) {
+						var funcionario = funcionarios.find(function(f) { return f.matricula === matricula; });
+						if (funcionario) {
+							document.getElementById('func-matricula').value = funcionario.matricula;
+							document.getElementById('func-nome').value = funcionario.nome;
+							document.getElementById('func-funcao').value = funcionario.funcao;
+							document.getElementById('func-admissao').value = funcionario.admissao;
+							document.getElementById('func-empresa').value = funcionario.empresa;
+							
+							// Remover funcionário atual e abrir modal para edição
+							excluirFuncionario(matricula);
+							document.getElementById('modal-funcionario').style.display = 'flex';
+						}
+					}
+					
+					// Importar planilha (funcionalidade básica)
+					document.getElementById('btn-importar-planilha').addEventListener('click', function() {
+						alert('Funcionalidade de importar planilha será implementada em breve!\n\nPor enquanto, use o botão "Novo Funcionário" para cadastrar individualmente.');
+					});
+					
+					// Inicializar exibição de funcionários
+					exibirFuncionarios();
 					</script>
