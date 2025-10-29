@@ -1560,21 +1560,56 @@
 						var dados = coletarDadosRAS();
 						var presentes = coletarFuncionariosPresentes();
 						
-						var mensagem = '🏢 *RELATÓRIO RAS - ' + (dados.empresa || 'Empresa') + '*\n\n';
-						mensagem += '📅 *Data:* ' + formatarDataExibicao(dados.data) + '\n';
-						mensagem += '⏰ *Horário:* ' + (dados.inicio && dados.termino ? dados.inicio + ' às ' + dados.termino : '-') + '\n';
-						mensagem += '👥 *Efetivo Total:* ' + (dados.efetivo || '-') + '\n';
-						mensagem += '⚠️ *Atividade Alto Risco:* ' + (dados.altoRisco || '-') + '\n';
-						mensagem += '✅ *Presentes:* ' + presentes.length + ' funcionário(s)\n\n';
+						var mensagem = '';
 						
-						if (presentes.length > 0) {
-							mensagem += '*👥 LISTA DE PRESENÇA:*\n';
-							presentes.forEach(function(p) {
-								mensagem += '• ' + p.nome + ' (' + p.matricula + ')\n';
-							});
-						}
+						// Primeira seção - participantes principais
+						mensagem += '✅ Técnico de segurança (a): ' + (dados.tecnicoSeguranca || '-') + '\n';
+						mensagem += '😊 Anjo da semana: ' + (dados.anjoSemana || '-') + '\n';
+						mensagem += '🔴 TARD-C: ' + (dados.tardc ? 'SIM' : 'NÃO') + '\n';
+						mensagem += '🚛 Brigada: ' + (dados.brigada || '-') + '\n';
 						
-						mensagem += '\n📊 Relatório gerado pelo Sistema RAS';
+						// Horário no formato do WhatsApp
+						var agora = new Date();
+						var horas = agora.getHours().toString().padStart(2, '0');
+						var minutos = agora.getMinutes().toString().padStart(2, '0');
+						mensagem += horas + ':' + minutos + ' ✅\n\n';
+						
+						// Título da RAS
+						mensagem += 'RAS - Reunião de Análise de Segurança\n\n';
+						
+						// Informações da empresa
+						mensagem += '🏢 Empresa: ' + (dados.empresa || '-') + '\n';
+						mensagem += '📅 DATA: ' + formatarDataExibicao(dados.data) + '\n';
+						mensagem += '🕐 Tempo: ' + (dados.inicio && dados.termino ? dados.inicio + ' às ' + dados.termino : '-') + '\n';
+						mensagem += '👥 Efetivo: ' + (dados.efetivo || '-') + ' funcionários\n';
+						mensagem += '________________\n\n';
+						
+						// Tarefa de alto risco
+						mensagem += '⚠️ TAREFA DE ALTO RISCO:\n';
+						mensagem += (dados.altoRisco || '-') + '\n';
+						mensagem += '________________\n\n';
+						
+						// Algo a ser compartilhado
+						mensagem += '🤝 Algo a ser compartilhado:\n';
+						mensagem += (dados.compartilhar || '-') + '\n';
+						mensagem += '________________\n\n';
+						
+						// Liderança
+						mensagem += '🎯 LIDERANÇA:\n';
+						mensagem += '- Gerente: ' + (dados.gerente || '-') + '\n';
+						mensagem += '- Engenheiro: ' + (dados.engenheiro || '-') + '\n';
+						mensagem += '- Supervisor: ' + (dados.supervisor || '-') + '\n';
+						mensagem += '- Encarregado: ' + (dados.encarregado || '-') + '\n';
+						mensagem += '________________\n\n';
+						
+						// Segunda seção de participantes
+						mensagem += '✅ Técnico de Segurança: ' + (dados.tecnicoSeguranca || '-') + '\n';
+						mensagem += '😊 Anjo da Semana: ' + (dados.anjoSemana || '-') + '\n';
+						mensagem += '� TARD-C: ' + (dados.tardc ? 'SIM' : 'NÃO') + '\n';
+						mensagem += '🚛 Brigada: ' + (dados.brigada || '-') + '\n';
+						
+						// Horário final
+						mensagem += horas + ':' + minutos + ' ✅';
 						
 						var url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(mensagem);
 						window.open(url, '_blank');
