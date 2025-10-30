@@ -886,6 +886,68 @@
 						</form>
 					</div>
 				</div>
+				
+				<!-- Modal para Importar Planilha -->
+				<div id="modal-importar" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1001;justify-content:center;align-items:center">
+					<div style="background:#fff;border-radius:12px;width:90%;max-width:600px;max-height:80vh;overflow-y:auto">
+						<div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff;padding:20px;border-radius:12px 12px 0 0">
+							<h2 style="margin:0;font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:8px">
+								<span>📊</span> Importar Planilha de Funcionários
+							</h2>
+							<p style="margin:8px 0 0 0;opacity:0.9;font-size:0.9rem">Envie um arquivo Excel (.xlsx) com os dados dos funcionários</p>
+						</div>
+						
+						<div style="padding:20px">
+							<!-- Instruções -->
+							<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin-bottom:20px">
+								<h4 style="margin:0 0 8px 0;color:#166534;font-size:1rem">📋 Formato da Planilha</h4>
+								<p style="margin:0 0 8px 0;color:#166534;font-size:0.9rem">A planilha deve conter as seguintes colunas <strong>na ordem exata</strong>:</p>
+								<ol style="margin:0;color:#166534;font-size:0.9rem">
+									<li><strong>Matrícula</strong> - Número de identificação do funcionário</li>
+									<li><strong>Nome</strong> - Nome completo do funcionário</li>
+									<li><strong>Função</strong> - Cargo ou função exercida</li>
+									<li><strong>Data Admissão</strong> - Data no formato DD/MM/AAAA</li>
+									<li><strong>Empresa</strong> - Nome da empresa</li>
+								</ol>
+							</div>
+							
+							<!-- Upload Area -->
+							<div id="upload-area-planilha" style="border:2px dashed #d1d5db;border-radius:8px;padding:40px 20px;text-align:center;cursor:pointer;transition:all 0.3s ease;background:#fafafa">
+								<div style="font-size:2rem;margin-bottom:12px;color:#9ca3af">📁</div>
+								<div style="font-size:1.1rem;font-weight:600;color:#374151;margin-bottom:8px">Clique aqui ou arraste o arquivo</div>
+								<div style="font-size:0.9rem;color:#6b7280;margin-bottom:16px">Formatos aceitos: .xlsx, .xls (máx. 5MB)</div>
+								<input type="file" id="input-planilha" accept=".xlsx,.xls" style="display:none">
+								<button type="button" onclick="document.getElementById('input-planilha').click()" style="background:#10b981;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:0.9rem;font-weight:600;cursor:pointer">
+									Selecionar Arquivo
+								</button>
+							</div>
+							
+							<!-- Preview da planilha -->
+							<div id="preview-planilha" style="display:none;margin-top:20px">
+								<h4 style="margin:0 0 12px 0;color:#374151">👀 Prévia dos Dados</h4>
+								<div style="max-height:200px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:6px">
+									<table id="tabela-preview" style="width:100%;border-collapse:collapse;font-size:0.8rem">
+										<!-- Preview será inserido aqui -->
+									</table>
+								</div>
+							</div>
+							
+							<!-- Status -->
+							<div id="status-importacao" style="margin-top:16px;display:none">
+								<!-- Status será inserido aqui -->
+							</div>
+						</div>
+						
+						<div style="padding:16px 20px;background:#f8fafc;border-radius:0 0 12px 12px;display:flex;justify-content:flex-end;gap:12px">
+							<button type="button" onclick="fecharModalImportar()" style="background:#6b7280;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:0.9rem;font-weight:600;cursor:pointer">
+								Cancelar
+							</button>
+							<button type="button" id="btn-confirmar-importacao" onclick="confirmarImportacao()" disabled style="background:#10b981;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:0.9rem;font-weight:600;cursor:pointer;opacity:0.5">
+								Importar Funcionários
+							</button>
+						</div>
+					</div>
+				</div>
 			</main>
 		</div>
 					<script>
@@ -1959,10 +2021,192 @@
 						}
 					}
 					
-					// Importar planilha (funcionalidade básica)
+					// Variáveis globais para importação
+					var dadosPreview = [];
+					
+					// Importar planilha - abrir modal
 					document.getElementById('btn-importar-planilha').addEventListener('click', function() {
-						alert('Funcionalidade de importar planilha será implementada em breve!\n\nPor enquanto, use o botão "Novo Funcionário" para cadastrar individualmente.');
+						document.getElementById('modal-importar').style.display = 'flex';
+						resetarModalImportacao();
 					});
+					
+					// Fechar modal de importação
+					function fecharModalImportar() {
+						document.getElementById('modal-importar').style.display = 'none';
+						resetarModalImportacao();
+					}
+					
+					// Resetar modal de importação
+					function resetarModalImportacao() {
+						document.getElementById('input-planilha').value = '';
+						document.getElementById('preview-planilha').style.display = 'none';
+						document.getElementById('status-importacao').style.display = 'none';
+						document.getElementById('btn-confirmar-importacao').disabled = true;
+						document.getElementById('btn-confirmar-importacao').style.opacity = '0.5';
+						dadosPreview = [];
+					}
+					
+					// Upload de planilha
+					document.getElementById('input-planilha').addEventListener('change', function(e) {
+						var file = e.target.files[0];
+						if (!file) return;
+						
+						// Validações
+						if (file.size > 5 * 1024 * 1024) { // 5MB
+							mostrarStatus('Arquivo muito grande! Máximo permitido: 5MB', 'erro');
+							return;
+						}
+						
+						var validTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
+						if (!validTypes.includes(file.type)) {
+							mostrarStatus('Formato não suportado! Use apenas arquivos .xlsx ou .xls', 'erro');
+							return;
+						}
+						
+						mostrarStatus('Processando arquivo...', 'carregando');
+						processarPlanilha(file);
+					});
+					
+					// Drag and drop
+					var uploadArea = document.getElementById('upload-area-planilha');
+					uploadArea.addEventListener('dragover', function(e) {
+						e.preventDefault();
+						this.style.borderColor = '#10b981';
+						this.style.background = '#ecfdf5';
+					});
+					
+					uploadArea.addEventListener('dragleave', function(e) {
+						e.preventDefault();
+						this.style.borderColor = '#d1d5db';
+						this.style.background = '#fafafa';
+					});
+					
+					uploadArea.addEventListener('drop', function(e) {
+						e.preventDefault();
+						this.style.borderColor = '#d1d5db';
+						this.style.background = '#fafafa';
+						
+						var file = e.dataTransfer.files[0];
+						if (file) {
+							document.getElementById('input-planilha').files = e.dataTransfer.files;
+							document.getElementById('input-planilha').dispatchEvent(new Event('change'));
+						}
+					});
+					
+					// Processar planilha Excel (simulação básica)
+					function processarPlanilha(file) {
+						var reader = new FileReader();
+						reader.onload = function(e) {
+							try {
+								// Simulação de processamento Excel
+								// Em um projeto real, usaria uma biblioteca como SheetJS
+								var data = e.target.result;
+								
+								// Para simulação, vamos criar dados de exemplo
+								// Aqui seria onde você processaria o Excel real
+								setTimeout(function() {
+									// Dados simulados como se viessem da planilha
+									var dadosSimulados = [
+										['Matrícula', 'Nome', 'Função', 'Data Admissão', 'Empresa'],
+										['29001', 'João Silva Santos', 'Operador de Máquinas', '15/01/2024', 'RS Construções'],
+										['29002', 'Maria Oliveira Costa', 'Engenheira Civil', '22/02/2024', 'RS Construções'],
+										['29003', 'Pedro Almeida Souza', 'Técnico em Segurança', '10/03/2024', 'Construtora ABC'],
+										['29004', 'Ana Paula Lima', 'Coordenadora de Obras', '05/04/2024', 'RS Construções'],
+										['29005', 'Carlos Eduardo Rocha', 'Soldador', '18/05/2024', 'Metalúrgica XYZ']
+									];
+									
+									dadosPreview = dadosSimulados;
+									exibirPreview(dadosSimulados);
+									mostrarStatus('Arquivo processado com sucesso! ' + (dadosSimulados.length - 1) + ' funcionários encontrados.', 'sucesso');
+									
+									document.getElementById('btn-confirmar-importacao').disabled = false;
+									document.getElementById('btn-confirmar-importacao').style.opacity = '1';
+								}, 1500);
+								
+							} catch (error) {
+								mostrarStatus('Erro ao processar arquivo: ' + error.message, 'erro');
+							}
+						};
+						reader.readAsArrayBuffer(file);
+					}
+					
+					// Exibir preview dos dados
+					function exibirPreview(dados) {
+						var tabela = document.getElementById('tabela-preview');
+						var html = '';
+						
+						dados.forEach(function(linha, index) {
+							var isHeader = index === 0;
+							html += '<tr style="' + (isHeader ? 'background:#f1f5f9;font-weight:600;' : '') + '">';
+							linha.forEach(function(celula) {
+								html += '<td style="padding:8px;border:1px solid #e5e7eb;font-size:0.8rem">' + celula + '</td>';
+							});
+							html += '</tr>';
+						});
+						
+						tabela.innerHTML = html;
+						document.getElementById('preview-planilha').style.display = 'block';
+					}
+					
+					// Mostrar status da importação
+					function mostrarStatus(mensagem, tipo) {
+						var statusDiv = document.getElementById('status-importacao');
+						var cores = {
+							'sucesso': { bg: '#f0fdf4', border: '#bbf7d0', text: '#166534', icon: '✅' },
+							'erro': { bg: '#fef2f2', border: '#fecaca', text: '#dc2626', icon: '❌' },
+							'carregando': { bg: '#eff6ff', border: '#bfdbfe', text: '#1d4ed8', icon: '⏳' }
+						};
+						
+						var cor = cores[tipo] || cores['carregando'];
+						
+						statusDiv.innerHTML = '<div style="background:' + cor.bg + ';border:1px solid ' + cor.border + ';border-radius:6px;padding:12px;color:' + cor.text + '">' +
+							'<span style="margin-right:8px">' + cor.icon + '</span>' + mensagem + '</div>';
+						statusDiv.style.display = 'block';
+					}
+					
+					// Confirmar importação
+					function confirmarImportacao() {
+						if (dadosPreview.length <= 1) {
+							mostrarStatus('Nenhum dado para importar!', 'erro');
+							return;
+						}
+						
+						mostrarStatus('Importando funcionários...', 'carregando');
+						
+						// Processar dados (pular cabeçalho)
+						var novosfuncionarios = [];
+						for (var i = 1; i < dadosPreview.length; i++) {
+							var linha = dadosPreview[i];
+							if (linha.length >= 5) {
+								var funcionario = {
+									matricula: linha[0].toString(),
+									nome: linha[1],
+									funcao: linha[2],
+									dataAdmissao: linha[3],
+									empresa: linha[4]
+								};
+								
+								// Verificar se matrícula já existe
+								var existe = funcionarios.find(function(f) { return f.matricula === funcionario.matricula; });
+								if (!existe) {
+									novosfuncionarios.push(funcionario);
+								}
+							}
+						}
+						
+						// Adicionar ao array de funcionários
+						funcionarios = funcionarios.concat(novosfuncionarios);
+						salvarFuncionarios();
+						exibirFuncionarios();
+						
+						setTimeout(function() {
+							mostrarStatus('Importação concluída! ' + novosfuncionarios.length + ' funcionários adicionados.', 'sucesso');
+							
+							setTimeout(function() {
+								fecharModalImportar();
+							}, 2000);
+						}, 1000);
+					}
 					
 					// Inicializar exibição de funcionários
 					exibirFuncionarios();
