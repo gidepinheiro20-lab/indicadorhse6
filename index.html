@@ -948,6 +948,129 @@
 						</div>
 					</div>
 				</div>
+				
+				<!-- Seção Controle de Frequência -->
+				<div id="frequencia" style="display:none;max-width:1200px;margin:0 auto;">
+					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3">
+						<div style="background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%);color:#fff;padding:20px 24px;border-radius:16px 16px 0 0">
+							<div style="display:flex;justify-content:space-between;align-items:center">
+								<div>
+									<div style="font-size:1.4rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px">
+										<span>🔎</span> Controle de Frequência
+									</div>
+									<div style="font-size:1rem;opacity:0.9">Visualize presença e ausência dos funcionários por data</div>
+								</div>
+							</div>
+						</div>
+						
+						<div style="padding:24px">
+							<!-- Filtro por Data -->
+							<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:24px">
+								<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem">Filtrar por Data</h3>
+								<div style="display:flex;gap:16px;align-items:end;flex-wrap:wrap">
+									<div style="flex:1;min-width:200px">
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Data da RAS</label>
+										<input type="date" id="filtro-data-frequencia" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									<button onclick="buscarFrequencia()" style="background:#8b5cf6;color:#fff;border:none;border-radius:6px;padding:12px 24px;font-size:0.9rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px">
+										<span>🔍</span> Buscar Frequência
+									</button>
+								</div>
+							</div>
+							
+							<!-- Cards de Resumo -->
+							<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px">
+								<!-- Presentes -->
+								<div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff;padding:20px;border-radius:12px;text-align:center">
+									<div style="font-size:2rem;margin-bottom:8px">👤</div>
+									<div style="font-size:1.1rem;font-weight:600;margin-bottom:4px">Presentes</div>
+									<div style="font-size:2rem;font-weight:700" id="total-presentes">0</div>
+								</div>
+								
+								<!-- Ausentes -->
+								<div style="background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);color:#fff;padding:20px;border-radius:12px;text-align:center">
+									<div style="font-size:2rem;margin-bottom:8px">👥</div>
+									<div style="font-size:1.1rem;font-weight:600;margin-bottom:4px">Ausentes</div>
+									<div style="font-size:2rem;font-weight:700" id="total-ausentes">1</div>
+								</div>
+							</div>
+							
+							<!-- Listas de Presentes e Ausentes -->
+							<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px" id="listas-frequencia">
+								<!-- Lista de Presentes -->
+								<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;overflow:hidden">
+									<div style="background:#10b981;color:#fff;padding:16px;font-weight:600;display:flex;align-items:center;gap:8px">
+										<span>👤</span> Presentes
+										<span style="background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:12px;font-size:0.8rem" id="badge-presentes">0</span>
+									</div>
+									
+									<div style="padding:0">
+										<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:100px 2fr 1.5fr 1.5fr;gap:12px;font-weight:600;color:#374151;font-size:0.85rem">
+											<div>Matrícula</div>
+											<div>Nome</div>
+											<div>Função</div>
+											<div>Empresa</div>
+										</div>
+										
+										<div id="lista-presentes" style="min-height:120px;color:#166534">
+											<div style="padding:40px 16px;text-align:center;color:#9ca3af;font-style:italic">
+												Nenhum funcionário presente
+											</div>
+										</div>
+									</div>
+								</div>
+								
+								<!-- Lista de Ausentes -->
+								<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;overflow:hidden">
+									<div style="background:#ef4444;color:#fff;padding:16px;font-weight:600;display:flex;align-items:center;gap:8px">
+										<span>👥</span> Ausentes
+										<span style="background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:12px;font-size:0.8rem" id="badge-ausentes">1</span>
+									</div>
+									
+									<div style="padding:0">
+										<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:100px 2fr 1.5fr 1.5fr;gap:12px;font-weight:600;color:#374151;font-size:0.85rem">
+											<div>Matrícula</div>
+											<div>Nome</div>
+											<div>Função</div>
+											<div>Empresa</div>
+										</div>
+										
+										<div id="lista-ausentes" style="min-height:120px;color:#dc2626">
+											<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:100px 2fr 1.5fr 1.5fr;gap:12px;align-items:center;font-size:0.85rem">
+												<div style="font-weight:500">28853</div>
+												<div>Ademilcio Ferreira Caldas</div>
+												<div style="color:#6b7280">Encarregado de obras II</div>
+												<div style="color:#6b7280">RS Construções</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- Resumo do Dia -->
+							<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:20px">
+								<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem">Resumo do Dia - <span id="data-resumo">01/11/2025</span></h3>
+								
+								<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;text-align:center">
+									<div style="background:#f1f5f9;padding:16px;border-radius:8px">
+										<div style="font-size:0.9rem;color:#6b7280;margin-bottom:4px">Total de Funcionários</div>
+										<div style="font-size:1.8rem;font-weight:700;color:#3b82f6" id="resumo-total">1</div>
+									</div>
+									
+									<div style="background:#f0fdf4;padding:16px;border-radius:8px">
+										<div style="font-size:0.9rem;color:#6b7280;margin-bottom:4px">Presentes</div>
+										<div style="font-size:1.8rem;font-weight:700;color:#10b981" id="resumo-presentes">0</div>
+									</div>
+									
+									<div style="background:#fef2f2;padding:16px;border-radius:8px">
+										<div style="font-size:0.9rem;color:#6b7280;margin-bottom:4px">Ausentes</div>
+										<div style="font-size:1.8rem;font-weight:700;color:#ef4444" id="resumo-ausentes">1</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</main>
 		</div>
 					<script>
@@ -991,6 +1114,7 @@
 								document.getElementById('cadastro-usuario').style.display = 'block';
 								document.getElementById('nova-ras').style.display = 'none';
 								document.getElementById('funcionarios').style.display = 'none';
+								document.getElementById('frequencia').style.display = 'none';
 								hideSidebarOnMobile();
 							});
 						});
@@ -1002,6 +1126,7 @@
 								document.getElementById('cadastro-usuario').style.display = 'none';
 								document.getElementById('nova-ras').style.display = 'block';
 								document.getElementById('funcionarios').style.display = 'none';
+								document.getElementById('frequencia').style.display = 'none';
 								hideSidebarOnMobile();
 							});
 						});
@@ -1013,16 +1138,31 @@
 								document.getElementById('cadastro-usuario').style.display = 'none';
 								document.getElementById('nova-ras').style.display = 'none';
 								document.getElementById('funcionarios').style.display = 'block';
+								document.getElementById('frequencia').style.display = 'none';
 								carregarFuncionarios();
 								hideSidebarOnMobile();
 							});
 						});
+					// Exibir frequência ao clicar em Frequência
+						document.querySelectorAll('.nav a[href="#frequencia"]').forEach(function(link){
+							link.addEventListener('click',function(e){
+								e.preventDefault();
+								document.getElementById('conteudo-principal').style.display = 'none';
+								document.getElementById('cadastro-usuario').style.display = 'none';
+								document.getElementById('nova-ras').style.display = 'none';
+								document.getElementById('funcionarios').style.display = 'none';
+								document.getElementById('frequencia').style.display = 'block';
+								inicializarFrequencia();
+								hideSidebarOnMobile();
+							});
+						});
 					// Ocultar outras seções ao clicar em outros itens
-						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"])').forEach(function(link){
+						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"])').forEach(function(link){
 							link.addEventListener('click',function(){
 								document.getElementById('nova-ras').style.display = 'none';
 								document.getElementById('cadastro-usuario').style.display = 'none';
 								document.getElementById('funcionarios').style.display = 'none';
+								document.getElementById('frequencia').style.display = 'none';
 								document.getElementById('conteudo-principal').style.display = 'block';
 								hideSidebarOnMobile();
 							});
@@ -1670,6 +1810,9 @@
 						// Lista de presença
 						document.getElementById('rel-total-presentes').textContent = presentes.length;
 						exibirListaPresencaRelatorio(presentes);
+						
+						// Salvar dados de frequência no histórico
+						salvarFrequenciaRAS(dados.data, presentes);
 					}
 
 					// Função para exibir fotos no relatório
@@ -2206,6 +2349,164 @@
 								fecharModalImportar();
 							}, 2000);
 						}, 1000);
+					}
+					
+					// SISTEMA DE CONTROLE DE FREQUÊNCIA
+					
+					// Histórico de presenças (simulado - em produção viria das RAS)
+					var historicoRAS = JSON.parse(localStorage.getItem('historicoRAS')) || [];
+					
+					// Inicializar frequência
+					function inicializarFrequencia() {
+						var hoje = new Date();
+						var dataFormatada = hoje.getDate().toString().padStart(2, '0') + '/' + 
+										   (hoje.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+										   hoje.getFullYear();
+						
+						document.getElementById('filtro-data-frequencia').valueAsDate = hoje;
+						document.getElementById('data-resumo').textContent = dataFormatada;
+						
+						// Carregar dados iniciais
+						carregarFrequenciaDia(dataFormatada);
+					}
+					
+					// Buscar frequência por data
+					function buscarFrequencia() {
+						var dataInput = document.getElementById('filtro-data-frequencia').value;
+						if (!dataInput) {
+							alert('Por favor, selecione uma data para buscar.');
+							return;
+						}
+						
+						var data = new Date(dataInput);
+						var dataFormatada = data.getDate().toString().padStart(2, '0') + '/' + 
+										   (data.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+										   data.getFullYear();
+						
+						document.getElementById('data-resumo').textContent = dataFormatada;
+						carregarFrequenciaDia(dataFormatada);
+					}
+					
+					// Carregar frequência de um dia específico
+					function carregarFrequenciaDia(data) {
+						// Buscar RAS da data específica
+						var rasDoDia = historicoRAS.find(function(ras) {
+							return ras.data === data;
+						});
+						
+						// Se não encontrar RAS, mostrar todos como ausentes
+						if (!rasDoDia) {
+							var todosAusentes = funcionarios.map(function(f) { return f.matricula; });
+							exibirFrequencia([], todosAusentes);
+							return;
+						}
+						
+						// Separar presentes e ausentes
+						var presentes = rasDoDia.presentes || [];
+						var todasMatriculas = funcionarios.map(function(f) { return f.matricula; });
+						var ausentes = todasMatriculas.filter(function(m) { 
+							return !presentes.includes(m); 
+						});
+						
+						exibirFrequencia(presentes, ausentes);
+					}
+					
+					// Exibir listas de frequência
+					function exibirFrequencia(presentes, ausentes) {
+						// Atualizar totais
+						document.getElementById('total-presentes').textContent = presentes.length;
+						document.getElementById('total-ausentes').textContent = ausentes.length;
+						document.getElementById('badge-presentes').textContent = presentes.length;
+						document.getElementById('badge-ausentes').textContent = ausentes.length;
+						
+						// Resumo
+						document.getElementById('resumo-total').textContent = funcionarios.length;
+						document.getElementById('resumo-presentes').textContent = presentes.length;
+						document.getElementById('resumo-ausentes').textContent = ausentes.length;
+						
+						// Lista de presentes
+						var listaPresentes = document.getElementById('lista-presentes');
+						if (presentes.length === 0) {
+							listaPresentes.innerHTML = '<div style="padding:40px 16px;text-align:center;color:#9ca3af;font-style:italic">Nenhum funcionário presente</div>';
+						} else {
+							var htmlPresentes = '';
+							presentes.forEach(function(matricula) {
+								var funcionario = funcionarios.find(function(f) { return f.matricula === matricula; });
+								if (funcionario) {
+									htmlPresentes += '<div style="padding:12px 16px;border-bottom:1px solid #bbf7d0;display:grid;grid-template-columns:100px 2fr 1.5fr 1.5fr;gap:12px;align-items:center;font-size:0.85rem">';
+									htmlPresentes += '<div style="font-weight:500">' + funcionario.matricula + '</div>';
+									htmlPresentes += '<div>' + funcionario.nome + '</div>';
+									htmlPresentes += '<div style="color:#059669">' + funcionario.funcao + '</div>';
+									htmlPresentes += '<div style="color:#059669">' + funcionario.empresa + '</div>';
+									htmlPresentes += '</div>';
+								}
+							});
+							listaPresentes.innerHTML = htmlPresentes;
+						}
+						
+						// Lista de ausentes
+						var listaAusentes = document.getElementById('lista-ausentes');
+						if (ausentes.length === 0) {
+							listaAusentes.innerHTML = '<div style="padding:40px 16px;text-align:center;color:#9ca3af;font-style:italic">Todos os funcionários presentes</div>';
+						} else {
+							var htmlAusentes = '';
+							ausentes.forEach(function(matricula) {
+								var funcionario = funcionarios.find(function(f) { return f.matricula === matricula; });
+								if (funcionario) {
+									htmlAusentes += '<div style="padding:12px 16px;border-bottom:1px solid #fecaca;display:grid;grid-template-columns:100px 2fr 1.5fr 1.5fr;gap:12px;align-items:center;font-size:0.85rem">';
+									htmlAusentes += '<div style="font-weight:500">' + funcionario.matricula + '</div>';
+									htmlAusentes += '<div>' + funcionario.nome + '</div>';
+									htmlAusentes += '<div style="color:#dc2626">' + funcionario.funcao + '</div>';
+									htmlAusentes += '<div style="color:#dc2626">' + funcionario.empresa + '</div>';
+									htmlAusentes += '</div>';
+								}
+							});
+							listaAusentes.innerHTML = htmlAusentes;
+						}
+					}
+					
+					// Simular alguns dados de exemplo
+					if (historicoRAS.length === 0) {
+						// Adicionar dados simulados
+						historicoRAS = [
+							{
+								data: '01/11/2025',
+								presentes: [] // Nenhum presente por enquanto
+							}
+						];
+						localStorage.setItem('historicoRAS', JSON.stringify(historicoRAS));
+					}
+					
+					// Salvar dados de frequência da RAS
+					function salvarFrequenciaRAS(data, presentes) {
+						// Converter data para formato DD/MM/AAAA se necessário
+						var dataFormatada = data;
+						if (data.includes('-')) {
+							var partes = data.split('-');
+							dataFormatada = partes[2] + '/' + partes[1] + '/' + partes[0];
+						}
+						
+						// Buscar se já existe registro para esta data
+						var indiceExistente = historicoRAS.findIndex(function(ras) {
+							return ras.data === dataFormatada;
+						});
+						
+						// Atualizar ou adicionar novo registro
+						var novoRegistro = {
+							data: dataFormatada,
+							presentes: presentes
+						};
+						
+						if (indiceExistente >= 0) {
+							historicoRAS[indiceExistente] = novoRegistro;
+						} else {
+							historicoRAS.push(novoRegistro);
+						}
+						
+						// Salvar no localStorage
+						localStorage.setItem('historicoRAS', JSON.stringify(historicoRAS));
+						
+						console.log('Frequência salva para', dataFormatada, ':', presentes.length, 'presentes');
 					}
 					
 					// Inicializar exibição de funcionários
