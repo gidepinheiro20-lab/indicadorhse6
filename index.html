@@ -1071,6 +1071,162 @@
 						</div>
 					</div>
 				</div>
+				
+				<!-- Seção CPT - Conversa Pré Tarefa -->
+				<div id="cpt" style="display:none;max-width:800px;margin:0 auto;">
+					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3">
+						<div style="background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#fff;padding:20px 24px;border-radius:16px 16px 0 0">
+							<div style="display:flex;justify-content:space-between;align-items:center">
+								<div>
+									<div style="font-size:1.4rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px">
+										<span>👥</span> CPT - Conversa Pré Tarefa
+									</div>
+									<div style="font-size:1rem;opacity:0.9">Registre as conversas pré-trabalho da equipe</div>
+								</div>
+							</div>
+						</div>
+						
+						<div style="padding:24px">
+							<form id="form-cpt" autocomplete="off">
+								<!-- Empresa -->
+								<div style="margin-bottom:18px">
+									<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">
+										<span style="font-size:1.1rem;">🏢</span> Empresa
+									</label>
+									<select id="cpt-empresa" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
+										<option value="">Selecione a empresa</option>
+										<option value="RS Construções">RS Construções</option>
+										<option value="Construtora ABC">Construtora ABC</option>
+										<option value="Metalúrgica XYZ">Metalúrgica XYZ</option>
+										<option value="Engenharia Beta">Engenharia Beta</option>
+									</select>
+								</div>
+								
+								<!-- Data e Hora -->
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px">
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">
+											<span style="font-size:1.1rem;">📅</span> Data
+										</label>
+										<input type="date" id="cpt-data" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
+									</div>
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">
+											<span style="font-size:1.1rem;">🕐</span> Hora
+										</label>
+										<input type="time" id="cpt-hora" required placeholder="Hora" style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
+									</div>
+								</div>
+								
+								<!-- Líder da CPT -->
+								<div style="margin-bottom:18px">
+									<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">
+										<span style="font-size:1.1rem;">👤</span> Líder da CPT
+									</label>
+									<input type="text" id="cpt-lider" required placeholder="Nome do líder responsável pela CPT" style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
+								</div>
+								
+								<!-- Área -->
+								<div style="margin-bottom:18px">
+									<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">
+										<span style="font-size:1.1rem;">🏗️</span> Área
+									</label>
+									<input type="text" id="cpt-area" required placeholder="Área ou setor de trabalho" style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
+								</div>
+								
+								<!-- Local de Execução -->
+								<div style="margin-bottom:18px">
+									<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">
+										<span style="font-size:1.1rem;">📍</span> Local de Execução
+									</label>
+									<input type="text" id="cpt-local" required placeholder="Local específico da execução" style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
+								</div>
+								
+								<!-- Descrição da Tarefa -->
+								<div style="margin-bottom:18px">
+									<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">
+										<span style="font-size:1.1rem;">📝</span> Descrição da Tarefa
+									</label>
+									<textarea id="cpt-descricao" required placeholder="Descreva detalhadamente a tarefa a ser executada" style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;min-height:100px;resize:vertical"></textarea>
+								</div>
+								
+								<!-- Quantidades de Executantes -->
+								<div style="margin-bottom:18px">
+									<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">
+										<span style="font-size:1.1rem;">👷</span> Quantidades de Executantes
+									</label>
+									<input type="number" id="cpt-executantes" required placeholder="Número de pessoas que executarão a tarefa" min="1" style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
+								</div>
+								
+								<!-- Convidados / Líderes / Avaliadores -->
+								<div style="margin-bottom:18px">
+									<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">
+										<span style="font-size:1.1rem;">👥</span> Convidados / Líderes / Avaliadores
+									</label>
+									<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:16px">
+										<div id="lista-participantes-cpt">
+											<!-- Linha 1 -->
+											<div style="display:grid;grid-template-columns:1fr 120px;gap:12px;margin-bottom:12px">
+												<input type="text" placeholder="Nome do participante" style="padding:8px;border:1px solid #d1d5db;border-radius:4px;font-size:0.9rem">
+												<input type="text" placeholder="Matrícula" style="padding:8px;border:1px solid #d1d5db;border-radius:4px;font-size:0.9rem">
+											</div>
+											<!-- Linha 2 -->
+											<div style="display:grid;grid-template-columns:1fr 120px;gap:12px;margin-bottom:12px">
+												<input type="text" placeholder="Nome do participante" style="padding:8px;border:1px solid #d1d5db;border-radius:4px;font-size:0.9rem">
+												<input type="text" placeholder="Matrícula" style="padding:8px;border:1px solid #d1d5db;border-radius:4px;font-size:0.9rem">
+											</div>
+											<!-- Linha 3 -->
+											<div style="display:grid;grid-template-columns:1fr 120px;gap:12px;margin-bottom:12px">
+												<input type="text" placeholder="Nome do participante" style="padding:8px;border:1px solid #d1d5db;border-radius:4px;font-size:0.9rem">
+												<input type="text" placeholder="Matrícula" style="padding:8px;border:1px solid #d1d5db;border-radius:4px;font-size:0.9rem">
+											</div>
+										</div>
+										<button type="button" onclick="adicionarParticipanteCPT()" style="background:#f59e0b;color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:0.9rem;cursor:pointer;margin-top:8px">
+											+ Adicionar Participante
+										</button>
+									</div>
+								</div>
+								
+								<!-- Status e Data de Fechamento -->
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">
+											<span style="font-size:1.1rem;">📊</span> Situação
+										</label>
+										<select id="cpt-status" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
+											<option value="">Selecione o status</option>
+											<option value="Em Aberto">Em Aberto</option>
+											<option value="Fechado">Fechado</option>
+										</select>
+									</div>
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">
+											<span style="font-size:1.1rem;">📅</span> Data do Fechamento
+										</label>
+										<input type="date" id="cpt-data-fechamento" style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
+									</div>
+								</div>
+								
+								<!-- Botão Anexar CPT-PDF -->
+								<div style="text-align:center;margin-bottom:24px">
+									<button type="button" onclick="anexarCPTPDF()" style="background:#fff;border:2px dashed #f59e0b;color:#f59e0b;padding:16px 24px;border-radius:8px;font-size:1rem;cursor:pointer;font-weight:600">
+										📎 Anexar CPT-PDF
+									</button>
+								</div>
+								
+								<!-- Botões de Ação -->
+								<div style="display:flex;gap:12px">
+									<button type="button" onclick="cancelarCPT()" style="flex:1;background:#6b7280;color:#fff;padding:12px;border:none;border-radius:6px;cursor:pointer;font-weight:600">
+										Cancelar
+									</button>
+									<button type="submit" style="flex:2;background:#f59e0b;color:#fff;padding:12px;border:none;border-radius:6px;cursor:pointer;font-weight:600">
+										💾 Salvar CPT
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
 			</main>
 		</div>
 					<script>
@@ -1115,6 +1271,7 @@
 								document.getElementById('nova-ras').style.display = 'none';
 								document.getElementById('funcionarios').style.display = 'none';
 								document.getElementById('frequencia').style.display = 'none';
+								document.getElementById('cpt').style.display = 'none';
 								hideSidebarOnMobile();
 							});
 						});
@@ -1127,6 +1284,7 @@
 								document.getElementById('nova-ras').style.display = 'block';
 								document.getElementById('funcionarios').style.display = 'none';
 								document.getElementById('frequencia').style.display = 'none';
+								document.getElementById('cpt').style.display = 'none';
 								hideSidebarOnMobile();
 							});
 						});
@@ -1139,6 +1297,7 @@
 								document.getElementById('nova-ras').style.display = 'none';
 								document.getElementById('funcionarios').style.display = 'block';
 								document.getElementById('frequencia').style.display = 'none';
+								document.getElementById('cpt').style.display = 'none';
 								carregarFuncionarios();
 								hideSidebarOnMobile();
 							});
@@ -1152,17 +1311,33 @@
 								document.getElementById('nova-ras').style.display = 'none';
 								document.getElementById('funcionarios').style.display = 'none';
 								document.getElementById('frequencia').style.display = 'block';
+								document.getElementById('cpt').style.display = 'none';
 								inicializarFrequencia();
 								hideSidebarOnMobile();
 							});
 						});
+					// Exibir CPT ao clicar em CPT
+						document.querySelectorAll('.nav a[href="#cpt"]').forEach(function(link){
+							link.addEventListener('click',function(e){
+								e.preventDefault();
+								document.getElementById('conteudo-principal').style.display = 'none';
+								document.getElementById('cadastro-usuario').style.display = 'none';
+								document.getElementById('nova-ras').style.display = 'none';
+								document.getElementById('funcionarios').style.display = 'none';
+								document.getElementById('frequencia').style.display = 'none';
+								document.getElementById('cpt').style.display = 'block';
+								inicializarCPT();
+								hideSidebarOnMobile();
+							});
+						});
 					// Ocultar outras seções ao clicar em outros itens
-						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"])').forEach(function(link){
+						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"])').forEach(function(link){
 							link.addEventListener('click',function(){
 								document.getElementById('nova-ras').style.display = 'none';
 								document.getElementById('cadastro-usuario').style.display = 'none';
 								document.getElementById('funcionarios').style.display = 'none';
 								document.getElementById('frequencia').style.display = 'none';
+								document.getElementById('cpt').style.display = 'none';
 								document.getElementById('conteudo-principal').style.display = 'block';
 								hideSidebarOnMobile();
 							});
@@ -2508,6 +2683,134 @@
 						
 						console.log('Frequência salva para', dataFormatada, ':', presentes.length, 'presentes');
 					}
+					
+					// SISTEMA CPT - CONVERSA PRÉ TAREFA
+					
+					// Array para armazenar CPTs
+					var cpts = JSON.parse(localStorage.getItem('cpts')) || [];
+					
+					// Inicializar CPT
+					function inicializarCPT() {
+						var hoje = new Date();
+						var dataHoje = hoje.getFullYear() + '-' + 
+									   (hoje.getMonth() + 1).toString().padStart(2, '0') + '-' + 
+									   hoje.getDate().toString().padStart(2, '0');
+						var horaAtual = hoje.getHours().toString().padStart(2, '0') + ':' + 
+										hoje.getMinutes().toString().padStart(2, '0');
+						
+						document.getElementById('cpt-data').value = dataHoje;
+						document.getElementById('cpt-hora').value = horaAtual;
+						document.getElementById('cpt-status').value = 'Em Aberto';
+						
+						// Limpar formulário
+						document.getElementById('form-cpt').reset();
+						document.getElementById('cpt-data').value = dataHoje;
+						document.getElementById('cpt-hora').value = horaAtual;
+						document.getElementById('cpt-status').value = 'Em Aberto';
+					}
+					
+					// Adicionar participante à CPT
+					function adicionarParticipanteCPT() {
+						var container = document.getElementById('lista-participantes-cpt');
+						var novaLinha = document.createElement('div');
+						novaLinha.style.cssText = 'display:grid;grid-template-columns:1fr 120px 40px;gap:12px;margin-bottom:12px;align-items:center';
+						novaLinha.innerHTML = 
+							'<input type="text" placeholder="Nome do participante" style="padding:8px;border:1px solid #d1d5db;border-radius:4px;font-size:0.9rem">' +
+							'<input type="text" placeholder="Matrícula" style="padding:8px;border:1px solid #d1d5db;border-radius:4px;font-size:0.9rem">' +
+							'<button type="button" onclick="removerParticipanteCPT(this)" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:6px;cursor:pointer;font-size:0.8rem">🗑️</button>';
+						container.appendChild(novaLinha);
+					}
+					
+					// Remover participante da CPT
+					function removerParticipanteCPT(botao) {
+						botao.parentElement.remove();
+					}
+					
+					// Anexar CPT PDF
+					function anexarCPTPDF() {
+						var input = document.createElement('input');
+						input.type = 'file';
+						input.accept = '.pdf';
+						input.onchange = function(e) {
+							var file = e.target.files[0];
+							if (file) {
+								alert('Arquivo ' + file.name + ' anexado com sucesso!');
+								// Aqui seria implementado o upload real do arquivo
+							}
+						};
+						input.click();
+					}
+					
+					// Cancelar CPT
+					function cancelarCPT() {
+						if (confirm('Deseja cancelar? Todos os dados serão perdidos.')) {
+							document.getElementById('form-cpt').reset();
+							inicializarCPT();
+						}
+					}
+					
+					// Salvar CPT
+					document.getElementById('form-cpt').addEventListener('submit', function(e) {
+						e.preventDefault();
+						
+						// Coletar dados do formulário
+						var participantes = [];
+						var linhasParticipantes = document.querySelectorAll('#lista-participantes-cpt > div');
+						linhasParticipantes.forEach(function(linha) {
+							var inputs = linha.querySelectorAll('input');
+							if (inputs.length >= 2 && inputs[0].value.trim() && inputs[1].value.trim()) {
+								participantes.push({
+									nome: inputs[0].value.trim(),
+									matricula: inputs[1].value.trim()
+								});
+							}
+						});
+						
+						var cpt = {
+							id: Date.now(),
+							empresa: document.getElementById('cpt-empresa').value,
+							data: document.getElementById('cpt-data').value,
+							hora: document.getElementById('cpt-hora').value,
+							lider: document.getElementById('cpt-lider').value,
+							area: document.getElementById('cpt-area').value,
+							local: document.getElementById('cpt-local').value,
+							descricao: document.getElementById('cpt-descricao').value,
+							executantes: document.getElementById('cpt-executantes').value,
+							participantes: participantes,
+							status: document.getElementById('cpt-status').value,
+							dataFechamento: document.getElementById('cpt-data-fechamento').value,
+							dataCriacao: new Date().toISOString()
+						};
+						
+						// Adicionar à lista
+						cpts.push(cpt);
+						localStorage.setItem('cpts', JSON.stringify(cpts));
+						
+						alert('CPT salva com sucesso!');
+						
+						// Limpar formulário
+						inicializarCPT();
+					});
+					
+					// Habilitar/desabilitar data de fechamento baseado no status
+					document.getElementById('cpt-status').addEventListener('change', function() {
+						var dataFechamento = document.getElementById('cpt-data-fechamento');
+						if (this.value === 'Fechado') {
+							dataFechamento.required = true;
+							dataFechamento.style.backgroundColor = '#fef3c7';
+							if (!dataFechamento.value) {
+								var hoje = new Date();
+								var dataHoje = hoje.getFullYear() + '-' + 
+											   (hoje.getMonth() + 1).toString().padStart(2, '0') + '-' + 
+											   hoje.getDate().toString().padStart(2, '0');
+								dataFechamento.value = dataHoje;
+							}
+						} else {
+							dataFechamento.required = false;
+							dataFechamento.style.backgroundColor = '#fff';
+							dataFechamento.value = '';
+						}
+					});
 					
 					// Inicializar exibição de funcionários
 					exibirFuncionarios();
