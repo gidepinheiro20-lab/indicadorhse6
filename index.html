@@ -1337,101 +1337,165 @@
 							</h2>
 						</div>
 						
-						<div style="padding:20px">
+						<div style="padding:24px">
 							<form id="form-nova-inspecao">
-								<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:18px">
-									<!-- Data -->
+								<!-- Primeira linha: Data, Área, Local -->
+								<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
 									<div>
-										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Data</label>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Data do Registro</label>
 										<input type="date" id="insp-data" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
 									</div>
 									
-									<!-- Área -->
 									<div>
-										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Área</label>
-										<select id="insp-area" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
-											<option value="">Selecione</option>
-											<option value="BAP 1A">BAP 1A</option>
-											<option value="BAP 1B">BAP 1B</option>
-											<option value="BAP 2A">BAP 2A</option>
-											<option value="BAP 2B">BAP 2B</option>
-										</select>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Área</label>
+										<input type="text" id="insp-area" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
 									</div>
 									
-									<!-- Local -->
 									<div>
-										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Local</label>
-										<select id="insp-local" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
-											<option value="">Selecione</option>
-											<option value="Escavação">Escavação</option>
-											<option value="Fundação">Fundação</option>
-											<option value="Estrutura">Estrutura</option>
-											<option value="Cobertura">Cobertura</option>
-										</select>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Local</label>
+										<input type="text" id="insp-local" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+								</div>
+								
+								<!-- Segunda linha: Tipo de Registro, Semana -->
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Tipo de Registro</label>
+										<input type="text" id="insp-tipo" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
 									</div>
 									
-									<!-- Tipo -->
 									<div>
-										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Tipo</label>
-										<select id="insp-tipo" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
-											<option value="">Selecione</option>
-											<option value="Inspeção">Inspeção</option>
-											<option value="Auditoria">Auditoria</option>
-											<option value="Vistoria">Vistoria</option>
-										</select>
-									</div>
-									
-									<!-- Semana -->
-									<div>
-										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Semana</label>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Semana</label>
 										<input type="number" id="insp-semana" required min="1" max="53" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
 									</div>
-									
-									<!-- Categoria -->
+								</div>
+								
+								<!-- Terceira linha: Descrição do Desvio -->
+								<div style="margin-bottom:16px">
+									<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Descrição do Desvio</label>
+									<textarea id="insp-descricao" placeholder="Descreva detalhadamente a situação encontrada..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
+								</div>
+								
+								<!-- Quarta linha: Upload de Fotos -->
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
 									<div>
-										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Categoria</label>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Foto Antes</label>
+										<div style="border:2px dashed #d1d5db;border-radius:6px;padding:40px 20px;text-align:center;background:#fafbfc;cursor:pointer" onclick="document.getElementById('insp-foto-antes').click()">
+											<div style="font-size:2rem;margin-bottom:8px;color:#9ca3af">📷</div>
+											<div style="font-size:0.85rem;color:#6b7280">Clique para adicionar</div>
+											<input type="file" id="insp-foto-antes" accept="image/*" style="display:none">
+										</div>
+										<div id="preview-foto-antes" style="margin-top:8px;display:none"></div>
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Foto Depois</label>
+										<div style="border:2px dashed #d1d5db;border-radius:6px;padding:40px 20px;text-align:center;background:#fafbfc;cursor:pointer" onclick="document.getElementById('insp-foto-depois').click()">
+											<div style="font-size:2rem;margin-bottom:8px;color:#9ca3af">📷</div>
+											<div style="font-size:0.85rem;color:#6b7280">Clique para adicionar</div>
+											<input type="file" id="insp-foto-depois" accept="image/*" style="display:none">
+										</div>
+										<div id="preview-foto-depois" style="margin-top:8px;display:none"></div>
+									</div>
+								</div>
+								
+								<!-- Quinta linha: Ações Tomadas -->
+								<div style="margin-bottom:16px">
+									<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Ações Tomadas</label>
+									<textarea id="insp-acoes" placeholder="Descreva as ações tomadas para resolver a situação..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
+								</div>
+								
+								<!-- Sexta linha: Categoria, Classificação, Severidade -->
+								<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Categoria</label>
 										<select id="insp-categoria" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
-											<option value="">Selecione</option>
-											<option value="Segurança do trabalho">Segurança do trabalho</option>
-											<option value="Meio ambiente">Meio ambiente</option>
-											<option value="Saúde ocupacional">Saúde ocupacional</option>
+											<option value=""></option>
+											<option value="Segurança">Segurança</option>
+											<option value="Meio Ambiente">Meio Ambiente</option>
+											<option value="Saúde">Saúde</option>
 											<option value="Qualidade">Qualidade</option>
 										</select>
 									</div>
 									
-									<!-- Severidade -->
 									<div>
-										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Severidade</label>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Classificação</label>
+										<select id="insp-classificacao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value=""></option>
+											<option value="Ato Inseguro">Ato Inseguro</option>
+											<option value="Condição Insegura">Condição Insegura</option>
+											<option value="Não Conformidade">Não Conformidade</option>
+											<option value="Melhoria">Melhoria</option>
+										</select>
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Severidade</label>
 										<select id="insp-severidade" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
-											<option value="">Selecione</option>
+											<option value=""></option>
 											<option value="Baixa">Baixa</option>
 											<option value="Média">Média</option>
 											<option value="Alta">Alta</option>
 											<option value="Crítica">Crítica</option>
 										</select>
 									</div>
-									
-									<!-- Interdição -->
+								</div>
+								
+								<!-- Sétima linha: Risco/Perigo, Controlável, Interdição -->
+								<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
 									<div>
-										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Interdição</label>
-										<select id="insp-interdicao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
-											<option value="">Selecione</option>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Risco/Perigo</label>
+										<input type="text" id="insp-risco" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Controlável</label>
+										<select id="insp-controlavel" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Sim</option>
 											<option value="Sim">Sim</option>
 											<option value="Não">Não</option>
 										</select>
 									</div>
 									
-									<!-- Responsável -->
 									<div>
-										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Responsável</label>
-										<input type="text" id="insp-responsavel" required placeholder="Nome do responsável" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Interdição</label>
+										<select id="insp-interdicao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Não</option>
+											<option value="Sim">Sim</option>
+											<option value="Não">Não</option>
+										</select>
+									</div>
+								</div>
+								
+								<!-- Oitava linha: Emissor, Responsável pela ação -->
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Emissor</label>
+										<input type="text" id="insp-emissor" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
 									</div>
 									
-									<!-- Status -->
 									<div>
-										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Status</label>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Responsável pela ação</label>
+										<input type="text" id="insp-responsavel" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+								</div>
+								
+								<!-- Nona linha: Prazo, Conclusão, Status -->
+								<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px">
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Prazo</label>
+										<input type="date" id="insp-prazo" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Conclusão</label>
+										<input type="date" id="insp-conclusao" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Status</label>
 										<select id="insp-status" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
-											<option value="">Selecione</option>
+											<option value="">PENDENTE</option>
 											<option value="PENDENTE">PENDENTE</option>
 											<option value="EM ANDAMENTO">EM ANDAMENTO</option>
 											<option value="CONCLUÍDO">CONCLUÍDO</option>
@@ -1439,32 +1503,12 @@
 									</div>
 								</div>
 								
-								<!-- Descrição/Observações -->
-								<div style="margin-bottom:18px">
-									<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Descrição/Observações</label>
-									<textarea id="insp-descricao" placeholder="Descreva os detalhes da inspeção, não conformidades encontradas, ações necessárias..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:100px;resize:vertical"></textarea>
-								</div>
-								
-								<!-- Upload de Fotos -->
-								<div style="margin-bottom:20px">
-									<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Fotos da Inspeção</label>
-									<div style="border:2px dashed #d1d5db;border-radius:8px;padding:20px;text-align:center;background:#fafafa">
-										<div style="font-size:1.5rem;margin-bottom:8px;color:#9ca3af">📷</div>
-										<div style="font-size:0.9rem;color:#6b7280;margin-bottom:12px">Clique ou arraste fotos da inspeção</div>
-										<input type="file" id="insp-fotos" multiple accept="image/*" style="display:none">
-										<button type="button" onclick="document.getElementById('insp-fotos').click()" style="background:#059669;color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:0.9rem;cursor:pointer">
-											Selecionar Fotos
-										</button>
-									</div>
-									<div id="preview-fotos-inspecao" style="margin-top:12px;display:none"></div>
-								</div>
-								
-								<div style="display:flex;gap:12px">
-									<button type="button" onclick="fecharModalInspecao()" style="flex:1;background:#6b7280;color:#fff;padding:12px;border:none;border-radius:6px;cursor:pointer;font-weight:600">
+								<div style="display:flex;gap:12px;justify-content:flex-end">
+									<button type="button" onclick="fecharModalInspecao()" style="background:#6b7280;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
 										Cancelar
 									</button>
-									<button type="submit" style="flex:2;background:#059669;color:#fff;padding:12px;border:none;border-radius:6px;cursor:pointer;font-weight:600">
-										💾 Salvar Inspeção
+									<button type="submit" style="background:#3b82f6;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+										Salvar Inspeção
 									</button>
 								</div>
 							</form>
@@ -3121,28 +3165,32 @@
 					function fecharModalInspecao() {
 						document.getElementById('modal-nova-inspecao').style.display = 'none';
 						document.getElementById('form-nova-inspecao').reset();
-						document.getElementById('preview-fotos-inspecao').style.display = 'none';
+						document.getElementById('preview-foto-antes').style.display = 'none';
+						document.getElementById('preview-foto-depois').style.display = 'none';
 					}
 					
-					// Upload de fotos com preview
-					document.getElementById('insp-fotos').addEventListener('change', function(e) {
-						var files = e.target.files;
-						var preview = document.getElementById('preview-fotos-inspecao');
+					// Upload de foto antes com preview
+					document.getElementById('insp-foto-antes').addEventListener('change', function(e) {
+						var file = e.target.files[0];
+						var preview = document.getElementById('preview-foto-antes');
 						
-						if (files.length > 0) {
-							var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:8px">';
-							for (var i = 0; i < files.length; i++) {
-								var file = files[i];
-								if (file.type.startsWith('image/')) {
-									var url = URL.createObjectURL(file);
-									html += '<div style="border:1px solid #e5e7eb;border-radius:6px;overflow:hidden">';
-									html += '<img src="' + url + '" style="width:100%;height:80px;object-fit:cover">';
-									html += '<div style="padding:4px;font-size:0.7rem;color:#6b7280;text-align:center">' + file.name + '</div>';
-									html += '</div>';
-								}
-							}
-							html += '</div>';
-							preview.innerHTML = html;
+						if (file && file.type.startsWith('image/')) {
+							var url = URL.createObjectURL(file);
+							preview.innerHTML = '<img src="' + url + '" style="width:100%;max-width:150px;height:100px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb">';
+							preview.style.display = 'block';
+						} else {
+							preview.style.display = 'none';
+						}
+					});
+					
+					// Upload de foto depois com preview
+					document.getElementById('insp-foto-depois').addEventListener('change', function(e) {
+						var file = e.target.files[0];
+						var preview = document.getElementById('preview-foto-depois');
+						
+						if (file && file.type.startsWith('image/')) {
+							var url = URL.createObjectURL(file);
+							preview.innerHTML = '<img src="' + url + '" style="width:100%;max-width:150px;height:100px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb">';
 							preview.style.display = 'block';
 						} else {
 							preview.style.display = 'none';
@@ -3160,20 +3208,28 @@
 							local: document.getElementById('insp-local').value,
 							tipo: document.getElementById('insp-tipo').value,
 							semana: document.getElementById('insp-semana').value,
-							categoria: document.getElementById('insp-categoria').value,
-							severidade: document.getElementById('insp-severidade').value,
-							interdicao: document.getElementById('insp-interdicao').value,
-							responsavel: document.getElementById('insp-responsavel').value,
-							status: document.getElementById('insp-status').value,
 							descricao: document.getElementById('insp-descricao').value,
-							fotos: document.getElementById('insp-fotos').files.length,
+							acoes: document.getElementById('insp-acoes').value,
+							categoria: document.getElementById('insp-categoria').value,
+							classificacao: document.getElementById('insp-classificacao').value,
+							severidade: document.getElementById('insp-severidade').value,
+							risco: document.getElementById('insp-risco').value,
+							controlavel: document.getElementById('insp-controlavel').value,
+							interdicao: document.getElementById('insp-interdicao').value,
+							emissor: document.getElementById('insp-emissor').value,
+							responsavel: document.getElementById('insp-responsavel').value,
+							prazo: document.getElementById('insp-prazo').value,
+							conclusao: document.getElementById('insp-conclusao').value,
+							status: document.getElementById('insp-status').value,
+							fotoAntes: document.getElementById('insp-foto-antes').files.length > 0,
+							fotoDepois: document.getElementById('insp-foto-depois').files.length > 0,
 							dataCriacao: new Date().toISOString()
 						};
 						
 						inspecoes.push(novaInspecao);
 						localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
 						
-						alert('Inspeção salva com sucesso!');
+						alert('Inspeção registrada com sucesso!');
 						fecharModalInspecao();
 						carregarInspecoes();
 					});
@@ -3205,8 +3261,12 @@
 							html += '<div style="color:#6b7280">' + inspecao.responsavel + '</div>';
 							html += '<div><span style="background:' + corStatus + ';color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">' + inspecao.status + '</span></div>';
 							html += '<div>';
-							if (inspecao.fotos > 0) {
-								html += '<button style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer">📷 ' + inspecao.fotos + ' Foto' + (inspecao.fotos > 1 ? 's' : '') + '</button>';
+							var totalFotos = 0;
+							if (inspecao.fotoAntes) totalFotos++;
+							if (inspecao.fotoDepois) totalFotos++;
+							
+							if (totalFotos > 0) {
+								html += '<button style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer">📷 ' + totalFotos + ' Foto' + (totalFotos > 1 ? 's' : '') + '</button>';
 							} else {
 								html += '<span style="color:#9ca3af;font-size:0.75rem">Sem fotos</span>';
 							}
