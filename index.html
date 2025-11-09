@@ -1595,6 +1595,198 @@
 						</div>
 					</div>
 				</div>
+
+				<!-- Modal Editar Inspeção -->
+				<div id="modal-editar-inspecao" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1005;justify-content:center;align-items:center;overflow-y:auto">
+					<div style="background:#fff;border-radius:12px;width:90%;max-width:800px;max-height:90vh;overflow-y:auto;margin:20px">
+						<div style="background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#fff;padding:20px;border-radius:12px 12px 0 0">
+							<h2 style="margin:0;font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:8px">
+								<span>✏️</span> Editar Inspeção de HSE
+							</h2>
+						</div>
+						
+						<div style="padding:24px">
+							<form id="form-editar-inspecao">
+								<!-- Primeira linha: Data, Área, Local -->
+								<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Data do Registro</label>
+										<input type="date" id="edit-insp-data" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Área</label>
+										<select id="edit-insp-area" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value=""></option>
+											<!-- Opções carregadas dinamicamente -->
+										</select>
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Local</label>
+										<select id="edit-insp-local" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value=""></option>
+											<!-- Opções carregadas dinamicamente -->
+										</select>
+									</div>
+								</div>
+								
+								<!-- Segunda linha: Tipo de Registro, Semana -->
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Tipo de Registro</label>
+										<select id="edit-insp-tipo" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+											<option value="">Selecione o tipo de registro...</option>
+										</select>
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Semana</label>
+										<input type="number" id="edit-insp-semana" required min="1" max="53" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+								</div>
+								
+								<!-- Terceira linha: Descrição do Desvio -->
+								<div style="margin-bottom:16px">
+									<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Descrição do Desvio</label>
+									<textarea id="edit-insp-descricao" placeholder="Descreva detalhadamente a situação encontrada..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
+								</div>
+								
+								<!-- Quarta linha: Upload de Fotos -->
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Foto Antes</label>
+										<div style="border:2px dashed #d1d5db;border-radius:6px;padding:40px 20px;text-align:center;background:#fafbfc;cursor:pointer" onclick="document.getElementById('edit-insp-foto-antes').click()">
+											<div style="font-size:2rem;margin-bottom:8px;color:#9ca3af">📷</div>
+											<div style="font-size:0.85rem;color:#6b7280">Clique para alterar</div>
+											<input type="file" id="edit-insp-foto-antes" accept="image/*" style="display:none">
+										</div>
+										<div id="edit-preview-foto-antes" style="margin-top:8px"></div>
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Foto Depois</label>
+										<div style="border:2px dashed #d1d5db;border-radius:6px;padding:40px 20px;text-align:center;background:#fafbfc;cursor:pointer" onclick="document.getElementById('edit-insp-foto-depois').click()">
+											<div style="font-size:2rem;margin-bottom:8px;color:#9ca3af">📷</div>
+											<div style="font-size:0.85rem;color:#6b7280">Clique para alterar</div>
+											<input type="file" id="edit-insp-foto-depois" accept="image/*" style="display:none">
+										</div>
+										<div id="edit-preview-foto-depois" style="margin-top:8px"></div>
+									</div>
+								</div>
+								
+								<!-- Quinta linha: Ações Tomadas -->
+								<div style="margin-bottom:16px">
+									<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Ações Tomadas</label>
+									<textarea id="edit-insp-acoes" placeholder="Descreva as ações tomadas para resolver a situação..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
+								</div>
+								
+								<!-- Sexta linha: Categoria, Classificação, Severidade -->
+								<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Categoria</label>
+										<select id="edit-insp-categoria" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value=""></option>
+											<!-- Opções carregadas dinamicamente -->
+										</select>
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Classificação</label>
+										<select id="edit-insp-classificacao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value=""></option>
+											<!-- Opções carregadas dinamicamente -->
+										</select>
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Severidade</label>
+										<select id="edit-insp-severidade" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value=""></option>
+											<option value="Baixa">Baixa</option>
+											<option value="Média">Média</option>
+											<option value="Alta">Alta</option>
+											<option value="Crítica">Crítica</option>
+										</select>
+									</div>
+								</div>
+								
+								<!-- Sétima linha: Risco/Perigo, Controlável, Interdição -->
+								<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Risco/Perigo</label>
+										<select id="edit-insp-risco" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione o risco/perigo...</option>
+										</select>
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Controlável</label>
+										<select id="edit-insp-controlavel" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value=""></option>
+											<option value="Sim">Sim</option>
+											<option value="Não">Não</option>
+										</select>
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Interdição</label>
+										<select id="edit-insp-interdicao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value=""></option>
+											<option value="Sim">Sim</option>
+											<option value="Não">Não</option>
+										</select>
+									</div>
+								</div>
+								
+								<!-- Oitava linha: Emissor, Responsável pela ação -->
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Emissor</label>
+										<input type="text" id="edit-insp-emissor" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Responsável pela ação</label>
+										<input type="text" id="edit-insp-responsavel" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+								</div>
+								
+								<!-- Nona linha: Prazo, Conclusão, Status -->
+								<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px">
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Prazo</label>
+										<input type="date" id="edit-insp-prazo" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Conclusão</label>
+										<input type="date" id="edit-insp-conclusao" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									
+									<div>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Status</label>
+										<select id="edit-insp-status" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value=""></option>
+											<option value="PENDENTE">PENDENTE</option>
+											<option value="EM ANDAMENTO">EM ANDAMENTO</option>
+											<option value="CONCLUÍDO">CONCLUÍDO</option>
+										</select>
+									</div>
+								</div>
+								
+								<div style="display:flex;gap:12px;justify-content:flex-end">
+									<button type="button" onclick="fecharModalEditarInspecao()" style="background:#6b7280;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+										Cancelar
+									</button>
+									<button type="submit" style="background:#f59e0b;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+										Atualizar Inspeção
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
 			
 			<!-- Seção Categorias HSE -->
 			<div id="categorias-hse" style="display:none;padding:20px">
@@ -4208,6 +4400,126 @@
 						
 						processarFotos();
 					});
+
+					// Salvar edição da inspeção
+					document.getElementById('form-editar-inspecao').addEventListener('submit', function(e) {
+						e.preventDefault();
+						
+						if (!inspecaoEditandoId) {
+							alert('Erro: ID da inspeção não encontrado!');
+							return;
+						}
+
+						// Processar fotos
+						var fotoAntesFile = document.getElementById('edit-insp-foto-antes').files[0];
+						var fotoDepoisFile = document.getElementById('edit-insp-foto-depois').files[0];
+						
+						// Encontrar inspeção existente
+						var inspecaoIndex = inspecoes.findIndex(function(insp) { return insp.id == inspecaoEditandoId; });
+						if (inspecaoIndex === -1) {
+							alert('Inspeção não encontrada!');
+							return;
+						}
+
+						// Manter fotos existentes se não foram alteradas
+						var inspecaoExistente = inspecoes[inspecaoIndex];
+						
+						var inspecaoAtualizada = {
+							id: inspecaoEditandoId,
+							data: document.getElementById('edit-insp-data').value,
+							area: document.getElementById('edit-insp-area').value,
+							local: document.getElementById('edit-insp-local').value,
+							tipo: document.getElementById('edit-insp-tipo').value,
+							semana: document.getElementById('edit-insp-semana').value,
+							descricao: document.getElementById('edit-insp-descricao').value,
+							acoes: document.getElementById('edit-insp-acoes').value,
+							categoria: document.getElementById('edit-insp-categoria').value,
+							classificacao: document.getElementById('edit-insp-classificacao').value,
+							severidade: document.getElementById('edit-insp-severidade').value,
+							risco: document.getElementById('edit-insp-risco').value,
+							controlavel: document.getElementById('edit-insp-controlavel').value,
+							interdicao: document.getElementById('edit-insp-interdicao').value,
+							emissor: document.getElementById('edit-insp-emissor').value,
+							responsavel: document.getElementById('edit-insp-responsavel').value,
+							prazo: document.getElementById('edit-insp-prazo').value,
+							conclusao: document.getElementById('edit-insp-conclusao').value,
+							status: document.getElementById('edit-insp-status').value,
+							fotoAntes: inspecaoExistente.fotoAntes, // Manter foto existente inicialmente
+							fotoDepois: inspecaoExistente.fotoDepois, // Manter foto existente inicialmente
+							dataCriacao: inspecaoExistente.dataCriacao,
+							dataAtualizacao: new Date().toISOString()
+						};
+
+						// Função para processar fotos da edição
+						function processarFotosEdicao() {
+							var fotosProcessadas = 0;
+							var totalFotos = (fotoAntesFile ? 1 : 0) + (fotoDepoisFile ? 1 : 0);
+							
+							if (totalFotos === 0) {
+								// Não há fotos novas, finalizar com fotos existentes
+								finalizarEdicao();
+								return;
+							}
+							
+							if (fotoAntesFile) {
+								var readerAntes = new FileReader();
+								readerAntes.onload = function(e) {
+									inspecaoAtualizada.fotoAntes = e.target.result;
+									fotosProcessadas++;
+									if (fotosProcessadas === totalFotos) {
+										finalizarEdicao();
+									}
+								};
+								readerAntes.readAsDataURL(fotoAntesFile);
+							}
+							
+							if (fotoDepoisFile) {
+								var readerDepois = new FileReader();
+								readerDepois.onload = function(e) {
+									inspecaoAtualizada.fotoDepois = e.target.result;
+									fotosProcessadas++;
+									if (fotosProcessadas === totalFotos) {
+										finalizarEdicao();
+									}
+								};
+								readerDepois.readAsDataURL(fotoDepoisFile);
+							}
+						}
+						
+						function finalizarEdicao() {
+							inspecoes[inspecaoIndex] = inspecaoAtualizada;
+							localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
+							
+							alert('Inspeção atualizada com sucesso!');
+							fecharModalEditarInspecao();
+							carregarInspecoes();
+						}
+						
+						processarFotosEdicao();
+					});
+
+					// Preview das fotos no modal de edição
+					document.getElementById('edit-insp-foto-antes').addEventListener('change', function(e) {
+						var file = e.target.files[0];
+						if (file) {
+							var reader = new FileReader();
+							reader.onload = function(e) {
+								document.getElementById('edit-preview-foto-antes').innerHTML = '<img src="' + e.target.result + '" style="width:100px;height:100px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb"><br><small style="color:#6b7280">Nova foto</small>';
+							};
+							reader.readAsDataURL(file);
+						}
+					});
+
+					document.getElementById('edit-insp-foto-depois').addEventListener('change', function(e) {
+						var file = e.target.files[0];
+						if (file) {
+							var reader = new FileReader();
+							reader.onload = function(e) {
+								document.getElementById('edit-preview-foto-depois').innerHTML = '<img src="' + e.target.result + '" style="width:100px;height:100px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb"><br><small style="color:#6b7280">Nova foto</small>';
+							};
+							reader.readAsDataURL(file);
+						}
+					});
 					
 					// Carregar e exibir inspeções
 					function carregarInspecoes() {
@@ -4282,9 +4594,98 @@
 						}
 					}
 					
-					// Funções de ação (placeholder)
+					// Variável global para armazenar ID da inspeção sendo editada
+					var inspecaoEditandoId = null;
+
+					// Função para editar inspeção
 					function editarInspecao(id) {
-						alert('Função de editar inspeção será implementada. ID: ' + id);
+						var inspecao = inspecoes.find(function(insp) { return insp.id == id; });
+						if (!inspecao) {
+							alert('Inspeção não encontrada!');
+							return;
+						}
+
+						inspecaoEditandoId = id;
+
+						// Preencher o formulário com os dados existentes
+						document.getElementById('edit-insp-data').value = inspecao.data || '';
+						document.getElementById('edit-insp-area').value = inspecao.area || '';
+						document.getElementById('edit-insp-local').value = inspecao.local || '';
+						document.getElementById('edit-insp-tipo').value = inspecao.tipo || '';
+						document.getElementById('edit-insp-semana').value = inspecao.semana || '';
+						document.getElementById('edit-insp-descricao').value = inspecao.descricao || '';
+						document.getElementById('edit-insp-acoes').value = inspecao.acoes || '';
+						document.getElementById('edit-insp-categoria').value = inspecao.categoria || '';
+						document.getElementById('edit-insp-classificacao').value = inspecao.classificacao || '';
+						document.getElementById('edit-insp-severidade').value = inspecao.severidade || '';
+						document.getElementById('edit-insp-risco').value = inspecao.risco || '';
+						document.getElementById('edit-insp-controlavel').value = inspecao.controlavel || '';
+						document.getElementById('edit-insp-interdicao').value = inspecao.interdicao || '';
+						document.getElementById('edit-insp-emissor').value = inspecao.emissor || '';
+						document.getElementById('edit-insp-responsavel').value = inspecao.responsavel || '';
+						document.getElementById('edit-insp-prazo').value = inspecao.prazo || '';
+						document.getElementById('edit-insp-conclusao').value = inspecao.conclusao || '';
+						document.getElementById('edit-insp-status').value = inspecao.status || '';
+
+						// Carregar opções dos selects
+						carregarOpcoesEditarInspecao();
+
+						// Mostrar fotos existentes se houver
+						if (inspecao.fotoAntes) {
+							document.getElementById('edit-preview-foto-antes').innerHTML = '<img src="' + inspecao.fotoAntes + '" style="width:100px;height:100px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb"><br><small style="color:#6b7280">Foto atual</small>';
+						}
+
+						if (inspecao.fotoDepois) {
+							document.getElementById('edit-preview-foto-depois').innerHTML = '<img src="' + inspecao.fotoDepois + '" style="width:100px;height:100px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb"><br><small style="color:#6b7280">Foto atual</small>';
+						}
+
+						// Abrir modal
+						document.getElementById('modal-editar-inspecao').style.display = 'flex';
+					}
+
+					function carregarOpcoesEditarInspecao() {
+						// Carregar áreas
+						var selectArea = document.getElementById('edit-insp-area');
+						selectArea.innerHTML = '<option value="">Selecione a área...</option>';
+						areas.forEach(function(area) {
+							selectArea.innerHTML += '<option value="' + area.nome + '">' + area.nome + '</option>';
+						});
+
+						// Carregar locais
+						var selectLocal = document.getElementById('edit-insp-local');
+						selectLocal.innerHTML = '<option value="">Selecione o local...</option>';
+						locais.forEach(function(local) {
+							selectLocal.innerHTML += '<option value="' + local.nome + '">' + local.nome + '</option>';
+						});
+
+						// Carregar tipos de registro
+						var selectTipo = document.getElementById('edit-insp-tipo');
+						selectTipo.innerHTML = '<option value="">Selecione o tipo de registro...</option>';
+						tiposRegistro.forEach(function(tipo) {
+							selectTipo.innerHTML += '<option value="' + tipo.nome + '">' + tipo.nome + '</option>';
+						});
+
+						// Carregar categorias
+						var selectCategoria = document.getElementById('edit-insp-categoria');
+						selectCategoria.innerHTML = '<option value="">Selecione a categoria...</option>';
+						categoriasHSE.forEach(function(categoria) {
+							selectCategoria.innerHTML += '<option value="' + categoria.nome + '">' + categoria.nome + '</option>';
+						});
+
+						// Carregar riscos/perigos
+						var selectRisco = document.getElementById('edit-insp-risco');
+						selectRisco.innerHTML = '<option value="">Selecione o risco/perigo...</option>';
+						riscosPerigos.filter(function(risco) { return risco.status === 'Ativo'; }).forEach(function(risco) {
+							selectRisco.innerHTML += '<option value="' + risco.nome + '">' + risco.nome + '</option>';
+						});
+					}
+
+					function fecharModalEditarInspecao() {
+						document.getElementById('modal-editar-inspecao').style.display = 'none';
+						document.getElementById('form-editar-inspecao').reset();
+						document.getElementById('edit-preview-foto-antes').innerHTML = '';
+						document.getElementById('edit-preview-foto-depois').innerHTML = '';
+						inspecaoEditandoId = null;
 					}
 					
 					function excluirInspecao(id) {
