@@ -1227,6 +1227,253 @@
 						</div>
 					</div>
 				</div>
+				
+				<!-- Seção Inspeção de HSE -->
+				<div id="inspecao" style="display:none;max-width:1400px;margin:0 auto;">
+					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3">
+						<div style="background:linear-gradient(135deg,#059669 0%,#047857 100%);color:#fff;padding:20px 24px;border-radius:16px 16px 0 0">
+							<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+								<div>
+									<div style="font-size:1.4rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px">
+										<span>🔍</span> Inspeção de HSE
+									</div>
+									<div style="font-size:1rem;opacity:0.9">Sistema de registros e controle de inspeções</div>
+								</div>
+								<div style="display:flex;gap:12px;flex-wrap:wrap">
+									<button id="btn-nova-inspecao" type="button" style="background:#fff;color:#059669;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
+										<span>✨</span> Nova Inspeção
+									</button>
+									<button id="btn-cadastrar-area" type="button" style="background:#10b981;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
+										<span>📍</span> Cadastrar Área / Local
+									</button>
+									<button id="btn-cadastrar-categoria" type="button" style="background:#059669;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
+										<span>🏷️</span> Cadastrar Categoria
+									</button>
+								</div>
+							</div>
+						</div>
+						
+						<div style="padding:24px">
+							<!-- Registros de Inspeção -->
+							<div id="lista-inspecoes-section">
+								<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+									<h3 style="margin:0;color:#374151;font-size:1.3rem">Registros de Inspeção</h3>
+									<button id="btn-nova-inspecao-top" type="button" style="background:#059669;color:#fff;padding:8px 16px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600">
+										+ Nova Inspeção
+									</button>
+								</div>
+								
+								<!-- Tabela de Inspeções -->
+								<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden">
+									<!-- Cabeçalho da tabela -->
+									<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:80px 60px 80px 60px 60px 100px 80px 80px 120px 80px 80px 100px;gap:8px;font-weight:600;color:#374151;font-size:0.85rem">
+										<div>Data</div>
+										<div>Área</div>
+										<div>Local</div>
+										<div>Tipo</div>
+										<div>Semana</div>
+										<div>Categoria</div>
+										<div>Severidade</div>
+										<div>Interdição</div>
+										<div>Responsável</div>
+										<div>Status</div>
+										<div>Fotos</div>
+										<div>Ações</div>
+									</div>
+									
+									<!-- Lista de inspeções -->
+									<div id="lista-inspecoes">
+										<!-- Exemplo de inspeção -->
+										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:80px 60px 80px 60px 60px 100px 80px 80px 120px 80px 80px 100px;gap:8px;align-items:center;font-size:0.8rem">
+											<div style="color:#374151;font-weight:500">04/11/2025</div>
+											<div style="color:#374151">BAP 1B</div>
+											<div style="color:#6b7280">Escavação</div>
+											<div style="color:#6b7280">Inspeção</div>
+											<div style="color:#6b7280">45</div>
+											<div style="color:#6b7280">Segurança do trabalho</div>
+											<div><span style="background:#10b981;color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">Baixa</span></div>
+											<div><span style="color:#ef4444;font-weight:600">Não</span></div>
+											<div style="color:#6b7280">Ademilcio Ferreira Caldas</div>
+											<div><span style="background:#10b981;color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">CONCLUÍDO</span></div>
+											<div>
+												<button style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer">📷 Ver Fotos</button>
+											</div>
+											<div style="display:flex;gap:4px">
+												<button onclick="editarInspecao('1')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>
+												<button onclick="excluirInspecao('1')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">🗑️</button>
+											</div>
+										</div>
+										
+										<!-- Segunda inspeção exemplo -->
+										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:80px 60px 80px 60px 60px 100px 80px 80px 120px 80px 80px 100px;gap:8px;align-items:center;font-size:0.8rem">
+											<div style="color:#374151;font-weight:500">03/11/2025</div>
+											<div style="color:#374151">BAP 1B</div>
+											<div style="color:#6b7280">Escavação</div>
+											<div style="color:#6b7280">Inspeção</div>
+											<div style="color:#6b7280">45</div>
+											<div style="color:#6b7280">Segurança do trabalho</div>
+											<div><span style="background:#f59e0b;color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">Média</span></div>
+											<div><span style="color:#ef4444;font-weight:600">Não</span></div>
+											<div style="color:#6b7280">Ademilcio Ferreira Caldas</div>
+											<div><span style="background:#10b981;color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">CONCLUÍDO</span></div>
+											<div>
+												<button style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer">📷 Ver Fotos</button>
+											</div>
+											<div style="display:flex;gap:4px">
+												<button onclick="editarInspecao('2')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>
+												<button onclick="excluirInspecao('2')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">🗑️</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Modal Nova Inspeção -->
+				<div id="modal-nova-inspecao" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1002;justify-content:center;align-items:center;overflow-y:auto">
+					<div style="background:#fff;border-radius:12px;width:90%;max-width:800px;max-height:90vh;overflow-y:auto;margin:20px">
+						<div style="background:linear-gradient(135deg,#059669 0%,#047857 100%);color:#fff;padding:20px;border-radius:12px 12px 0 0">
+							<h2 style="margin:0;font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:8px">
+								<span>🔍</span> Nova Inspeção de HSE
+							</h2>
+						</div>
+						
+						<div style="padding:20px">
+							<form id="form-nova-inspecao">
+								<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:18px">
+									<!-- Data -->
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Data</label>
+										<input type="date" id="insp-data" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									
+									<!-- Área -->
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Área</label>
+										<select id="insp-area" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione</option>
+											<option value="BAP 1A">BAP 1A</option>
+											<option value="BAP 1B">BAP 1B</option>
+											<option value="BAP 2A">BAP 2A</option>
+											<option value="BAP 2B">BAP 2B</option>
+										</select>
+									</div>
+									
+									<!-- Local -->
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Local</label>
+										<select id="insp-local" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione</option>
+											<option value="Escavação">Escavação</option>
+											<option value="Fundação">Fundação</option>
+											<option value="Estrutura">Estrutura</option>
+											<option value="Cobertura">Cobertura</option>
+										</select>
+									</div>
+									
+									<!-- Tipo -->
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Tipo</label>
+										<select id="insp-tipo" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione</option>
+											<option value="Inspeção">Inspeção</option>
+											<option value="Auditoria">Auditoria</option>
+											<option value="Vistoria">Vistoria</option>
+										</select>
+									</div>
+									
+									<!-- Semana -->
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Semana</label>
+										<input type="number" id="insp-semana" required min="1" max="53" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									
+									<!-- Categoria -->
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Categoria</label>
+										<select id="insp-categoria" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione</option>
+											<option value="Segurança do trabalho">Segurança do trabalho</option>
+											<option value="Meio ambiente">Meio ambiente</option>
+											<option value="Saúde ocupacional">Saúde ocupacional</option>
+											<option value="Qualidade">Qualidade</option>
+										</select>
+									</div>
+									
+									<!-- Severidade -->
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Severidade</label>
+										<select id="insp-severidade" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione</option>
+											<option value="Baixa">Baixa</option>
+											<option value="Média">Média</option>
+											<option value="Alta">Alta</option>
+											<option value="Crítica">Crítica</option>
+										</select>
+									</div>
+									
+									<!-- Interdição -->
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Interdição</label>
+										<select id="insp-interdicao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione</option>
+											<option value="Sim">Sim</option>
+											<option value="Não">Não</option>
+										</select>
+									</div>
+									
+									<!-- Responsável -->
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Responsável</label>
+										<input type="text" id="insp-responsavel" required placeholder="Nome do responsável" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									
+									<!-- Status -->
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Status</label>
+										<select id="insp-status" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione</option>
+											<option value="PENDENTE">PENDENTE</option>
+											<option value="EM ANDAMENTO">EM ANDAMENTO</option>
+											<option value="CONCLUÍDO">CONCLUÍDO</option>
+										</select>
+									</div>
+								</div>
+								
+								<!-- Descrição/Observações -->
+								<div style="margin-bottom:18px">
+									<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Descrição/Observações</label>
+									<textarea id="insp-descricao" placeholder="Descreva os detalhes da inspeção, não conformidades encontradas, ações necessárias..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:100px;resize:vertical"></textarea>
+								</div>
+								
+								<!-- Upload de Fotos -->
+								<div style="margin-bottom:20px">
+									<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Fotos da Inspeção</label>
+									<div style="border:2px dashed #d1d5db;border-radius:8px;padding:20px;text-align:center;background:#fafafa">
+										<div style="font-size:1.5rem;margin-bottom:8px;color:#9ca3af">📷</div>
+										<div style="font-size:0.9rem;color:#6b7280;margin-bottom:12px">Clique ou arraste fotos da inspeção</div>
+										<input type="file" id="insp-fotos" multiple accept="image/*" style="display:none">
+										<button type="button" onclick="document.getElementById('insp-fotos').click()" style="background:#059669;color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:0.9rem;cursor:pointer">
+											Selecionar Fotos
+										</button>
+									</div>
+									<div id="preview-fotos-inspecao" style="margin-top:12px;display:none"></div>
+								</div>
+								
+								<div style="display:flex;gap:12px">
+									<button type="button" onclick="fecharModalInspecao()" style="flex:1;background:#6b7280;color:#fff;padding:12px;border:none;border-radius:6px;cursor:pointer;font-weight:600">
+										Cancelar
+									</button>
+									<button type="submit" style="flex:2;background:#059669;color:#fff;padding:12px;border:none;border-radius:6px;cursor:pointer;font-weight:600">
+										💾 Salvar Inspeção
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
 			</main>
 		</div>
 					<script>
@@ -1272,6 +1519,7 @@
 								document.getElementById('funcionarios').style.display = 'none';
 								document.getElementById('frequencia').style.display = 'none';
 								document.getElementById('cpt').style.display = 'none';
+								document.getElementById('inspecao').style.display = 'none';
 								hideSidebarOnMobile();
 							});
 						});
@@ -1285,6 +1533,7 @@
 								document.getElementById('funcionarios').style.display = 'none';
 								document.getElementById('frequencia').style.display = 'none';
 								document.getElementById('cpt').style.display = 'none';
+								document.getElementById('inspecao').style.display = 'none';
 								hideSidebarOnMobile();
 							});
 						});
@@ -1298,6 +1547,7 @@
 								document.getElementById('funcionarios').style.display = 'block';
 								document.getElementById('frequencia').style.display = 'none';
 								document.getElementById('cpt').style.display = 'none';
+								document.getElementById('inspecao').style.display = 'none';
 								carregarFuncionarios();
 								hideSidebarOnMobile();
 							});
@@ -1312,6 +1562,7 @@
 								document.getElementById('funcionarios').style.display = 'none';
 								document.getElementById('frequencia').style.display = 'block';
 								document.getElementById('cpt').style.display = 'none';
+								document.getElementById('inspecao').style.display = 'none';
 								inicializarFrequencia();
 								hideSidebarOnMobile();
 							});
@@ -1326,18 +1577,35 @@
 								document.getElementById('funcionarios').style.display = 'none';
 								document.getElementById('frequencia').style.display = 'none';
 								document.getElementById('cpt').style.display = 'block';
+								document.getElementById('inspecao').style.display = 'none';
 								inicializarCPT();
 								hideSidebarOnMobile();
 							});
 						});
+					// Exibir Inspeção ao clicar em Inspeção de HSE
+						document.querySelectorAll('.nav a[href="#inspecao"]').forEach(function(link){
+							link.addEventListener('click',function(e){
+								e.preventDefault();
+								document.getElementById('conteudo-principal').style.display = 'none';
+								document.getElementById('cadastro-usuario').style.display = 'none';
+								document.getElementById('nova-ras').style.display = 'none';
+								document.getElementById('funcionarios').style.display = 'none';
+								document.getElementById('frequencia').style.display = 'none';
+								document.getElementById('cpt').style.display = 'none';
+								document.getElementById('inspecao').style.display = 'block';
+								inicializarInspecao();
+								hideSidebarOnMobile();
+							});
+						});
 					// Ocultar outras seções ao clicar em outros itens
-						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"])').forEach(function(link){
+						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"]):not([href="#inspecao"])').forEach(function(link){
 							link.addEventListener('click',function(){
 								document.getElementById('nova-ras').style.display = 'none';
 								document.getElementById('cadastro-usuario').style.display = 'none';
 								document.getElementById('funcionarios').style.display = 'none';
 								document.getElementById('frequencia').style.display = 'none';
 								document.getElementById('cpt').style.display = 'none';
+								document.getElementById('inspecao').style.display = 'none';
 								document.getElementById('conteudo-principal').style.display = 'block';
 								hideSidebarOnMobile();
 							});
@@ -2810,6 +3078,199 @@
 							dataFechamento.style.backgroundColor = '#fff';
 							dataFechamento.value = '';
 						}
+					});
+					
+					// SISTEMA DE INSPEÇÃO DE HSE
+					
+					// Array para armazenar inspeções
+					var inspecoes = JSON.parse(localStorage.getItem('inspecoes')) || [];
+					
+					// Inicializar sistema de inspeção
+					function inicializarInspecao() {
+						carregarInspecoes();
+						configurarSemanaAtual();
+					}
+					
+					// Configurar semana atual
+					function configurarSemanaAtual() {
+						var hoje = new Date();
+						var primeiroDia = new Date(hoje.getFullYear(), 0, 1);
+						var diasPassados = Math.floor((hoje - primeiroDia) / (24 * 60 * 60 * 1000));
+						var semanaAtual = Math.ceil((diasPassados + primeiroDia.getDay() + 1) / 7);
+						
+						var inputSemana = document.getElementById('insp-semana');
+						if (inputSemana) {
+							inputSemana.value = semanaAtual;
+						}
+					}
+					
+					// Abrir modal nova inspeção
+					document.getElementById('btn-nova-inspecao').addEventListener('click', abrirModalNovaInspecao);
+					document.getElementById('btn-nova-inspecao-top').addEventListener('click', abrirModalNovaInspecao);
+					
+					function abrirModalNovaInspecao() {
+						document.getElementById('modal-nova-inspecao').style.display = 'flex';
+						
+						// Configurar data atual
+						var hoje = new Date();
+						var dataHoje = hoje.getFullYear() + '-' + 
+									   (hoje.getMonth() + 1).toString().padStart(2, '0') + '-' + 
+									   hoje.getDate().toString().padStart(2, '0');
+						document.getElementById('insp-data').value = dataHoje;
+						
+						configurarSemanaAtual();
+					}
+					
+					// Fechar modal de inspeção
+					function fecharModalInspecao() {
+						document.getElementById('modal-nova-inspecao').style.display = 'none';
+						document.getElementById('form-nova-inspecao').reset();
+						document.getElementById('preview-fotos-inspecao').style.display = 'none';
+					}
+					
+					// Upload de fotos com preview
+					document.getElementById('insp-fotos').addEventListener('change', function(e) {
+						var files = e.target.files;
+						var preview = document.getElementById('preview-fotos-inspecao');
+						
+						if (files.length > 0) {
+							var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:8px">';
+							for (var i = 0; i < files.length; i++) {
+								var file = files[i];
+								if (file.type.startsWith('image/')) {
+									var url = URL.createObjectURL(file);
+									html += '<div style="border:1px solid #e5e7eb;border-radius:6px;overflow:hidden">';
+									html += '<img src="' + url + '" style="width:100%;height:80px;object-fit:cover">';
+									html += '<div style="padding:4px;font-size:0.7rem;color:#6b7280;text-align:center">' + file.name + '</div>';
+									html += '</div>';
+								}
+							}
+							html += '</div>';
+							preview.innerHTML = html;
+							preview.style.display = 'block';
+						} else {
+							preview.style.display = 'none';
+						}
+					});
+					
+					// Salvar nova inspeção
+					document.getElementById('form-nova-inspecao').addEventListener('submit', function(e) {
+						e.preventDefault();
+						
+						var novaInspecao = {
+							id: Date.now(),
+							data: document.getElementById('insp-data').value,
+							area: document.getElementById('insp-area').value,
+							local: document.getElementById('insp-local').value,
+							tipo: document.getElementById('insp-tipo').value,
+							semana: document.getElementById('insp-semana').value,
+							categoria: document.getElementById('insp-categoria').value,
+							severidade: document.getElementById('insp-severidade').value,
+							interdicao: document.getElementById('insp-interdicao').value,
+							responsavel: document.getElementById('insp-responsavel').value,
+							status: document.getElementById('insp-status').value,
+							descricao: document.getElementById('insp-descricao').value,
+							fotos: document.getElementById('insp-fotos').files.length,
+							dataCriacao: new Date().toISOString()
+						};
+						
+						inspecoes.push(novaInspecao);
+						localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
+						
+						alert('Inspeção salva com sucesso!');
+						fecharModalInspecao();
+						carregarInspecoes();
+					});
+					
+					// Carregar e exibir inspeções
+					function carregarInspecoes() {
+						var lista = document.getElementById('lista-inspecoes');
+						
+						if (inspecoes.length === 0) {
+							lista.innerHTML = '<div style="padding:40px;text-align:center;color:#9ca3af;font-style:italic">Nenhuma inspeção cadastrada</div>';
+							return;
+						}
+						
+						var html = '';
+						inspecoes.forEach(function(inspecao) {
+							var dataFormatada = formatarData(inspecao.data);
+							var corSeveridade = getCorSeveridade(inspecao.severidade);
+							var corStatus = getCorStatus(inspecao.status);
+							
+							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:80px 60px 80px 60px 60px 100px 80px 80px 120px 80px 80px 100px;gap:8px;align-items:center;font-size:0.8rem">';
+							html += '<div style="color:#374151;font-weight:500">' + dataFormatada + '</div>';
+							html += '<div style="color:#374151">' + inspecao.area + '</div>';
+							html += '<div style="color:#6b7280">' + inspecao.local + '</div>';
+							html += '<div style="color:#6b7280">' + inspecao.tipo + '</div>';
+							html += '<div style="color:#6b7280">' + inspecao.semana + '</div>';
+							html += '<div style="color:#6b7280">' + inspecao.categoria + '</div>';
+							html += '<div><span style="background:' + corSeveridade + ';color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">' + inspecao.severidade + '</span></div>';
+							html += '<div><span style="color:' + (inspecao.interdicao === 'Sim' ? '#10b981' : '#ef4444') + ';font-weight:600">' + inspecao.interdicao + '</span></div>';
+							html += '<div style="color:#6b7280">' + inspecao.responsavel + '</div>';
+							html += '<div><span style="background:' + corStatus + ';color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">' + inspecao.status + '</span></div>';
+							html += '<div>';
+							if (inspecao.fotos > 0) {
+								html += '<button style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer">📷 ' + inspecao.fotos + ' Foto' + (inspecao.fotos > 1 ? 's' : '') + '</button>';
+							} else {
+								html += '<span style="color:#9ca3af;font-size:0.75rem">Sem fotos</span>';
+							}
+							html += '</div>';
+							html += '<div style="display:flex;gap:4px">';
+							html += '<button onclick="editarInspecao(\'' + inspecao.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>';
+							html += '<button onclick="excluirInspecao(\'' + inspecao.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">🗑️</button>';
+							html += '</div>';
+							html += '</div>';
+						});
+						
+						lista.innerHTML = html;
+					}
+					
+					// Funções auxiliares
+					function formatarData(data) {
+						var partes = data.split('-');
+						return partes[2] + '/' + partes[1] + '/' + partes[0];
+					}
+					
+					function getCorSeveridade(severidade) {
+						switch(severidade) {
+							case 'Baixa': return '#10b981';
+							case 'Média': return '#f59e0b';
+							case 'Alta': return '#ef4444';
+							case 'Crítica': return '#dc2626';
+							default: return '#6b7280';
+						}
+					}
+					
+					function getCorStatus(status) {
+						switch(status) {
+							case 'CONCLUÍDO': return '#10b981';
+							case 'EM ANDAMENTO': return '#f59e0b';
+							case 'PENDENTE': return '#ef4444';
+							default: return '#6b7280';
+						}
+					}
+					
+					// Funções de ação (placeholder)
+					function editarInspecao(id) {
+						alert('Função de editar inspeção será implementada. ID: ' + id);
+					}
+					
+					function excluirInspecao(id) {
+						if (confirm('Deseja realmente excluir esta inspeção?')) {
+							inspecoes = inspecoes.filter(function(insp) { return insp.id != id; });
+							localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
+							carregarInspecoes();
+							alert('Inspeção excluída com sucesso!');
+						}
+					}
+					
+					// Botões de cadastro de área e categoria (placeholder)
+					document.getElementById('btn-cadastrar-area').addEventListener('click', function() {
+						alert('Funcionalidade de cadastrar área/local será implementada em breve!');
+					});
+					
+					document.getElementById('btn-cadastrar-categoria').addEventListener('click', function() {
+						alert('Funcionalidade de cadastrar categoria será implementada em breve!');
 					});
 					
 					// Inicializar exibição de funcionários
