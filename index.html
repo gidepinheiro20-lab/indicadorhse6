@@ -1302,7 +1302,7 @@
 											<div style="color:#6b7280">Ademilcio Ferreira Caldas</div>
 											<div><span style="background:#10b981;color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">CONCLUÍDO</span></div>
 											<div>
-												<button style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer">📷 Ver Fotos</button>
+												<button onclick="mostrarFotosInspecao('1')" style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer" title="Ver e baixar fotos">📷 2 Fotos</button>
 											</div>
 											<div style="display:flex;gap:4px">
 												<button onclick="mostrarRelatorioInspecao('1')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer" title="Ver Relatório">📋</button>
@@ -1556,6 +1556,39 @@
 									🖨️ Imprimir
 								</button>
 								<button onclick="fecharModalRelatorio()" style="background:#6b7280;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+									Fechar
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Modal Fotos da Inspeção -->
+				<div id="modal-fotos-inspecao" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1004;justify-content:center;align-items:center;overflow-y:auto">
+					<div style="background:#fff;border-radius:12px;max-width:900px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1)">
+						<div style="padding:24px">
+							<!-- Cabeçalho -->
+							<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:20px">
+								<div>
+									<h2 style="margin:0;color:#374151;font-size:1.5rem;font-weight:700;display:flex;align-items:center;gap:8px">
+										📷 Fotos da Inspeção
+									</h2>
+									<p style="margin:4px 0 0 0;color:#6b7280;font-size:0.9rem">Visualize e faça download das fotos</p>
+								</div>
+								<button onclick="fecharModalFotos()" style="background:none;border:none;font-size:1.5rem;color:#9ca3af;cursor:pointer;padding:4px">✕</button>
+							</div>
+
+							<!-- Conteúdo das Fotos -->
+							<div id="conteudo-fotos">
+								<!-- Conteúdo será preenchido dinamicamente -->
+							</div>
+
+							<!-- Botões do Rodapé -->
+							<div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid #e5e7eb">
+								<button onclick="baixarTodasFotos()" style="background:#059669;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem;display:flex;align-items:center;gap:6px">
+									💾 Baixar Todas
+								</button>
+								<button onclick="fecharModalFotos()" style="background:#6b7280;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
 									Fechar
 								</button>
 							</div>
@@ -4208,7 +4241,7 @@
 							if (inspecao.fotoDepois) totalFotos++;
 							
 							if (totalFotos > 0) {
-								html += '<button style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer">📷 ' + totalFotos + ' Foto' + (totalFotos > 1 ? 's' : '') + '</button>';
+								html += '<button onclick="mostrarFotosInspecao(\'' + inspecao.id + '\')" style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer" title="Ver e baixar fotos">📷 ' + totalFotos + ' Foto' + (totalFotos > 1 ? 's' : '') + '</button>';
 							} else {
 								html += '<span style="color:#9ca3af;font-size:0.75rem">Sem fotos</span>';
 							}
@@ -4401,6 +4434,120 @@
 						modal.innerHTML = '<div style="max-width:90%;max-height:90%;text-align:center"><h3 style="color:#fff;margin-bottom:20px">' + titulo + '</h3><img src="' + src + '" style="max-width:100%;max-height:80vh;border-radius:8px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.4)"></div>';
 						modal.onclick = function() { document.body.removeChild(modal); };
 						document.body.appendChild(modal);
+					}
+
+					// Funções do Modal de Fotos
+					var fotosParaBaixar = []; // Array para armazenar fotos selecionadas para download
+
+					function mostrarFotosInspecao(id) {
+						var inspecao = inspecoes.find(function(insp) { return insp.id == id; });
+						if (!inspecao) {
+							alert('Inspeção não encontrada!');
+							return;
+						}
+
+						var html = '';
+						fotosParaBaixar = []; // Limpar array de fotos
+
+						// Verificar se há fotos
+						if (!inspecao.fotoAntes && !inspecao.fotoDepois) {
+							html = '<div style="text-align:center;padding:40px;color:#6b7280"><div style="font-size:3rem;margin-bottom:16px;opacity:0.5">📷</div><div style="font-size:1.1rem;font-weight:500;margin-bottom:8px">Nenhuma foto disponível</div><div style="font-size:0.9rem">Esta inspeção não possui fotos cadastradas.</div></div>';
+						} else {
+							html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:24px">';
+							
+							// Foto Antes
+							if (inspecao.fotoAntes) {
+								fotosParaBaixar.push({
+									nome: 'Foto_Antes_Inspecao_' + id + '.jpg',
+									data: inspecao.fotoAntes
+								});
+								
+								html += '<div style="border:2px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#fff">';
+								html += '<div style="background:#f8fafc;padding:16px;border-bottom:1px solid #e5e7eb">';
+								html += '<h4 style="margin:0;color:#374151;font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:8px">📸 Foto Antes</h4>';
+								html += '</div>';
+								html += '<div style="position:relative">';
+								html += '<img src="' + inspecao.fotoAntes + '" style="width:100%;height:250px;object-fit:cover;cursor:pointer" onclick="abrirImagemModal(\'' + inspecao.fotoAntes + '\', \'Foto Antes - Inspeção #' + id + '\')">';
+								html += '<div style="position:absolute;top:8px;right:8px">';
+								html += '<button onclick="baixarFoto(\'' + inspecao.fotoAntes + '\', \'Foto_Antes_Inspecao_' + id + '.jpg\')" style="background:rgba(0,0,0,0.7);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;gap:4px" title="Baixar foto">';
+								html += '💾 Baixar</button>';
+								html += '</div>';
+								html += '</div>';
+								html += '</div>';
+							}
+							
+							// Foto Depois
+							if (inspecao.fotoDepois) {
+								fotosParaBaixar.push({
+									nome: 'Foto_Depois_Inspecao_' + id + '.jpg',
+									data: inspecao.fotoDepois
+								});
+								
+								html += '<div style="border:2px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#fff">';
+								html += '<div style="background:#f8fafc;padding:16px;border-bottom:1px solid #e5e7eb">';
+								html += '<h4 style="margin:0;color:#374151;font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:8px">📸 Foto Depois</h4>';
+								html += '</div>';
+								html += '<div style="position:relative">';
+								html += '<img src="' + inspecao.fotoDepois + '" style="width:100%;height:250px;object-fit:cover;cursor:pointer" onclick="abrirImagemModal(\'' + inspecao.fotoDepois + '\', \'Foto Depois - Inspeção #' + id + '\')">';
+								html += '<div style="position:absolute;top:8px;right:8px">';
+								html += '<button onclick="baixarFoto(\'' + inspecao.fotoDepois + '\', \'Foto_Depois_Inspecao_' + id + '.jpg\')" style="background:rgba(0,0,0,0.7);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;gap:4px" title="Baixar foto">';
+								html += '💾 Baixar</button>';
+								html += '</div>';
+								html += '</div>';
+								html += '</div>';
+							}
+							
+							html += '</div>';
+							
+							// Instruções
+							html += '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:16px;margin-top:20px">';
+							html += '<div style="display:flex;align-items:start;gap:12px">';
+							html += '<div style="color:#0284c7;font-size:1.2rem">💡</div>';
+							html += '<div>';
+							html += '<div style="font-weight:600;color:#0c4a6e;margin-bottom:4px">Como usar:</div>';
+							html += '<div style="color:#0369a1;font-size:0.9rem">';
+							html += '• <strong>Clique na imagem</strong> para visualizar em tela cheia<br>';
+							html += '• <strong>Clique em "Baixar"</strong> para fazer download individual<br>';
+							html += '• <strong>Use "Baixar Todas"</strong> para download de todas as fotos';
+							html += '</div>';
+							html += '</div>';
+							html += '</div>';
+							html += '</div>';
+						}
+
+						// Atualizar conteúdo do modal
+						document.getElementById('conteudo-fotos').innerHTML = html;
+						document.getElementById('modal-fotos-inspecao').style.display = 'flex';
+					}
+
+					function fecharModalFotos() {
+						document.getElementById('modal-fotos-inspecao').style.display = 'none';
+						fotosParaBaixar = [];
+					}
+
+					function baixarFoto(dataUrl, nomeArquivo) {
+						var link = document.createElement('a');
+						link.href = dataUrl;
+						link.download = nomeArquivo;
+						link.style.display = 'none';
+						document.body.appendChild(link);
+						link.click();
+						document.body.removeChild(link);
+					}
+
+					function baixarTodasFotos() {
+						if (fotosParaBaixar.length === 0) {
+							alert('Nenhuma foto disponível para download!');
+							return;
+						}
+
+						fotosParaBaixar.forEach(function(foto, index) {
+							setTimeout(function() {
+								baixarFoto(foto.data, foto.nome);
+							}, index * 500); // Delay de 500ms entre downloads para evitar conflitos
+						});
+
+						alert('Iniciando download de ' + fotosParaBaixar.length + ' foto(s)!');
 					}
 					
 					// Botões de cadastro de área e categoria
