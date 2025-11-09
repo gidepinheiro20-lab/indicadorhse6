@@ -1253,6 +1253,10 @@
 									<button id="btn-cadastrar-tipo-registro" type="button" style="background:#7c3aed;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
 										<span>📋</span> Cadastrar Tipo de Registro
 									</button>
+									<!-- Botão para cadastrar riscos e perigos -->
+									<button id="btn-cadastrar-riscos-perigos" type="button" style="background:#dc2626;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
+										<span>⚠️</span> Cadastrar Riscos / Perigos
+									</button>
 								</div>
 							</div>
 						</div>
@@ -1638,6 +1642,44 @@
 				</div>
 			</div>
 			
+			<!-- Seção Riscos e Perigos -->
+			<div id="gerenciamento-riscos-perigos" style="display:none;padding:20px">
+				<div style="max-width:1200px;margin:0 auto">
+					<!-- Header -->
+					<div style="background:linear-gradient(135deg,#dc2626 0%,#ef4444 100%);border-radius:12px;padding:32px;margin-bottom:24px;color:#fff;text-align:center">
+						<h2 style="margin:0;font-size:2rem;font-weight:700;margin-bottom:8px">Riscos e Perigos</h2>
+						<p style="margin:0;font-size:1.1rem;opacity:0.95">Gerencie os riscos e perigos identificados</p>
+					</div>
+					
+					<!-- Controles -->
+					<div style="background:#fff;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+						<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+							<div style="display:flex;align-items:center;gap:12px">
+								<button id="btn-voltar-inspecao-riscos-perigos" style="background:#047857;color:#fff;padding:10px 16px;border:none;border-radius:6px;cursor:pointer;font-weight:500;display:flex;align-items:center;gap:6px;font-size:0.9rem">
+									← Voltar para Inspeção
+								</button>
+								<h3 style="margin:0;font-size:1.2rem;font-weight:600;color:#374151">Riscos e Perigos Cadastrados</h3>
+							</div>
+							<button id="btn-novo-risco-perigo" style="background:#dc2626;color:#fff;padding:10px 16px;border:none;border-radius:6px;cursor:pointer;font-weight:500;display:flex;align-items:center;gap:6px;font-size:0.9rem">
+								⚠️ Novo risco/perigo
+							</button>
+						</div>
+					</div>
+					
+					<!-- Lista de riscos e perigos -->
+					<div style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+						<div id="lista-riscos-perigos" style="min-height:200px">
+							<!-- Lista será preenchida dinamicamente -->
+							<div style="padding:60px 20px;text-align:center;color:#9ca3af">
+								<div style="font-size:3rem;margin-bottom:16px;opacity:0.5">⚠️</div>
+								<div style="font-size:1.1rem;font-weight:500;margin-bottom:8px">Nenhum risco ou perigo cadastrado ainda.</div>
+								<div style="font-size:0.9rem">Clique em "Novo risco/perigo" para começar.</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
 			<!-- Modal Nova Categoria -->
 			<div id="modal-nova-categoria" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1003;justify-content:center;align-items:center;overflow-y:auto">
 				<div style="background:#fff;border-radius:8px;width:90%;max-width:500px;margin:20px;position:relative">
@@ -1859,6 +1901,228 @@
 								</button>
 								<button type="submit" style="background:#7c3aed;color:#fff;padding:10px 24px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
 									Atualizar Tipo de Registro
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Modal Novo Risco/Perigo -->
+			<div id="modal-novo-risco-perigo" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1003;justify-content:center;align-items:center;overflow-y:auto">
+				<div style="background:#fff;border-radius:8px;width:90%;max-width:600px;margin:20px;position:relative">
+					<!-- Botão X para fechar -->
+					<button onclick="fecharModalRiscoPerigo()" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:1.2rem;color:#6b7280;cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center">×</button>
+					
+					<div style="padding:24px">
+						<h2 style="margin:0 0 24px 0;font-size:1.1rem;font-weight:600;color:#374151">Novo Risco / Perigo</h2>
+						
+						<form id="form-risco-perigo" onsubmit="salvarRiscoPerigo(event)">
+							<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+								<div>
+									<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Tipo *</label>
+									<select id="tipo-risco-perigo" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151">
+										<option value="">Selecione o tipo...</option>
+										<option value="risco">Risco</option>
+										<option value="perigo">Perigo</option>
+									</select>
+								</div>
+								
+								<div>
+									<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Categoria</label>
+									<select id="categoria-risco-perigo" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151">
+										<option value="">Selecione a categoria...</option>
+										<option value="fisico">Físico</option>
+										<option value="quimico">Químico</option>
+										<option value="biologico">Biológico</option>
+										<option value="ergonomico">Ergonômico</option>
+										<option value="acidente">Acidente</option>
+										<option value="ambiental">Ambiental</option>
+										<option value="social">Social</option>
+									</select>
+								</div>
+							</div>
+							
+							<div style="margin-bottom:16px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Nome/Descrição *</label>
+								<input id="nome-risco-perigo" type="text" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151" placeholder="Ex: Ruído excessivo, Exposição química, Queda de altura">
+							</div>
+							
+							<div style="margin-bottom:16px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Descrição Detalhada</label>
+								<textarea id="descricao-risco-perigo" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151;min-height:80px;resize:vertical" placeholder="Descrição detalhada do risco ou perigo identificado..."></textarea>
+							</div>
+							
+							<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+								<div>
+									<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Probabilidade</label>
+									<select id="probabilidade-risco-perigo" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151">
+										<option value="">Selecione...</option>
+										<option value="muito-baixa">Muito Baixa</option>
+										<option value="baixa">Baixa</option>
+										<option value="media">Média</option>
+										<option value="alta">Alta</option>
+										<option value="muito-alta">Muito Alta</option>
+									</select>
+								</div>
+								
+								<div>
+									<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Severidade</label>
+									<select id="severidade-risco-perigo" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151">
+										<option value="">Selecione...</option>
+										<option value="insignificante">Insignificante</option>
+										<option value="menor">Menor</option>
+										<option value="moderada">Moderada</option>
+										<option value="maior">Maior</option>
+										<option value="catastrofica">Catastrófica</option>
+									</select>
+								</div>
+								
+								<div>
+									<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Nível de Risco</label>
+									<select id="nivel-risco-perigo" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151">
+										<option value="">Selecione...</option>
+										<option value="muito-baixo">Muito Baixo</option>
+										<option value="baixo">Baixo</option>
+										<option value="medio">Médio</option>
+										<option value="alto">Alto</option>
+										<option value="muito-alto">Muito Alto</option>
+									</select>
+								</div>
+							</div>
+							
+							<div style="margin-bottom:16px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Medidas de Controle</label>
+								<textarea id="medidas-controle-risco-perigo" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151;min-height:80px;resize:vertical" placeholder="Medidas de prevenção e controle recomendadas..."></textarea>
+							</div>
+							
+							<div style="margin-bottom:24px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Status</label>
+								<select id="status-risco-perigo" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151">
+									<option value="ativo">Ativo</option>
+									<option value="controlado">Controlado</option>
+									<option value="eliminado">Eliminado</option>
+								</select>
+							</div>
+							
+							<div style="display:flex;gap:12px;justify-content:flex-end">
+								<button type="button" onclick="fecharModalRiscoPerigo()" style="background:#f3f4f6;color:#374151;padding:10px 24px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+									Cancelar
+								</button>
+								<button type="submit" style="background:#dc2626;color:#fff;padding:10px 24px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+									Salvar Risco/Perigo
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Modal Editar Risco/Perigo -->
+			<div id="modal-editar-risco-perigo" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1003;justify-content:center;align-items:center;overflow-y:auto">
+				<div style="background:#fff;border-radius:8px;width:90%;max-width:600px;margin:20px;position:relative">
+					<!-- Botão X para fechar -->
+					<button onclick="fecharModalEdicaoRiscoPerigo()" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:1.2rem;color:#6b7280;cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center">×</button>
+					
+					<div style="padding:24px">
+						<h2 style="margin:0 0 24px 0;font-size:1.1rem;font-weight:600;color:#374151">Editar Risco / Perigo</h2>
+						
+						<form id="form-editar-risco-perigo" onsubmit="atualizarRiscoPerigo(event)">
+							<input type="hidden" id="id-editar-risco-perigo">
+							
+							<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+								<div>
+									<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Tipo *</label>
+									<select id="tipo-editar-risco-perigo" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151">
+										<option value="">Selecione o tipo...</option>
+										<option value="risco">Risco</option>
+										<option value="perigo">Perigo</option>
+									</select>
+								</div>
+								
+								<div>
+									<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Categoria</label>
+									<select id="categoria-editar-risco-perigo" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151">
+										<option value="">Selecione a categoria...</option>
+										<option value="fisico">Físico</option>
+										<option value="quimico">Químico</option>
+										<option value="biologico">Biológico</option>
+										<option value="ergonomico">Ergonômico</option>
+										<option value="acidente">Acidente</option>
+										<option value="ambiental">Ambiental</option>
+										<option value="social">Social</option>
+									</select>
+								</div>
+							</div>
+							
+							<div style="margin-bottom:16px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Nome/Descrição *</label>
+								<input id="nome-editar-risco-perigo" type="text" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151" placeholder="Ex: Ruído excessivo, Exposição química, Queda de altura">
+							</div>
+							
+							<div style="margin-bottom:16px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Descrição Detalhada</label>
+								<textarea id="descricao-editar-risco-perigo" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151;min-height:80px;resize:vertical" placeholder="Descrição detalhada do risco ou perigo identificado..."></textarea>
+							</div>
+							
+							<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+								<div>
+									<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Probabilidade</label>
+									<select id="probabilidade-editar-risco-perigo" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151">
+										<option value="">Selecione...</option>
+										<option value="muito-baixa">Muito Baixa</option>
+										<option value="baixa">Baixa</option>
+										<option value="media">Média</option>
+										<option value="alta">Alta</option>
+										<option value="muito-alta">Muito Alta</option>
+									</select>
+								</div>
+								
+								<div>
+									<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Severidade</label>
+									<select id="severidade-editar-risco-perigo" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151">
+										<option value="">Selecione...</option>
+										<option value="insignificante">Insignificante</option>
+										<option value="menor">Menor</option>
+										<option value="moderada">Moderada</option>
+										<option value="maior">Maior</option>
+										<option value="catastrofica">Catastrófica</option>
+									</select>
+								</div>
+								
+								<div>
+									<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Nível de Risco</label>
+									<select id="nivel-editar-risco-perigo" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151">
+										<option value="">Selecione...</option>
+										<option value="muito-baixo">Muito Baixo</option>
+										<option value="baixo">Baixo</option>
+										<option value="medio">Médio</option>
+										<option value="alto">Alto</option>
+										<option value="muito-alto">Muito Alto</option>
+									</select>
+								</div>
+							</div>
+							
+							<div style="margin-bottom:16px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Medidas de Controle</label>
+								<textarea id="medidas-controle-editar-risco-perigo" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151;min-height:80px;resize:vertical" placeholder="Medidas de prevenção e controle recomendadas..."></textarea>
+							</div>
+							
+							<div style="margin-bottom:24px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Status</label>
+								<select id="status-editar-risco-perigo" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151">
+									<option value="ativo">Ativo</option>
+									<option value="controlado">Controlado</option>
+									<option value="eliminado">Eliminado</option>
+								</select>
+							</div>
+							
+							<div style="display:flex;gap:12px;justify-content:flex-end">
+								<button type="button" onclick="fecharModalEdicaoRiscoPerigo()" style="background:#f3f4f6;color:#374151;padding:10px 24px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+									Cancelar
+								</button>
+								<button type="submit" style="background:#dc2626;color:#fff;padding:10px 24px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+									Atualizar Risco/Perigo
 								</button>
 							</div>
 						</form>
@@ -4024,6 +4288,20 @@
 						hideSidebarOnMobile();
 					});
 					
+					document.getElementById('btn-cadastrar-riscos-perigos').addEventListener('click', function() {
+						// Ocultar todas as seções
+						document.getElementById('conteudo-principal').style.display = 'none';
+						document.getElementById('cadastro-usuario').style.display = 'none';
+						document.getElementById('nova-ras').style.display = 'none';
+						document.getElementById('funcionarios').style.display = 'none';
+						document.getElementById('frequencia').style.display = 'none';
+						document.getElementById('cpt').style.display = 'none';
+						document.getElementById('inspecao').style.display = 'none';
+						document.getElementById('gerenciamento-riscos-perigos').style.display = 'block';
+						inicializarRiscosPerigos();
+						hideSidebarOnMobile();
+					});
+					
 					// SISTEMA DE CATEGORIAS HSE
 					
 					// Array para armazenar categorias
@@ -4693,6 +4971,277 @@
 							localStorage.setItem('tiposRegistro', JSON.stringify(tiposRegistro));
 							carregarTiposRegistro();
 							alert('Tipo de registro excluído com sucesso!');
+						}
+					}
+					
+					// SISTEMA DE RISCOS E PERIGOS
+					
+					// Array para armazenar riscos e perigos
+					var riscosPerigos = JSON.parse(localStorage.getItem('riscosPerigos')) || [];
+					var riscoPerigoeditando = null;
+					
+					// Inicializar sistema de riscos e perigos
+					function inicializarRiscosPerigos() {
+						carregarRiscosPerigos();
+						
+						// Event listener para o botão novo risco/perigo
+						document.getElementById('btn-novo-risco-perigo').addEventListener('click', abrirModalNovoRiscoPerigo);
+					}
+					
+					// Botão voltar para inspeção
+					document.getElementById('btn-voltar-inspecao-riscos-perigos') && document.getElementById('btn-voltar-inspecao-riscos-perigos').addEventListener('click', function() {
+						// Ocultar seção de riscos/perigos e mostrar inspeção
+						document.getElementById('gerenciamento-riscos-perigos').style.display = 'none';
+						document.getElementById('inspecao').style.display = 'block';
+						inicializarInspecao();
+					});
+					
+					// Abrir modal novo risco/perigo
+					function abrirModalNovoRiscoPerigo() {
+						document.getElementById('modal-novo-risco-perigo').style.display = 'flex';
+					}
+					
+					// Fechar modal de risco/perigo
+					function fecharModalRiscoPerigo() {
+						document.getElementById('modal-novo-risco-perigo').style.display = 'none';
+						document.getElementById('form-risco-perigo').reset();
+					}
+					
+					// Salvar novo risco/perigo
+					function salvarRiscoPerigo(event) {
+						event.preventDefault();
+						
+						var tipo = document.getElementById('tipo-risco-perigo').value;
+						var categoria = document.getElementById('categoria-risco-perigo').value;
+						var nome = document.getElementById('nome-risco-perigo').value.trim();
+						var descricao = document.getElementById('descricao-risco-perigo').value.trim();
+						var probabilidade = document.getElementById('probabilidade-risco-perigo').value;
+						var severidade = document.getElementById('severidade-risco-perigo').value;
+						var nivel = document.getElementById('nivel-risco-perigo').value;
+						var medidasControle = document.getElementById('medidas-controle-risco-perigo').value.trim();
+						var status = document.getElementById('status-risco-perigo').value;
+						
+						if (!tipo || !nome) {
+							alert('Por favor, informe o tipo e o nome/descrição do risco ou perigo.');
+							return;
+						}
+						
+						// Verificar se já existe um risco/perigo com o mesmo nome
+						var existente = riscosPerigos.find(function(item) {
+							return item.nome.toLowerCase() === nome.toLowerCase();
+						});
+						
+						if (existente) {
+							alert('Já existe um risco/perigo com esse nome.');
+							return;
+						}
+						
+						var novoRiscoPerigo = {
+							id: Date.now(),
+							tipo: tipo,
+							categoria: categoria,
+							nome: nome,
+							descricao: descricao,
+							probabilidade: probabilidade,
+							severidade: severidade,
+							nivel: nivel,
+							medidasControle: medidasControle,
+							status: status,
+							dataCriacao: new Date().toLocaleString('pt-BR')
+						};
+						
+						riscosPerigos.push(novoRiscoPerigo);
+						localStorage.setItem('riscosPerigos', JSON.stringify(riscosPerigos));
+						
+						// Fechar modal e recarregar lista
+						fecharModalRiscoPerigo();
+						carregarRiscosPerigos();
+						
+						alert('Risco/perigo cadastrado com sucesso!');
+					}
+					
+					// Carregar e exibir riscos/perigos
+					function carregarRiscosPerigos() {
+						var lista = document.getElementById('lista-riscos-perigos');
+						
+						if (riscosPerigos.length === 0) {
+							lista.innerHTML = '<div style="padding:60px 20px;text-align:center;color:#9ca3af"><div style="font-size:3rem;margin-bottom:16px;opacity:0.5">⚠️</div><div style="font-size:1.1rem;font-weight:500;margin-bottom:8px">Nenhum risco ou perigo cadastrado ainda.</div><div style="font-size:0.9rem">Clique em "Novo risco/perigo" para começar.</div></div>';
+							return;
+						}
+						
+						var html = '';
+						riscosPerigos.forEach(function(item) {
+							var tipoIcon = item.tipo === 'risco' ? '⚠️' : '☢️';
+							var statusClass = '';
+							var statusIcon = '';
+							
+							switch(item.status) {
+								case 'ativo':
+									statusClass = 'background:#ef4444;color:#fff';
+									statusIcon = '🔴';
+									break;
+								case 'controlado':
+									statusClass = 'background:#f59e0b;color:#fff';
+									statusIcon = '🟡';
+									break;
+								case 'eliminado':
+									statusClass = 'background:#10b981;color:#fff';
+									statusIcon = '🟢';
+									break;
+							}
+							
+							var nivelClass = '';
+							switch(item.nivel) {
+								case 'muito-baixo':
+									nivelClass = 'background:#10b981;color:#fff';
+									break;
+								case 'baixo':
+									nivelClass = 'background:#84cc16;color:#fff';
+									break;
+								case 'medio':
+									nivelClass = 'background:#f59e0b;color:#fff';
+									break;
+								case 'alto':
+									nivelClass = 'background:#f97316;color:#fff';
+									break;
+								case 'muito-alto':
+									nivelClass = 'background:#ef4444;color:#fff';
+									break;
+								default:
+									nivelClass = 'background:#6b7280;color:#fff';
+							}
+							
+							html += '<div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid #e5e7eb;justify-content:space-between">';
+							html += '<div style="flex:1">';
+							html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">';
+							html += '<span style="font-size:1.2rem">' + tipoIcon + '</span>';
+							html += '<div style="font-weight:600;color:#374151;font-size:1rem">' + item.nome + '</div>';
+							if (item.categoria) {
+								html += '<span style="background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:4px;font-size:0.8rem;font-weight:500">' + item.categoria.charAt(0).toUpperCase() + item.categoria.slice(1) + '</span>';
+							}
+							if (item.nivel) {
+								html += '<span style="' + nivelClass + ';padding:4px 8px;border-radius:4px;font-size:0.8rem;font-weight:500">' + item.nivel.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) + '</span>';
+							}
+							html += '<span style="' + statusClass + ';padding:4px 8px;border-radius:4px;font-size:0.8rem;font-weight:500">' + statusIcon + ' ' + item.status.charAt(0).toUpperCase() + item.status.slice(1) + '</span>';
+							html += '</div>';
+							if (item.descricao) {
+								html += '<div style="color:#6b7280;font-size:0.9rem;margin-bottom:4px">' + item.descricao + '</div>';
+							}
+							if (item.medidasControle) {
+								html += '<div style="color:#6b7280;font-size:0.8rem;margin-bottom:4px"><strong>Controles:</strong> ' + item.medidasControle + '</div>';
+							}
+							html += '<div style="color:#9ca3af;font-size:0.8rem">Criado em: ' + item.dataCriacao + '</div>';
+							html += '</div>';
+							html += '<div style="display:flex;gap:8px">';
+							html += '<button onclick="editarRiscoPerigo(' + item.id + ')" style="background:#3b82f6;color:#fff;border:none;padding:8px 12px;border-radius:4px;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;gap:4px">';
+							html += '<span>✏️</span> Editar';
+							html += '</button>';
+							html += '<button onclick="excluirRiscoPerigo(' + item.id + ')" style="background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:4px;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;gap:4px">';
+							html += '<span>🗑️</span> Excluir';
+							html += '</button>';
+							html += '</div>';
+							html += '</div>';
+						});
+						
+						lista.innerHTML = html;
+					}
+					
+					// Editar risco/perigo
+					function editarRiscoPerigo(id) {
+						var item = riscosPerigos.find(function(r) { return r.id == id; });
+						if (!item) {
+							alert('Risco/perigo não encontrado.');
+							return;
+						}
+						
+						riscoPerigoeditando = item;
+						
+						// Preencher campos do modal de edição
+						document.getElementById('id-editar-risco-perigo').value = item.id;
+						document.getElementById('tipo-editar-risco-perigo').value = item.tipo;
+						document.getElementById('categoria-editar-risco-perigo').value = item.categoria || '';
+						document.getElementById('nome-editar-risco-perigo').value = item.nome;
+						document.getElementById('descricao-editar-risco-perigo').value = item.descricao || '';
+						document.getElementById('probabilidade-editar-risco-perigo').value = item.probabilidade || '';
+						document.getElementById('severidade-editar-risco-perigo').value = item.severidade || '';
+						document.getElementById('nivel-editar-risco-perigo').value = item.nivel || '';
+						document.getElementById('medidas-controle-editar-risco-perigo').value = item.medidasControle || '';
+						document.getElementById('status-editar-risco-perigo').value = item.status;
+						
+						// Abrir o modal
+						document.getElementById('modal-editar-risco-perigo').style.display = 'flex';
+					}
+					
+					// Função para fechar modal de edição
+					function fecharModalEdicaoRiscoPerigo() {
+						document.getElementById('modal-editar-risco-perigo').style.display = 'none';
+						document.getElementById('form-editar-risco-perigo').reset();
+						riscoPerigoeditando = null;
+					}
+					
+					// Atualizar risco/perigo
+					function atualizarRiscoPerigo(event) {
+						event.preventDefault();
+						
+						if (!riscoPerigoeditando) {
+							alert('Erro: Risco/perigo não selecionado.');
+							return;
+						}
+						
+						var novoTipo = document.getElementById('tipo-editar-risco-perigo').value;
+						var novaCategoria = document.getElementById('categoria-editar-risco-perigo').value;
+						var novoNome = document.getElementById('nome-editar-risco-perigo').value.trim();
+						var novaDescricao = document.getElementById('descricao-editar-risco-perigo').value.trim();
+						var novaProbabilidade = document.getElementById('probabilidade-editar-risco-perigo').value;
+						var novaSeveridade = document.getElementById('severidade-editar-risco-perigo').value;
+						var novoNivel = document.getElementById('nivel-editar-risco-perigo').value;
+						var novasMedidas = document.getElementById('medidas-controle-editar-risco-perigo').value.trim();
+						var novoStatus = document.getElementById('status-editar-risco-perigo').value;
+						
+						if (!novoTipo || !novoNome) {
+							alert('Por favor, informe o tipo e o nome/descrição do risco ou perigo.');
+							return;
+						}
+						
+						// Verificar se já existe outro risco/perigo com o mesmo nome
+						var existente = riscosPerigos.find(function(item) {
+							return item.nome.toLowerCase() === novoNome.toLowerCase() && item.id !== riscoPerigoeditando.id;
+						});
+						
+						if (existente) {
+							alert('Já existe outro risco/perigo com esse nome.');
+							return;
+						}
+						
+						// Atualizar o risco/perigo
+						riscoPerigoeditando.tipo = novoTipo;
+						riscoPerigoeditando.categoria = novaCategoria;
+						riscoPerigoeditando.nome = novoNome;
+						riscoPerigoeditando.descricao = novaDescricao;
+						riscoPerigoeditando.probabilidade = novaProbabilidade;
+						riscoPerigoeditando.severidade = novaSeveridade;
+						riscoPerigoeditando.nivel = novoNivel;
+						riscoPerigoeditando.medidasControle = novasMedidas;
+						riscoPerigoeditando.status = novoStatus;
+						riscoPerigoeditando.dataEdicao = new Date().toLocaleString('pt-BR');
+						
+						// Salvar no localStorage
+						localStorage.setItem('riscosPerigos', JSON.stringify(riscosPerigos));
+						
+						// Fechar modal e recarregar lista
+						fecharModalEdicaoRiscoPerigo();
+						carregarRiscosPerigos();
+						
+						alert('Risco/perigo atualizado com sucesso!');
+					}
+					
+					// Excluir risco/perigo
+					function excluirRiscoPerigo(id) {
+						if (confirm('Deseja realmente excluir este risco/perigo?')) {
+							riscosPerigos = riscosPerigos.filter(function(item) { return item.id != id; });
+							localStorage.setItem('riscosPerigos', JSON.stringify(riscosPerigos));
+							carregarRiscosPerigos();
+							alert('Risco/perigo excluído com sucesso!');
 						}
 					}
 					
