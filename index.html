@@ -1258,9 +1258,6 @@
 							<div id="lista-inspecoes-section">
 								<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
 									<h3 style="margin:0;color:#374151;font-size:1.3rem">Registros de Inspeção</h3>
-									<button id="btn-nova-inspecao-top" type="button" style="background:#059669;color:#fff;padding:8px 16px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600">
-										+ Nova Inspeção
-									</button>
 								</div>
 								
 								<!-- Tabela de Inspeções -->
@@ -3106,7 +3103,6 @@
 					
 					// Abrir modal nova inspeção
 					document.getElementById('btn-nova-inspecao').addEventListener('click', abrirModalNovaInspecao);
-					document.getElementById('btn-nova-inspecao-top').addEventListener('click', abrirModalNovaInspecao);
 					
 					function abrirModalNovaInspecao() {
 						document.getElementById('modal-nova-inspecao').style.display = 'flex';
