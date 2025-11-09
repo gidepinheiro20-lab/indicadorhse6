@@ -1558,86 +1558,32 @@
 			
 			<!-- Modal Nova Categoria -->
 			<div id="modal-nova-categoria" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1003;justify-content:center;align-items:center;overflow-y:auto">
-				<div style="background:#fff;border-radius:12px;width:90%;max-width:600px;max-height:90vh;overflow-y:auto;margin:20px">
-					<div style="background:linear-gradient(135deg,#059669 0%,#047857 100%);color:#fff;padding:20px;border-radius:12px 12px 0 0">
-						<h2 style="margin:0;font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:8px">
-							<span>🏷️</span> Nova Categoria HSE
-						</h2>
-					</div>
+				<div style="background:#fff;border-radius:8px;width:90%;max-width:500px;margin:20px;position:relative">
+					<!-- Botão X para fechar -->
+					<button onclick="fecharModalCategoria()" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:1.2rem;color:#6b7280;cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center">×</button>
 					
 					<div style="padding:24px">
+						<h2 style="margin:0 0 24px 0;font-size:1.1rem;font-weight:600;color:#374151">Adicionar Categoria e Subcategoria</h2>
+						
 						<form id="form-nova-categoria">
-							<!-- Nome da Categoria -->
+							<!-- Categoria -->
 							<div style="margin-bottom:20px">
-								<label style="display:block;font-weight:600;color:#374151;margin-bottom:8px;font-size:0.95rem">Nome da Categoria *</label>
-								<input type="text" id="cat-nome" required placeholder="Ex: Segurança do Trabalho, Meio Ambiente..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Categoria</label>
+								<input type="text" id="cat-nome" required placeholder="" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
 							</div>
 							
-							<!-- Descrição -->
-							<div style="margin-bottom:20px">
-								<label style="display:block;font-weight:600;color:#374151;margin-bottom:8px;font-size:0.95rem">Descrição</label>
-								<textarea id="cat-descricao" placeholder="Descreva o escopo desta categoria..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
-							</div>
-							
-							<!-- Cor da Categoria -->
-							<div style="margin-bottom:20px">
-								<label style="display:block;font-weight:600;color:#374151;margin-bottom:8px;font-size:0.95rem">Cor de Identificação</label>
-								<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:12px">
-									<label style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:12px;border:2px solid #e5e7eb;border-radius:8px;transition:all 0.2s" onclick="selecionarCor(this, '#ef4444')">
-										<div style="width:30px;height:30px;background:#ef4444;border-radius:50%;margin-bottom:6px"></div>
-										<input type="radio" name="cat-cor" value="#ef4444" style="display:none">
-										<span style="font-size:0.8rem;color:#6b7280">Vermelho</span>
-									</label>
-									<label style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:12px;border:2px solid #e5e7eb;border-radius:8px;transition:all 0.2s" onclick="selecionarCor(this, '#f59e0b')">
-										<div style="width:30px;height:30px;background:#f59e0b;border-radius:50%;margin-bottom:6px"></div>
-										<input type="radio" name="cat-cor" value="#f59e0b" style="display:none">
-										<span style="font-size:0.8rem;color:#6b7280">Laranja</span>
-									</label>
-									<label style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:12px;border:2px solid #e5e7eb;border-radius:8px;transition:all 0.2s" onclick="selecionarCor(this, '#10b981')">
-										<div style="width:30px;height:30px;background:#10b981;border-radius:50%;margin-bottom:6px"></div>
-										<input type="radio" name="cat-cor" value="#10b981" style="display:none">
-										<span style="font-size:0.8rem;color:#6b7280">Verde</span>
-									</label>
-									<label style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:12px;border:2px solid #e5e7eb;border-radius:8px;transition:all 0.2s" onclick="selecionarCor(this, '#3b82f6')">
-										<div style="width:30px;height:30px;background:#3b82f6;border-radius:50%;margin-bottom:6px"></div>
-										<input type="radio" name="cat-cor" value="#3b82f6" style="display:none">
-										<span style="font-size:0.8rem;color:#6b7280">Azul</span>
-									</label>
-									<label style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:12px;border:2px solid #e5e7eb;border-radius:8px;transition:all 0.2s" onclick="selecionarCor(this, '#8b5cf6')">
-										<div style="width:30px;height:30px;background:#8b5cf6;border-radius:50%;margin-bottom:6px"></div>
-										<input type="radio" name="cat-cor" value="#8b5cf6" style="display:none">
-										<span style="font-size:0.8rem;color:#6b7280">Roxo</span>
-									</label>
-									<label style="display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:12px;border:2px solid #e5e7eb;border-radius:8px;transition:all 0.2s" onclick="selecionarCor(this, '#6b7280')">
-										<div style="width:30px;height:30px;background:#6b7280;border-radius:50%;margin-bottom:6px"></div>
-										<input type="radio" name="cat-cor" value="#6b7280" style="display:none">
-										<span style="font-size:0.8rem;color:#6b7280">Cinza</span>
-									</label>
-								</div>
-							</div>
-							
-							<!-- Subcategorias -->
-							<div style="margin-bottom:24px">
-								<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-									<label style="font-weight:600;color:#374151;font-size:0.95rem">Subcategorias</label>
-									<button type="button" id="btn-adicionar-subcategoria" style="background:#059669;color:#fff;border:none;border-radius:4px;padding:6px 12px;font-size:0.8rem;cursor:pointer;font-weight:500">
-										+ Adicionar
-									</button>
-								</div>
-								<div id="lista-subcategorias">
-									<div class="subcategoria-item" style="display:flex;gap:8px;margin-bottom:8px">
-										<input type="text" placeholder="Nome da subcategoria" style="flex:1;padding:8px;border:1px solid #d1d5db;border-radius:4px;font-size:0.85rem">
-										<button type="button" onclick="removerSubcategoria(this)" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.8rem;cursor:pointer">×</button>
-									</div>
-								</div>
+							<!-- Subcategoria -->
+							<div style="margin-bottom:32px">
+								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Subcategoria</label>
+								<input type="text" id="cat-subcategoria" required placeholder="" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
 							</div>
 							
 							<div style="display:flex;gap:12px;justify-content:flex-end">
-								<button type="button" onclick="fecharModalCategoria()" style="background:#6b7280;color:#fff;padding:12px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+								<button type="button" onclick="fecharModalCategoria()" style="background:#f3f4f6;color:#374151;padding:10px 24px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
 									Cancelar
 								</button>
-								<button type="submit" style="background:#059669;color:#fff;padding:12px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
-									💾 Salvar Categoria
+								<button type="submit" style="background:#374151;color:#fff;padding:10px 24px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+									Adicionar
 								</button>
 							</div>
 						</form>
@@ -3496,99 +3442,56 @@
 					
 					function abrirModalNovaCategoria() {
 						document.getElementById('modal-nova-categoria').style.display = 'flex';
-						// Selecionar cor verde por padrão
-						var corVerde = document.querySelector('input[name="cat-cor"][value="#10b981"]');
-						if (corVerde) {
-							corVerde.checked = true;
-							selecionarCor(corVerde.closest('label'), '#10b981');
-						}
 					}
 					
 					// Fechar modal de categoria
 					function fecharModalCategoria() {
 						document.getElementById('modal-nova-categoria').style.display = 'none';
 						document.getElementById('form-nova-categoria').reset();
-						// Limpar subcategorias extras
-						var listaSubcategorias = document.getElementById('lista-subcategorias');
-						listaSubcategorias.innerHTML = '<div class="subcategoria-item" style="display:flex;gap:8px;margin-bottom:8px"><input type="text" placeholder="Nome da subcategoria" style="flex:1;padding:8px;border:1px solid #d1d5db;border-radius:4px;font-size:0.85rem"><button type="button" onclick="removerSubcategoria(this)" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.8rem;cursor:pointer">×</button></div>';
-						// Limpar seleção de cor
-						document.querySelectorAll('input[name="cat-cor"]').forEach(function(input) {
-							input.checked = false;
-							input.closest('label').style.borderColor = '#e5e7eb';
-						});
-					}
-					
-					// Selecionar cor
-					function selecionarCor(label, cor) {
-						// Limpar seleções anteriores
-						document.querySelectorAll('input[name="cat-cor"]').forEach(function(input) {
-							input.closest('label').style.borderColor = '#e5e7eb';
-							input.checked = false;
-						});
-						// Selecionar nova cor
-						label.style.borderColor = cor;
-						label.querySelector('input').checked = true;
-					}
-					
-					// Adicionar subcategoria
-					document.getElementById('btn-adicionar-subcategoria').addEventListener('click', function() {
-						var lista = document.getElementById('lista-subcategorias');
-						var novaSubcategoria = document.createElement('div');
-						novaSubcategoria.className = 'subcategoria-item';
-						novaSubcategoria.style.cssText = 'display:flex;gap:8px;margin-bottom:8px';
-						novaSubcategoria.innerHTML = '<input type="text" placeholder="Nome da subcategoria" style="flex:1;padding:8px;border:1px solid #d1d5db;border-radius:4px;font-size:0.85rem"><button type="button" onclick="removerSubcategoria(this)" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.8rem;cursor:pointer">×</button>';
-						lista.appendChild(novaSubcategoria);
-					});
-					
-					// Remover subcategoria
-					function removerSubcategoria(botao) {
-						var lista = document.getElementById('lista-subcategorias');
-						if (lista.children.length > 1) {
-							botao.closest('.subcategoria-item').remove();
-						} else {
-							alert('Deve haver pelo menos uma subcategoria.');
-						}
 					}
 					
 					// Salvar nova categoria
 					document.getElementById('form-nova-categoria').addEventListener('submit', function(e) {
 						e.preventDefault();
 						
-						var nome = document.getElementById('cat-nome').value;
-						var descricao = document.getElementById('cat-descricao').value;
-						var cor = document.querySelector('input[name="cat-cor"]:checked');
+						var nomeCategoria = document.getElementById('cat-nome').value.trim();
+						var nomeSubcategoria = document.getElementById('cat-subcategoria').value.trim();
 						
-						if (!cor) {
-							alert('Por favor, selecione uma cor para a categoria.');
+						if (!nomeCategoria || !nomeSubcategoria) {
+							alert('Por favor, preencha tanto a categoria quanto a subcategoria.');
 							return;
 						}
 						
-						// Coletar subcategorias
-						var subcategorias = [];
-						document.querySelectorAll('#lista-subcategorias input[type="text"]').forEach(function(input) {
-							if (input.value.trim()) {
-								subcategorias.push(input.value.trim());
-							}
+						// Verificar se a categoria já existe
+						var categoriaExistente = categoriasHSE.find(function(cat) {
+							return cat.nome.toLowerCase() === nomeCategoria.toLowerCase();
 						});
 						
-						if (subcategorias.length === 0) {
-							alert('Por favor, adicione pelo menos uma subcategoria.');
-							return;
+						if (categoriaExistente) {
+							// Adicionar subcategoria à categoria existente
+							if (!categoriaExistente.subcategorias.includes(nomeSubcategoria)) {
+								categoriaExistente.subcategorias.push(nomeSubcategoria);
+								localStorage.setItem('categoriasHSE', JSON.stringify(categoriasHSE));
+								alert('Subcategoria adicionada à categoria existente!');
+							} else {
+								alert('Esta subcategoria já existe nesta categoria.');
+								return;
+							}
+						} else {
+							// Criar nova categoria
+							var novaCategoria = {
+								id: Date.now(),
+								nome: nomeCategoria,
+								cor: '#10b981', // Cor verde padrão
+								subcategorias: [nomeSubcategoria],
+								dataCriacao: new Date().toISOString()
+							};
+							
+							categoriasHSE.push(novaCategoria);
+							localStorage.setItem('categoriasHSE', JSON.stringify(categoriasHSE));
+							alert('Nova categoria criada com sucesso!');
 						}
 						
-						var novaCategoria = {
-							id: Date.now(),
-							nome: nome,
-							descricao: descricao,
-							cor: cor.value,
-							subcategorias: subcategorias,
-							dataCriacao: new Date().toISOString()
-						};
-						
-						categoriasHSE.push(novaCategoria);
-						localStorage.setItem('categoriasHSE', JSON.stringify(categoriasHSE));
-						
-						alert('Categoria cadastrada com sucesso!');
 						fecharModalCategoria();
 						carregarCategorias();
 					});
