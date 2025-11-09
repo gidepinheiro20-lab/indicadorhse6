@@ -1272,7 +1272,7 @@
 								<!-- Tabela de Inspeções -->
 								<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden">
 									<!-- Cabeçalho da tabela -->
-									<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:80px 60px 80px 60px 60px 100px 80px 80px 120px 80px 80px 100px;gap:8px;font-weight:600;color:#374151;font-size:0.85rem">
+									<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:80px 60px 80px 60px 60px 100px 80px 80px 120px 80px 80px 120px;gap:8px;font-weight:600;color:#374151;font-size:0.85rem">
 										<div>Data</div>
 										<div>Área</div>
 										<div>Local</div>
@@ -1290,7 +1290,7 @@
 									<!-- Lista de inspeções -->
 									<div id="lista-inspecoes">
 										<!-- Exemplo de inspeção -->
-										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:80px 60px 80px 60px 60px 100px 80px 80px 120px 80px 80px 100px;gap:8px;align-items:center;font-size:0.8rem">
+										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:80px 60px 80px 60px 60px 100px 80px 80px 120px 80px 80px 120px;gap:8px;align-items:center;font-size:0.8rem">
 											<div style="color:#374151;font-weight:500">04/11/2025</div>
 											<div style="color:#374151">BAP 1B</div>
 											<div style="color:#6b7280">Escavação</div>
@@ -1305,6 +1305,7 @@
 												<button style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer">📷 Ver Fotos</button>
 											</div>
 											<div style="display:flex;gap:4px">
+												<button onclick="mostrarRelatorioInspecao('1')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer" title="Ver Relatório">📋</button>
 												<button onclick="editarInspecao('1')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>
 												<button onclick="excluirInspecao('1')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">🗑️</button>
 											</div>
@@ -1525,6 +1526,39 @@
 									</button>
 								</div>
 							</form>
+						</div>
+					</div>
+				</div>
+
+				<!-- Modal Relatório de Inspeção -->
+				<div id="modal-relatorio-inspecao" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1003;justify-content:center;align-items:center;overflow-y:auto">
+					<div style="background:#fff;border-radius:12px;max-width:800px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1)">
+						<div style="padding:24px">
+							<!-- Cabeçalho do Relatório -->
+							<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:20px">
+								<div>
+									<h2 style="margin:0;color:#374151;font-size:1.5rem;font-weight:700;display:flex;align-items:center;gap:8px">
+										📋 Relatório de Inspeção
+									</h2>
+									<p style="margin:4px 0 0 0;color:#6b7280;font-size:0.9rem">Informações detalhadas da inspeção</p>
+								</div>
+								<button onclick="fecharModalRelatorio()" style="background:none;border:none;font-size:1.5rem;color:#9ca3af;cursor:pointer;padding:4px">✕</button>
+							</div>
+
+							<!-- Conteúdo do Relatório -->
+							<div id="conteudo-relatorio">
+								<!-- Conteúdo será preenchido dinamicamente -->
+							</div>
+
+							<!-- Botões do Rodapé -->
+							<div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid #e5e7eb">
+								<button onclick="imprimirRelatorio()" style="background:#059669;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem;display:flex;align-items:center;gap:6px">
+									🖨️ Imprimir
+								</button>
+								<button onclick="fecharModalRelatorio()" style="background:#6b7280;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+									Fechar
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -4113,7 +4147,7 @@
 							var corSeveridade = getCorSeveridade(inspecao.severidade);
 							var corStatus = getCorStatus(inspecao.status);
 							
-							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:80px 60px 80px 60px 60px 100px 80px 80px 120px 80px 80px 100px;gap:8px;align-items:center;font-size:0.8rem">';
+							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:80px 60px 80px 60px 60px 100px 80px 80px 120px 80px 80px 120px;gap:8px;align-items:center;font-size:0.8rem">';
 							html += '<div style="color:#374151;font-weight:500">' + dataFormatada + '</div>';
 							html += '<div style="color:#374151">' + inspecao.area + '</div>';
 							html += '<div style="color:#6b7280">' + inspecao.local + '</div>';
@@ -4136,6 +4170,7 @@
 							}
 							html += '</div>';
 							html += '<div style="display:flex;gap:4px">';
+							html += '<button onclick="mostrarRelatorioInspecao(\'' + inspecao.id + '\')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer" title="Ver Relatório">📋</button>';
 							html += '<button onclick="editarInspecao(\'' + inspecao.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>';
 							html += '<button onclick="excluirInspecao(\'' + inspecao.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">🗑️</button>';
 							html += '</div>';
@@ -4182,6 +4217,123 @@
 							carregarInspecoes();
 							alert('Inspeção excluída com sucesso!');
 						}
+					}
+
+					// Funções do Modal de Relatório
+					function mostrarRelatorioInspecao(id) {
+						var inspecao = inspecoes.find(function(insp) { return insp.id == id; });
+						if (!inspecao) {
+							alert('Inspeção não encontrada!');
+							return;
+						}
+
+						var html = '';
+						
+						// Informações Básicas
+						html += '<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:20px;margin-bottom:20px">';
+						html += '<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem;font-weight:600;display:flex;align-items:center;gap:8px">📊 Informações Básicas</h3>';
+						html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">';
+						html += '<div><strong style="color:#6b7280">Data:</strong><br><span style="color:#374151">' + formatarData(inspecao.data) + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Área:</strong><br><span style="color:#374151">' + inspecao.area + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Local:</strong><br><span style="color:#374151">' + inspecao.local + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Tipo:</strong><br><span style="color:#374151">' + inspecao.tipo + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Semana:</strong><br><span style="color:#374151">' + inspecao.semana + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Responsável:</strong><br><span style="color:#374151">' + inspecao.responsavel + '</span></div>';
+						html += '</div>';
+						html += '</div>';
+
+						// Detalhes da Inspeção
+						html += '<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:20px;margin-bottom:20px">';
+						html += '<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem;font-weight:600;display:flex;align-items:center;gap:8px">🔍 Detalhes da Inspeção</h3>';
+						html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:16px">';
+						html += '<div><strong style="color:#6b7280">Categoria:</strong><br><span style="color:#374151">' + inspecao.categoria + '</span></div>';
+						var corSeveridade = getCorSeveridade(inspecao.severidade);
+						html += '<div><strong style="color:#6b7280">Severidade:</strong><br><span style="background:' + corSeveridade + ';color:#fff;padding:4px 12px;border-radius:16px;font-size:0.85rem;font-weight:500">' + inspecao.severidade + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Interdição:</strong><br><span style="color:' + (inspecao.interdicao === 'Sim' ? '#10b981' : '#ef4444') + ';font-weight:600">' + inspecao.interdicao + '</span></div>';
+						var corStatus = getCorStatus(inspecao.status);
+						html += '<div><strong style="color:#6b7280">Status:</strong><br><span style="background:' + corStatus + ';color:#fff;padding:4px 12px;border-radius:16px;font-size:0.85rem;font-weight:500">' + inspecao.status + '</span></div>';
+						html += '</div>';
+						
+						if (inspecao.descricao) {
+							html += '<div style="margin-top:16px">';
+							html += '<strong style="color:#6b7280">Descrição:</strong>';
+							html += '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:12px;margin-top:8px;color:#374151">' + inspecao.descricao + '</div>';
+							html += '</div>';
+						}
+						html += '</div>';
+
+						// Fotos
+						if (inspecao.fotoAntes || inspecao.fotoDepois) {
+							html += '<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:20px;margin-bottom:20px">';
+							html += '<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem;font-weight:600;display:flex;align-items:center;gap:8px">📷 Fotos da Inspeção</h3>';
+							html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px">';
+							
+							if (inspecao.fotoAntes) {
+								html += '<div>';
+								html += '<h4 style="margin:0 0 12px 0;color:#6b7280;font-size:1rem;font-weight:600">📸 Foto Antes</h4>';
+								html += '<div style="border:2px solid #e5e7eb;border-radius:8px;overflow:hidden;background:#fff">';
+								html += '<img src="' + inspecao.fotoAntes + '" style="width:100%;height:200px;object-fit:cover;cursor:pointer" onclick="abrirImagemModal(\'' + inspecao.fotoAntes + '\', \'Foto Antes\')">';
+								html += '</div>';
+								html += '</div>';
+							}
+							
+							if (inspecao.fotoDepois) {
+								html += '<div>';
+								html += '<h4 style="margin:0 0 12px 0;color:#6b7280;font-size:1rem;font-weight:600">📸 Foto Depois</h4>';
+								html += '<div style="border:2px solid #e5e7eb;border-radius:8px;overflow:hidden;background:#fff">';
+								html += '<img src="' + inspecao.fotoDepois + '" style="width:100%;height:200px;object-fit:cover;cursor:pointer" onclick="abrirImagemModal(\'' + inspecao.fotoDepois + '\', \'Foto Depois\')">';
+								html += '</div>';
+								html += '</div>';
+							}
+							
+							html += '</div>';
+							html += '</div>';
+						}
+
+						// Atualizar conteúdo do modal
+						document.getElementById('conteudo-relatorio').innerHTML = html;
+						document.getElementById('modal-relatorio-inspecao').style.display = 'flex';
+					}
+
+					function fecharModalRelatorio() {
+						document.getElementById('modal-relatorio-inspecao').style.display = 'none';
+					}
+
+					function imprimirRelatorio() {
+						var conteudo = document.getElementById('conteudo-relatorio').innerHTML;
+						var janelaImprimir = window.open('', '_blank');
+						janelaImprimir.document.write(`
+							<html>
+								<head>
+									<title>Relatório de Inspeção HSE</title>
+									<style>
+										body { font-family: Arial, sans-serif; margin: 20px; color: #374151; }
+										h1 { color: #059669; border-bottom: 2px solid #059669; padding-bottom: 10px; }
+										h3 { color: #374151; margin-top: 20px; }
+										img { max-width: 300px; height: auto; border: 1px solid #e5e7eb; border-radius: 8px; }
+										.no-print { display: none; }
+										@media print {
+											body { margin: 0; }
+											img { max-width: 200px; }
+										}
+									</style>
+								</head>
+								<body>
+									<h1>📋 Relatório de Inspeção HSE</h1>
+									${conteudo}
+								</body>
+							</html>
+						`);
+						janelaImprimir.document.close();
+						janelaImprimir.print();
+					}
+
+					function abrirImagemModal(src, titulo) {
+						var modal = document.createElement('div');
+						modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:2000;display:flex;justify-content:center;align-items:center;cursor:pointer';
+						modal.innerHTML = '<div style="max-width:90%;max-height:90%;text-align:center"><h3 style="color:#fff;margin-bottom:20px">' + titulo + '</h3><img src="' + src + '" style="max-width:100%;max-height:80vh;border-radius:8px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.4)"></div>';
+						modal.onclick = function() { document.body.removeChild(modal); };
+						document.body.appendChild(modal);
 					}
 					
 					// Botões de cadastro de área e categoria
