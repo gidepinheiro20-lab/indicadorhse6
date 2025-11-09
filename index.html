@@ -1728,6 +1728,53 @@
 				</div>
 			</div>
 			
+			<!-- Modal Editar Área/Local -->
+			<div id="modal-editar-area" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1003;justify-content:center;align-items:center;overflow-y:auto">
+				<div style="background:#fff;border-radius:8px;width:90%;max-width:500px;margin:20px;position:relative">
+					<!-- Botão X para fechar -->
+					<button onclick="fecharModalEdicaoArea()" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:1.2rem;color:#6b7280;cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center">×</button>
+					
+					<div style="padding:24px">
+						<h2 style="margin:0 0 24px 0;font-size:1.1rem;font-weight:600;color:#374151">Editar Área e Local</h2>
+						
+						<form id="form-editar-area">
+							<!-- Campo Nome da Área -->
+							<div style="margin-bottom:20px">
+								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Nome da Área</label>
+								<input type="text" id="edit-area-nome" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+							</div>
+							
+							<!-- Campo Local Específico -->
+							<div style="margin-bottom:20px">
+								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Local Específico</label>
+								<input type="text" id="edit-area-local" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+							</div>
+							
+							<!-- Campo Descrição -->
+							<div style="margin-bottom:20px">
+								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Descrição (Opcional)</label>
+								<textarea id="edit-area-descricao" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff;resize:vertical;min-height:80px"></textarea>
+							</div>
+							
+							<!-- Campo Cor Identificadora -->
+							<div style="margin-bottom:32px">
+								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Cor Identificadora</label>
+								<input type="color" id="edit-area-cor" style="width:60px;height:40px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer">
+							</div>
+							
+							<div style="display:flex;gap:12px;justify-content:flex-end">
+								<button type="button" onclick="fecharModalEdicaoArea()" style="background:#f3f4f6;color:#374151;padding:10px 24px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+									Cancelar
+								</button>
+								<button type="submit" style="background:#f59e0b;color:#fff;padding:10px 24px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+									Salvar Alterações
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			
 			</main>
 		</div>
 					<script>
@@ -3961,10 +4008,82 @@
 						lista.innerHTML = html;
 					}
 					
-					// Funções de ação para áreas (placeholder)
+					// Variável para armazenar a área sendo editada
+					var areaEditando = null;
+					
+					// Função para editar área
 					function editarArea(id) {
-						alert('Função de editar área será implementada. ID: ' + id);
+						// Encontrar a área pelo ID
+						areaEditando = areasLocais.find(function(area) { return area.id == id; });
+						
+						if (!areaEditando) {
+							alert('Área não encontrada!');
+							return;
+						}
+						
+						// Preencher o formulário com os dados da área
+						document.getElementById('edit-area-nome').value = areaEditando.nome;
+						document.getElementById('edit-area-local').value = areaEditando.local;
+						document.getElementById('edit-area-descricao').value = areaEditando.descricao || '';
+						document.getElementById('edit-area-cor').value = areaEditando.cor || '#10b981';
+						
+						// Abrir o modal
+						document.getElementById('modal-editar-area').style.display = 'flex';
 					}
+					
+					// Função para fechar modal de edição
+					function fecharModalEdicaoArea() {
+						document.getElementById('modal-editar-area').style.display = 'none';
+						document.getElementById('form-editar-area').reset();
+						areaEditando = null;
+					}
+					
+					// Event listener para o formulário de edição
+					document.getElementById('form-editar-area').addEventListener('submit', function(e) {
+						e.preventDefault();
+						
+						if (!areaEditando) {
+							alert('Erro: Área não selecionada.');
+							return;
+						}
+						
+						var novoNome = document.getElementById('edit-area-nome').value.trim();
+						var novoLocal = document.getElementById('edit-area-local').value.trim();
+						var novaDescricao = document.getElementById('edit-area-descricao').value.trim();
+						var novaCor = document.getElementById('edit-area-cor').value;
+						
+						if (!novoNome || !novoLocal) {
+							alert('Por favor, preencha o nome da área e o local específico.');
+							return;
+						}
+						
+						// Verificar se a combinação área + local já existe em outra área
+						var areaExistente = areasLocais.find(function(area) {
+							return area.id != areaEditando.id && 
+								   area.nome.toLowerCase() === novoNome.toLowerCase() && 
+								   area.local.toLowerCase() === novoLocal.toLowerCase();
+						});
+						
+						if (areaExistente) {
+							alert('Esta combinação de área e local já existe.');
+							return;
+						}
+						
+						// Atualizar a área
+						areaEditando.nome = novoNome;
+						areaEditando.local = novoLocal;
+						areaEditando.descricao = novaDescricao;
+						areaEditando.cor = novaCor;
+						
+						// Salvar no localStorage
+						localStorage.setItem('areasLocais', JSON.stringify(areasLocais));
+						
+						// Fechar modal e recarregar lista
+						fecharModalEdicaoArea();
+						carregarAreasLocais();
+						
+						alert('Área/local atualizada com sucesso!');
+					});
 					
 					function excluirArea(id) {
 						if (confirm('Deseja realmente excluir esta área/local?')) {
