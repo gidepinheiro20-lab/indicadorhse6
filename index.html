@@ -1249,6 +1249,9 @@
 									<button id="btn-cadastrar-categoria" type="button" style="background:#059669;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
 										<span>🏷️</span> Cadastrar Categoria
 									</button>
+									<button id="btn-cadastrar-tipo-registro" type="button" style="background:#7c3aed;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
+										<span>📋</span> Cadastrar Tipo de Registro
+									</button>
 								</div>
 							</div>
 						</div>
@@ -1367,7 +1370,9 @@
 								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
 									<div>
 										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Tipo de Registro</label>
-										<input type="text" id="insp-tipo" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+										<select id="insp-tipo" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+											<option value="">Selecione o tipo de registro...</option>
+										</select>
 									</div>
 									
 									<div>
@@ -1594,6 +1599,44 @@
 				</div>
 			</div>
 			
+			<!-- Seção Tipos de Registro -->
+			<div id="gerenciamento-tipos-registro" style="display:none;padding:20px">
+				<div style="max-width:1200px;margin:0 auto">
+					<!-- Header -->
+					<div style="background:linear-gradient(135deg,#7c3aed 0%,#a855f7 100%);border-radius:12px;padding:32px;margin-bottom:24px;color:#fff;text-align:center">
+						<h2 style="margin:0;font-size:2rem;font-weight:700;margin-bottom:8px">Tipos de Registro</h2>
+						<p style="margin:0;font-size:1.1rem;opacity:0.95">Gerencie os tipos de registros de inspeção</p>
+					</div>
+					
+					<!-- Controles -->
+					<div style="background:#fff;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+						<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+							<div style="display:flex;align-items:center;gap:12px">
+								<button id="btn-voltar-inspecao-tipos-registro" style="background:#047857;color:#fff;padding:10px 16px;border:none;border-radius:6px;cursor:pointer;font-weight:500;display:flex;align-items:center;gap:6px;font-size:0.9rem">
+									← Voltar para Inspeção
+								</button>
+								<h3 style="margin:0;font-size:1.2rem;font-weight:600;color:#374151">Tipos de Registro Cadastrados</h3>
+							</div>
+							<button id="btn-novo-tipo-registro" style="background:#7c3aed;color:#fff;padding:10px 16px;border:none;border-radius:6px;cursor:pointer;font-weight:500;display:flex;align-items:center;gap:6px;font-size:0.9rem">
+								📋 Novo tipo de registro
+							</button>
+						</div>
+					</div>
+					
+					<!-- Lista de tipos de registro -->
+					<div style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+						<div id="lista-tipos-registro" style="min-height:200px">
+							<!-- Lista será preenchida dinamicamente -->
+							<div style="padding:60px 20px;text-align:center;color:#9ca3af">
+								<div style="font-size:3rem;margin-bottom:16px;opacity:0.5">📋</div>
+								<div style="font-size:1.1rem;font-weight:500;margin-bottom:8px">Nenhum tipo de registro cadastrado ainda.</div>
+								<div style="font-size:0.9rem">Clique em "Novo tipo de registro" para começar.</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
 			<!-- Modal Nova Categoria -->
 			<div id="modal-nova-categoria" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1003;justify-content:center;align-items:center;overflow-y:auto">
 				<div style="background:#fff;border-radius:8px;width:90%;max-width:500px;margin:20px;position:relative">
@@ -1681,6 +1724,52 @@
 				</div>
 			</div>
 			
+			<!-- Modal Novo Tipo de Registro -->
+			<div id="modal-novo-tipo-registro" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1003;justify-content:center;align-items:center;overflow-y:auto">
+				<div style="background:#fff;border-radius:8px;width:90%;max-width:500px;margin:20px;position:relative">
+					<!-- Botão X para fechar -->
+					<button onclick="fecharModalTipoRegistro()" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:1.2rem;color:#6b7280;cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center">×</button>
+					
+					<div style="padding:24px">
+						<h2 style="margin:0 0 24px 0;font-size:1.1rem;font-weight:600;color:#374151">Novo Tipo de Registro</h2>
+						
+						<form id="form-tipo-registro" onsubmit="salvarTipoRegistro(event)">
+							<div style="margin-bottom:16px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Nome do Tipo de Registro *</label>
+								<input id="nome-tipo-registro" type="text" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151" placeholder="Ex: Inspeção de Segurança, Auditoria Ambiental">
+							</div>
+							
+							<div style="margin-bottom:16px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Descrição</label>
+								<textarea id="descricao-tipo-registro" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151;min-height:80px;resize:vertical" placeholder="Descrição detalhada do tipo de registro..."></textarea>
+							</div>
+							
+							<div style="margin-bottom:16px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Código/Sigla</label>
+								<input id="codigo-tipo-registro" type="text" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151" placeholder="Ex: IS, AA, VA">
+							</div>
+							
+							<div style="margin-bottom:24px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Status</label>
+								<select id="status-tipo-registro" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151">
+									<option value="ativo">Ativo</option>
+									<option value="inativo">Inativo</option>
+								</select>
+							</div>
+							
+							<div style="display:flex;gap:12px;justify-content:flex-end">
+								<button type="button" onclick="fecharModalTipoRegistro()" style="background:#f3f4f6;color:#374151;padding:10px 24px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+									Cancelar
+								</button>
+								<button type="submit" style="background:#7c3aed;color:#fff;padding:10px 24px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+									Salvar Tipo de Registro
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			
 			<!-- Modal Nova Área/Local -->
 			<div id="modal-nova-area" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1003;justify-content:center;align-items:center;overflow-y:auto">
 				<div style="background:#fff;border-radius:8px;width:90%;max-width:500px;margin:20px;position:relative">
@@ -1721,6 +1810,54 @@
 								</button>
 								<button type="submit" style="background:#10b981;color:#fff;padding:10px 24px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
 									Adicionar
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Modal Editar Tipo de Registro -->
+			<div id="modal-editar-tipo-registro" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1003;justify-content:center;align-items:center;overflow-y:auto">
+				<div style="background:#fff;border-radius:8px;width:90%;max-width:500px;margin:20px;position:relative">
+					<!-- Botão X para fechar -->
+					<button onclick="fecharModalEdicaoTipoRegistro()" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:1.2rem;color:#6b7280;cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center">×</button>
+					
+					<div style="padding:24px">
+						<h2 style="margin:0 0 24px 0;font-size:1.1rem;font-weight:600;color:#374151">Editar Tipo de Registro</h2>
+						
+						<form id="form-editar-tipo-registro" onsubmit="atualizarTipoRegistro(event)">
+							<input type="hidden" id="id-editar-tipo-registro">
+							
+							<div style="margin-bottom:16px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Nome do Tipo de Registro *</label>
+								<input id="nome-editar-tipo-registro" type="text" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151" placeholder="Ex: Inspeção de Segurança, Auditoria Ambiental">
+							</div>
+							
+							<div style="margin-bottom:16px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Descrição</label>
+								<textarea id="descricao-editar-tipo-registro" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151;min-height:80px;resize:vertical" placeholder="Descrição detalhada do tipo de registro..."></textarea>
+							</div>
+							
+							<div style="margin-bottom:16px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Código/Sigla</label>
+								<input id="codigo-editar-tipo-registro" type="text" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151" placeholder="Ex: IS, AA, VA">
+							</div>
+							
+							<div style="margin-bottom:24px">
+								<label style="display:block;color:#374151;font-weight:500;margin-bottom:8px">Status</label>
+								<select id="status-editar-tipo-registro" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;color:#374151">
+									<option value="ativo">Ativo</option>
+									<option value="inativo">Inativo</option>
+								</select>
+							</div>
+							
+							<div style="display:flex;gap:12px;justify-content:flex-end">
+								<button type="button" onclick="fecharModalEdicaoTipoRegistro()" style="background:#f3f4f6;color:#374151;padding:10px 24px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+									Cancelar
+								</button>
+								<button type="submit" style="background:#7c3aed;color:#fff;padding:10px 24px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
+									Atualizar Tipo de Registro
 								</button>
 							</div>
 						</form>
@@ -3630,6 +3767,36 @@
 						});
 					}
 					
+					// Carregar tipos de registro no dropdown
+					function carregarTiposRegistroDropdown() {
+						var selectTipo = document.getElementById('insp-tipo');
+						if (!selectTipo) return;
+						
+						// Limpar opções existentes (manter primeira opção vazia)
+						selectTipo.innerHTML = '<option value="">Selecione o tipo de registro...</option>';
+						
+						// Buscar tipos de registro cadastrados
+						var tiposRegistro = JSON.parse(localStorage.getItem('tiposRegistro')) || [];
+						
+						// Filtrar apenas os tipos ativos
+						var tiposAtivos = tiposRegistro.filter(function(tipo) {
+							return tipo.status === 'ativo';
+						});
+						
+						// Ordenar alfabeticamente
+						tiposAtivos.sort(function(a, b) {
+							return a.nome.localeCompare(b.nome);
+						});
+						
+						// Adicionar cada tipo ao dropdown
+						tiposAtivos.forEach(function(tipo) {
+							var option = document.createElement('option');
+							option.value = tipo.nome;
+							option.textContent = tipo.nome + (tipo.codigo ? ' (' + tipo.codigo + ')' : '');
+							selectTipo.appendChild(option);
+						});
+					}
+					
 					// Abrir modal nova inspeção
 					document.getElementById('btn-nova-inspecao').addEventListener('click', abrirModalNovaInspecao);
 					
@@ -3649,6 +3816,7 @@
 						carregarCategoriasDropdown();
 						carregarClassificacoesDropdown();
 						carregarAreasDropdown();
+						carregarTiposRegistroDropdown();
 						carregarLocaisDropdown();
 					}
 					
@@ -3838,6 +4006,20 @@
 						document.getElementById('inspecao').style.display = 'none';
 						document.getElementById('categorias-hse').style.display = 'block';
 						inicializarCategorias();
+						hideSidebarOnMobile();
+					});
+					
+					document.getElementById('btn-cadastrar-tipo-registro').addEventListener('click', function() {
+						// Ocultar todas as seções
+						document.getElementById('conteudo-principal').style.display = 'none';
+						document.getElementById('cadastro-usuario').style.display = 'none';
+						document.getElementById('nova-ras').style.display = 'none';
+						document.getElementById('funcionarios').style.display = 'none';
+						document.getElementById('frequencia').style.display = 'none';
+						document.getElementById('cpt').style.display = 'none';
+						document.getElementById('inspecao').style.display = 'none';
+						document.getElementById('gerenciamento-tipos-registro').style.display = 'block';
+						inicializarTiposRegistro();
 						hideSidebarOnMobile();
 					});
 					
@@ -4308,6 +4490,208 @@
 							localStorage.setItem('areasLocais', JSON.stringify(areasLocais));
 							carregarAreasLocais();
 							alert('Área/local excluída com sucesso!');
+						}
+					}
+					
+					// SISTEMA DE TIPOS DE REGISTRO
+					
+					// Array para armazenar tipos de registro
+					var tiposRegistro = JSON.parse(localStorage.getItem('tiposRegistro')) || [];
+					var tipoRegistroEditando = null;
+					
+					// Inicializar sistema de tipos de registro
+					function inicializarTiposRegistro() {
+						carregarTiposRegistro();
+						
+						// Event listener para o botão novo tipo de registro
+						document.getElementById('btn-novo-tipo-registro').addEventListener('click', abrirModalNovoTipoRegistro);
+					}
+					
+					// Botão voltar para inspeção
+					document.getElementById('btn-voltar-inspecao-tipos-registro') && document.getElementById('btn-voltar-inspecao-tipos-registro').addEventListener('click', function() {
+						// Ocultar seção de tipos de registro e mostrar inspeção
+						document.getElementById('gerenciamento-tipos-registro').style.display = 'none';
+						document.getElementById('inspecao').style.display = 'block';
+						inicializarInspecao();
+					});
+					
+					// Abrir modal novo tipo de registro
+					function abrirModalNovoTipoRegistro() {
+						document.getElementById('modal-novo-tipo-registro').style.display = 'flex';
+					}
+					
+					// Fechar modal de tipo de registro
+					function fecharModalTipoRegistro() {
+						document.getElementById('modal-novo-tipo-registro').style.display = 'none';
+						document.getElementById('form-tipo-registro').reset();
+					}
+					
+					// Salvar novo tipo de registro
+					function salvarTipoRegistro(event) {
+						event.preventDefault();
+						
+						var nome = document.getElementById('nome-tipo-registro').value.trim();
+						var descricao = document.getElementById('descricao-tipo-registro').value.trim();
+						var codigo = document.getElementById('codigo-tipo-registro').value.trim();
+						var status = document.getElementById('status-tipo-registro').value;
+						
+						if (!nome) {
+							alert('Por favor, informe o nome do tipo de registro.');
+							return;
+						}
+						
+						// Verificar se já existe um tipo de registro com o mesmo nome
+						var tipoExistente = tiposRegistro.find(function(tipo) {
+							return tipo.nome.toLowerCase() === nome.toLowerCase();
+						});
+						
+						if (tipoExistente) {
+							alert('Já existe um tipo de registro com esse nome.');
+							return;
+						}
+						
+						var novoTipo = {
+							id: Date.now(),
+							nome: nome,
+							descricao: descricao,
+							codigo: codigo,
+							status: status,
+							dataCriacao: new Date().toLocaleString('pt-BR')
+						};
+						
+						tiposRegistro.push(novoTipo);
+						localStorage.setItem('tiposRegistro', JSON.stringify(tiposRegistro));
+						
+						// Fechar modal e recarregar lista
+						fecharModalTipoRegistro();
+						carregarTiposRegistro();
+						
+						alert('Tipo de registro cadastrado com sucesso!');
+					}
+					
+					// Carregar e exibir tipos de registro
+					function carregarTiposRegistro() {
+						var lista = document.getElementById('lista-tipos-registro');
+						
+						if (tiposRegistro.length === 0) {
+							lista.innerHTML = '<div style="padding:60px 20px;text-align:center;color:#9ca3af"><div style="font-size:3rem;margin-bottom:16px;opacity:0.5">📋</div><div style="font-size:1.1rem;font-weight:500;margin-bottom:8px">Nenhum tipo de registro cadastrado ainda.</div><div style="font-size:0.9rem">Clique em "Novo tipo de registro" para começar.</div></div>';
+							return;
+						}
+						
+						var html = '';
+						tiposRegistro.forEach(function(tipo) {
+							var statusClass = tipo.status === 'ativo' ? 'background:#10b981;color:#fff' : 'background:#6b7280;color:#fff';
+							var statusIcon = tipo.status === 'ativo' ? '✓' : '⏸️';
+							
+							html += '<div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid #e5e7eb;justify-content:space-between">';
+							html += '<div style="flex:1">';
+							html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">';
+							html += '<div style="font-weight:600;color:#374151;font-size:1rem">' + tipo.nome + '</div>';
+							if (tipo.codigo) {
+								html += '<span style="background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:4px;font-size:0.8rem;font-weight:500">' + tipo.codigo + '</span>';
+							}
+							html += '<span style="' + statusClass + ';padding:4px 8px;border-radius:4px;font-size:0.8rem;font-weight:500">' + statusIcon + ' ' + (tipo.status === 'ativo' ? 'Ativo' : 'Inativo') + '</span>';
+							html += '</div>';
+							if (tipo.descricao) {
+								html += '<div style="color:#6b7280;font-size:0.9rem;margin-bottom:4px">' + tipo.descricao + '</div>';
+							}
+							html += '<div style="color:#9ca3af;font-size:0.8rem">Criado em: ' + tipo.dataCriacao + '</div>';
+							html += '</div>';
+							html += '<div style="display:flex;gap:8px">';
+							html += '<button onclick="editarTipoRegistro(' + tipo.id + ')" style="background:#3b82f6;color:#fff;border:none;padding:8px 12px;border-radius:4px;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;gap:4px">';
+							html += '<span>✏️</span> Editar';
+							html += '</button>';
+							html += '<button onclick="excluirTipoRegistro(' + tipo.id + ')" style="background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:4px;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;gap:4px">';
+							html += '<span>🗑️</span> Excluir';
+							html += '</button>';
+							html += '</div>';
+							html += '</div>';
+						});
+						
+						lista.innerHTML = html;
+					}
+					
+					// Editar tipo de registro
+					function editarTipoRegistro(id) {
+						var tipo = tiposRegistro.find(function(t) { return t.id == id; });
+						if (!tipo) {
+							alert('Tipo de registro não encontrado.');
+							return;
+						}
+						
+						tipoRegistroEditando = tipo;
+						
+						// Preencher campos do modal de edição
+						document.getElementById('id-editar-tipo-registro').value = tipo.id;
+						document.getElementById('nome-editar-tipo-registro').value = tipo.nome;
+						document.getElementById('descricao-editar-tipo-registro').value = tipo.descricao || '';
+						document.getElementById('codigo-editar-tipo-registro').value = tipo.codigo || '';
+						document.getElementById('status-editar-tipo-registro').value = tipo.status;
+						
+						// Abrir o modal
+						document.getElementById('modal-editar-tipo-registro').style.display = 'flex';
+					}
+					
+					// Função para fechar modal de edição
+					function fecharModalEdicaoTipoRegistro() {
+						document.getElementById('modal-editar-tipo-registro').style.display = 'none';
+						document.getElementById('form-editar-tipo-registro').reset();
+						tipoRegistroEditando = null;
+					}
+					
+					// Atualizar tipo de registro
+					function atualizarTipoRegistro(event) {
+						event.preventDefault();
+						
+						if (!tipoRegistroEditando) {
+							alert('Erro: Tipo de registro não selecionado.');
+							return;
+						}
+						
+						var novoNome = document.getElementById('nome-editar-tipo-registro').value.trim();
+						var novaDescricao = document.getElementById('descricao-editar-tipo-registro').value.trim();
+						var novoCodigo = document.getElementById('codigo-editar-tipo-registro').value.trim();
+						var novoStatus = document.getElementById('status-editar-tipo-registro').value;
+						
+						if (!novoNome) {
+							alert('Por favor, informe o nome do tipo de registro.');
+							return;
+						}
+						
+						// Verificar se já existe outro tipo de registro com o mesmo nome
+						var tipoExistente = tiposRegistro.find(function(tipo) {
+							return tipo.nome.toLowerCase() === novoNome.toLowerCase() && tipo.id !== tipoRegistroEditando.id;
+						});
+						
+						if (tipoExistente) {
+							alert('Já existe outro tipo de registro com esse nome.');
+							return;
+						}
+						
+						// Atualizar o tipo de registro
+						tipoRegistroEditando.nome = novoNome;
+						tipoRegistroEditando.descricao = novaDescricao;
+						tipoRegistroEditando.codigo = novoCodigo;
+						tipoRegistroEditando.status = novoStatus;
+						tipoRegistroEditando.dataEdicao = new Date().toLocaleString('pt-BR');
+						
+						// Salvar no localStorage
+						localStorage.setItem('tiposRegistro', JSON.stringify(tiposRegistro));
+						
+						// Fechar modal e recarregar lista
+						fecharModalEdicaoTipoRegistro();
+						carregarTiposRegistro();
+						
+						alert('Tipo de registro atualizado com sucesso!');
+					}
+					
+					// Excluir tipo de registro
+					function excluirTipoRegistro(id) {
+						if (confirm('Deseja realmente excluir este tipo de registro?')) {
+							tiposRegistro = tiposRegistro.filter(function(tipo) { return tipo.id != id; });
+							localStorage.setItem('tiposRegistro', JSON.stringify(tiposRegistro));
+							carregarTiposRegistro();
+							alert('Tipo de registro excluído com sucesso!');
 						}
 					}
 					
