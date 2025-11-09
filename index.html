@@ -1411,10 +1411,7 @@
 										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Categoria</label>
 										<select id="insp-categoria" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
 											<option value=""></option>
-											<option value="Segurança">Segurança</option>
-											<option value="Meio Ambiente">Meio Ambiente</option>
-											<option value="Saúde">Saúde</option>
-											<option value="Qualidade">Qualidade</option>
+											<!-- Opções carregadas dinamicamente -->
 										</select>
 									</div>
 									
@@ -1422,10 +1419,7 @@
 										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Classificação</label>
 										<select id="insp-classificacao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
 											<option value=""></option>
-											<option value="Ato Inseguro">Ato Inseguro</option>
-											<option value="Condição Insegura">Condição Insegura</option>
-											<option value="Não Conformidade">Não Conformidade</option>
-											<option value="Melhoria">Melhoria</option>
+											<!-- Opções carregadas dinamicamente -->
 										</select>
 									</div>
 									
@@ -3404,6 +3398,8 @@
 					function inicializarInspecao() {
 						carregarInspecoes();
 						configurarSemanaAtual();
+						carregarCategoriasDropdown();
+						carregarClassificacoesDropdown();
 					}
 					
 					// Configurar semana atual
@@ -3417,6 +3413,110 @@
 						if (inputSemana) {
 							inputSemana.value = semanaAtual;
 						}
+					}
+					
+					// Carregar categorias no dropdown
+					function carregarCategoriasDropdown() {
+						var selectCategoria = document.getElementById('insp-categoria');
+						if (!selectCategoria) return;
+						
+						// Limpar opções existentes (manter primeira opção vazia)
+						selectCategoria.innerHTML = '<option value=""></option>';
+						
+						// Buscar categorias cadastradas
+						var categoriasHSE = JSON.parse(localStorage.getItem('categoriasHSE')) || [];
+						
+						// Adicionar cada categoria ao dropdown
+						categoriasHSE.forEach(function(categoria) {
+							var option = document.createElement('option');
+							option.value = categoria.nome;
+							option.textContent = categoria.nome;
+							selectCategoria.appendChild(option);
+						});
+						
+						// Event listener para atualizar classificações quando categoria muda
+						selectCategoria.addEventListener('change', function() {
+							carregarClassificacoesPorCategoria(this.value);
+						});
+					}
+					
+					// Carregar classificações no dropdown
+					function carregarClassificacoesDropdown() {
+						var selectClassificacao = document.getElementById('insp-classificacao');
+						if (!selectClassificacao) return;
+						
+						// Limpar opções existentes (manter primeira opção vazia)
+						selectClassificacao.innerHTML = '<option value=""></option>';
+						
+						// Buscar todas as classificações cadastradas
+						var categoriasHSE = JSON.parse(localStorage.getItem('categoriasHSE')) || [];
+						var todasClassificacoes = [];
+						
+						// Coletar todas as classificações únicas
+						categoriasHSE.forEach(function(categoria) {
+							if (categoria.classificacoes && categoria.classificacoes.length > 0) {
+								categoria.classificacoes.forEach(function(classif) {
+									if (todasClassificacoes.indexOf(classif) === -1) {
+										todasClassificacoes.push(classif);
+									}
+								});
+							}
+							// Compatibilidade com dados antigos (subcategorias)
+							if (categoria.subcategorias && categoria.subcategorias.length > 0 && !categoria.classificacoes) {
+								categoria.subcategorias.forEach(function(sub) {
+									if (todasClassificacoes.indexOf(sub) === -1) {
+										todasClassificacoes.push(sub);
+									}
+								});
+							}
+						});
+						
+						// Ordenar alfabeticamente
+						todasClassificacoes.sort();
+						
+						// Adicionar cada classificação ao dropdown
+						todasClassificacoes.forEach(function(classificacao) {
+							var option = document.createElement('option');
+							option.value = classificacao;
+							option.textContent = classificacao;
+							selectClassificacao.appendChild(option);
+						});
+					}
+					
+					// Carregar classificações filtradas por categoria
+					function carregarClassificacoesPorCategoria(nomeCategoria) {
+						var selectClassificacao = document.getElementById('insp-classificacao');
+						if (!selectClassificacao) return;
+						
+						// Limpar opções existentes (manter primeira opção vazia)
+						selectClassificacao.innerHTML = '<option value=""></option>';
+						
+						if (!nomeCategoria) {
+							// Se nenhuma categoria selecionada, carregar todas as classificações
+							carregarClassificacoesDropdown();
+							return;
+						}
+						
+						// Buscar a categoria específica
+						var categoriasHSE = JSON.parse(localStorage.getItem('categoriasHSE')) || [];
+						var categoriaEncontrada = categoriasHSE.find(function(cat) {
+							return cat.nome === nomeCategoria;
+						});
+						
+						if (!categoriaEncontrada) return;
+						
+						var classificacoes = categoriaEncontrada.classificacoes || categoriaEncontrada.subcategorias || [];
+						
+						// Ordenar alfabeticamente
+						classificacoes.sort();
+						
+						// Adicionar cada classificação ao dropdown
+						classificacoes.forEach(function(classificacao) {
+							var option = document.createElement('option');
+							option.value = classificacao;
+							option.textContent = classificacao;
+							selectClassificacao.appendChild(option);
+						});
 					}
 					
 					// Abrir modal nova inspeção
@@ -3433,6 +3533,10 @@
 						document.getElementById('insp-data').value = dataHoje;
 						
 						configurarSemanaAtual();
+						
+						// Carregar dropdowns com dados atualizados
+						carregarCategoriasDropdown();
+						carregarClassificacoesDropdown();
 					}
 					
 					// Fechar modal de inspeção
