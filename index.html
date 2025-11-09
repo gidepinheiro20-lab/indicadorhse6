@@ -3520,13 +3520,15 @@
 						categoriasHSE.forEach(function(categoria) {
 							html += '<div style="padding:20px;border-bottom:1px solid #f3f4f6">';
 							
-							// Exibir classificações primeiro (em cima)
+							// ORDEM CORRETA: Classificações EM CIMA, Categoria EMBAIXO
+							
+							// 1. CLASSIFICAÇÕES PRIMEIRO (EM CIMA) - Maior destaque
 							if (categoria.classificacoes && categoria.classificacoes.length > 0) {
-								html += '<div style="margin-bottom:12px">';
-								html += '<div style="font-size:0.85rem;color:#6b7280;font-weight:500;margin-bottom:8px">Classificações:</div>';
-								html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+								html += '<div style="margin-bottom:16px">';
+								html += '<div style="font-size:0.9rem;color:#374151;font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">🏷️ Classificações:</div>';
+								html += '<div style="display:flex;flex-wrap:wrap;gap:8px">';
 								categoria.classificacoes.forEach(function(classif) {
-									html += '<span style="background:#e5f5ff;color:#0369a1;padding:6px 12px;border-radius:12px;font-size:0.85rem;border:1px solid #bae6fd;font-weight:500">' + classif + '</span>';
+									html += '<span style="background:#10b981;color:#fff;padding:8px 16px;border-radius:20px;font-size:0.95rem;font-weight:600;box-shadow:0 2px 4px rgba(16,185,129,0.2)">' + classif + '</span>';
 								});
 								html += '</div>';
 								html += '</div>';
@@ -3534,24 +3536,25 @@
 							
 							// Compatibilidade com dados antigos (subcategorias)
 							if (categoria.subcategorias && categoria.subcategorias.length > 0 && !categoria.classificacoes) {
-								html += '<div style="margin-bottom:12px">';
-								html += '<div style="font-size:0.85rem;color:#6b7280;font-weight:500;margin-bottom:8px">Classificações:</div>';
-								html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+								html += '<div style="margin-bottom:16px">';
+								html += '<div style="font-size:0.9rem;color:#374151;font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">🏷️ Classificações:</div>';
+								html += '<div style="display:flex;flex-wrap:wrap;gap:8px">';
 								categoria.subcategorias.forEach(function(sub) {
-									html += '<span style="background:#e5f5ff;color:#0369a1;padding:6px 12px;border-radius:12px;font-size:0.85rem;border:1px solid #bae6fd;font-weight:500">' + sub + '</span>';
+									html += '<span style="background:#10b981;color:#fff;padding:8px 16px;border-radius:20px;font-size:0.95rem;font-weight:600;box-shadow:0 2px 4px rgba(16,185,129,0.2)">' + sub + '</span>';
 								});
 								html += '</div>';
 								html += '</div>';
 							}
 							
-							// Exibir categoria depois (embaixo)
-							html += '<div style="display:flex;justify-content:space-between;align-items:start">';
+							// 2. CATEGORIA DEPOIS (EMBAIXO) - Menor destaque
+							html += '<div style="display:flex;justify-content:space-between;align-items:start;background:#f9fafb;padding:12px;border-radius:8px;border:1px solid #e5e7eb">';
 							html += '<div style="display:flex;align-items:center;gap:12px">';
-							html += '<div style="width:20px;height:20px;background:' + categoria.cor + ';border-radius:4px"></div>';
+							html += '<div style="width:16px;height:16px;background:' + categoria.cor + ';border-radius:4px"></div>';
 							html += '<div>';
-							html += '<h4 style="margin:0;color:#374151;font-size:1.1rem;font-weight:600">' + categoria.nome + '</h4>';
+							html += '<div style="font-size:0.8rem;color:#6b7280;font-weight:500;margin-bottom:2px">Categoria:</div>';
+							html += '<h4 style="margin:0;color:#374151;font-size:1rem;font-weight:500">' + categoria.nome + '</h4>';
 							if (categoria.descricao) {
-								html += '<p style="margin:4px 0 0 0;color:#6b7280;font-size:0.9rem">' + categoria.descricao + '</p>';
+								html += '<p style="margin:4px 0 0 0;color:#6b7280;font-size:0.85rem">' + categoria.descricao + '</p>';
 							}
 							html += '</div>';
 							html += '</div>';
