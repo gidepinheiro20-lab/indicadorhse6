@@ -3519,7 +3519,33 @@
 						var html = '';
 						categoriasHSE.forEach(function(categoria) {
 							html += '<div style="padding:20px;border-bottom:1px solid #f3f4f6">';
-							html += '<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">';
+							
+							// Exibir classificações primeiro (em cima)
+							if (categoria.classificacoes && categoria.classificacoes.length > 0) {
+								html += '<div style="margin-bottom:12px">';
+								html += '<div style="font-size:0.85rem;color:#6b7280;font-weight:500;margin-bottom:8px">Classificações:</div>';
+								html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+								categoria.classificacoes.forEach(function(classif) {
+									html += '<span style="background:#e5f5ff;color:#0369a1;padding:6px 12px;border-radius:12px;font-size:0.85rem;border:1px solid #bae6fd;font-weight:500">' + classif + '</span>';
+								});
+								html += '</div>';
+								html += '</div>';
+							}
+							
+							// Compatibilidade com dados antigos (subcategorias)
+							if (categoria.subcategorias && categoria.subcategorias.length > 0 && !categoria.classificacoes) {
+								html += '<div style="margin-bottom:12px">';
+								html += '<div style="font-size:0.85rem;color:#6b7280;font-weight:500;margin-bottom:8px">Classificações:</div>';
+								html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+								categoria.subcategorias.forEach(function(sub) {
+									html += '<span style="background:#e5f5ff;color:#0369a1;padding:6px 12px;border-radius:12px;font-size:0.85rem;border:1px solid #bae6fd;font-weight:500">' + sub + '</span>';
+								});
+								html += '</div>';
+								html += '</div>';
+							}
+							
+							// Exibir categoria depois (embaixo)
+							html += '<div style="display:flex;justify-content:space-between;align-items:start">';
 							html += '<div style="display:flex;align-items:center;gap:12px">';
 							html += '<div style="width:20px;height:20px;background:' + categoria.cor + ';border-radius:4px"></div>';
 							html += '<div>';
@@ -3534,29 +3560,6 @@
 							html += '<button onclick="excluirCategoria(\'' + categoria.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:6px 10px;font-size:0.8rem;cursor:pointer">🗑️ Excluir</button>';
 							html += '</div>';
 							html += '</div>';
-							
-							if (categoria.classificacoes && categoria.classificacoes.length > 0) {
-								html += '<div style="margin-left:32px">';
-								html += '<div style="font-size:0.85rem;color:#6b7280;font-weight:500;margin-bottom:8px">Classificações:</div>';
-								html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
-								categoria.classificacoes.forEach(function(classif) {
-									html += '<span style="background:#f3f4f6;color:#374151;padding:4px 10px;border-radius:12px;font-size:0.8rem;border:1px solid #e5e7eb">' + classif + '</span>';
-								});
-								html += '</div>';
-								html += '</div>';
-							}
-							
-							// Compatibilidade com dados antigos (subcategorias)
-							if (categoria.subcategorias && categoria.subcategorias.length > 0 && !categoria.classificacoes) {
-								html += '<div style="margin-left:32px">';
-								html += '<div style="font-size:0.85rem;color:#6b7280;font-weight:500;margin-bottom:8px">Classificações:</div>';
-								html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
-								categoria.subcategorias.forEach(function(sub) {
-									html += '<span style="background:#f3f4f6;color:#374151;padding:4px 10px;border-radius:12px;font-size:0.8rem;border:1px solid #e5e7eb">' + sub + '</span>';
-								});
-								html += '</div>';
-								html += '</div>';
-							}
 							
 							html += '</div>';
 						});
