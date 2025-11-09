@@ -1456,7 +1456,9 @@
 								<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
 									<div>
 										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Risco/Perigo</label>
-										<input type="text" id="insp-risco" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+										<select id="insp-risco" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione o risco/perigo...</option>
+										</select>
 									</div>
 									
 									<div>
@@ -3967,6 +3969,38 @@
 						});
 					}
 					
+					// Carregar riscos/perigos no dropdown
+					function carregarRiscosPerigosDropdown() {
+						var selectRisco = document.getElementById('insp-risco');
+						if (!selectRisco) return;
+						
+						// Limpar opções existentes (manter primeira opção vazia)
+						selectRisco.innerHTML = '<option value="">Selecione o risco/perigo...</option>';
+						
+						// Buscar riscos/perigos cadastrados
+						var riscosPerigos = JSON.parse(localStorage.getItem('riscosPerigos')) || [];
+						
+						// Filtrar apenas os ativos
+						var riscosAtivos = riscosPerigos.filter(function(item) {
+							return item.status === 'ativo';
+						});
+						
+						// Ordenar alfabeticamente
+						riscosAtivos.sort(function(a, b) {
+							return a.nome.localeCompare(b.nome);
+						});
+						
+						// Adicionar cada risco/perigo ao dropdown
+						riscosAtivos.forEach(function(item) {
+							var option = document.createElement('option');
+							option.value = item.nome;
+							var tipoIcon = item.tipo === 'risco' ? '⚠️' : '☢️';
+							var categoriaText = item.categoria ? ' - ' + item.categoria.charAt(0).toUpperCase() + item.categoria.slice(1) : '';
+							option.textContent = tipoIcon + ' ' + item.nome + categoriaText;
+							selectRisco.appendChild(option);
+						});
+					}
+					
 					// Abrir modal nova inspeção
 					document.getElementById('btn-nova-inspecao').addEventListener('click', abrirModalNovaInspecao);
 					
@@ -3987,6 +4021,7 @@
 						carregarClassificacoesDropdown();
 						carregarAreasDropdown();
 						carregarTiposRegistroDropdown();
+						carregarRiscosPerigosDropdown();
 						carregarLocaisDropdown();
 					}
 					
