@@ -4328,53 +4328,69 @@
 							return;
 						}
 						
-						var html = '';
+						// Agrupar categorias por classificação
+						var grupos = {};
+						
 						categoriasHSE.forEach(function(categoria) {
-							html += '<div style="padding:20px;border-bottom:1px solid #f3f4f6">';
+							var classificacoes = categoria.classificacoes || categoria.subcategorias || [];
 							
-							// ORDEM CORRETA: Classificações EM CIMA, Categoria EMBAIXO
+							classificacoes.forEach(function(classificacao) {
+								if (!grupos[classificacao]) {
+									grupos[classificacao] = [];
+								}
+								grupos[classificacao].push(categoria);
+							});
 							
-							// 1. CLASSIFICAÇÕES PRIMEIRO (EM CIMA) - Maior destaque
-							if (categoria.classificacoes && categoria.classificacoes.length > 0) {
-								html += '<div style="margin-bottom:16px">';
-								html += '<div style="font-size:0.9rem;color:#374151;font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">🏷️ Classificações:</div>';
-								html += '<div style="display:flex;flex-wrap:wrap;gap:8px">';
-								categoria.classificacoes.forEach(function(classif) {
-									html += '<span style="background:#10b981;color:#fff;padding:8px 16px;border-radius:20px;font-size:0.95rem;font-weight:600;box-shadow:0 2px 4px rgba(16,185,129,0.2)">' + classif + '</span>';
-								});
-								html += '</div>';
-								html += '</div>';
+							// Se não tem classificação, colocar em grupo "Sem Classificação"
+							if (classificacoes.length === 0) {
+								if (!grupos['Sem Classificação']) {
+									grupos['Sem Classificação'] = [];
+								}
+								grupos['Sem Classificação'].push(categoria);
 							}
+						});
+						
+						// Ordenar os grupos alfabeticamente
+						var gruposOrdenados = Object.keys(grupos).sort();
+						
+						var html = '';
+						
+						gruposOrdenados.forEach(function(nomeGrupo) {
+							var categorias = grupos[nomeGrupo];
 							
-							// Compatibilidade com dados antigos (subcategorias)
-							if (categoria.subcategorias && categoria.subcategorias.length > 0 && !categoria.classificacoes) {
-								html += '<div style="margin-bottom:16px">';
-								html += '<div style="font-size:0.9rem;color:#374151;font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">🏷️ Classificações:</div>';
-								html += '<div style="display:flex;flex-wrap:wrap;gap:8px">';
-								categoria.subcategorias.forEach(function(sub) {
-									html += '<span style="background:#10b981;color:#fff;padding:8px 16px;border-radius:20px;font-size:0.95rem;font-weight:600;box-shadow:0 2px 4px rgba(16,185,129,0.2)">' + sub + '</span>';
-								});
+							// Header do grupo (Classificação)
+							html += '<div style="margin-bottom:20px">';
+							html += '<div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff;padding:16px 20px;border-radius:8px;margin-bottom:12px">';
+							html += '<div style="font-size:0.8rem;font-weight:500;opacity:0.9;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">🏷️ CLASSIFICAÇÕES:</div>';
+							html += '<div style="font-size:1.1rem;font-weight:700">' + nomeGrupo + '</div>';
+							html += '</div>';
+							
+							// Listar categorias do grupo
+							categorias.forEach(function(categoria) {
+								html += '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin-bottom:12px;margin-left:20px">';
+								html += '<div style="display:flex;justify-content:space-between;align-items:center">';
+								
+								// Lado esquerdo - Info da categoria
+								html += '<div style="display:flex;align-items:center;gap:12px;flex:1">';
+								html += '<div style="width:12px;height:12px;background:' + (categoria.cor || '#10b981') + ';border-radius:50%;flex-shrink:0"></div>';
+								html += '<div>';
+								html += '<div style="font-size:0.75rem;color:#6b7280;font-weight:500;margin-bottom:2px">Categoria:</div>';
+								html += '<div style="font-size:1rem;font-weight:600;color:#374151">' + categoria.nome + '</div>';
+								if (categoria.descricao) {
+									html += '<div style="font-size:0.85rem;color:#6b7280;margin-top:4px">' + categoria.descricao + '</div>';
+								}
 								html += '</div>';
 								html += '</div>';
-							}
-							
-							// 2. CATEGORIA DEPOIS (EMBAIXO) - Menor destaque
-							html += '<div style="display:flex;justify-content:space-between;align-items:start;background:#f9fafb;padding:12px;border-radius:8px;border:1px solid #e5e7eb">';
-							html += '<div style="display:flex;align-items:center;gap:12px">';
-							html += '<div style="width:16px;height:16px;background:' + categoria.cor + ';border-radius:4px"></div>';
-							html += '<div>';
-							html += '<div style="font-size:0.8rem;color:#6b7280;font-weight:500;margin-bottom:2px">Categoria:</div>';
-							html += '<h4 style="margin:0;color:#374151;font-size:1rem;font-weight:500">' + categoria.nome + '</h4>';
-							if (categoria.descricao) {
-								html += '<p style="margin:4px 0 0 0;color:#6b7280;font-size:0.85rem">' + categoria.descricao + '</p>';
-							}
-							html += '</div>';
-							html += '</div>';
-							html += '<div style="display:flex;gap:8px">';
-							html += '<button onclick="editarCategoria(\'' + categoria.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:6px 10px;font-size:0.8rem;cursor:pointer">✏️ Editar</button>';
-							html += '<button onclick="excluirCategoria(\'' + categoria.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:6px 10px;font-size:0.8rem;cursor:pointer">🗑️ Excluir</button>';
-							html += '</div>';
-							html += '</div>';
+								
+								// Lado direito - Botões
+								html += '<div style="display:flex;gap:8px">';
+								html += '<button onclick="editarCategoria(\'' + categoria.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;gap:4px">✏️ Editar</button>';
+								html += '<button onclick="excluirCategoria(\'' + categoria.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;gap:4px">🗑️ Excluir</button>';
+								html += '</div>';
+								
+								html += '</div>';
+								html += '</div>';
+							});
 							
 							html += '</div>';
 						});
