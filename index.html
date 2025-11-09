@@ -1563,19 +1563,19 @@
 					<button onclick="fecharModalCategoria()" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:1.2rem;color:#6b7280;cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center">×</button>
 					
 					<div style="padding:24px">
-						<h2 style="margin:0 0 24px 0;font-size:1.1rem;font-weight:600;color:#374151">Adicionar Categoria e Classificação</h2>
+						<h2 style="margin:0 0 24px 0;font-size:1.1rem;font-weight:600;color:#374151">Adicionar Classificação e Categoria</h2>
 						
 						<form id="form-nova-categoria">
-							<!-- Campo Categoria -->
-							<div style="margin-bottom:20px">
-								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Categoria</label>
-								<input type="text" id="cat-nome" required placeholder="" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
-							</div>
-							
 							<!-- Campo Classificação -->
-							<div style="margin-bottom:32px">
+							<div style="margin-bottom:20px">
 								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Classificação</label>
 								<input type="text" id="cat-classificacao" required placeholder="" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+							</div>
+							
+							<!-- Campo Categoria -->
+							<div style="margin-bottom:32px">
+								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Categoria</label>
+								<input type="text" id="cat-nome" required placeholder="" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
 							</div>
 							
 							<div style="display:flex;gap:12px;justify-content:flex-end">
@@ -3454,11 +3454,11 @@
 					document.getElementById('form-nova-categoria').addEventListener('submit', function(e) {
 						e.preventDefault();
 						
-						var nomeCategoria = document.getElementById('cat-nome').value.trim();
 						var nomeClassificacao = document.getElementById('cat-classificacao').value.trim();
+						var nomeCategoria = document.getElementById('cat-nome').value.trim();
 						
-						if (!nomeCategoria || !nomeClassificacao) {
-							alert('Por favor, preencha tanto a categoria quanto a classificação.');
+						if (!nomeClassificacao || !nomeCategoria) {
+							alert('Por favor, preencha tanto a classificação quanto a categoria.');
 							return;
 						}
 						
