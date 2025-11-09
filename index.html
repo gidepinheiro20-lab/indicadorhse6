@@ -1529,6 +1529,9 @@
 								<div style="font-size:1rem;opacity:0.9">Sistema de classificação e categorias para inspeções</div>
 							</div>
 							<div style="display:flex;gap:12px;flex-wrap:wrap">
+								<button id="btn-voltar-inspecao" type="button" style="background:#047857;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
+									<span>←</span> Voltar
+								</button>
 								<button id="btn-nova-categoria" type="button" style="background:#fff;color:#059669;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
 									<span>✨</span> Nova Categoria
 								</button>
@@ -3436,6 +3439,14 @@
 					function inicializarCategorias() {
 						carregarCategorias();
 					}
+					
+					// Botão voltar para inspeção
+					document.getElementById('btn-voltar-inspecao').addEventListener('click', function() {
+						// Ocultar seção de categorias e mostrar inspeção
+						document.getElementById('categorias-hse').style.display = 'none';
+						document.getElementById('inspecao').style.display = 'block';
+						inicializarInspecao();
+					});
 					
 					// Abrir modal nova categoria
 					document.getElementById('btn-nova-categoria').addEventListener('click', abrirModalNovaCategoria);
