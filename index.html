@@ -1348,12 +1348,18 @@
 									
 									<div>
 										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Área</label>
-										<input type="text" id="insp-area" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+										<select id="insp-area" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value=""></option>
+											<!-- Opções carregadas dinamicamente -->
+										</select>
 									</div>
 									
 									<div>
 										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Local</label>
-										<input type="text" id="insp-local" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+										<select id="insp-local" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value=""></option>
+											<!-- Opções carregadas dinamicamente -->
+										</select>
 									</div>
 								</div>
 								
@@ -3400,6 +3406,8 @@
 						configurarSemanaAtual();
 						carregarCategoriasDropdown();
 						carregarClassificacoesDropdown();
+						carregarAreasDropdown();
+						carregarLocaisDropdown();
 					}
 					
 					// Configurar semana atual
@@ -3519,6 +3527,109 @@
 						});
 					}
 					
+					// Carregar áreas no dropdown
+					function carregarAreasDropdown() {
+						var selectArea = document.getElementById('insp-area');
+						if (!selectArea) return;
+						
+						// Limpar opções existentes (manter primeira opção vazia)
+						selectArea.innerHTML = '<option value=""></option>';
+						
+						// Buscar áreas cadastradas
+						var areasLocais = JSON.parse(localStorage.getItem('areasLocais')) || [];
+						
+						// Coletar áreas únicas
+						var areasUnicas = [];
+						areasLocais.forEach(function(area) {
+							if (areasUnicas.indexOf(area.nome) === -1) {
+								areasUnicas.push(area.nome);
+							}
+						});
+						
+						// Ordenar alfabeticamente
+						areasUnicas.sort();
+						
+						// Adicionar cada área ao dropdown
+						areasUnicas.forEach(function(nomeArea) {
+							var option = document.createElement('option');
+							option.value = nomeArea;
+							option.textContent = nomeArea;
+							selectArea.appendChild(option);
+						});
+						
+						// Event listener para atualizar locais quando área muda
+						selectArea.addEventListener('change', function() {
+							carregarLocaisPorArea(this.value);
+						});
+					}
+					
+					// Carregar locais no dropdown
+					function carregarLocaisDropdown() {
+						var selectLocal = document.getElementById('insp-local');
+						if (!selectLocal) return;
+						
+						// Limpar opções existentes (manter primeira opção vazia)
+						selectLocal.innerHTML = '<option value=""></option>';
+						
+						// Buscar todas as áreas/locais cadastradas
+						var areasLocais = JSON.parse(localStorage.getItem('areasLocais')) || [];
+						
+						// Coletar todos os locais únicos
+						var locaisUnicos = [];
+						areasLocais.forEach(function(area) {
+							if (locaisUnicos.indexOf(area.local) === -1) {
+								locaisUnicos.push(area.local);
+							}
+						});
+						
+						// Ordenar alfabeticamente
+						locaisUnicos.sort();
+						
+						// Adicionar cada local ao dropdown
+						locaisUnicos.forEach(function(local) {
+							var option = document.createElement('option');
+							option.value = local;
+							option.textContent = local;
+							selectLocal.appendChild(option);
+						});
+					}
+					
+					// Carregar locais filtrados por área
+					function carregarLocaisPorArea(nomeArea) {
+						var selectLocal = document.getElementById('insp-local');
+						if (!selectLocal) return;
+						
+						// Limpar opções existentes (manter primeira opção vazia)
+						selectLocal.innerHTML = '<option value=""></option>';
+						
+						if (!nomeArea) {
+							// Se nenhuma área selecionada, carregar todos os locais
+							carregarLocaisDropdown();
+							return;
+						}
+						
+						// Buscar locais da área específica
+						var areasLocais = JSON.parse(localStorage.getItem('areasLocais')) || [];
+						var locaisDaArea = areasLocais.filter(function(area) {
+							return area.nome === nomeArea;
+						}).map(function(area) {
+							return area.local;
+						});
+						
+						// Remover duplicatas e ordenar
+						var locaisUnicos = locaisDaArea.filter(function(item, index) {
+							return locaisDaArea.indexOf(item) === index;
+						}).sort();
+						
+						// Adicionar cada local ao dropdown
+						locaisUnicos.forEach(function(local) {
+							var option = document.createElement('option');
+							option.value = local;
+							option.textContent = local;
+							selectLocal.appendChild(option);
+						});
+					}
+					
 					// Abrir modal nova inspeção
 					document.getElementById('btn-nova-inspecao').addEventListener('click', abrirModalNovaInspecao);
 					
@@ -3537,6 +3648,8 @@
 						// Carregar dropdowns com dados atualizados
 						carregarCategoriasDropdown();
 						carregarClassificacoesDropdown();
+						carregarAreasDropdown();
+						carregarLocaisDropdown();
 					}
 					
 					// Fechar modal de inspeção
