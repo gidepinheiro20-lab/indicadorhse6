@@ -4099,6 +4099,10 @@
 					document.getElementById('form-nova-inspecao').addEventListener('submit', function(e) {
 						e.preventDefault();
 						
+						// Processar fotos
+						var fotoAntesFile = document.getElementById('insp-foto-antes').files[0];
+						var fotoDepoisFile = document.getElementById('insp-foto-depois').files[0];
+						
 						var novaInspecao = {
 							id: Date.now(),
 							data: document.getElementById('insp-data').value,
@@ -4119,17 +4123,57 @@
 							prazo: document.getElementById('insp-prazo').value,
 							conclusao: document.getElementById('insp-conclusao').value,
 							status: document.getElementById('insp-status').value,
-							fotoAntes: document.getElementById('insp-foto-antes').files.length > 0,
-							fotoDepois: document.getElementById('insp-foto-depois').files.length > 0,
+							fotoAntes: null,
+							fotoDepois: null,
 							dataCriacao: new Date().toISOString()
 						};
+
+						// Função para processar fotos e salvar
+						function processarFotos() {
+							var fotosProcessadas = 0;
+							var totalFotos = (fotoAntesFile ? 1 : 0) + (fotoDepoisFile ? 1 : 0);
+							
+							if (totalFotos === 0) {
+								// Não há fotos, salvar direto
+								finalizarSalvamento();
+								return;
+							}
+							
+							if (fotoAntesFile) {
+								var readerAntes = new FileReader();
+								readerAntes.onload = function(e) {
+									novaInspecao.fotoAntes = e.target.result;
+									fotosProcessadas++;
+									if (fotosProcessadas === totalFotos) {
+										finalizarSalvamento();
+									}
+								};
+								readerAntes.readAsDataURL(fotoAntesFile);
+							}
+							
+							if (fotoDepoisFile) {
+								var readerDepois = new FileReader();
+								readerDepois.onload = function(e) {
+									novaInspecao.fotoDepois = e.target.result;
+									fotosProcessadas++;
+									if (fotosProcessadas === totalFotos) {
+										finalizarSalvamento();
+									}
+								};
+								readerDepois.readAsDataURL(fotoDepoisFile);
+							}
+						}
 						
-						inspecoes.push(novaInspecao);
-						localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
+						function finalizarSalvamento() {
+							inspecoes.push(novaInspecao);
+							localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
+							
+							alert('Inspeção registrada com sucesso!');
+							fecharModalInspecao();
+							carregarInspecoes();
+						}
 						
-						alert('Inspeção registrada com sucesso!');
-						fecharModalInspecao();
-						carregarInspecoes();
+						processarFotos();
 					});
 					
 					// Carregar e exibir inspeções
@@ -4234,11 +4278,18 @@
 						html += '<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem;font-weight:600;display:flex;align-items:center;gap:8px">📊 Informações Básicas</h3>';
 						html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">';
 						html += '<div><strong style="color:#6b7280">Data:</strong><br><span style="color:#374151">' + formatarData(inspecao.data) + '</span></div>';
-						html += '<div><strong style="color:#6b7280">Área:</strong><br><span style="color:#374151">' + inspecao.area + '</span></div>';
-						html += '<div><strong style="color:#6b7280">Local:</strong><br><span style="color:#374151">' + inspecao.local + '</span></div>';
-						html += '<div><strong style="color:#6b7280">Tipo:</strong><br><span style="color:#374151">' + inspecao.tipo + '</span></div>';
-						html += '<div><strong style="color:#6b7280">Semana:</strong><br><span style="color:#374151">' + inspecao.semana + '</span></div>';
-						html += '<div><strong style="color:#6b7280">Responsável:</strong><br><span style="color:#374151">' + inspecao.responsavel + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Área:</strong><br><span style="color:#374151">' + (inspecao.area || 'Não informado') + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Local:</strong><br><span style="color:#374151">' + (inspecao.local || 'Não informado') + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Tipo:</strong><br><span style="color:#374151">' + (inspecao.tipo || 'Não informado') + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Semana:</strong><br><span style="color:#374151">' + (inspecao.semana || 'Não informado') + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Emissor:</strong><br><span style="color:#374151">' + (inspecao.emissor || 'Não informado') + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Responsável:</strong><br><span style="color:#374151">' + (inspecao.responsavel || 'Não informado') + '</span></div>';
+						if (inspecao.prazo) {
+							html += '<div><strong style="color:#6b7280">Prazo:</strong><br><span style="color:#374151">' + formatarData(inspecao.prazo) + '</span></div>';
+						}
+						if (inspecao.conclusao) {
+							html += '<div><strong style="color:#6b7280">Data Conclusão:</strong><br><span style="color:#374151">' + formatarData(inspecao.conclusao) + '</span></div>';
+						}
 						html += '</div>';
 						html += '</div>';
 
@@ -4246,18 +4297,34 @@
 						html += '<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:20px;margin-bottom:20px">';
 						html += '<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem;font-weight:600;display:flex;align-items:center;gap:8px">🔍 Detalhes da Inspeção</h3>';
 						html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:16px">';
-						html += '<div><strong style="color:#6b7280">Categoria:</strong><br><span style="color:#374151">' + inspecao.categoria + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Categoria:</strong><br><span style="color:#374151">' + (inspecao.categoria || 'Não informado') + '</span></div>';
+						if (inspecao.classificacao) {
+							html += '<div><strong style="color:#6b7280">Classificação:</strong><br><span style="color:#374151">' + inspecao.classificacao + '</span></div>';
+						}
 						var corSeveridade = getCorSeveridade(inspecao.severidade);
-						html += '<div><strong style="color:#6b7280">Severidade:</strong><br><span style="background:' + corSeveridade + ';color:#fff;padding:4px 12px;border-radius:16px;font-size:0.85rem;font-weight:500">' + inspecao.severidade + '</span></div>';
-						html += '<div><strong style="color:#6b7280">Interdição:</strong><br><span style="color:' + (inspecao.interdicao === 'Sim' ? '#10b981' : '#ef4444') + ';font-weight:600">' + inspecao.interdicao + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Severidade:</strong><br><span style="background:' + corSeveridade + ';color:#fff;padding:4px 12px;border-radius:16px;font-size:0.85rem;font-weight:500">' + (inspecao.severidade || 'Não informado') + '</span></div>';
+						if (inspecao.risco) {
+							html += '<div><strong style="color:#6b7280">Risco:</strong><br><span style="color:#374151">' + inspecao.risco + '</span></div>';
+						}
+						if (inspecao.controlavel) {
+							html += '<div><strong style="color:#6b7280">Controlável:</strong><br><span style="color:' + (inspecao.controlavel === 'Sim' ? '#10b981' : '#ef4444') + ';font-weight:600">' + inspecao.controlavel + '</span></div>';
+						}
+						html += '<div><strong style="color:#6b7280">Interdição:</strong><br><span style="color:' + (inspecao.interdicao === 'Sim' ? '#10b981' : '#ef4444') + ';font-weight:600">' + (inspecao.interdicao || 'Não informado') + '</span></div>';
 						var corStatus = getCorStatus(inspecao.status);
-						html += '<div><strong style="color:#6b7280">Status:</strong><br><span style="background:' + corStatus + ';color:#fff;padding:4px 12px;border-radius:16px;font-size:0.85rem;font-weight:500">' + inspecao.status + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Status:</strong><br><span style="background:' + corStatus + ';color:#fff;padding:4px 12px;border-radius:16px;font-size:0.85rem;font-weight:500">' + (inspecao.status || 'Não informado') + '</span></div>';
 						html += '</div>';
 						
 						if (inspecao.descricao) {
 							html += '<div style="margin-top:16px">';
 							html += '<strong style="color:#6b7280">Descrição:</strong>';
 							html += '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:12px;margin-top:8px;color:#374151">' + inspecao.descricao + '</div>';
+							html += '</div>';
+						}
+						
+						if (inspecao.acoes) {
+							html += '<div style="margin-top:16px">';
+							html += '<strong style="color:#6b7280">Ações Tomadas:</strong>';
+							html += '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:12px;margin-top:8px;color:#374151">' + inspecao.acoes + '</div>';
 							html += '</div>';
 						}
 						html += '</div>';
