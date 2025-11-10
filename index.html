@@ -4599,9 +4599,14 @@
 
 					// Função para editar inspeção
 					function editarInspecao(id) {
+						console.log('Função editarInspecao chamada com ID:', id);
+						console.log('Array inspecoes:', inspecoes);
+						
 						var inspecao = inspecoes.find(function(insp) { return insp.id == id; });
+						console.log('Inspeção encontrada:', inspecao);
+						
 						if (!inspecao) {
-							alert('Inspeção não encontrada!');
+							alert('Inspeção não encontrada! ID: ' + id);
 							return;
 						}
 
@@ -4628,6 +4633,7 @@
 						document.getElementById('edit-insp-status').value = inspecao.status || '';
 
 						// Carregar opções dos selects
+						console.log('Carregando opções do modal de edição...');
 						carregarOpcoesEditarInspecao();
 
 						// Mostrar fotos existentes se houver
@@ -4640,7 +4646,16 @@
 						}
 
 						// Abrir modal
-						document.getElementById('modal-editar-inspecao').style.display = 'flex';
+						console.log('Tentando abrir modal de edição...');
+						var modal = document.getElementById('modal-editar-inspecao');
+						console.log('Modal encontrado:', modal);
+						if (modal) {
+							modal.style.display = 'flex';
+							console.log('Modal aberto com sucesso!');
+						} else {
+							console.error('Modal não encontrado!');
+							alert('Erro: Modal de edição não encontrado!');
+						}
 					}
 
 					function carregarOpcoesEditarInspecao() {
