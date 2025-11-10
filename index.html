@@ -3970,6 +3970,36 @@
 					
 					// Inicializar sistema de inspeção
 					function inicializarInspecao() {
+						// Adicionar dados de exemplo se não houver inspeções
+						if (inspecoes.length === 0) {
+							var inspecaoExemplo = {
+								id: Date.now(),
+								data: '2025-11-09',
+								area: 'BAP 1B',
+								local: 'Ferragem',
+								tipo: 'Inspeção de HSE',
+								semana: '45',
+								descricao: 'Tampa da canaleta fora de posição',
+								acoes: 'Reposicionamento da tampa e sinalização adequada',
+								categoria: 'Ferramentas manuais',
+								classificacao: 'Categorias de riscos',
+								severidade: 'Baixa',
+								risco: 'Ferramentas inadequadas',
+								controlavel: 'Sim',
+								interdicao: 'Não',
+								emissor: 'Sistema',
+								responsavel: 'Adelson',
+								prazo: '2025-11-15',
+								conclusao: '',
+								status: 'CONCLUÍDO',
+								fotoAntes: null,
+								fotoDepois: null,
+								dataCriacao: new Date().toISOString()
+							};
+							inspecoes.push(inspecaoExemplo);
+							localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
+						}
+						
 						carregarInspecoes();
 						configurarSemanaAtual();
 						carregarCategoriasDropdown();
@@ -4525,8 +4555,10 @@
 					function carregarInspecoes() {
 						var lista = document.getElementById('lista-inspecoes');
 						
+						console.log('Carregando inspeções:', inspecoes.length);
+						
 						if (inspecoes.length === 0) {
-							lista.innerHTML = '<div style="padding:40px;text-align:center;color:#9ca3af;font-style:italic">Nenhuma inspeção cadastrada</div>';
+							lista.innerHTML = '<div style="padding:60px 20px;text-align:center;color:#9ca3af"><div style="font-size:3rem;margin-bottom:16px;opacity:0.5">🔍</div><div style="font-size:1.1rem;font-weight:500;margin-bottom:8px">Nenhuma inspeção cadastrada ainda.</div><div style="font-size:0.9rem">Clique em "Nova Inspeção" para começar.</div></div>';
 							return;
 						}
 						
@@ -4536,32 +4568,68 @@
 							var corSeveridade = getCorSeveridade(inspecao.severidade);
 							var corStatus = getCorStatus(inspecao.status);
 							
-							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:80px 60px 80px 60px 60px 100px 80px 80px 120px 80px 80px 120px;gap:8px;align-items:center;font-size:0.8rem">';
-							html += '<div style="color:#374151;font-weight:500">' + dataFormatada + '</div>';
-							html += '<div style="color:#374151">' + inspecao.area + '</div>';
-							html += '<div style="color:#6b7280">' + inspecao.local + '</div>';
-							html += '<div style="color:#6b7280">' + inspecao.tipo + '</div>';
-							html += '<div style="color:#6b7280">' + inspecao.semana + '</div>';
-							html += '<div style="color:#6b7280">' + inspecao.categoria + '</div>';
-							html += '<div><span style="background:' + corSeveridade + ';color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">' + inspecao.severidade + '</span></div>';
-							html += '<div><span style="color:' + (inspecao.interdicao === 'Sim' ? '#10b981' : '#ef4444') + ';font-weight:600">' + inspecao.interdicao + '</span></div>';
-							html += '<div style="color:#6b7280">' + inspecao.responsavel + '</div>';
-							html += '<div><span style="background:' + corStatus + ';color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">' + inspecao.status + '</span></div>';
+							// Card responsivo para mobile/tablet
+							html += '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">';
+							
+							// Header do card
+							html += '<div style="background:#f8fafc;padding:16px;border-bottom:1px solid #e5e7eb">';
+							html += '<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">';
+							html += '<div>';
+							html += '<div style="font-size:1.1rem;font-weight:600;color:#374151;margin-bottom:4px">📋 Inspeção #' + inspecao.id + '</div>';
+							html += '<div style="font-size:0.9rem;color:#6b7280">' + dataFormatada + ' • Semana ' + (inspecao.semana || 'N/A') + '</div>';
+							html += '</div>';
+							html += '<div style="display:flex;align-items:center;gap:8px">';
+							html += '<span style="background:' + corStatus + ';color:#fff;padding:4px 12px;border-radius:16px;font-size:0.8rem;font-weight:500">' + (inspecao.status || 'N/A') + '</span>';
+							html += '</div>';
+							html += '</div>';
+							html += '</div>';
+							
+							// Conteúdo do card
+							html += '<div style="padding:16px">';
+							
+							// Primeira linha: Área, Local, Tipo
+							html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:16px">';
+							html += '<div><strong style="color:#6b7280;font-size:0.85rem">📍 Área:</strong><br><span style="color:#374151">' + (inspecao.area || 'N/A') + '</span></div>';
+							html += '<div><strong style="color:#6b7280;font-size:0.85rem">🏢 Local:</strong><br><span style="color:#374151">' + (inspecao.local || 'N/A') + '</span></div>';
+							html += '<div><strong style="color:#6b7280;font-size:0.85rem">📄 Tipo:</strong><br><span style="color:#374151">' + (inspecao.tipo || 'N/A') + '</span></div>';
+							html += '</div>';
+							
+							// Segunda linha: Categoria, Severidade, Interdição
+							html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:16px">';
+							html += '<div><strong style="color:#6b7280;font-size:0.85rem">🏷️ Categoria:</strong><br><span style="color:#374151">' + (inspecao.categoria || 'N/A') + '</span></div>';
+							html += '<div><strong style="color:#6b7280;font-size:0.85rem">⚠️ Severidade:</strong><br><span style="background:' + corSeveridade + ';color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">' + (inspecao.severidade || 'N/A') + '</span></div>';
+							html += '<div><strong style="color:#6b7280;font-size:0.85rem">🚫 Interdição:</strong><br><span style="color:' + (inspecao.interdicao === 'Sim' ? '#ef4444' : '#10b981') + ';font-weight:600">' + (inspecao.interdicao || 'N/A') + '</span></div>';
+							html += '</div>';
+							
+							if (inspecao.responsavel) {
+								html += '<div style="margin-bottom:16px">';
+								html += '<strong style="color:#6b7280;font-size:0.85rem">👤 Responsável:</strong><br>';
+								html += '<span style="color:#374151">' + inspecao.responsavel + '</span>';
+								html += '</div>';
+							}
+							
+							// Fotos e ações
+							html += '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid #f3f4f6">';
+							
+							// Fotos
 							html += '<div>';
 							var totalFotos = 0;
 							if (inspecao.fotoAntes) totalFotos++;
 							if (inspecao.fotoDepois) totalFotos++;
 							
 							if (totalFotos > 0) {
-								html += '<button onclick="mostrarFotosInspecao(\'' + inspecao.id + '\')" style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer" title="Ver e baixar fotos">📷 ' + totalFotos + ' Foto' + (totalFotos > 1 ? 's' : '') + '</button>';
-							} else {
-								html += '<span style="color:#9ca3af;font-size:0.75rem">Sem fotos</span>';
+								html += '<button onclick="mostrarFotosInspecao(\'' + inspecao.id + '\')" style="background:#3b82f6;color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-right:8px" title="Ver e baixar fotos">📷 ' + totalFotos + ' Foto' + (totalFotos > 1 ? 's' : '') + '</button>';
 							}
 							html += '</div>';
-							html += '<div style="display:flex;gap:4px">';
-							html += '<button onclick="mostrarRelatorioInspecao(\'' + inspecao.id + '\')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer" title="Ver Relatório">📋</button>';
-							html += '<button onclick="editarInspecao(\'' + inspecao.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>';
-							html += '<button onclick="excluirInspecao(\'' + inspecao.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">🗑️</button>';
+							
+							// Ações
+							html += '<div style="display:flex;gap:8px">';
+							html += '<button onclick="mostrarRelatorioInspecao(\'' + inspecao.id + '\')" style="background:#8b5cf6;color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:0.8rem;cursor:pointer" title="Ver Relatório">📋</button>';
+							html += '<button onclick="editarInspecao(\'' + inspecao.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:0.8rem;cursor:pointer" title="Editar">✏️</button>';
+							html += '<button onclick="excluirInspecao(\'' + inspecao.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:0.8rem;cursor:pointer" title="Excluir">🗑️</button>';
+							html += '</div>';
+							
+							html += '</div>';
 							html += '</div>';
 							html += '</div>';
 						});
