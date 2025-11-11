@@ -4631,14 +4631,10 @@
 
 					// Função para editar inspeção
 					function editarInspecao(id) {
-						console.log('Função editarInspecao chamada com ID:', id);
-						console.log('Array inspecoes:', inspecoes);
-						
 						var inspecao = inspecoes.find(function(insp) { return insp.id == id; });
-						console.log('Inspeção encontrada:', inspecao);
 						
 						if (!inspecao) {
-							alert('Inspeção não encontrada! ID: ' + id);
+							alert('Inspeção não encontrada!');
 							return;
 						}
 
@@ -4665,7 +4661,6 @@
 						document.getElementById('edit-insp-status').value = inspecao.status || '';
 
 						// Carregar opções dos selects
-						console.log('Carregando opções do modal de edição...');
 						carregarOpcoesEditarInspecao();
 
 						// Mostrar fotos existentes se houver
@@ -4678,53 +4673,87 @@
 						}
 
 						// Abrir modal
-						console.log('Tentando abrir modal de edição...');
-						var modal = document.getElementById('modal-editar-inspecao');
-						console.log('Modal encontrado:', modal);
-						if (modal) {
-							modal.style.display = 'flex';
-							console.log('Modal aberto com sucesso!');
-						} else {
-							console.error('Modal não encontrado!');
-							alert('Erro: Modal de edição não encontrado!');
-						}
+						document.getElementById('modal-editar-inspecao').style.display = 'flex';
 					}
 
 					function carregarOpcoesEditarInspecao() {
-						// Carregar áreas
+						// Carregar áreas do localStorage
+						var areasLocaisData = JSON.parse(localStorage.getItem('areasLocais')) || [];
 						var selectArea = document.getElementById('edit-insp-area');
-						selectArea.innerHTML = '<option value="">Selecione a área...</option>';
-						areas.forEach(function(area) {
-							selectArea.innerHTML += '<option value="' + area.nome + '">' + area.nome + '</option>';
-						});
+						if (selectArea) {
+							selectArea.innerHTML = '<option value="">Selecione a área...</option>';
+							var areasUnicas = [];
+							areasLocaisData.forEach(function(area) {
+								if (areasUnicas.indexOf(area.nome) === -1) {
+									areasUnicas.push(area.nome);
+								}
+							});
+							areasUnicas.sort();
+							areasUnicas.forEach(function(nomeArea) {
+								var option = document.createElement('option');
+								option.value = nomeArea;
+								option.textContent = nomeArea;
+								selectArea.appendChild(option);
+							});
+						}
 
-						// Carregar locais
+						// Carregar locais do localStorage
 						var selectLocal = document.getElementById('edit-insp-local');
-						selectLocal.innerHTML = '<option value="">Selecione o local...</option>';
-						locais.forEach(function(local) {
-							selectLocal.innerHTML += '<option value="' + local.nome + '">' + local.nome + '</option>';
-						});
+						if (selectLocal) {
+							selectLocal.innerHTML = '<option value="">Selecione o local...</option>';
+							var locaisUnicos = [];
+							areasLocaisData.forEach(function(area) {
+								if (locaisUnicos.indexOf(area.local) === -1) {
+									locaisUnicos.push(area.local);
+								}
+							});
+							locaisUnicos.sort();
+							locaisUnicos.forEach(function(local) {
+								var option = document.createElement('option');
+								option.value = local;
+								option.textContent = local;
+								selectLocal.appendChild(option);
+							});
+						}
 
-						// Carregar tipos de registro
+						// Carregar tipos de registro do localStorage
+						var tiposRegistroData = JSON.parse(localStorage.getItem('tiposRegistro')) || [];
 						var selectTipo = document.getElementById('edit-insp-tipo');
-						selectTipo.innerHTML = '<option value="">Selecione o tipo de registro...</option>';
-						tiposRegistro.forEach(function(tipo) {
-							selectTipo.innerHTML += '<option value="' + tipo.nome + '">' + tipo.nome + '</option>';
-						});
+						if (selectTipo) {
+							selectTipo.innerHTML = '<option value="">Selecione o tipo de registro...</option>';
+							tiposRegistroData.filter(function(tipo) { return tipo.status === 'ativo'; }).forEach(function(tipo) {
+								var option = document.createElement('option');
+								option.value = tipo.nome;
+								option.textContent = tipo.nome;
+								selectTipo.appendChild(option);
+							});
+						}
 
-						// Carregar categorias
+						// Carregar categorias do localStorage
+						var categoriasHSEData = JSON.parse(localStorage.getItem('categoriasHSE')) || [];
 						var selectCategoria = document.getElementById('edit-insp-categoria');
-						selectCategoria.innerHTML = '<option value="">Selecione a categoria...</option>';
-						categoriasHSE.forEach(function(categoria) {
-							selectCategoria.innerHTML += '<option value="' + categoria.nome + '">' + categoria.nome + '</option>';
-						});
+						if (selectCategoria) {
+							selectCategoria.innerHTML = '<option value="">Selecione a categoria...</option>';
+							categoriasHSEData.forEach(function(categoria) {
+								var option = document.createElement('option');
+								option.value = categoria.nome;
+								option.textContent = categoria.nome;
+								selectCategoria.appendChild(option);
+							});
+						}
 
-						// Carregar riscos/perigos
+						// Carregar riscos/perigos do localStorage
+						var riscosPerigosData = JSON.parse(localStorage.getItem('riscosPerigos')) || [];
 						var selectRisco = document.getElementById('edit-insp-risco');
-						selectRisco.innerHTML = '<option value="">Selecione o risco/perigo...</option>';
-						riscosPerigos.filter(function(risco) { return risco.status === 'Ativo'; }).forEach(function(risco) {
-							selectRisco.innerHTML += '<option value="' + risco.nome + '">' + risco.nome + '</option>';
-						});
+						if (selectRisco) {
+							selectRisco.innerHTML = '<option value="">Selecione o risco/perigo...</option>';
+							riscosPerigosData.filter(function(risco) { return risco.status === 'ativo'; }).forEach(function(risco) {
+								var option = document.createElement('option');
+								option.value = risco.nome;
+								option.textContent = risco.nome;
+								selectRisco.appendChild(option);
+							});
+						}
 					}
 
 					function fecharModalEditarInspecao() {
