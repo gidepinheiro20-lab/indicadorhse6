@@ -914,6 +914,7 @@
 									<li><strong>Matrícula</strong> - Número de identificação do funcionário</li>
 									<li><strong>Nome</strong> - Nome completo do funcionário</li>
 									<li><strong>Função</strong> - Cargo ou função exercida</li>
+									<li><strong>Setor</strong> - Setor ou departamento de trabalho</li>
 									<li><strong>Data Admissão</strong> - Data no formato DD/MM/AAAA</li>
 									<li><strong>Empresa</strong> - Nome da empresa</li>
 								</ol>
@@ -3587,17 +3588,15 @@
 								// Para simulação, vamos criar dados de exemplo
 								// Aqui seria onde você processaria o Excel real
 								setTimeout(function() {
-									// Dados simulados como se viessem da planilha
-									var dadosSimulados = [
-										['Matrícula', 'Nome', 'Função', 'Data Admissão', 'Empresa'],
-										['29001', 'João Silva Santos', 'Operador de Máquinas', '15/01/2024', 'RS Construções'],
-										['29002', 'Maria Oliveira Costa', 'Engenheira Civil', '22/02/2024', 'RS Construções'],
-										['29003', 'Pedro Almeida Souza', 'Técnico em Segurança', '10/03/2024', 'Construtora ABC'],
-										['29004', 'Ana Paula Lima', 'Coordenadora de Obras', '05/04/2024', 'RS Construções'],
-										['29005', 'Carlos Eduardo Rocha', 'Soldador', '18/05/2024', 'Metalúrgica XYZ']
-									];
-									
-									dadosPreview = dadosSimulados;
+								// Dados simulados como se viessem da planilha
+								var dadosSimulados = [
+									['Matrícula', 'Nome', 'Função', 'Setor', 'Data Admissão', 'Empresa'],
+									['29001', 'João Silva Santos', 'Operador de Máquinas', 'Operações', '15/01/2024', 'RS Construções'],
+									['29002', 'Maria Oliveira Costa', 'Engenheira Civil', 'Engenharia', '22/02/2024', 'RS Construções'],
+									['29003', 'Pedro Almeida Souza', 'Técnico em Segurança', 'Segurança do Trabalho', '10/03/2024', 'Construtora ABC'],
+									['29004', 'Ana Paula Lima', 'Coordenadora de Obras', 'Obras Civis', '05/04/2024', 'RS Construções'],
+									['29005', 'Carlos Eduardo Rocha', 'Soldador', 'Soldagem', '18/05/2024', 'Metalúrgica XYZ']
+								];									dadosPreview = dadosSimulados;
 									exibirPreview(dadosSimulados);
 									mostrarStatus('Arquivo processado com sucesso! ' + (dadosSimulados.length - 1) + ' funcionários encontrados.', 'sucesso');
 									
@@ -3659,13 +3658,14 @@
 						var novosfuncionarios = [];
 						for (var i = 1; i < dadosPreview.length; i++) {
 							var linha = dadosPreview[i];
-							if (linha.length >= 5) {
+							if (linha.length >= 6) {
 								var funcionario = {
 									matricula: linha[0].toString(),
 									nome: linha[1],
 									funcao: linha[2],
-									dataAdmissao: linha[3],
-									empresa: linha[4]
+									setor: linha[3],
+									admissao: linha[4],
+									empresa: linha[5]
 								};
 								
 								// Verificar se matrícula já existe
