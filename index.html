@@ -812,10 +812,11 @@
 								
 								<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">
 									<!-- Cabeçalho da tabela -->
-									<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:120px 2fr 2fr 120px 1.5fr 100px;gap:16px;font-weight:600;color:#374151">
+									<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:120px 2fr 1.5fr 1.5fr 120px 1.5fr 100px;gap:16px;font-weight:600;color:#374151">
 										<div>Matrícula</div>
 										<div>Nome</div>
 										<div>Função</div>
+										<div>Setor</div>
 										<div>Data Admissão</div>
 										<div>Empresa</div>
 										<div>Ações</div>
@@ -824,10 +825,11 @@
 									<!-- Lista de funcionários cadastrados -->
 									<div id="funcionarios-lista">
 										<!-- Funcionário exemplo -->
-										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:120px 2fr 2fr 120px 1.5fr 100px;gap:16px;align-items:center">
+										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:120px 2fr 1.5fr 1.5fr 120px 1.5fr 100px;gap:16px;align-items:center">
 											<div style="color:#374151;font-weight:500">28853</div>
 											<div style="color:#374151">Ademilcio Ferreira Caldas</div>
 											<div style="color:#6b7280">Encarregado de obras II</div>
+											<div style="color:#6b7280">Obras Civis</div>
 											<div style="color:#6b7280">10/10/2025</div>
 											<div style="color:#6b7280">RS Construções</div>
 											<div>
@@ -868,6 +870,11 @@
 							<div>
 								<label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Função *</label>
 								<input type="text" id="func-funcao" required style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
+							</div>
+							
+							<div>
+								<label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Setor *</label>
+								<input type="text" id="func-setor" required style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
 							</div>
 							
 							<div>
@@ -3395,10 +3402,11 @@
 						
 						var html = '';
 						funcionarios.forEach(function(func) {
-							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:120px 2fr 2fr 120px 1.5fr 100px;gap:16px;align-items:center">';
+							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:120px 2fr 1.5fr 1.5fr 120px 1.5fr 100px;gap:16px;align-items:center">';
 							html += '<div style="color:#374151;font-weight:500">' + func.matricula + '</div>';
 							html += '<div style="color:#374151">' + func.nome + '</div>';
 							html += '<div style="color:#6b7280">' + func.funcao + '</div>';
+							html += '<div style="color:#6b7280">' + (func.setor || 'Não informado') + '</div>';
 							html += '<div style="color:#6b7280">' + formatarDataBR(func.admissao) + '</div>';
 							html += '<div style="color:#6b7280">' + func.empresa + '</div>';
 							html += '<div>';
@@ -3441,6 +3449,7 @@
 						var matricula = document.getElementById('func-matricula').value;
 						var nome = document.getElementById('func-nome').value;
 						var funcao = document.getElementById('func-funcao').value;
+						var setor = document.getElementById('func-setor').value;
 						var admissao = document.getElementById('func-admissao').value;
 						var empresa = document.getElementById('func-empresa').value;
 						
@@ -3456,6 +3465,7 @@
 							matricula: matricula,
 							nome: nome,
 							funcao: funcao,
+							setor: setor,
 							admissao: admissao,
 							empresa: empresa
 						});
@@ -3483,6 +3493,7 @@
 							document.getElementById('func-matricula').value = funcionario.matricula;
 							document.getElementById('func-nome').value = funcionario.nome;
 							document.getElementById('func-funcao').value = funcionario.funcao;
+							document.getElementById('func-setor').value = funcionario.setor || '';
 							document.getElementById('func-admissao').value = funcionario.admissao;
 							document.getElementById('func-empresa').value = funcionario.empresa;
 							
