@@ -3579,9 +3579,13 @@
 					
 					// Processar planilha Excel (real)
 					function processarPlanilha(file) {
+						mostrarStatus('Lendo arquivo...', 'carregando');
+						
 						var reader = new FileReader();
 						reader.onload = function(e) {
 							try {
+								mostrarStatus('Processando dados...', 'carregando');
+								
 								var data = new Uint8Array(e.target.result);
 								
 								// Usar SheetJS para ler o arquivo Excel
@@ -3592,6 +3596,8 @@
 								// Converter para array de arrays
 								var jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1, defval: ''});
 								
+								console.log('Dados brutos do Excel:', jsonData);
+								
 								// Filtrar linhas vazias
 								var dadosLimpos = jsonData.filter(function(linha) {
 									return linha.length > 0 && linha.some(function(celula) {
@@ -3599,20 +3605,41 @@
 									});
 								});
 								
+								console.log('Dados após filtro:', dadosLimpos);
+								
 								if (dadosLimpos.length === 0) {
 									mostrarStatus('Arquivo vazio ou inválido!', 'erro');
 									return;
 								}
 								
-								// Verificar se tem pelo menos 6 colunas (incluindo setor)
-								if (dadosLimpos[0].length < 6) {
-									mostrarStatus('Formato inválido! A planilha deve ter 6 colunas: Matrícula, Nome, Função, Setor, Data Admissão, Empresa', 'erro');
+								if (dadosLimpos.length === 1) {
+									mostrarStatus('Planilha contém apenas cabeçalho. Adicione dados nas linhas seguintes.', 'erro');
 									return;
 								}
 								
+								// Verificar se tem pelo menos 5 colunas básicas (flexível para suportar com ou sem setor)
+								var numColunas = dadosLimpos[0].length;
+								if (numColunas < 5) {
+									mostrarStatus('Formato inválido! A planilha deve ter pelo menos 5 colunas: Matrícula, Nome, Função, Data Admissão, Empresa', 'erro');
+									return;
+								}
+								
+								// Se tem 6 colunas, incluir setor
+								var comSetor = numColunas >= 6;
+								console.log('Planilha com setor:', comSetor, '- Colunas:', numColunas);
+								
 								dadosPreview = dadosLimpos;
 								exibirPreview(dadosLimpos);
-								mostrarStatus('Arquivo processado com sucesso! ' + (dadosLimpos.length - 1) + ' funcionários encontrados.', 'sucesso');
+								
+								var numFuncionarios = dadosLimpos.length - 1;
+								var mensagem = 'Arquivo processado com sucesso! ' + numFuncionarios + ' funcionário' + (numFuncionarios > 1 ? 's' : '') + ' encontrado' + (numFuncionarios > 1 ? 's' : '') + '.';
+								if (comSetor) {
+									mensagem += ' (com campo Setor)';
+								} else {
+									mensagem += ' (sem campo Setor - será preenchido como "Não informado")';
+								}
+								
+								mostrarStatus(mensagem, 'sucesso');
 								
 								document.getElementById('btn-confirmar-importacao').disabled = false;
 								document.getElementById('btn-confirmar-importacao').style.opacity = '1';
@@ -3622,6 +3649,11 @@
 								mostrarStatus('Erro ao processar arquivo Excel: ' + error.message, 'erro');
 							}
 						};
+						
+						reader.onerror = function() {
+							mostrarStatus('Erro ao ler o arquivo. Tente novamente.', 'erro');
+						};
+						
 						reader.readAsArrayBuffer(file);
 					}
 					
@@ -3670,22 +3702,50 @@
 						
 						// Processar dados (pular cabeçalho)
 						var novosfuncionarios = [];
+						var comSetor = dadosPreview[0].length >= 6; // Verifica se tem campo setor
+						
+						console.log('Processando', dadosPreview.length - 1, 'funcionários. Com setor:', comSetor);
+						
 						for (var i = 1; i < dadosPreview.length; i++) {
 							var linha = dadosPreview[i];
-							if (linha.length >= 6) {
-								var funcionario = {
-									matricula: linha[0].toString(),
-									nome: linha[1],
-									funcao: linha[2],
-									setor: linha[3],
-									admissao: linha[4],
-									empresa: linha[5]
-								};
+							
+							// Suporta planilhas com 5 colunas (sem setor) ou 6 colunas (com setor)
+							if (linha.length >= 5) {
+								var funcionario;
 								
-								// Verificar se matrícula já existe
-								var existe = funcionarios.find(function(f) { return f.matricula === funcionario.matricula; });
-								if (!existe) {
-									novosfuncionarios.push(funcionario);
+								if (comSetor && linha.length >= 6) {
+									// Planilha com setor (6 colunas)
+									funcionario = {
+										matricula: String(linha[0] || '').trim(),
+										nome: String(linha[1] || '').trim(),
+										funcao: String(linha[2] || '').trim(),
+										setor: String(linha[3] || '').trim(),
+										admissao: String(linha[4] || '').trim(),
+										empresa: String(linha[5] || '').trim()
+									};
+								} else {
+									// Planilha sem setor (5 colunas)
+									funcionario = {
+										matricula: String(linha[0] || '').trim(),
+										nome: String(linha[1] || '').trim(),
+										funcao: String(linha[2] || '').trim(),
+										setor: 'Não informado',
+										admissao: String(linha[3] || '').trim(),
+										empresa: String(linha[4] || '').trim()
+									};
+								}
+								
+								// Verificar se matrícula já existe e se dados estão válidos
+								if (funcionario.matricula && funcionario.nome) {
+									var existe = funcionarios.find(function(f) { return f.matricula === funcionario.matricula; });
+									if (!existe) {
+										novosfuncionarios.push(funcionario);
+										console.log('Funcionário adicionado:', funcionario);
+									} else {
+										console.log('Funcionário já existe:', funcionario.matricula);
+									}
+								} else {
+									console.log('Linha inválida (sem matrícula ou nome):', linha);
 								}
 							}
 						}
