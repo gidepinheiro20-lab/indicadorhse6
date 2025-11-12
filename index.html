@@ -3828,90 +3828,55 @@
 							return ras.data === data;
 						});
 						
-						// Se não encontrar RAS, mostrar todos como ausentes
+						// Se não encontrar RAS, mostrar mensagem de nenhum registro
 						if (!rasDoDia) {
-							var todosAusentes = funcionarios.map(function(f) { return f.matricula; });
-							exibirFrequencia([], todosAusentes);
+							exibirFrequencia([], []);
 							return;
 						}
 						
-						// Separar presentes e ausentes
+						// Usar os dados completos da RAS (presentes tem nome, empresa, função)
 						var presentes = rasDoDia.presentes || [];
-						var todasMatriculas = funcionarios.map(function(f) { return f.matricula; });
-						var ausentes = todasMatriculas.filter(function(m) { 
-							return !presentes.includes(m); 
-						});
 						
-						exibirFrequencia(presentes, ausentes);
+						exibirFrequencia(presentes, []);
 					}
 					
 					// Exibir listas de frequência
 					function exibirFrequencia(presentes, ausentes) {
 						// Atualizar totais
 						document.getElementById('total-presentes').textContent = presentes.length;
-						document.getElementById('total-ausentes').textContent = ausentes.length;
+						document.getElementById('total-ausentes').textContent = 0; // Sempre 0 pois não temos lista de ausentes
 						document.getElementById('badge-presentes').textContent = presentes.length;
-						document.getElementById('badge-ausentes').textContent = ausentes.length;
+						document.getElementById('badge-ausentes').textContent = 0;
 						
 						// Resumo
-						document.getElementById('resumo-total').textContent = funcionarios.length;
+						document.getElementById('resumo-total').textContent = presentes.length;
 						document.getElementById('resumo-presentes').textContent = presentes.length;
-						document.getElementById('resumo-ausentes').textContent = ausentes.length;
+						document.getElementById('resumo-ausentes').textContent = 0;
 						
-						// Lista de presentes
+						// Lista de presentes (usando dados completos da RAS)
 						var listaPresentes = document.getElementById('lista-presentes');
 						if (presentes.length === 0) {
-							listaPresentes.innerHTML = '<div style="padding:40px 16px;text-align:center;color:#9ca3af;font-style:italic">Nenhum funcionário presente</div>';
+							listaPresentes.innerHTML = '<div style="padding:40px 16px;text-align:center;color:#9ca3af;font-style:italic">Nenhuma RAS encontrada para esta data</div>';
 						} else {
 							var htmlPresentes = '';
-							presentes.forEach(function(matricula) {
-								var funcionario = funcionarios.find(function(f) { return f.matricula === matricula; });
-								if (funcionario) {
-									htmlPresentes += '<div style="padding:12px 16px;border-bottom:1px solid #bbf7d0;display:grid;grid-template-columns:100px 2fr 1.5fr 1.5fr 60px;gap:12px;align-items:center;font-size:0.85rem">';
-									htmlPresentes += '<div style="font-weight:500">' + funcionario.matricula + '</div>';
-									htmlPresentes += '<div>' + funcionario.nome + '</div>';
-									htmlPresentes += '<div style="color:#059669">' + funcionario.funcao + '</div>';
-									htmlPresentes += '<div style="color:#059669">' + funcionario.empresa + '</div>';
-									htmlPresentes += '<div><button onclick="removerPresenca(\'' + funcionario.matricula + '\')" style="background:#dc2626;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.7rem;cursor:pointer" title="Remover presença">🗑️</button></div>';
-									htmlPresentes += '</div>';
-								}
+							presentes.forEach(function(funcionario) {
+								htmlPresentes += '<div style="padding:12px 16px;border-bottom:1px solid #bbf7d0;display:grid;grid-template-columns:100px 2fr 1.5fr 1.5fr 60px;gap:12px;align-items:center;font-size:0.85rem">';
+								htmlPresentes += '<div style="font-weight:500">' + funcionario.matricula + '</div>';
+								htmlPresentes += '<div>' + funcionario.nome + '</div>';
+								htmlPresentes += '<div style="color:#059669">' + funcionario.funcao + '</div>';
+								htmlPresentes += '<div style="color:#059669">' + funcionario.empresa + '</div>';
+								htmlPresentes += '<div><button onclick="removerPresencaRAS(\'' + funcionario.matricula + '\')" style="background:#dc2626;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.7rem;cursor:pointer" title="Remover presença">🗑️</button></div>';
+								htmlPresentes += '</div>';
 							});
 							listaPresentes.innerHTML = htmlPresentes;
 						}
 						
-						// Lista de ausentes
+						// Lista de ausentes (ocultar pois não usamos mais)
 						var listaAusentes = document.getElementById('lista-ausentes');
-						if (ausentes.length === 0) {
-							listaAusentes.innerHTML = '<div style="padding:40px 16px;text-align:center;color:#9ca3af;font-style:italic">Todos os funcionários presentes</div>';
-						} else {
-							var htmlAusentes = '';
-							ausentes.forEach(function(matricula) {
-								var funcionario = funcionarios.find(function(f) { return f.matricula === matricula; });
-								if (funcionario) {
-									htmlAusentes += '<div style="padding:12px 16px;border-bottom:1px solid #fecaca;display:grid;grid-template-columns:100px 2fr 1.5fr 1.5fr 60px;gap:12px;align-items:center;font-size:0.85rem">';
-									htmlAusentes += '<div style="font-weight:500">' + funcionario.matricula + '</div>';
-									htmlAusentes += '<div>' + funcionario.nome + '</div>';
-									htmlAusentes += '<div style="color:#dc2626">' + funcionario.funcao + '</div>';
-									htmlAusentes += '<div style="color:#dc2626">' + funcionario.empresa + '</div>';
-									htmlAusentes += '<div><button onclick="adicionarPresenca(\'' + funcionario.matricula + '\')" style="background:#059669;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.7rem;cursor:pointer" title="Marcar como presente">✓</button></div>';
-									htmlAusentes += '</div>';
-								}
-							});
-							listaAusentes.innerHTML = htmlAusentes;
-						}
+						listaAusentes.innerHTML = '<div style="padding:40px 16px;text-align:center;color:#9ca3af;font-style:italic">Os funcionários ausentes não aparecem aqui.<br>Apenas os presentes confirmados na RAS são exibidos.</div>';
 					}
 					
-					// Simular alguns dados de exemplo
-					if (historicoRAS.length === 0) {
-						// Adicionar dados simulados
-						historicoRAS = [
-							{
-								data: '01/11/2025',
-								presentes: [] // Nenhum presente por enquanto
-							}
-						];
-						localStorage.setItem('historicoRAS', JSON.stringify(historicoRAS));
-					}
+
 					
 					// Salvar dados de frequência da RAS
 					function salvarFrequenciaRAS(data, presentes) {
@@ -3950,9 +3915,9 @@
 					// Array para armazenar CPTs
 					var cpts = JSON.parse(localStorage.getItem('cpts')) || [];
 					
-					// Remover presença de um funcionário
-					function removerPresenca(matricula) {
-						if (!confirm('Tem certeza que deseja remover este funcionário da lista de presentes?')) {
+					// Remover presença de um funcionário da RAS
+					function removerPresencaRAS(matricula) {
+						if (!confirm('Tem certeza que deseja remover este funcionário da RAS?')) {
 							return;
 						}
 						
@@ -3964,50 +3929,18 @@
 						});
 						
 						if (rasIndex !== -1) {
-							// Remover da lista de presentes
+							// Remover da lista de presentes (comparar por matrícula)
 							var presentes = historicoRAS[rasIndex].presentes || [];
-							var novaListaPresentes = presentes.filter(function(m) {
-								return m !== matricula;
+							var novaListaPresentes = presentes.filter(function(funcionario) {
+								return funcionario.matricula !== matricula;
 							});
 							
 							historicoRAS[rasIndex].presentes = novaListaPresentes;
 							
-							// Salvar no localStorage
-							localStorage.setItem('historicoRAS', JSON.stringify(historicoRAS));
-							
-							// Recarregar a exibição
-							carregarFrequenciaDia(dataAtual);
-						}
-					}
-					
-					// Adicionar presença de um funcionário
-					function adicionarPresenca(matricula) {
-						var dataAtual = document.getElementById('data-resumo').textContent;
-						
-						// Buscar o RAS do dia
-						var rasIndex = historicoRAS.findIndex(function(ras) {
-							return ras.data === dataAtual;
-						});
-						
-						if (rasIndex !== -1) {
-							// Adicionar à lista de presentes se não estiver
-							var presentes = historicoRAS[rasIndex].presentes || [];
-							if (!presentes.includes(matricula)) {
-								presentes.push(matricula);
-								historicoRAS[rasIndex].presentes = presentes;
-								
-								// Salvar no localStorage
-								localStorage.setItem('historicoRAS', JSON.stringify(historicoRAS));
-								
-								// Recarregar a exibição
-								carregarFrequenciaDia(dataAtual);
+							// Se não sobrou ninguém, remover o registro RAS completo
+							if (novaListaPresentes.length === 0) {
+								historicoRAS.splice(rasIndex, 1);
 							}
-						} else {
-							// Criar novo registro RAS para o dia
-							historicoRAS.push({
-								data: dataAtual,
-								presentes: [matricula]
-							});
 							
 							// Salvar no localStorage
 							localStorage.setItem('historicoRAS', JSON.stringify(historicoRAS));
@@ -4017,9 +3950,9 @@
 						}
 					}
 					
-					// Limpar toda a frequência do dia
+					// Limpar toda a RAS do dia
 					function limparFrequenciaDia() {
-						if (!confirm('Tem certeza que deseja limpar TODA a frequência do dia? Esta ação não pode ser desfeita.')) {
+						if (!confirm('Tem certeza que deseja limpar TODA a RAS do dia? Esta ação não pode ser desfeita e removerá completamente os dados da reunião.')) {
 							return;
 						}
 						
@@ -4040,9 +3973,9 @@
 							// Recarregar a exibição
 							carregarFrequenciaDia(dataAtual);
 							
-							alert('Frequência do dia limpa com sucesso!');
+							alert('RAS do dia removida com sucesso!');
 						} else {
-							alert('Não há registros de frequência para este dia.');
+							alert('Não há RAS registrada para este dia.');
 						}
 					}
 
