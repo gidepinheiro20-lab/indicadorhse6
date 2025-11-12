@@ -3418,9 +3418,14 @@
 						var container = document.getElementById('funcionarios-lista');
 						var total = document.getElementById('total-funcionarios');
 						
-						console.log('🎯 DEBUG exibirFuncionarios:');
-						console.log('📊 funcionarios.length:', funcionarios.length);
-						console.log('📋 funcionarios array:', funcionarios);
+						// Forçar recarga do localStorage antes de exibir
+						if(localStorage.getItem('funcionarios')){
+							try {
+								funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
+							} catch(e){ funcionarios = []; }
+						}
+						
+						console.log('EXIBIR: Total de funcionários:', funcionarios.length);
 						
 						if (funcionarios.length === 0) {
 							container.innerHTML = '<div style="padding:20px;text-align:center;color:#6b7280">Nenhum funcionário cadastrado</div>';
@@ -3730,8 +3735,6 @@
 						var novosfuncionarios = [];
 						var comSetor = dadosPreview[0].length >= 6; // Verifica se tem campo setor
 						
-						console.log('Processando', dadosPreview.length - 1, 'funcionários. Com setor:', comSetor);
-						
 						for (var i = 1; i < dadosPreview.length; i++) {
 							var linha = dadosPreview[i];
 							
@@ -3766,32 +3769,19 @@
 									var existe = funcionarios.find(function(f) { return f.matricula === funcionario.matricula; });
 									if (!existe) {
 										novosfuncionarios.push(funcionario);
-										console.log('Funcionário adicionado:', funcionario);
-									} else {
-										console.log('Funcionário já existe:', funcionario.matricula);
 									}
-								} else {
-									console.log('Linha inválida (sem matrícula ou nome):', linha);
 								}
 							}
 						}
 						
 						// Adicionar ao array de funcionários
-						console.log('Funcionários antes da importação:', funcionarios.length);
-						console.log('Novos funcionários a adicionar:', novosfuncionarios.length);
-						console.log('Lista de novos funcionários:', novosfuncionarios);
+						console.log('IMPORTAÇÃO: Antes =', funcionarios.length, '| Novos =', novosfuncionarios.length);
 						
 						funcionarios = funcionarios.concat(novosfuncionarios);
-						
-						console.log('Funcionários após concatenação:', funcionarios.length);
-						console.log('Array completo de funcionários:', funcionarios);
-						
 						salvarFuncionarios();
-						console.log('Funcionários salvos no localStorage');
 						
-						// Verificar se realmente salvou
-						var funcionariosSalvos = JSON.parse(localStorage.getItem('funcionarios')) || [];
-						console.log('Verificação - funcionários no localStorage:', funcionariosSalvos.length);
+						console.log('IMPORTAÇÃO: Após salvar =', funcionarios.length);
+						console.log('VERIFICAÇÃO localStorage:', JSON.parse(localStorage.getItem('funcionarios') || '[]').length);
 						
 						exibirFuncionarios();
 						
