@@ -3453,6 +3453,40 @@
 						total.textContent = funcionarios.length;
 					}
 					
+					// Excluir funcionário
+					function excluirFuncionario(matricula) {
+						console.log('Excluindo funcionário:', matricula);
+						if (confirm('Tem certeza que deseja excluir este funcionário?')) {
+							funcionarios = funcionarios.filter(function(f) { return f.matricula !== matricula; });
+							salvarFuncionarios();
+							exibirFuncionarios();
+							alert('Funcionário excluído com sucesso!');
+						}
+					}
+					
+					// Editar funcionário
+					function editarFuncionario(matricula) {
+						console.log('Editando funcionário:', matricula);
+						var funcionario = funcionarios.find(function(f) { return f.matricula === matricula; });
+						console.log('Funcionário encontrado:', funcionario);
+						if (funcionario) {
+							// Preencher formulário com dados existentes
+							document.getElementById('func-matricula').value = funcionario.matricula;
+							document.getElementById('func-nome').value = funcionario.nome;
+							document.getElementById('func-funcao').value = funcionario.funcao;
+							document.getElementById('func-setor').value = funcionario.setor || '';
+							document.getElementById('func-admissao').value = funcionario.admissao;
+							document.getElementById('func-empresa').value = funcionario.empresa;
+							
+							// Marcar como edição
+							document.getElementById('modal-funcionario').setAttribute('data-editando', matricula);
+							document.getElementById('modal-funcionario').style.display = 'flex';
+							
+							// Alterar título do modal
+							document.querySelector('#modal-funcionario h2').textContent = 'Editar Funcionário';
+						}
+					}
+					
 					// Formatar data para exibição brasileira
 					function formatarDataBR(data) {
 						if (!data) return '-';
@@ -3538,36 +3572,7 @@
 						document.getElementById('modal-funcionario').style.display = 'none';
 					});
 					
-					// Excluir funcionário
-					function excluirFuncionario(matricula) {
-						if (confirm('Tem certeza que deseja excluir este funcionário?')) {
-							funcionarios = funcionarios.filter(function(f) { return f.matricula !== matricula; });
-							salvarFuncionarios();
-							exibirFuncionarios();
-							alert('Funcionário excluído com sucesso!');
-						}
-					}
-					
-					// Editar funcionário
-					function editarFuncionario(matricula) {
-						var funcionario = funcionarios.find(function(f) { return f.matricula === matricula; });
-						if (funcionario) {
-							// Preencher formulário com dados existentes
-							document.getElementById('func-matricula').value = funcionario.matricula;
-							document.getElementById('func-nome').value = funcionario.nome;
-							document.getElementById('func-funcao').value = funcionario.funcao;
-							document.getElementById('func-setor').value = funcionario.setor || '';
-							document.getElementById('func-admissao').value = funcionario.admissao;
-							document.getElementById('func-empresa').value = funcionario.empresa;
-							
-							// Marcar como edição
-							document.getElementById('modal-funcionario').setAttribute('data-editando', matricula);
-							document.getElementById('modal-funcionario').style.display = 'flex';
-							
-							// Alterar título do modal
-							document.querySelector('#modal-funcionario h2').textContent = 'Editar Funcionário';
-						}
-					}
+
 					
 					// Variáveis globais para importação
 					var dadosPreview = [];
