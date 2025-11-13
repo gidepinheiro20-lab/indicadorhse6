@@ -3462,20 +3462,29 @@
 					
 					// Abrir modal novo funcionário
 					document.getElementById('btn-novo-funcionario').addEventListener('click', function() {
-						document.getElementById('modal-funcionario').style.display = 'flex';
+						var modal = document.getElementById('modal-funcionario');
+						modal.style.display = 'flex';
+						modal.removeAttribute('data-editando');
 						document.getElementById('form-funcionario').reset();
+						document.querySelector('#modal-funcionario h2').textContent = 'Novo Funcionário';
 					});
 					
 					// Fechar modal
 					document.getElementById('fechar-modal').addEventListener('click', function() {
-						document.getElementById('modal-funcionario').style.display = 'none';
+						var modal = document.getElementById('modal-funcionario');
+						modal.style.display = 'none';
+						modal.removeAttribute('data-editando');
+						document.querySelector('#modal-funcionario h2').textContent = 'Novo Funcionário';
 					});
 					
 					document.getElementById('cancelar-funcionario').addEventListener('click', function() {
-						document.getElementById('modal-funcionario').style.display = 'none';
+						var modal = document.getElementById('modal-funcionario');
+						modal.style.display = 'none';
+						modal.removeAttribute('data-editando');
+						document.querySelector('#modal-funcionario h2').textContent = 'Novo Funcionário';
 					});
 					
-					// Cadastrar funcionário
+					// Cadastrar/Editar funcionário
 					document.getElementById('form-funcionario').addEventListener('submit', function(e) {
 						e.preventDefault();
 						
@@ -3486,27 +3495,47 @@
 						var admissao = document.getElementById('func-admissao').value;
 						var empresa = document.getElementById('func-empresa').value;
 						
-						// Verificar se matrícula já existe
-						var existe = funcionarios.find(function(f) { return f.matricula === matricula; });
-						if (existe) {
-							alert('Matrícula já existe! Use uma matrícula diferente.');
-							return;
-						}
+						var modal = document.getElementById('modal-funcionario');
+						var editando = modal.getAttribute('data-editando');
 						
-						// Adicionar funcionário
-						funcionarios.push({
-							matricula: matricula,
-							nome: nome,
-							funcao: funcao,
-							setor: setor,
-							admissao: admissao,
-							empresa: empresa
-						});
+						if (editando) {
+							// Modo edição
+							var index = funcionarios.findIndex(function(f) { return f.matricula === editando; });
+							if (index !== -1) {
+								funcionarios[index] = {
+									matricula: matricula,
+									nome: nome,
+									funcao: funcao,
+									setor: setor,
+									admissao: admissao,
+									empresa: empresa
+								};
+								alert('Funcionário editado com sucesso!');
+							}
+							modal.removeAttribute('data-editando');
+						} else {
+							// Modo cadastro - verificar se matrícula já existe
+							var existe = funcionarios.find(function(f) { return f.matricula === matricula; });
+							if (existe) {
+								alert('Matrícula já existe! Use uma matrícula diferente.');
+								return;
+							}
+							
+							// Adicionar funcionário
+							funcionarios.push({
+								matricula: matricula,
+								nome: nome,
+								funcao: funcao,
+								setor: setor,
+								admissao: admissao,
+								empresa: empresa
+							});
+							alert('Funcionário cadastrado com sucesso!');
+						}
 						
 						salvarFuncionarios();
 						exibirFuncionarios();
 						document.getElementById('modal-funcionario').style.display = 'none';
-						alert('Funcionário cadastrado com sucesso!');
 					});
 					
 					// Excluir funcionário
@@ -3519,10 +3548,11 @@
 						}
 					}
 					
-					// Editar funcionário (função simples por enquanto)
+					// Editar funcionário
 					function editarFuncionario(matricula) {
 						var funcionario = funcionarios.find(function(f) { return f.matricula === matricula; });
 						if (funcionario) {
+							// Preencher formulário com dados existentes
 							document.getElementById('func-matricula').value = funcionario.matricula;
 							document.getElementById('func-nome').value = funcionario.nome;
 							document.getElementById('func-funcao').value = funcionario.funcao;
@@ -3530,9 +3560,12 @@
 							document.getElementById('func-admissao').value = funcionario.admissao;
 							document.getElementById('func-empresa').value = funcionario.empresa;
 							
-							// Remover funcionário atual e abrir modal para edição
-							excluirFuncionario(matricula);
+							// Marcar como edição
+							document.getElementById('modal-funcionario').setAttribute('data-editando', matricula);
 							document.getElementById('modal-funcionario').style.display = 'flex';
+							
+							// Alterar título do modal
+							document.querySelector('#modal-funcionario h2').textContent = 'Editar Funcionário';
 						}
 					}
 					
