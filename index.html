@@ -192,7 +192,7 @@
 					<ul class="nav">
 						<li><a href="#dashboard"><span class="icon" aria-hidden="true">📊</span><span class="label">Dashboard</span></a></li>
 						<li><a href="#relatorios"><span class="icon" aria-hidden="true">📄</span><span class="label">Relatórios</span></a></li>
-						<li><a href="#funcionarios"><span class="icon" aria-hidden="true">👥</span><span class="label">Novo Colaborador</span></a></li>
+						<li><a href="#novo-colaborador"><span class="icon" aria-hidden="true">👥</span><span class="label">Novo Colaborador</span></a></li>
 						<li><a href="#frequencia"><span class="icon" aria-hidden="true">🔎</span><span class="label">Frequência</span></a></li>
 						<li><a href="#usuario"><span class="icon" aria-hidden="true">👤</span><span class="label">Usuário</span></a></li>
 					</ul>
@@ -951,7 +951,62 @@
 						</div>
 					</div>
 				</div>
-				
+
+				<!-- Seção Novo Colaborador -->
+				<div id="novo-colaborador" style="display:none;max-width:800px;margin:0 auto;">
+					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3">
+						<div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff;padding:20px 24px;border-radius:16px 16px 0 0">
+							<div style="text-align:center;margin-bottom:16px">
+								<div style="font-size:3rem;margin-bottom:12px">👤</div>
+								<div style="font-size:1.6rem;font-weight:700;margin-bottom:8px">Novo Colaborador</div>
+								<div style="font-size:1rem;opacity:0.9">Cadastre um novo membro da equipe</div>
+							</div>
+						</div>
+
+						<div style="padding:32px">
+							<form id="form-novo-colaborador" style="display:grid;gap:20px">
+								<div style="display:grid;grid-template-columns:1fr 2fr;gap:16px">
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Matrícula</label>
+										<input type="text" id="colaborador-matricula" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Nome Completo</label>
+										<input type="text" id="colaborador-nome" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+								</div>
+
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Função</label>
+										<input type="text" id="colaborador-funcao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Setor</label>
+										<input type="text" id="colaborador-setor" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+								</div>
+
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Data de Admissão</label>
+										<input type="date" id="colaborador-admissao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Empresa</label>
+										<input type="text" id="colaborador-empresa" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+								</div>
+
+								<div style="display:flex;gap:12px;justify-content:center;margin-top:16px">
+									<button type="submit" style="background:#10b981;color:#fff;padding:12px 32px;font-size:1rem;border:none;border-radius:6px;cursor:pointer;font-weight:600">✓ Cadastrar Colaborador</button>
+									<button type="button" onclick="limparFormularioColaborador()" style="background:#6b7280;color:#fff;padding:12px 32px;font-size:1rem;border:none;border-radius:6px;cursor:pointer;font-weight:600">🗑️ Limpar</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+
 				<!-- Seção Controle de Frequência -->
 				<div id="frequencia" style="display:none;max-width:1200px;margin:0 auto;">
 					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3">
@@ -3872,6 +3927,67 @@
 						}, 1000);
 					}
 					
+					// ===== SISTEMA DE NOVO COLABORADOR =====
+					var colaboradores = JSON.parse(localStorage.getItem('colaboradores')) || [];
+
+					// Manipular formulário de novo colaborador
+					document.getElementById('form-novo-colaborador').addEventListener('submit', function(e) {
+						e.preventDefault();
+						
+						const matricula = document.getElementById('colaborador-matricula').value.trim();
+						const nome = document.getElementById('colaborador-nome').value.trim();
+						const funcao = document.getElementById('colaborador-funcao').value.trim();
+						const setor = document.getElementById('colaborador-setor').value.trim();
+						const admissao = document.getElementById('colaborador-admissao').value;
+						const empresa = document.getElementById('colaborador-empresa').value.trim();
+						
+						if (!matricula || !nome || !funcao || !admissao || !empresa) {
+							alert('Por favor, preencha todos os campos obrigatórios.');
+							return;
+						}
+						
+						// Verificar se matrícula já existe
+						if (colaboradores.find(c => c.matricula === matricula)) {
+							alert('Já existe um colaborador com essa matrícula.');
+							return;
+						}
+						
+						// Criar novo colaborador
+						const colaborador = {
+							id: Date.now(),
+							matricula: matricula,
+							nome: nome,
+							funcao: funcao,
+							setor: setor,
+							admissao: admissao,
+							empresa: empresa,
+							dataCadastro: new Date().toISOString().split('T')[0]
+						};
+						
+						// Adicionar ao array
+						colaboradores.push(colaborador);
+						
+						// Salvar no localStorage
+						localStorage.setItem('colaboradores', JSON.stringify(colaboradores));
+						
+						// Limpar formulário
+						limparFormularioColaborador();
+						
+						// Mostrar mensagem de sucesso
+						alert('✅ Colaborador cadastrado com sucesso!');
+					});
+
+					function limparFormularioColaborador() {
+						document.getElementById('colaborador-matricula').value = '';
+						document.getElementById('colaborador-nome').value = '';
+						document.getElementById('colaborador-funcao').value = '';
+						document.getElementById('colaborador-setor').value = '';
+						document.getElementById('colaborador-admissao').value = '';
+						document.getElementById('colaborador-empresa').value = '';
+					}
+
+					window.limparFormularioColaborador = limparFormularioColaborador;
+
 					// SISTEMA DE CONTROLE DE FREQUÊNCIA
 					
 					// Histórico de presenças (simulado - em produção viria das RAS)
