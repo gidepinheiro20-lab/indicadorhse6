@@ -953,123 +953,56 @@
 				</div>
 
 				<!-- Seção Novo Colaborador -->
-				<div id="novo-colaborador" style="display:none;max-width:1200px;margin:0 auto;">
-					<!-- Cabeçalho da Seção -->
-					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3;margin-bottom:24px">
-						<div style="background:linear-gradient(135deg,#4f46e5 0%,#3b82f6 100%);color:#fff;padding:20px 24px;border-radius:16px 16px 0 0">
-							<div style="display:flex;align-items:center;justify-content:space-between">
-								<div style="display:flex;align-items:center;gap:16px">
-									<div style="font-size:2.5rem">👥</div>
-									<div>
-										<div style="font-size:1.8rem;font-weight:700;margin-bottom:4px">Cadastro de Colaboradores</div>
-										<div style="font-size:1rem;opacity:0.9">Gerencie sua equipe de colaboradores e importe dados de painhas.</div>
-									</div>
-								</div>
-								<div style="display:flex;gap:12px">
-									<button onclick="abrirModalColaborador()" style="background:#fff;color:#4f46e5;padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:8px">⭐ Novo Colaborador</button>
-									<button onclick="abrirModalImportarColaboradores()" style="background:#10b981;color:#fff;padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:8px">📊 Importar Planilha</button>
-								</div>
-							</div>
-					</div>
-
-					<!-- Lista de Colaboradores -->
+				<div id="novo-colaborador" style="display:none;max-width:800px;margin:0 auto;">
 					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3">
-						<div style="padding:20px 24px;border-bottom:1px solid #f3f4f6">
-							<h3 style="font-size:1.2rem;font-weight:700;color:#1f2937;margin:0">Lista de Colaboradores</h3>
-						</div>
-						<div style="overflow-x:auto">
-							<table style="width:100%;border-collapse:collapse">
-								<thead>
-									<tr style="background:#f9fafb">
-										<th style="padding:12px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb">Matrícula</th>
-										<th style="padding:12px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb">Nome</th>
-										<th style="padding:12px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb">Função</th>
-										<th style="padding:12px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb">Setor</th>
-										<th style="padding:12px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb">Data Admissão</th>
-										<th style="padding:12px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb">Empresa</th>
-										<th style="padding:12px;text-align:center;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb">Ações</th>
-									</tr>
-								</thead>
-								<tbody id="colaboradores-lista">
-									<!-- Lista será preenchida via JavaScript -->
-								</tbody>
-							</table>
-						</div>
-					</div>
-
-					<!-- Modal Novo Colaborador -->
-					<div id="modal-colaborador" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center">
-						<div style="background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.2);max-width:600px;width:90%;max-height:80vh;overflow-y:auto">
-							<div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff;padding:20px 24px;border-radius:16px 16px 0 0">
-								<div style="display:flex;align-items:center;justify-content:space-between">
-									<h2 style="font-size:1.4rem;font-weight:700;margin:0">Novo Colaborador</h2>
-									<button onclick="fecharModalColaborador()" style="background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center">×</button>
-								</div>
-							</div>
-							<div style="padding:32px">
-								<form id="form-colaborador" style="display:grid;gap:20px">
-									<div style="display:grid;grid-template-columns:1fr 2fr;gap:16px">
-										<div>
-											<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Matrícula</label>
-											<input type="text" id="colaborador-matricula" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
-										</div>
-										<div>
-											<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Nome Completo</label>
-											<input type="text" id="colaborador-nome" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
-										</div>
-									</div>
-
-									<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-										<div>
-											<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Função</label>
-											<input type="text" id="colaborador-funcao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
-										</div>
-										<div>
-											<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Setor</label>
-											<input type="text" id="colaborador-setor" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
-										</div>
-									</div>
-
-									<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-										<div>
-											<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Data de Admissão</label>
-											<input type="date" id="colaborador-admissao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
-										</div>
-										<div>
-											<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Empresa</label>
-											<input type="text" id="colaborador-empresa" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
-										</div>
-									</div>
-
-									<div style="display:flex;gap:12px;justify-content:center;margin-top:16px">
-										<button type="submit" style="background:#10b981;color:#fff;padding:12px 32px;font-size:1rem;border:none;border-radius:6px;cursor:pointer;font-weight:600">✓ Salvar Colaborador</button>
-										<button type="button" onclick="fecharModalColaborador()" style="background:#6b7280;color:#fff;padding:12px 32px;font-size:1rem;border:none;border-radius:6px;cursor:pointer;font-weight:600">Cancelar</button>
-									</div>
-								</form>
+						<div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff;padding:20px 24px;border-radius:16px 16px 0 0">
+							<div style="text-align:center;margin-bottom:16px">
+								<div style="font-size:3rem;margin-bottom:12px">👤</div>
+								<div style="font-size:1.6rem;font-weight:700;margin-bottom:8px">Novo Colaborador</div>
+								<div style="font-size:1rem;opacity:0.9">Cadastre um novo membro da equipe</div>
 							</div>
 						</div>
-					</div>
 
-					<!-- Modal Importar Colaboradores -->
-					<div id="modal-importar-colaboradores" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center">
-						<div style="background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.2);max-width:500px;width:90%">
-							<div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff;padding:20px 24px;border-radius:16px 16px 0 0">
-								<div style="display:flex;align-items:center;justify-content:space-between">
-									<h2 style="font-size:1.4rem;font-weight:700;margin:0">Importar Planilha de Colaboradores</h2>
-									<button onclick="fecharModalImportarColaboradores()" style="background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center">×</button>
+						<div style="padding:32px">
+							<form id="form-novo-colaborador" style="display:grid;gap:20px">
+								<div style="display:grid;grid-template-columns:1fr 2fr;gap:16px">
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Matrícula</label>
+										<input type="text" id="colaborador-matricula" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Nome Completo</label>
+										<input type="text" id="colaborador-nome" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
 								</div>
-							</div>
-							<div style="padding:32px">
-								<div style="text-align:center;margin-bottom:24px">
-									<div style="font-size:3rem;margin-bottom:12px">📊</div>
-									<p style="color:#6b7280;margin-bottom:16px">Selecione um arquivo Excel (.xlsx) com os dados dos colaboradores</p>
+
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Função</label>
+										<input type="text" id="colaborador-funcao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Setor</label>
+										<input type="text" id="colaborador-setor" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
 								</div>
-								<input type="file" id="arquivo-colaboradores" accept=".xlsx,.xls" style="width:100%;padding:12px;border:2px dashed #d1d5db;border-radius:8px;margin-bottom:20px;cursor:pointer">
-								<div style="display:flex;gap:12px;justify-content:center">
-									<button onclick="importarColaboradores()" style="background:#10b981;color:#fff;padding:12px 24px;border:none;border-radius:6px;cursor:pointer;font-weight:600">📥 Importar</button>
-									<button onclick="fecharModalImportarColaboradores()" style="background:#6b7280;color:#fff;padding:12px 24px;border:none;border-radius:6px;cursor:pointer;font-weight:600">Cancelar</button>
+
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Data de Admissão</label>
+										<input type="date" id="colaborador-admissao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
+									<div>
+										<label style="display:block;font-weight:600;color:#374151;margin-bottom:6px">Empresa</label>
+										<input type="text" id="colaborador-empresa" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+									</div>
 								</div>
-							</div>
+
+								<div style="display:flex;gap:12px;justify-content:center;margin-top:16px">
+									<button type="submit" style="background:#10b981;color:#fff;padding:12px 32px;font-size:1rem;border:none;border-radius:6px;cursor:pointer;font-weight:600">✓ Cadastrar Colaborador</button>
+									<button type="button" onclick="limparFormularioColaborador()" style="background:#6b7280;color:#fff;padding:12px 32px;font-size:1rem;border:none;border-radius:6px;cursor:pointer;font-weight:600">🗑️ Limpar</button>
+								</div>
+							</form>
 						</div>
 					</div>
 				</div>
@@ -2526,7 +2459,6 @@
 								document.getElementById('inspecao').style.display = 'none';
 								document.getElementById('categorias-hse').style.display = 'none';
 								document.getElementById('areas-locais').style.display = 'none';
-								document.getElementById('novo-colaborador').style.display = 'none';
 								hideSidebarOnMobile();
 							});
 						});
@@ -2609,57 +2541,22 @@
 								hideSidebarOnMobile();
 							});
 						});
-				// Exibir Novo Colaborador ao clicar em Novo Colaborador
-					document.querySelectorAll('.nav a[href="#novo-colaborador"]').forEach(function(link){
-						link.addEventListener('click',function(e){
-							e.preventDefault();
-							document.getElementById('conteudo-principal').style.display = 'none';
-							document.getElementById('cadastro-usuario').style.display = 'none';
-							document.getElementById('nova-ras').style.display = 'none';
-							document.getElementById('funcionarios').style.display = 'none';
-							document.getElementById('frequencia').style.display = 'none';
-							document.getElementById('cpt').style.display = 'none';
-							document.getElementById('inspecao').style.display = 'none';
-							document.getElementById('categorias-hse').style.display = 'none';
-							document.getElementById('areas-locais').style.display = 'none';
-							document.getElementById('novo-colaborador').style.display = 'block';
-							exibirColaboradores();
-							hideSidebarOnMobile();
+					// Ocultar outras seções ao clicar em outros itens
+						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"]):not([href="#inspecao"])').forEach(function(link){
+							link.addEventListener('click',function(){
+								document.getElementById('nova-ras').style.display = 'none';
+								document.getElementById('cadastro-usuario').style.display = 'none';
+								document.getElementById('funcionarios').style.display = 'none';
+								document.getElementById('frequencia').style.display = 'none';
+								document.getElementById('cpt').style.display = 'none';
+								document.getElementById('inspecao').style.display = 'none';
+								document.getElementById('categorias-hse').style.display = 'none';
+								document.getElementById('conteudo-principal').style.display = 'block';
+								hideSidebarOnMobile();
+							});
 						});
-					});
-				// Exibir Relatórios ao clicar em Relatórios
-					document.querySelectorAll('.nav a[href="#relatorios"]').forEach(function(link){
-						link.addEventListener('click',function(e){
-							e.preventDefault();
-							document.getElementById('conteudo-principal').style.display = 'block';
-							document.getElementById('cadastro-usuario').style.display = 'none';
-							document.getElementById('nova-ras').style.display = 'none';
-							document.getElementById('funcionarios').style.display = 'none';
-							document.getElementById('frequencia').style.display = 'none';
-							document.getElementById('cpt').style.display = 'none';
-							document.getElementById('inspecao').style.display = 'none';
-							document.getElementById('categorias-hse').style.display = 'none';
-							document.getElementById('areas-locais').style.display = 'none';
-							document.getElementById('novo-colaborador').style.display = 'none';
-							hideSidebarOnMobile();
-						});
-					});
-				// Ocultar outras seções ao clicar em outros itens
-					document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"]):not([href="#inspecao"]):not([href="#novo-colaborador"]):not([href="#relatorios"])').forEach(function(link){
-						link.addEventListener('click',function(){
-							document.getElementById('nova-ras').style.display = 'none';
-							document.getElementById('cadastro-usuario').style.display = 'none';
-							document.getElementById('funcionarios').style.display = 'none';
-							document.getElementById('frequencia').style.display = 'none';
-							document.getElementById('cpt').style.display = 'none';
-							document.getElementById('inspecao').style.display = 'none';
-							document.getElementById('categorias-hse').style.display = 'none';
-							document.getElementById('areas-locais').style.display = 'none';
-							document.getElementById('novo-colaborador').style.display = 'none';
-							document.getElementById('conteudo-principal').style.display = 'block';
-							hideSidebarOnMobile();
-						});
-					});					// Habilitar botão Próximo só se todos os campos obrigatórios estiverem preenchidos - Etapa 1
+
+					// Habilitar botão Próximo só se todos os campos obrigatórios estiverem preenchidos - Etapa 1
 					function validarRASEtapa1() {
 						var empresa = document.getElementById('ras-empresa').value;
 						var data = document.getElementById('ras-data').value;
@@ -4033,145 +3930,8 @@
 					// ===== SISTEMA DE NOVO COLABORADOR =====
 					var colaboradores = JSON.parse(localStorage.getItem('colaboradores')) || [];
 
-					// Exibir lista de colaboradores
-					function exibirColaboradores() {
-						var container = document.getElementById('colaboradores-lista');
-						
-						if (colaboradores.length === 0) {
-							container.innerHTML = '<tr><td colspan="7" style="padding:40px;text-align:center;color:#9ca3af;font-style:italic">Nenhum colaborador cadastrado ainda.</td></tr>';
-							return;
-						}
-						
-						var html = '';
-						colaboradores.forEach(function(colaborador) {
-							html += '<tr style="border-bottom:1px solid #f3f4f6">';
-							html += '<td style="padding:12px;color:#374151;font-weight:500">' + colaborador.matricula + '</td>';
-							html += '<td style="padding:12px;color:#374151">' + colaborador.nome + '</td>';
-							html += '<td style="padding:12px;color:#6b7280">' + colaborador.funcao + '</td>';
-							html += '<td style="padding:12px;color:#6b7280">' + (colaborador.setor || '-') + '</td>';
-							html += '<td style="padding:12px;color:#6b7280">' + formatarDataBR(colaborador.admissao) + '</td>';
-							html += '<td style="padding:12px;color:#6b7280">' + colaborador.empresa + '</td>';
-							html += '<td style="padding:12px;text-align:center">';
-							html += '<div style="display:flex;gap:8px;justify-content:center">';
-							html += '<button onclick="editarColaborador(\'' + colaborador.id + '\')" style="background:#3b82f6;color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:0.8rem">✏️ Editar</button>';
-							html += '<button onclick="excluirColaborador(\'' + colaborador.id + '\')" style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:0.8rem">🗑️ Excluir</button>';
-							html += '</div>';
-							html += '</td>';
-							html += '</tr>';
-						});
-						
-						container.innerHTML = html;
-					}
-
-					// Abrir modal colaborador
-					function abrirModalColaborador() {
-						document.getElementById('modal-colaborador').style.display = 'flex';
-						document.getElementById('form-colaborador').reset();
-						document.querySelector('#modal-colaborador h2').textContent = 'Novo Colaborador';
-						document.getElementById('modal-colaborador').removeAttribute('data-editando');
-					}
-
-					// Fechar modal colaborador
-					function fecharModalColaborador() {
-						document.getElementById('modal-colaborador').style.display = 'none';
-						document.getElementById('form-colaborador').reset();
-					}
-
-					// Abrir modal importar colaboradores
-					function abrirModalImportarColaboradores() {
-						document.getElementById('modal-importar-colaboradores').style.display = 'flex';
-					}
-
-					// Fechar modal importar colaboradores
-					function fecharModalImportarColaboradores() {
-						document.getElementById('modal-importar-colaboradores').style.display = 'none';
-					}
-
-					// Editar colaborador
-					function editarColaborador(id) {
-						var colaborador = colaboradores.find(c => c.id == id);
-						if (!colaborador) return;
-						
-						// Preencher formulário
-						document.getElementById('colaborador-matricula').value = colaborador.matricula;
-						document.getElementById('colaborador-nome').value = colaborador.nome;
-						document.getElementById('colaborador-funcao').value = colaborador.funcao;
-						document.getElementById('colaborador-setor').value = colaborador.setor || '';
-						document.getElementById('colaborador-admissao').value = colaborador.admissao;
-						document.getElementById('colaborador-empresa').value = colaborador.empresa;
-						
-						// Marcar como edição
-						document.getElementById('modal-colaborador').setAttribute('data-editando', id);
-						document.querySelector('#modal-colaborador h2').textContent = 'Editar Colaborador';
-						
-						// Abrir modal
-						document.getElementById('modal-colaborador').style.display = 'flex';
-					}
-
-					// Excluir colaborador
-					function excluirColaborador(id) {
-						if (!confirm('Tem certeza que deseja excluir este colaborador?')) return;
-						
-						colaboradores = colaboradores.filter(c => c.id != id);
-						localStorage.setItem('colaboradores', JSON.stringify(colaboradores));
-						exibirColaboradores();
-					}
-
-					// Importar colaboradores
-					function importarColaboradores() {
-						var arquivo = document.getElementById('arquivo-colaboradores').files[0];
-						if (!arquivo) {
-							alert('Por favor, selecione um arquivo.');
-							return;
-						}
-						
-						var reader = new FileReader();
-						reader.onload = function(e) {
-							try {
-								var workbook = XLSX.read(e.target.result, {type: 'binary'});
-								var sheetName = workbook.SheetNames[0];
-								var worksheet = workbook.Sheets[sheetName];
-								var dados = XLSX.utils.sheet_to_json(worksheet);
-								
-								var novosColaboradores = [];
-								dados.forEach(function(linha) {
-									if (linha.Matricula && linha.Nome) {
-										var colaborador = {
-											id: Date.now() + Math.random(),
-											matricula: linha.Matricula.toString().trim(),
-											nome: linha.Nome.toString().trim(),
-											funcao: (linha.Funcao || linha['Função'] || '').toString().trim(),
-											setor: (linha.Setor || '').toString().trim(),
-											admissao: formatarDataParaInput(linha['Data de Admissao'] || linha['Data Admissao'] || linha.Admissao || ''),
-											empresa: (linha.Empresa || '').toString().trim(),
-											dataCadastro: new Date().toISOString().split('T')[0]
-										};
-										
-										// Verificar se matrícula já existe
-										if (!colaboradores.find(c => c.matricula === colaborador.matricula)) {
-											novosColaboradores.push(colaborador);
-										}
-									}
-								});
-								
-								if (novosColaboradores.length > 0) {
-									colaboradores = colaboradores.concat(novosColaboradores);
-									localStorage.setItem('colaboradores', JSON.stringify(colaboradores));
-									exibirColaboradores();
-									alert('✅ ' + novosColaboradores.length + ' colaboradores importados com sucesso!');
-									fecharModalImportarColaboradores();
-								} else {
-									alert('Nenhum novo colaborador foi encontrado no arquivo.');
-								}
-							} catch (error) {
-								alert('Erro ao ler o arquivo: ' + error.message);
-							}
-						};
-						reader.readAsBinaryString(arquivo);
-					}
-
-					// Manipular formulário de colaborador
-					document.getElementById('form-colaborador').addEventListener('submit', function(e) {
+					// Manipular formulário de novo colaborador
+					document.getElementById('form-novo-colaborador').addEventListener('submit', function(e) {
 						e.preventDefault();
 						
 						const matricula = document.getElementById('colaborador-matricula').value.trim();
@@ -4186,73 +3946,47 @@
 							return;
 						}
 						
-						const editandoId = document.getElementById('modal-colaborador').getAttribute('data-editando');
-						
-						if (editandoId) {
-							// Editando colaborador existente
-							var index = colaboradores.findIndex(c => c.id == editandoId);
-							if (index !== -1) {
-								// Verificar se matrícula já existe em outro colaborador
-								var outroColaborador = colaboradores.find(c => c.matricula === matricula && c.id != editandoId);
-								if (outroColaborador) {
-									alert('Já existe outro colaborador com essa matrícula.');
-									return;
-								}
-								
-								colaboradores[index] = {
-									...colaboradores[index],
-									matricula: matricula,
-									nome: nome,
-									funcao: funcao,
-									setor: setor,
-									admissao: admissao,
-									empresa: empresa
-								};
-								
-								localStorage.setItem('colaboradores', JSON.stringify(colaboradores));
-								exibirColaboradores();
-								fecharModalColaborador();
-								alert('✅ Colaborador atualizado com sucesso!');
-							}
-						} else {
-							// Criando novo colaborador
-							if (colaboradores.find(c => c.matricula === matricula)) {
-								alert('Já existe um colaborador com essa matrícula.');
-								return;
-							}
-							
-							const colaborador = {
-								id: Date.now(),
-								matricula: matricula,
-								nome: nome,
-								funcao: funcao,
-								setor: setor,
-								admissao: admissao,
-								empresa: empresa,
-								dataCadastro: new Date().toISOString().split('T')[0]
-							};
-							
-							colaboradores.push(colaborador);
-							localStorage.setItem('colaboradores', JSON.stringify(colaboradores));
-							exibirColaboradores();
-							fecharModalColaborador();
-							alert('✅ Colaborador cadastrado com sucesso!');
+						// Verificar se matrícula já existe
+						if (colaboradores.find(c => c.matricula === matricula)) {
+							alert('Já existe um colaborador com essa matrícula.');
+							return;
 						}
+						
+						// Criar novo colaborador
+						const colaborador = {
+							id: Date.now(),
+							matricula: matricula,
+							nome: nome,
+							funcao: funcao,
+							setor: setor,
+							admissao: admissao,
+							empresa: empresa,
+							dataCadastro: new Date().toISOString().split('T')[0]
+						};
+						
+						// Adicionar ao array
+						colaboradores.push(colaborador);
+						
+						// Salvar no localStorage
+						localStorage.setItem('colaboradores', JSON.stringify(colaboradores));
+						
+						// Limpar formulário
+						limparFormularioColaborador();
+						
+						// Mostrar mensagem de sucesso
+						alert('✅ Colaborador cadastrado com sucesso!');
 					});
 
-					// Expor funções globalmente
-					window.abrirModalColaborador = abrirModalColaborador;
-					window.fecharModalColaborador = fecharModalColaborador;
-					window.abrirModalImportarColaboradores = abrirModalImportarColaboradores;
-					window.fecharModalImportarColaboradores = fecharModalImportarColaboradores;
-					window.editarColaborador = editarColaborador;
-					window.excluirColaborador = excluirColaborador;
-					window.importarColaboradores = importarColaboradores;
+					function limparFormularioColaborador() {
+						document.getElementById('colaborador-matricula').value = '';
+						document.getElementById('colaborador-nome').value = '';
+						document.getElementById('colaborador-funcao').value = '';
+						document.getElementById('colaborador-setor').value = '';
+						document.getElementById('colaborador-admissao').value = '';
+						document.getElementById('colaborador-empresa').value = '';
+					}
 
-					// Inicializar exibição dos colaboradores quando a seção for carregada
-					document.addEventListener('DOMContentLoaded', function() {
-						exibirColaboradores();
-					});
+					window.limparFormularioColaborador = limparFormularioColaborador;
 
 					// SISTEMA DE CONTROLE DE FREQUÊNCIA
 					
