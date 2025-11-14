@@ -2526,6 +2526,7 @@
 								document.getElementById('inspecao').style.display = 'none';
 								document.getElementById('categorias-hse').style.display = 'none';
 								document.getElementById('areas-locais').style.display = 'none';
+								document.getElementById('novo-colaborador').style.display = 'none';
 								hideSidebarOnMobile();
 							});
 						});
@@ -2608,22 +2609,57 @@
 								hideSidebarOnMobile();
 							});
 						});
-					// Ocultar outras seções ao clicar em outros itens
-						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"]):not([href="#inspecao"])').forEach(function(link){
-							link.addEventListener('click',function(){
-								document.getElementById('nova-ras').style.display = 'none';
-								document.getElementById('cadastro-usuario').style.display = 'none';
-								document.getElementById('funcionarios').style.display = 'none';
-								document.getElementById('frequencia').style.display = 'none';
-								document.getElementById('cpt').style.display = 'none';
-								document.getElementById('inspecao').style.display = 'none';
-								document.getElementById('categorias-hse').style.display = 'none';
-								document.getElementById('conteudo-principal').style.display = 'block';
-								hideSidebarOnMobile();
-							});
+				// Exibir Novo Colaborador ao clicar em Novo Colaborador
+					document.querySelectorAll('.nav a[href="#novo-colaborador"]').forEach(function(link){
+						link.addEventListener('click',function(e){
+							e.preventDefault();
+							document.getElementById('conteudo-principal').style.display = 'none';
+							document.getElementById('cadastro-usuario').style.display = 'none';
+							document.getElementById('nova-ras').style.display = 'none';
+							document.getElementById('funcionarios').style.display = 'none';
+							document.getElementById('frequencia').style.display = 'none';
+							document.getElementById('cpt').style.display = 'none';
+							document.getElementById('inspecao').style.display = 'none';
+							document.getElementById('categorias-hse').style.display = 'none';
+							document.getElementById('areas-locais').style.display = 'none';
+							document.getElementById('novo-colaborador').style.display = 'block';
+							exibirColaboradores();
+							hideSidebarOnMobile();
 						});
-
-					// Habilitar botão Próximo só se todos os campos obrigatórios estiverem preenchidos - Etapa 1
+					});
+				// Exibir Relatórios ao clicar em Relatórios
+					document.querySelectorAll('.nav a[href="#relatorios"]').forEach(function(link){
+						link.addEventListener('click',function(e){
+							e.preventDefault();
+							document.getElementById('conteudo-principal').style.display = 'block';
+							document.getElementById('cadastro-usuario').style.display = 'none';
+							document.getElementById('nova-ras').style.display = 'none';
+							document.getElementById('funcionarios').style.display = 'none';
+							document.getElementById('frequencia').style.display = 'none';
+							document.getElementById('cpt').style.display = 'none';
+							document.getElementById('inspecao').style.display = 'none';
+							document.getElementById('categorias-hse').style.display = 'none';
+							document.getElementById('areas-locais').style.display = 'none';
+							document.getElementById('novo-colaborador').style.display = 'none';
+							hideSidebarOnMobile();
+						});
+					});
+				// Ocultar outras seções ao clicar em outros itens
+					document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"]):not([href="#inspecao"]):not([href="#novo-colaborador"]):not([href="#relatorios"])').forEach(function(link){
+						link.addEventListener('click',function(){
+							document.getElementById('nova-ras').style.display = 'none';
+							document.getElementById('cadastro-usuario').style.display = 'none';
+							document.getElementById('funcionarios').style.display = 'none';
+							document.getElementById('frequencia').style.display = 'none';
+							document.getElementById('cpt').style.display = 'none';
+							document.getElementById('inspecao').style.display = 'none';
+							document.getElementById('categorias-hse').style.display = 'none';
+							document.getElementById('areas-locais').style.display = 'none';
+							document.getElementById('novo-colaborador').style.display = 'none';
+							document.getElementById('conteudo-principal').style.display = 'block';
+							hideSidebarOnMobile();
+						});
+					});					// Habilitar botão Próximo só se todos os campos obrigatórios estiverem preenchidos - Etapa 1
 					function validarRASEtapa1() {
 						var empresa = document.getElementById('ras-empresa').value;
 						var data = document.getElementById('ras-data').value;
