@@ -56,6 +56,7 @@
 			.nav a .icon{width:18px;height:18px;display:inline-block;flex:0 0 18px;color:var(--muted)}
 
 			.nav a:hover{background:#f0f6fb}
+			.nav a.active{background:#e6f3ff;color:#0066cc;font-weight:600}
 
 			/* content placeholder */
 			.main{
@@ -6454,4 +6455,77 @@
 					
 					// Inicializar exibição de funcionários
 					exibirFuncionarios();
+
+					// SISTEMA DE NAVEGAÇÃO ENTRE SEÇÕES
+					function mostrarSecao(secaoId) {
+						// Lista de todas as seções
+						var secoes = [
+							'dashboard', 'nova-ras', 'inspecao', 'relatorios', 
+							'funcionarios', 'novo-colaborador', 'frequencia', 'usuarios', 
+							'gerenciamento-riscos-perigos'
+						];
+						
+						// Ocultar todas as seções
+						secoes.forEach(function(id) {
+							var elemento = document.getElementById(id);
+							if (elemento) {
+								elemento.style.display = 'none';
+							}
+						});
+						
+						// Mostrar a seção selecionada
+						var secaoAtiva = document.getElementById(secaoId);
+						if (secaoAtiva) {
+							secaoAtiva.style.display = 'block';
+							
+							// Executar inicializações específicas da seção
+							if (secaoId === 'inspecao') {
+								inicializarInspecao();
+							} else if (secaoId === 'frequencia') {
+								inicializarFrequencia();
+							} else if (secaoId === 'novo-colaborador') {
+								exibirColaboradores();
+							} else if (secaoId === 'funcionarios') {
+								exibirFuncionarios();
+							}
+						}
+						
+						// Atualizar links ativos no menu
+						var links = document.querySelectorAll('nav a');
+						links.forEach(function(link) {
+							link.classList.remove('active');
+						});
+						
+						var linkAtivo = document.querySelector('nav a[href="#' + secaoId + '"]');
+						if (linkAtivo) {
+							linkAtivo.classList.add('active');
+						}
+					}
+
+					// Event listener para mudanças de hash na URL
+					window.addEventListener('hashchange', function() {
+						var hash = window.location.hash.substring(1);
+						if (hash) {
+							mostrarSecao(hash);
+						}
+					});
+
+					// Event listeners para os links do menu
+					document.addEventListener('DOMContentLoaded', function() {
+						var links = document.querySelectorAll('nav a');
+						links.forEach(function(link) {
+							link.addEventListener('click', function(e) {
+								e.preventDefault();
+								var href = this.getAttribute('href');
+								var secaoId = href.substring(1);
+								window.location.hash = href;
+								mostrarSecao(secaoId);
+							});
+						});
+						
+						// Mostrar seção inicial (dashboard ou a partir da URL)
+						var hashInicial = window.location.hash.substring(1) || 'dashboard';
+						mostrarSecao(hashInicial);
+					});
+
 					</script>
