@@ -784,13 +784,13 @@
 							<div style="display:flex;justify-content:space-between;align-items:center">
 								<div>
 									<div style="font-size:1.4rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px">
-										<span>👥</span> Cadastro de Funcionários
+										<span>👥</span> Cadastro de Colaboradores
 									</div>
 									<div style="font-size:1rem;opacity:0.9">Gerencie a equipe e importe dados de planilhas.</div>
 								</div>
 								<div style="display:flex;gap:12px">
 									<button id="btn-novo-funcionario" type="button" style="background:#fff;color:#3b82f6;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
-										<span>✨</span> Novo Funcionário
+										<span>✨</span> Novo Colaborador
 									</button>
 									<button id="btn-importar-planilha" type="button" style="background:#10b981;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
 										<span>📊</span> Importar Planilha
@@ -800,9 +800,9 @@
 						</div>
 						
 						<div style="padding:24px">
-							<!-- Lista de Funcionários -->
+							<!-- Lista de Colaboradores -->
 							<div id="lista-funcionarios-secao" style="margin-bottom:24px">
-								<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem">Lista de Funcionários</h3>
+								<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem">Lista de Colaboradores</h3>
 								
 								<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">
 									<!-- Cabeçalho da tabela -->
@@ -816,9 +816,9 @@
 										<div>Ações</div>
 									</div>
 									
-									<!-- Lista de funcionários cadastrados -->
+									<!-- Lista de colaboradores cadastrados -->
 									<div id="funcionarios-lista">
-										<!-- Funcionário exemplo -->
+										<!-- Colaborador exemplo -->
 										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:120px 2fr 1.5fr 1.5fr 120px 1.5fr 100px;gap:16px;align-items:center">
 											<div style="color:#374151;font-weight:500">28853</div>
 											<div style="color:#374151">Ademilcio Ferreira Caldas</div>
@@ -835,18 +835,18 @@
 								</div>
 								
 								<div style="margin-top:16px;text-align:center;color:#6b7280">
-									Total de Funcionários: <span id="total-funcionarios" style="font-weight:600;color:#3b82f6">1</span>
+									Total de Colaboradores: <span id="total-funcionarios" style="font-weight:600;color:#3b82f6">1</span>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 				
-				<!-- Modal Novo Funcionário -->
+				<!-- Modal Novo Colaborador -->
 				<div id="modal-funcionario" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center">
 					<div style="background:#fff;border-radius:12px;padding:24px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto">
 						<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-							<h3 style="margin:0;color:#374151">👤 Novo Funcionário</h3>
+							<h3 style="margin:0;color:#374151">👤 Novo Colaborador</h3>
 							<button id="fechar-modal" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#6b7280">×</button>
 						</div>
 						
@@ -883,7 +883,7 @@
 							
 							<div style="display:flex;gap:12px;margin-top:8px">
 								<button type="button" id="cancelar-funcionario" style="flex:1;background:#6b7280;color:#fff;padding:10px;border:none;border-radius:6px;cursor:pointer">Cancelar</button>
-								<button type="submit" style="flex:1;background:#3b82f6;color:#fff;padding:10px;border:none;border-radius:6px;cursor:pointer">Salvar Funcionário</button>
+								<button type="submit" style="flex:1;background:#3b82f6;color:#fff;padding:10px;border:none;border-radius:6px;cursor:pointer">Salvar Colaborador</button>
 							</div>
 						</form>
 					</div>
@@ -894,9 +894,9 @@
 					<div style="background:#fff;border-radius:12px;width:90%;max-width:600px;max-height:80vh;overflow-y:auto">
 						<div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff;padding:20px;border-radius:12px 12px 0 0">
 							<h2 style="margin:0;font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:8px">
-								<span>📊</span> Importar Planilha de Funcionários
+								<span>📊</span> Importar Planilha de Colaboradores
 							</h2>
-							<p style="margin:8px 0 0 0;opacity:0.9;font-size:0.9rem">Envie um arquivo Excel (.xlsx) com os dados dos funcionários</p>
+							<p style="margin:8px 0 0 0;opacity:0.9;font-size:0.9rem">Envie um arquivo Excel (.xlsx) com os dados dos colaboradores</p>
 						</div>
 						
 						<div style="padding:20px">
@@ -905,8 +905,8 @@
 								<h4 style="margin:0 0 8px 0;color:#166534;font-size:1rem">📋 Formato da Planilha</h4>
 								<p style="margin:0 0 8px 0;color:#166534;font-size:0.9rem">A planilha deve conter as seguintes colunas <strong>na ordem exata</strong>:</p>
 								<ol style="margin:0;color:#166534;font-size:0.9rem">
-									<li><strong>Matrícula</strong> - Número de identificação do funcionário</li>
-									<li><strong>Nome</strong> - Nome completo do funcionário</li>
+									<li><strong>Matrícula</strong> - Número de identificação do colaborador</li>
+									<li><strong>Nome</strong> - Nome completo do colaborador</li>
 									<li><strong>Função</strong> - Cargo ou função exercida</li>
 									<li><strong>Setor</strong> - Setor ou departamento de trabalho</li>
 									<li><strong>Data Admissão</strong> - Data no formato DD/MM/AAAA</li>
@@ -946,7 +946,7 @@
 								Cancelar
 							</button>
 							<button type="button" id="btn-confirmar-importacao" onclick="confirmarImportacao()" disabled style="background:#10b981;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:0.9rem;font-weight:600;cursor:pointer;opacity:0.5">
-								Importar Funcionários
+								Importar Colaboradores
 							</button>
 						</div>
 					</div>
@@ -3499,13 +3499,13 @@
 						return partes[2] + '/' + partes[1] + '/' + partes[0];
 					}
 					
-					// Abrir modal novo funcionário
+					// Abrir modal novo colaborador
 					document.getElementById('btn-novo-funcionario').addEventListener('click', function() {
 						var modal = document.getElementById('modal-funcionario');
 						modal.style.display = 'flex';
 						modal.removeAttribute('data-editando');
 						document.getElementById('form-funcionario').reset();
-						document.querySelector('#modal-funcionario h2').textContent = 'Novo Funcionário';
+						document.querySelector('#modal-funcionario h2').textContent = 'Novo Colaborador';
 					});
 					
 					// Fechar modal
@@ -3513,14 +3513,14 @@
 						var modal = document.getElementById('modal-funcionario');
 						modal.style.display = 'none';
 						modal.removeAttribute('data-editando');
-						document.querySelector('#modal-funcionario h2').textContent = 'Novo Funcionário';
+						document.querySelector('#modal-funcionario h2').textContent = 'Novo Colaborador';
 					});
 					
 					document.getElementById('cancelar-funcionario').addEventListener('click', function() {
 						var modal = document.getElementById('modal-funcionario');
 						modal.style.display = 'none';
 						modal.removeAttribute('data-editando');
-						document.querySelector('#modal-funcionario h2').textContent = 'Novo Funcionário';
+						document.querySelector('#modal-funcionario h2').textContent = 'Novo Colaborador';
 					});
 					
 					// Cadastrar/Editar funcionário
