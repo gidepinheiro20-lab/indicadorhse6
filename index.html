@@ -180,6 +180,26 @@
 					padding:6px 8px;
 				}
 			}
+			
+			/* Estilos para cards do dashboard */
+			.dashboard-card {
+				transition: transform 0.2s, box-shadow 0.2s;
+			}
+			
+			.dashboard-card:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 8px 16px rgba(0,0,0,0.15) !important;
+			}
+			
+			.dashboard-tool-card {
+				transition: all 0.2s;
+			}
+			
+			.dashboard-tool-card:hover {
+				transform: translateY(-2px);
+				border-color: #3b82f6 !important;
+				box-shadow: 0 8px 16px rgba(59, 130, 246, 0.1) !important;
+			}
 		</style>
 	</head>
 	<body>
@@ -197,6 +217,7 @@
 					<ul class="nav">
 						<li><a href="#dashboard"><span class="icon" aria-hidden="true">📊</span><span class="label">Dashboard</span></a></li>
 						<li><a href="#relatorios"><span class="icon" aria-hidden="true">📄</span><span class="label">Relatórios</span></a></li>
+						<li><a href="#empresa"><span class="icon" aria-hidden="true">🏢</span><span class="label">Empresa</span></a></li>
 						<li><a href="#funcionarios"><span class="icon" aria-hidden="true">👥</span><span class="label">Novo Colaborador</span></a></li>
 						<li><a href="#frequencia"><span class="icon" aria-hidden="true">🔎</span><span class="label">Frequência</span></a></li>
 						<li><a href="#usuario"><span class="icon" aria-hidden="true">👤</span><span class="label">Usuário</span></a></li>
@@ -232,9 +253,7 @@
 								<label style="font-weight:600;display:block;margin-bottom:4px">Empresa</label>
 								<select id="ras-empresa" required style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
 									<option value="">Selecione a empresa</option>
-									<option>Empresa 1</option>
-									<option>Empresa 2</option>
-									<option>Empresa 3</option>
+									<!-- Opções carregadas dinamicamente -->
 								</select>
 							</div>
 							<div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
@@ -293,11 +312,7 @@
 								</label>
 								<select id="ras-gerente" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
 									<option value="">Selecione o gerente</option>
-									<option value="João Silva">João Silva</option>
-									<option value="Maria Santos">Maria Santos</option>
-									<option value="Pedro Oliveira">Pedro Oliveira</option>
-									<option value="Ana Costa">Ana Costa</option>
-									<option value="Carlos Ferreira">Carlos Ferreira</option>
+									<!-- Opções carregadas dinamicamente -->
 								</select>
 							</div>
 
@@ -307,11 +322,7 @@
 								</label>
 								<select id="ras-engenheiro" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
 									<option value="">Selecione o engenheiro</option>
-									<option value="Lucas Martins">Lucas Martins</option>
-									<option value="Fernanda Lima">Fernanda Lima</option>
-									<option value="Rafael Souza">Rafael Souza</option>
-									<option value="Juliana Rocha">Juliana Rocha</option>
-									<option value="Bruno Alves">Bruno Alves</option>
+									<!-- Opções carregadas dinamicamente -->
 								</select>
 							</div>
 
@@ -321,11 +332,7 @@
 								</label>
 								<select id="ras-supervisor" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
 									<option value="">Selecione o supervisor / mestre</option>
-									<option value="Roberto Silva">Roberto Silva</option>
-									<option value="Cristina Mendes">Cristina Mendes</option>
-									<option value="Eduardo Barbosa">Eduardo Barbosa</option>
-									<option value="Patrícia Gomes">Patrícia Gomes</option>
-									<option value="Marcos Ribeiro">Marcos Ribeiro</option>
+									<!-- Opções carregadas dinamicamente -->
 								</select>
 							</div>
 
@@ -335,11 +342,7 @@
 								</label>
 								<select id="ras-encarregado" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
 									<option value="">Selecione o encarregado</option>
-									<option value="José Lima">José Lima</option>
-									<option value="Sandra Nunes">Sandra Nunes</option>
-									<option value="Ricardo Pereira">Ricardo Pereira</option>
-									<option value="Vanessa Torres">Vanessa Torres</option>
-									<option value="Antônio Campos">Antônio Campos</option>
+									<!-- Opções carregadas dinamicamente -->
 								</select>
 							</div>
 
@@ -349,11 +352,7 @@
 								</label>
 								<select id="ras-tecnico-seguranca" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
 									<option value="">Selecione o técnico de segurança</option>
-									<option value="Miguel Santos">Miguel Santos</option>
-									<option value="Carla Vieira">Carla Vieira</option>
-									<option value="Daniel Costa">Daniel Costa</option>
-									<option value="Renata Silva">Renata Silva</option>
-									<option value="Thiago Moreira">Thiago Moreira</option>
+									<!-- Opções carregadas dinamicamente -->
 								</select>
 							</div>
 
@@ -381,14 +380,6 @@
 								</label>
 								<select id="ras-anjo-semana" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
 									<option value="">Selecione o anjo da semana</option>
-									<option value="Carlos Mendes">Carlos Mendes</option>
-									<option value="Ana Paula">Ana Paula</option>
-									<option value="João Santos">João Santos</option>
-									<option value="Maria Silva">Maria Silva</option>
-									<option value="Pedro Costa">Pedro Costa</option>
-									<option value="Lucia Ferreira">Lucia Ferreira</option>
-									<option value="Roberto Alves">Roberto Alves</option>
-									<option value="Fernanda Lima">Fernanda Lima</option>
 								</select>
 							</div>
 
@@ -398,14 +389,6 @@
 								</label>
 								<select id="ras-lider-ras" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
 									<option value="">Selecione o líder da ras</option>
-									<option value="Eduardo Santos">Eduardo Santos</option>
-									<option value="Mariana Costa">Mariana Costa</option>
-									<option value="Rafael Oliveira">Rafael Oliveira</option>
-									<option value="Juliana Rocha">Juliana Rocha</option>
-									<option value="Bruno Martins">Bruno Martins</option>
-									<option value="Patricia Souza">Patricia Souza</option>
-									<option value="Leonardo Silva">Leonardo Silva</option>
-									<option value="Camila Pereira">Camila Pereira</option>
 								</select>
 							</div>
 
@@ -415,14 +398,6 @@
 								</label>
 								<select id="ras-lider-cpt" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
 									<option value="">Selecione o líder cpt</option>
-									<option value="Marcos Ribeiro">Marcos Ribeiro</option>
-									<option value="Cristina Mendes">Cristina Mendes</option>
-									<option value="Thiago Moreira">Thiago Moreira</option>
-									<option value="Sandra Nunes">Sandra Nunes</option>
-									<option value="Daniel Costa">Daniel Costa</option>
-									<option value="Renata Silva">Renata Silva</option>
-									<option value="Antonio Campos">Antonio Campos</option>
-									<option value="Vanessa Torres">Vanessa Torres</option>
 								</select>
 							</div>
 
@@ -782,6 +757,111 @@
 					<button id="btn-voltar-cadastro" style="margin-top:12px;display:none">Voltar ao cadastro</button>
 				</div>
 				
+				<!-- Seção Empresa -->
+				<div id="empresa" style="display:none;max-width:none;margin:0;">
+					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3">
+						<div style="background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#fff;padding:20px 24px;border-radius:16px 16px 0 0">
+							<div style="display:flex;justify-content:space-between;align-items:center">
+								<div>
+									<div style="font-size:1.4rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px">
+										<span>🏢</span> Cadastro de Empresa
+									</div>
+									<div style="font-size:1rem;opacity:0.9">Gerencie informações da empresa e configurações corporativas.</div>
+								</div>
+								<div style="display:flex;gap:12px">
+									<button id="btn-nova-empresa" type="button" style="background:#fff;color:#f59e0b;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
+										<span>✨</span> Nova Empresa
+									</button>
+								</div>
+							</div>
+						</div>
+						
+						<div style="padding:24px">
+							<!-- Lista de Empresas -->
+							<div id="lista-empresas-secao" style="margin-bottom:24px">
+								<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem">Lista de Empresas</h3>
+								
+								<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">
+									<!-- Cabeçalho da tabela -->
+									<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 1.5fr 1fr 2fr 1fr 1.5fr 100px;gap:16px;font-weight:600;color:#374151">
+										<div>Nome</div>
+										<div>CNPJ</div>
+										<div>CNAE</div>
+										<div>Ramo de Atividade</div>
+										<div>Grau de Risco</div>
+										<div>Contato</div>
+										<div>Ações</div>
+									</div>
+									
+									<!-- Lista de empresas cadastradas -->
+									<div id="empresas-lista">
+										<!-- Empresas serão carregadas dinamicamente aqui -->
+									</div>
+								</div>
+								
+								<div style="margin-top:16px;text-align:center;color:#6b7280">
+									Total de Empresas: <span id="total-empresas" style="font-weight:600;color:#f59e0b">0</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Modal Nova Empresa -->
+				<div id="modal-empresa" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center">
+					<div style="background:#fff;border-radius:12px;padding:24px;max-width:600px;width:90%;max-height:90vh;overflow-y:auto">
+						<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+							<h3 style="margin:0;color:#374151">🏢 Nova Empresa</h3>
+							<button id="fechar-modal-empresa" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#6b7280">×</button>
+						</div>
+						
+						<form id="form-empresa" onsubmit="event.preventDefault(); cadastrarEmpresa();" style="display:grid;gap:16px">
+							<div>
+								<label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Nome da Empresa *</label>
+								<input type="text" id="emp-nome" required style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
+							</div>
+							
+							<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+								<div>
+									<label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">CNPJ *</label>
+									<input type="text" id="emp-cnpj" required placeholder="00.000.000/0000-00" style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
+								</div>
+								<div>
+									<label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">CNAE</label>
+									<input type="text" id="emp-cnae" placeholder="0000-0/00" style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
+								</div>
+							</div>
+							
+							<div>
+								<label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Ramo de Atividade</label>
+								<input type="text" id="emp-ramo-atividade" placeholder="Ex: Construção Civil, Comércio, Indústria..." style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
+							</div>
+							
+							<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+								<div>
+									<label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Grau de Risco</label>
+									<select id="emp-grau-risco" style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;background:#fff">
+										<option value="">Selecione o grau de risco</option>
+										<option value="1">Grau 1 - Risco Mínimo</option>
+										<option value="2">Grau 2 - Risco Baixo</option>
+										<option value="3">Grau 3 - Risco Médio</option>
+										<option value="4">Grau 4 - Risco Alto</option>
+									</select>
+								</div>
+								<div>
+									<label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Contato</label>
+									<input type="text" id="emp-contato" placeholder="(00) 00000-0000" style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
+								</div>
+							</div>
+							
+							<div style="display:flex;gap:12px;margin-top:8px">
+								<button type="button" onclick="fecharModalEmpresa()" style="flex:1;background:#6b7280;color:#fff;padding:10px;border:none;border-radius:6px;cursor:pointer">Cancelar</button>
+								<button type="submit" style="flex:1;background:#f59e0b;color:#fff;padding:10px;border:none;border-radius:6px;cursor:pointer">Salvar Empresa</button>
+							</div>
+						</form>
+					</div>
+				</div>
+				
 				<!-- Seção Funcionários -->
 				<div id="funcionarios" style="display:none;max-width:none;margin:0;">
 					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3">
@@ -874,7 +954,10 @@
 							
 							<div>
 								<label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Empresa *</label>
-								<input type="text" id="func-empresa" required style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
+								<select id="func-empresa" required style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;background:#fff">
+									<option value="">Selecione a empresa</option>
+									<!-- Opções carregadas dinamicamente -->
+								</select>
 							</div>
 							
 							<div style="display:flex;gap:12px;margin-top:8px">
@@ -2383,6 +2466,7 @@
 						document.getElementById('areas-locais').style.display = 'none';
 						document.getElementById('gerenciamento-tipos-registro').style.display = 'none';
 						document.getElementById('gerenciamento-riscos-perigos').style.display = 'none';
+						document.getElementById('empresa').style.display = 'none';
 					}
 
 					// Botão voltar ao menu
@@ -2410,6 +2494,10 @@
 								e.preventDefault();
 								hideAllSections();
 								document.getElementById('nova-ras').style.display = 'block';
+								// Carregar empresas e colaboradores quando abrir RAS
+								carregarEmpresasRAS();
+								carregarColaboradoresRAS();
+								carregarColaboradoresRASEtapa3();
 								hideSidebarOnMobile();
 							});
 						});
@@ -2420,6 +2508,8 @@
 								hideAllSections();
 								document.getElementById('funcionarios').style.display = 'block';
 								exibirFuncionarios(); // CORRIGIDO: era carregarFuncionarios()
+								// Carregar empresas quando abrir colaboradores
+								carregarEmpresasColaborador();
 								hideSidebarOnMobile();
 							});
 						});
@@ -2453,8 +2543,18 @@
 								hideSidebarOnMobile();
 							});
 						});
+					// Exibir Empresa ao clicar em Empresa
+						document.querySelectorAll('.nav a[href="#empresa"]').forEach(function(link){
+							link.addEventListener('click',function(e){
+								e.preventDefault();
+								hideAllSections();
+								document.getElementById('empresa').style.display = 'block';
+								exibirEmpresas();
+								hideSidebarOnMobile();
+							});
+						});
 					// Ocultar outras seções ao clicar em outros itens
-						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"]):not([href="#inspecao"])').forEach(function(link){
+						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"]):not([href="#inspecao"]):not([href="#empresa"])').forEach(function(link){
 							link.addEventListener('click',function(){
 								hideAllSections();
 								document.getElementById('conteudo-principal').style.display = 'block';
@@ -2948,6 +3048,8 @@
 						if (!this.disabled) {
 							document.getElementById('ras-etapa-1').style.display = 'none';
 							document.getElementById('ras-etapa-2').style.display = 'block';
+							// Carregar colaboradores quando avançar para Etapa 2
+							carregarColaboradoresRAS();
 						}
 					});
 
@@ -2960,6 +3062,8 @@
 						if (!this.disabled) {
 							document.getElementById('ras-etapa-2').style.display = 'none';
 							document.getElementById('ras-etapa-3').style.display = 'block';
+							// Carregar colaboradores na etapa 3
+							carregarColaboradoresRASEtapa3();
 						}
 					});
 
@@ -2984,6 +3088,8 @@
 					document.getElementById('ras-voltar-4').addEventListener('click', function() {
 						document.getElementById('ras-etapa-4').style.display = 'none';
 						document.getElementById('ras-etapa-3').style.display = 'block';
+						// Carregar colaboradores na etapa 3
+						carregarColaboradoresRASEtapa3();
 					});
 
 					document.getElementById('ras-proximo-4').addEventListener('click', function() {
@@ -3361,6 +3467,9 @@
 						try {
 							localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
 							console.log('Funcionários salvos:', funcionarios.length, funcionarios);
+							// Atualizar dropdowns da RAS quando colaboradores forem salvos
+							carregarColaboradoresRAS();
+							carregarEmpresasColaborador();
 						} catch(e) {
 							console.error('Erro ao salvar funcionários:', e);
 						}
@@ -3540,6 +3649,8 @@
 						modal.removeAttribute('data-editando');
 						document.getElementById('form-funcionario').reset();
 						document.querySelector('#modal-funcionario h2').textContent = 'Novo Colaborador';
+						// Carregar empresas quando abrir modal de novo colaborador
+						carregarEmpresasColaborador();
 					});
 					
 					// Fechar modal
@@ -3886,6 +3997,374 @@
 								fecharModalImportar();
 							}, 2000);
 						}, 1000);
+					}
+					
+					// === SISTEMA DE GERENCIAMENTO DE EMPRESAS ===
+					
+					// Array global para armazenar empresas
+					var empresas = JSON.parse(localStorage.getItem('empresas')) || [];
+					
+					// Carregar empresas no dropdown da RAS
+					function carregarEmpresasRAS() {
+						var selectEmpresa = document.getElementById('ras-empresa');
+						if (!selectEmpresa) return;
+						
+						// Limpar opções existentes (manter primeira opção vazia)
+						selectEmpresa.innerHTML = '<option value="">Selecione a empresa</option>';
+						
+						// Recarregar empresas do localStorage
+						var empresasCadastradas = JSON.parse(localStorage.getItem('empresas')) || [];
+						
+						if (empresasCadastradas.length === 0) {
+							// Se não há empresas cadastradas, adicionar opção informativa
+							var optionInfo = document.createElement('option');
+							optionInfo.value = '';
+							optionInfo.textContent = 'Nenhuma empresa cadastrada - Cadastre uma empresa primeiro';
+							optionInfo.disabled = true;
+							selectEmpresa.appendChild(optionInfo);
+							return;
+						}
+						
+						// Ordenar empresas alfabeticamente por nome
+						empresasCadastradas.sort(function(a, b) {
+							return (a.nome || '').localeCompare(b.nome || '');
+						});
+						
+					// Adicionar cada empresa ao dropdown
+					empresasCadastradas.forEach(function(empresa) {
+						var option = document.createElement('option');
+						option.value = empresa.nome;
+						// Mostrar apenas o nome da empresa
+						option.textContent = empresa.nome;
+						selectEmpresa.appendChild(option);
+					});						console.log('Empresas carregadas na RAS:', empresasCadastradas.length);
+					}
+					
+					// Carregar empresas no dropdown de colaboradores
+					function carregarEmpresasColaborador() {
+						var selectEmpresa = document.getElementById('func-empresa');
+						if (!selectEmpresa) return;
+						
+						// Limpar opções existentes (manter primeira opção vazia)
+						selectEmpresa.innerHTML = '<option value="">Selecione a empresa</option>';
+						
+						// Recarregar empresas do localStorage
+						var empresasCadastradas = JSON.parse(localStorage.getItem('empresas')) || [];
+						
+						if (empresasCadastradas.length === 0) {
+							// Se não há empresas cadastradas, adicionar opção informativa
+							var optionInfo = document.createElement('option');
+							optionInfo.value = '';
+							optionInfo.textContent = 'Nenhuma empresa cadastrada - Cadastre uma empresa primeiro';
+							optionInfo.disabled = true;
+							selectEmpresa.appendChild(optionInfo);
+							return;
+						}
+						
+						// Ordenar empresas alfabeticamente por nome
+						empresasCadastradas.sort(function(a, b) {
+							return (a.nome || '').localeCompare(b.nome || '');
+						});
+						
+						// Adicionar cada empresa ao dropdown
+						empresasCadastradas.forEach(function(empresa) {
+							var option = document.createElement('option');
+							option.value = empresa.nome;
+							option.textContent = empresa.nome;
+							selectEmpresa.appendChild(option);
+						});
+						
+						console.log('Empresas carregadas no colaborador:', empresasCadastradas.length);
+					}
+					
+					// Carregar colaboradores nos dropdowns da RAS Etapa 2
+					function carregarColaboradoresRAS() {
+						var selectsLideranca = [
+							'ras-gerente',
+							'ras-engenheiro', 
+							'ras-supervisor',
+							'ras-encarregado',
+							'ras-tecnico-seguranca'
+						];
+						
+						var placeholders = {
+							'ras-gerente': 'Selecione o gerente',
+							'ras-engenheiro': 'Selecione o engenheiro',
+							'ras-supervisor': 'Selecione o supervisor / mestre',
+							'ras-encarregado': 'Selecione o encarregado',
+							'ras-tecnico-seguranca': 'Selecione o técnico de segurança'
+						};
+						
+						// Recarregar colaboradores do localStorage
+						var colaboradoresCadastrados = JSON.parse(localStorage.getItem('funcionarios')) || [];
+						
+						selectsLideranca.forEach(function(selectId) {
+							var selectElement = document.getElementById(selectId);
+							if (!selectElement) return;
+							
+							// Limpar opções existentes
+							selectElement.innerHTML = '<option value="">' + placeholders[selectId] + '</option>';
+							
+							if (colaboradoresCadastrados.length === 0) {
+								// Se não há colaboradores cadastrados
+								var optionInfo = document.createElement('option');
+								optionInfo.value = '';
+								optionInfo.textContent = 'Nenhum colaborador cadastrado';
+								optionInfo.disabled = true;
+								selectElement.appendChild(optionInfo);
+								return;
+							}
+							
+							// Ordenar colaboradores alfabeticamente por nome
+							var colaboradoresOrdenados = colaboradoresCadastrados.slice().sort(function(a, b) {
+								return (a.nome || '').localeCompare(b.nome || '');
+							});
+							
+							// Adicionar cada colaborador ao dropdown
+							colaboradoresOrdenados.forEach(function(colaborador) {
+								var option = document.createElement('option');
+								option.value = colaborador.nome;
+								// Extrair apenas primeiro nome e sobrenome
+								var partesNome = (colaborador.nome || '').trim().split(' ');
+								var primeiroNome = partesNome[0] || '';
+								var sobrenome = partesNome.length > 1 ? partesNome[partesNome.length - 1] : '';
+								var nomeCompleto = sobrenome ? primeiroNome + ' ' + sobrenome : primeiroNome;
+								option.textContent = nomeCompleto;
+								selectElement.appendChild(option);
+							});
+						});
+						
+						console.log('Colaboradores carregados na RAS Etapa 2:', colaboradoresCadastrados.length);
+					}
+					
+					// Carregar colaboradores nos dropdowns da RAS Etapa 3
+					function carregarColaboradoresRASEtapa3() {
+						var selectsEtapa3 = [
+							'ras-anjo-semana',
+							'ras-lider-ras',
+							'ras-lider-cpt'
+						];
+						
+						var placeholders = {
+							'ras-anjo-semana': 'Selecione o anjo da semana',
+							'ras-lider-ras': 'Selecione o líder da ras',
+							'ras-lider-cpt': 'Selecione o líder cpt'
+						};
+						
+						// Recarregar colaboradores do localStorage
+						var colaboradoresCadastrados = JSON.parse(localStorage.getItem('funcionarios')) || [];
+						
+						selectsEtapa3.forEach(function(selectId) {
+							var selectElement = document.getElementById(selectId);
+							if (!selectElement) return;
+							
+							// Limpar opções existentes
+							selectElement.innerHTML = '<option value="">' + placeholders[selectId] + '</option>';
+							
+							if (colaboradoresCadastrados.length === 0) {
+								// Se não há colaboradores cadastrados
+								var optionInfo = document.createElement('option');
+								optionInfo.value = '';
+								optionInfo.textContent = 'Nenhum colaborador cadastrado';
+								optionInfo.disabled = true;
+								selectElement.appendChild(optionInfo);
+								return;
+							}
+							
+							// Ordenar colaboradores alfabeticamente por nome
+							var colaboradoresOrdenados = colaboradoresCadastrados.slice().sort(function(a, b) {
+								return (a.nome || '').localeCompare(b.nome || '');
+							});
+							
+							// Adicionar cada colaborador ao dropdown
+							colaboradoresOrdenados.forEach(function(colaborador) {
+								var option = document.createElement('option');
+								option.value = colaborador.nome;
+								// Extrair apenas primeiro nome e sobrenome
+								var partesNome = (colaborador.nome || '').trim().split(' ');
+								var primeiroNome = partesNome[0] || '';
+								var sobrenome = partesNome.length > 1 ? partesNome[partesNome.length - 1] : '';
+								var nomeCompleto = sobrenome ? primeiroNome + ' ' + sobrenome : primeiroNome;
+								option.textContent = nomeCompleto;
+								selectElement.appendChild(option);
+							});
+						});
+						
+						console.log('Colaboradores carregados na RAS Etapa 3:', colaboradoresCadastrados.length);
+					}
+					
+					// Salvar empresas no localStorage
+					function salvarEmpresas() {
+						try {
+							localStorage.setItem('empresas', JSON.stringify(empresas));
+							console.log('Empresas salvas:', empresas.length);
+							// Atualizar dropdowns quando empresas forem salvas
+							carregarEmpresasRAS();
+							carregarEmpresasColaborador();
+						} catch(e) {
+							console.error('Erro ao salvar empresas:', e);
+						}
+					}
+					
+					// Exibir lista de empresas
+					function exibirEmpresas() {
+						var container = document.getElementById('empresas-lista');
+						var total = document.getElementById('total-empresas');
+						
+						if (!container || !total) {
+							console.error('Elementos não encontrados:', {container: !!container, total: !!total});
+							return;
+						}
+						
+						// Sempre recarregar do localStorage
+						try {
+							empresas = JSON.parse(localStorage.getItem('empresas')) || [];
+						} catch(e) { 
+							console.error('Erro ao carregar empresas:', e);
+							empresas = []; 
+						}
+						
+						console.log('EXIBIR: Total de empresas:', empresas.length, empresas);
+						
+						if (empresas.length === 0) {
+							container.innerHTML = '<div style="padding:20px;text-align:center;color:#6b7280">Nenhuma empresa cadastrada</div>';
+							total.textContent = '0';
+							return;
+						}
+						
+						var html = '';
+						console.log('Iniciando geração do HTML para', empresas.length, 'empresas');
+						
+					empresas.forEach(function(emp, index) {
+						console.log('Processando empresa', index + 1, ':', emp);
+						
+						try {
+							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:2fr 1.5fr 1fr 2fr 1fr 1.5fr 100px;gap:16px;align-items:center">';
+							html += '<div style="color:#374151;font-weight:500">' + (emp.nome || '') + '</div>';
+							html += '<div style="color:#374151">' + (emp.cnpj || '') + '</div>';
+							html += '<div style="color:#6b7280">' + (emp.cnae || '') + '</div>';
+							html += '<div style="color:#6b7280">' + (emp.ramoAtividade || '') + '</div>';
+							html += '<div style="color:#6b7280">' + (emp.grauRisco ? 'Grau ' + emp.grauRisco : '') + '</div>';
+							html += '<div style="color:#6b7280">' + (emp.contato || '') + '</div>';
+							html += '<div>';
+							html += '<button onclick="editarEmpresa(\'' + emp.cnpj + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;margin-right:4px">✏️</button>';
+							html += '<button onclick="excluirEmpresa(\'' + emp.cnpj + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer">🗑️</button>';
+							html += '</div>';
+							html += '</div>';
+						} catch(e) {
+							console.error('Erro ao processar empresa:', emp, e);
+						}
+					});						console.log('HTML gerado:', html.length, 'caracteres');
+						
+						container.innerHTML = html;
+						total.textContent = empresas.length;
+						
+						console.log('Exibição concluída. Container innerHTML length:', container.innerHTML.length);
+					}
+					
+					// Abrir modal nova empresa
+					function abrirModalNovaEmpresa() {
+						console.log('Abrindo modal nova empresa');
+						document.getElementById('modal-empresa').removeAttribute('data-editando');
+						document.querySelector('#modal-empresa h3').textContent = '🏢 Nova Empresa';
+						document.getElementById('form-empresa').reset();
+						document.getElementById('modal-empresa').style.display = 'flex';
+					}
+					
+					// Fechar modal empresa
+					function fecharModalEmpresa() {
+						document.getElementById('modal-empresa').style.display = 'none';
+						document.getElementById('form-empresa').reset();
+						document.getElementById('modal-empresa').removeAttribute('data-editando');
+					}
+					
+					// Cadastrar/editar empresa
+					function cadastrarEmpresa() {
+						var nome = document.getElementById('emp-nome').value.trim();
+						var cnpj = document.getElementById('emp-cnpj').value.trim();
+						var cnae = document.getElementById('emp-cnae').value.trim();
+						var ramoAtividade = document.getElementById('emp-ramo-atividade').value.trim();
+						var grauRisco = document.getElementById('emp-grau-risco').value.trim();
+						var contato = document.getElementById('emp-contato').value.trim();
+						
+						if (!nome || !cnpj) {
+							alert('Nome da Empresa e CNPJ são obrigatórios!');
+							return;
+						}
+						
+						var modal = document.getElementById('modal-empresa');
+						var editando = modal.getAttribute('data-editando');
+						
+						if (editando) {
+							// Editando empresa existente
+							var index = empresas.findIndex(function(e) { return e.cnpj === editando; });
+							if (index !== -1) {
+								empresas[index] = {
+									nome: nome,
+									cnpj: cnpj,
+									cnae: cnae,
+									ramoAtividade: ramoAtividade,
+									grauRisco: grauRisco,
+									contato: contato
+								};
+								alert('Empresa atualizada com sucesso!');
+							}
+						} else {
+							// Nova empresa
+							var existe = empresas.find(function(e) { return e.cnpj === cnpj; });
+							if (existe) {
+								alert('CNPJ já cadastrado!');
+								return;
+							}
+							
+							empresas.push({
+								nome: nome,
+								cnpj: cnpj,
+								cnae: cnae,
+								ramoAtividade: ramoAtividade,
+								grauRisco: grauRisco,
+								contato: contato
+							});
+							alert('Empresa cadastrada com sucesso!');
+						}
+						
+						salvarEmpresas();
+						exibirEmpresas();
+						fecharModalEmpresa();
+					}
+					
+					// Excluir empresa - Escopo Global
+					window.excluirEmpresa = function(cnpj) {
+						console.log('Excluindo empresa:', cnpj);
+						if (confirm('Tem certeza que deseja excluir esta empresa?')) {
+							empresas = empresas.filter(function(e) { return e.cnpj !== cnpj; });
+							salvarEmpresas();
+							exibirEmpresas();
+							alert('Empresa excluída com sucesso!');
+						}
+					}
+					
+					// Editar empresa - Escopo Global
+					window.editarEmpresa = function(cnpj) {
+						console.log('Editando empresa:', cnpj);
+						var empresa = empresas.find(function(e) { return e.cnpj === cnpj; });
+						console.log('Empresa encontrada:', empresa);
+						if (empresa) {
+							// Preencher formulário com dados existentes
+							document.getElementById('emp-nome').value = empresa.nome || '';
+							document.getElementById('emp-cnpj').value = empresa.cnpj;
+							document.getElementById('emp-cnae').value = empresa.cnae || '';
+							document.getElementById('emp-ramo-atividade').value = empresa.ramoAtividade || '';
+							document.getElementById('emp-grau-risco').value = empresa.grauRisco || '';
+							document.getElementById('emp-contato').value = empresa.contato || '';
+							
+							// Marcar como edição
+							document.getElementById('modal-empresa').setAttribute('data-editando', cnpj);
+							document.getElementById('modal-empresa').style.display = 'flex';
+							
+							// Alterar título do modal
+							document.querySelector('#modal-empresa h3').textContent = '🏢 Editar Empresa';
+						}
 					}
 					
 					// SISTEMA DE CONTROLE DE FREQUÊNCIA
@@ -5617,6 +6096,24 @@
 						document.getElementById('modal-nova-area').style.display = 'flex';
 					}
 					
+					// Abrir modal nova empresa
+					var btnNovaEmpresa = document.getElementById('btn-nova-empresa');
+					if (btnNovaEmpresa) {
+						btnNovaEmpresa.addEventListener('click', abrirModalNovaEmpresa);
+						console.log('Event listener adicionado ao botão Nova Empresa');
+					} else {
+						console.error('Botão Nova Empresa não encontrado!');
+					}
+					
+					// Fechar modal empresa
+					var btnFecharModal = document.getElementById('fechar-modal-empresa');
+					if (btnFecharModal) {
+						btnFecharModal.addEventListener('click', fecharModalEmpresa);
+						console.log('Event listener adicionado ao botão Fechar Modal');
+					} else {
+						console.error('Botão Fechar Modal não encontrado!');
+					}
+					
 					// Fechar modal de área
 					function fecharModalArea() {
 						document.getElementById('modal-nova-area').style.display = 'none';
@@ -6206,4 +6703,139 @@
 					
 					// Inicializar exibição de funcionários
 					exibirFuncionarios();
+					
+					// Verificar se os event listeners de empresa estão funcionando
+					setTimeout(function() {
+						console.log('Verificando elementos de empresa...');
+						var btnNovaEmpresa = document.getElementById('btn-nova-empresa');
+						var modalEmpresa = document.getElementById('modal-empresa');
+						console.log('Botão Nova Empresa encontrado:', !!btnNovaEmpresa);
+						console.log('Modal Empresa encontrado:', !!modalEmpresa);
+					}, 1000);
+					
+					// Inicializar conteúdo principal (dashboard)
+					function inicializarDashboard() {
+						var conteudoPrincipal = document.getElementById('conteudo-principal');
+						if (conteudoPrincipal) {
+							conteudoPrincipal.innerHTML = `
+								<div style="padding: 32px 24px; max-width: 1200px; margin: 0 auto;">
+									<!-- Cabeçalho -->
+									<div style="text-align: center; margin-bottom: 48px;">
+										<h1 style="font-size: 2.5rem; font-weight: 700; color: #1f2937; margin: 0 0 12px 0;">
+											📊 Dashboard HSE
+										</h1>
+										<p style="font-size: 1.2rem; color: #6b7280; margin: 0;">
+											Sistema completo de gestão de Saúde, Segurança e Meio Ambiente
+										</p>
+									</div>
+									
+									<!-- Grid de Cards Principais -->
+									<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 40px;">
+										<!-- Card Dashboard -->
+										<div class="dashboard-card" onclick="window.location.reload()" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+											<div style="font-size: 2.5rem; margin-bottom: 12px;">📊</div>
+											<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0;">Dashboard</h3>
+											<p style="opacity: 0.9; font-size: 0.95rem; margin: 0;">Visão geral do sistema e indicadores principais</p>
+										</div>
+										
+										<!-- Card Relatórios -->
+										<div class="dashboard-card" onclick="alert('Funcionalidade em desenvolvimento')" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+											<div style="font-size: 2.5rem; margin-bottom: 12px;">📄</div>
+											<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0;">Relatórios</h3>
+											<p style="opacity: 0.9; font-size: 0.95rem; margin: 0;">Relatórios e análises de segurança</p>
+										</div>
+										
+										<!-- Card Empresa -->
+										<div class="dashboard-card" onclick="document.querySelectorAll('.nav a[href=\\\"#empresa\\\"]')[0].click()" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+											<div style="font-size: 2.5rem; margin-bottom: 12px;">🏢</div>
+											<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0;">Empresa</h3>
+											<p style="opacity: 0.9; font-size: 0.95rem; margin: 0;">Gerenciamento de empresas e configurações</p>
+										</div>
+										
+										<!-- Card Colaboradores -->
+										<div class="dashboard-card" onclick="document.querySelectorAll('.nav a[href=\\\"#funcionarios\\\"]')[0].click()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+											<div style="font-size: 2.5rem; margin-bottom: 12px;">👥</div>
+											<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0;">Colaboradores</h3>
+											<p style="opacity: 0.9; font-size: 0.95rem; margin: 0;">Cadastro e gestão de funcionários</p>
+										</div>
+										
+										<!-- Card Frequência -->
+										<div class="dashboard-card" onclick="document.querySelectorAll('.nav a[href=\\\"#frequencia\\\"]')[0].click()" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+											<div style="font-size: 2.5rem; margin-bottom: 12px;">🔎</div>
+											<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0;">Frequência</h3>
+											<p style="opacity: 0.9; font-size: 0.95rem; margin: 0;">Controle de presenças e participação em RAS</p>
+										</div>
+										
+										<!-- Card Usuário -->
+										<div class="dashboard-card" onclick="document.querySelectorAll('.nav a[href=\\\"#usuario\\\"]')[0].click()" style="background: linear-gradient(135deg, #6b7280, #4b5563); color: white; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+											<div style="font-size: 2.5rem; margin-bottom: 12px;">👤</div>
+											<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0;">Usuário</h3>
+											<p style="opacity: 0.9; font-size: 0.95rem; margin: 0;">Configurações de usuário e acesso</p>
+										</div>
+									</div>
+									
+									<!-- Seção Ferramentas -->
+									<div style="margin-top: 48px;">
+										<h2 style="font-size: 1.8rem; font-weight: 700; color: #1f2937; margin: 0 0 24px 0; text-align: center;">
+											🛠️ Ferramentas HSE
+										</h2>
+										
+										<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+											<!-- Card RAS -->
+											<div class="dashboard-tool-card" onclick="document.querySelectorAll('.nav a[href=\\\"#ras\\\"]')[0].click()" style="background: white; border: 2px solid #e5e7eb; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+												<div style="font-size: 2.5rem; margin-bottom: 12px;">➕</div>
+												<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0; color: #1f2937;">RAS</h3>
+												<p style="color: #6b7280; font-size: 0.95rem; margin: 0;">Reunião de Análise de Segurança</p>
+											</div>
+											
+											<!-- Card CPT -->
+											<div class="dashboard-tool-card" onclick="document.querySelectorAll('.nav a[href=\\\"#cpt\\\"]')[0].click()" style="background: white; border: 2px solid #e5e7eb; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+												<div style="font-size: 2.5rem; margin-bottom: 12px;">👥</div>
+												<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0; color: #1f2937;">CPT</h3>
+												<p style="color: #6b7280; font-size: 0.95rem; margin: 0;">Controle de Presenças em Treinamentos</p>
+											</div>
+											
+											<!-- Card Inspeção HSE -->
+											<div class="dashboard-tool-card" onclick="document.querySelectorAll('.nav a[href=\\\"#inspecao\\\"]')[0].click()" style="background: white; border: 2px solid #e5e7eb; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+												<div style="font-size: 2.5rem; margin-bottom: 12px;">🔍</div>
+												<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0; color: #1f2937;">Inspeção HSE</h3>
+												<p style="color: #6b7280; font-size: 0.95rem; margin: 0;">Sistema de inspeções de segurança</p>
+											</div>
+											
+											<!-- Card WOC MDHO -->
+											<div class="dashboard-tool-card" onclick="alert('Funcionalidade em desenvolvimento')" style="background: white; border: 2px solid #e5e7eb; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+												<div style="font-size: 2.5rem; margin-bottom: 12px;">🛠️</div>
+												<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0; color: #1f2937;">WOC MDHO</h3>
+												<p style="color: #6b7280; font-size: 0.95rem; margin: 0;">Work Order Control - Manutenção</p>
+											</div>
+											
+											<!-- Card Melhorias -->
+											<div class="dashboard-tool-card" onclick="alert('Funcionalidade em desenvolvimento')" style="background: white; border: 2px solid #e5e7eb; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+												<div style="font-size: 2.5rem; margin-bottom: 12px;">⚡</div>
+												<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0; color: #1f2937;">Melhorias</h3>
+												<p style="color: #6b7280; font-size: 0.95rem; margin: 0;">Sistema de sugestões e melhorias</p>
+											</div>
+											
+											<!-- Card Reunião Mensal -->
+											<div class="dashboard-tool-card" onclick="alert('Funcionalidade em desenvolvimento')" style="background: white; border: 2px solid #e5e7eb; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+												<div style="font-size: 2.5rem; margin-bottom: 12px;">📅</div>
+												<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0; color: #1f2937;">Reunião Mensal</h3>
+												<p style="color: #6b7280; font-size: 0.95rem; margin: 0;">Controle de reuniões mensais HSE</p>
+											</div>
+										</div>
+									</div>
+									
+									<!-- Rodapé -->
+									<div style="text-align: center; margin-top: 48px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+										<p style="color: #9ca3af; font-size: 0.9rem; margin: 0;">
+											Sistema HSE - Versão 2.0 | Última atualização: ${new Date().toLocaleDateString('pt-BR')}
+										</p>
+									</div>
+								</div>
+							`;
+						}
+					}
+					
+					// Inicializar dashboard ao carregar a página
+					inicializarDashboard();
 					</script>
