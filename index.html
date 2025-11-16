@@ -3458,22 +3458,22 @@
 						total.textContent = funcionarios.length;
 					}
 					
-					// Excluir funcionário - Escopo Global
+					// Excluir colaborador - Escopo Global
 					window.excluirFuncionario = function(matricula) {
-						console.log('Excluindo funcionário:', matricula);
-						if (confirm('Tem certeza que deseja excluir este funcionário?')) {
+						console.log('Excluindo colaborador:', matricula);
+						if (confirm('Tem certeza que deseja excluir este colaborador?')) {
 							funcionarios = funcionarios.filter(function(f) { return f.matricula !== matricula; });
 							salvarFuncionarios();
 							exibirFuncionarios();
-							alert('Funcionário excluído com sucesso!');
+							alert('Colaborador excluído com sucesso!');
 						}
 					}
 					
-					// Editar funcionário - Escopo Global
+					// Editar colaborador - Escopo Global
 					window.editarFuncionario = function(matricula) {
-						console.log('Editando funcionário:', matricula);
+						console.log('Editando colaborador:', matricula);
 						var funcionario = funcionarios.find(function(f) { return f.matricula === matricula; });
-						console.log('Funcionário encontrado:', funcionario);
+						console.log('Colaborador encontrado:', funcionario);
 						if (funcionario) {
 							// Preencher formulário com dados existentes
 							document.getElementById('func-matricula').value = funcionario.matricula;
@@ -3488,7 +3488,7 @@
 							document.getElementById('modal-funcionario').style.display = 'flex';
 							
 							// Alterar título do modal
-							document.querySelector('#modal-funcionario h2').textContent = 'Editar Funcionário';
+							document.querySelector('#modal-funcionario h2').textContent = 'Editar Colaborador';
 						}
 					}
 					
@@ -3523,7 +3523,7 @@
 						document.querySelector('#modal-funcionario h2').textContent = 'Novo Colaborador';
 					});
 					
-					// Cadastrar/Editar funcionário
+					// Cadastrar/Editar colaborador
 					document.getElementById('form-funcionario').addEventListener('submit', function(e) {
 						e.preventDefault();
 						
@@ -3549,7 +3549,7 @@
 									admissao: admissao,
 									empresa: empresa
 								};
-								alert('Funcionário editado com sucesso!');
+								alert('Colaborador editado com sucesso!');
 							}
 							modal.removeAttribute('data-editando');
 						} else {
@@ -3560,7 +3560,7 @@
 								return;
 							}
 							
-							// Adicionar funcionário
+							// Adicionar colaborador
 							funcionarios.push({
 								matricula: matricula,
 								nome: nome,
@@ -3569,7 +3569,7 @@
 								admissao: admissao,
 								empresa: empresa
 							});
-							alert('Funcionário cadastrado com sucesso!');
+							alert('Colaborador cadastrado com sucesso!');
 						}
 						
 						salvarFuncionarios();
