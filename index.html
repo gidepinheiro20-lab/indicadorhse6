@@ -3340,9 +3340,27 @@
 						} catch(e){ funcionarios = []; }
 					}
 					
+					// Inicializar dados exemplo se não houver colaboradores (apenas uma vez)
+					if (funcionarios.length === 0) {
+						funcionarios = [{
+							matricula: '28853',
+							nome: 'Ademilcio Ferreira Caldas',
+							funcao: 'Encarregado de obras II',
+							setor: 'Obras Civis',
+							admissao: '2025-10-10',
+							empresa: 'RS Construções'
+						}];
+						localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
+					}
+					
 					// Salvar funcionários no localStorage - Escopo Global
 					window.salvarFuncionarios = function() {
-						localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
+						try {
+							localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
+							console.log('Funcionários salvos:', funcionarios.length, funcionarios);
+						} catch(e) {
+							console.error('Erro ao salvar funcionários:', e);
+						}
 					}
 					
 					// Carregar funcionários na RAS (Etapa 6 - Confirmar Presença) - Escopo Global
@@ -3416,17 +3434,24 @@
 						var container = document.getElementById('funcionarios-lista');
 						var total = document.getElementById('total-funcionarios');
 						
-						// Forçar recarga do localStorage antes de exibir
-						if(localStorage.getItem('funcionarios')){
-							try {
-								funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
-							} catch(e){ funcionarios = []; }
+						// Verificar se os elementos existem
+						if (!container || !total) {
+							console.error('Elementos não encontrados:', {container: !!container, total: !!total});
+							return;
 						}
 						
-						console.log('EXIBIR: Total de funcionários:', funcionarios.length);
+						// Sempre recarregar do localStorage
+						try {
+							funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
+						} catch(e) { 
+							console.error('Erro ao carregar funcionários:', e);
+							funcionarios = []; 
+						}
+						
+						console.log('EXIBIR: Total de funcionários:', funcionarios.length, funcionarios);
 						
 						if (funcionarios.length === 0) {
-							container.innerHTML = '<div style="padding:20px;text-align:center;color:#6b7280">Nenhum funcionário cadastrado</div>';
+							container.innerHTML = '<div style="padding:20px;text-align:center;color:#6b7280">Nenhum colaborador cadastrado</div>';
 							total.textContent = '0';
 							return;
 						}
@@ -6144,19 +6169,6 @@
 							carregarRiscosPerigos();
 							alert('Risco/perigo excluído com sucesso!');
 						}
-					}
-					
-					// Inicializar dados exemplo se não houver colaboradores
-					if (!localStorage.getItem('funcionarios') || JSON.parse(localStorage.getItem('funcionarios')).length === 0) {
-						funcionarios = [{
-							matricula: '28853',
-							nome: 'Ademilcio Ferreira Caldas',
-							funcao: 'Encarregado de obras II',
-							setor: 'Obras Civis',
-							admissao: '2025-10-10',
-							empresa: 'RS Construções'
-						}];
-						salvarFuncionarios();
 					}
 					
 					// Inicializar exibição de funcionários
