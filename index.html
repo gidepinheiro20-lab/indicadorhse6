@@ -200,6 +200,108 @@
 				border-color: #3b82f6 !important;
 				box-shadow: 0 8px 16px rgba(59, 130, 246, 0.1) !important;
 			}
+			
+			/* Estilos para anexos */
+			.secao-anexos {
+				margin-top: 20px;
+				padding: 20px;
+				background: #f8fafc;
+				border-radius: 8px;
+				border: 1px solid #e2e8f0;
+			}
+			
+			.grid-fotos {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+				gap: 12px;
+				margin-top: 12px;
+			}
+			
+			.item-foto {
+				position: relative;
+				aspect-ratio: 1;
+				border-radius: 8px;
+				overflow: hidden;
+				cursor: pointer;
+				transition: transform 0.2s ease;
+				box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+			}
+			
+			.item-foto:hover {
+				transform: scale(1.05);
+			}
+			
+			.item-foto img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+			
+			.nome-foto {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				background: linear-gradient(transparent, rgba(0,0,0,0.8));
+				color: white;
+				padding: 8px 6px 4px;
+				font-size: 0.75rem;
+				text-align: center;
+				word-break: break-word;
+			}
+			
+			.lista-documentos {
+				margin-top: 12px;
+			}
+			
+			.item-documento {
+				display: flex;
+				align-items: center;
+				padding: 12px;
+				margin-bottom: 8px;
+				background: white;
+				border: 1px solid #e2e8f0;
+				border-radius: 6px;
+				cursor: pointer;
+				transition: all 0.2s ease;
+			}
+			
+			.item-documento:hover {
+				background: #f1f5f9;
+				border-color: #cbd5e1;
+				transform: translateX(4px);
+			}
+			
+			.icone-documento {
+				width: 32px;
+				height: 32px;
+				border-radius: 4px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: white;
+				font-weight: bold;
+				font-size: 0.75rem;
+				margin-right: 12px;
+				flex-shrink: 0;
+			}
+			
+			.info-documento {
+				flex-grow: 1;
+				min-width: 0;
+			}
+			
+			.nome-documento {
+				font-weight: 500;
+				color: #1f2937;
+				margin-bottom: 2px;
+				word-break: break-word;
+			}
+			
+			.tipo-documento {
+				font-size: 0.875rem;
+				color: #6b7280;
+			}
 		</style>
 	</head>
 	<body>
@@ -238,13 +340,80 @@
 			<main class="main">
 				<button class="back-to-menu" id="back-to-menu" title="Voltar ao menu">←</button>
 				<div id="conteudo-principal"></div>
-				<div id="nova-ras" style="display:none;max-width:none;margin:0;">
-					<!-- Etapa 1: Informações Básicas -->
-					<div id="ras-etapa-1">
-						<h2 style="margin-top:24px;font-size:1.6rem;font-weight:700;color:#222">Nova RAS</h2>
-						<div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança · Etapa 1 de 6</div>
-						<div style="font-size:1.05rem;margin-bottom:18px;color:#888">Informações Básicas</div>
-						<form id="form-ras" autocomplete="off" style="background:#fff;border-radius:12px;padding:24px 24px 16px 24px;box-shadow:0 2px 8px #0001;border:1px solid #e6edf3">
+				<div id="nova-ras" style="display:none;max-width:none;margin:0;background:#f5f7fa;min-height:100vh;padding:0;">
+					<!-- Cabeçalho Principal RAS -->
+					<div style="background:linear-gradient(135deg, #16a085 0%, #2ecc71 100%);color:#fff;padding:32px 24px;border-radius:0;">
+						<div style="max-width:1200px;margin:0 auto;">
+							<div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;">
+								<div style="font-size:2rem;">📊</div>
+								<h1 style="margin:0;font-size:2rem;font-weight:700;">RAS - Reunião de Análise de Segurança</h1>
+							</div>
+							<p style="margin:0;font-size:1.1rem;opacity:0.9;">Sistema de registros e controle de reuniões de segurança</p>
+						</div>
+					</div>
+					
+					<!-- Menu de Ações RAS -->
+					<div style="background:#fff;border-bottom:2px solid #e2e8f0;padding:20px 24px;">
+						<div style="max-width:1200px;margin:0 auto;display:flex;gap:12px;flex-wrap:wrap;">
+							<button id="ras-nova-reuniao" style="background:#16a085;color:#fff;border:none;padding:12px 20px;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all 0.2s;">
+								<span style="font-size:1.2rem;">✨</span> Nova Reunião
+							</button>
+							<button id="ras-historico" style="background:#3498db;color:#fff;border:none;padding:12px 20px;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all 0.2s;">
+								<span style="font-size:1.2rem;">📋</span> Histórico
+							</button>
+							<button id="ras-relatorios" style="background:#9b59b6;color:#fff;border:none;padding:12px 20px;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all 0.2s;">
+								<span style="font-size:1.2rem;">📊</span> Relatórios
+							</button>
+							<button id="ras-configuracoes" style="background:#e74c3c;color:#fff;border:none;padding:12px 20px;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all 0.2s;">
+								<span style="font-size:1.2rem;">⚙️</span> Configurações
+							</button>
+						</div>
+					</div>
+					
+					<!-- Conteúdo Principal -->
+					<div style="max-width:1200px;margin:0 auto;padding:24px;">
+						
+						<!-- Lista de RAS Registradas -->
+						<div id="ras-lista-reunioes" style="background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1);margin-bottom:24px;">
+							<div style="padding:20px 24px;border-bottom:1px solid #e2e8f0;">
+								<h2 style="margin:0;font-size:1.4rem;font-weight:700;color:#2d3748;">Registros de RAS</h2>
+							</div>
+							
+							<div style="overflow-x:auto;">
+								<table style="width:100%;border-collapse:collapse;">
+									<thead>
+										<tr style="background:#f7fafc;">
+											<th style="padding:12px 16px;text-align:left;font-weight:600;color:#4a5568;border-bottom:2px solid #e2e8f0;">Data</th>
+											<th style="padding:12px 16px;text-align:left;font-weight:600;color:#4a5568;border-bottom:2px solid #e2e8f0;">Empresa</th>
+											<th style="padding:12px 16px;text-align:left;font-weight:600;color:#4a5568;border-bottom:2px solid #e2e8f0;">Efetivo</th>
+											<th style="padding:12px 16px;text-align:left;font-weight:600;color:#4a5568;border-bottom:2px solid #e2e8f0;">Alto Risco</th>
+											<th style="padding:12px 16px;text-align:left;font-weight:600;color:#4a5568;border-bottom:2px solid #e2e8f0;">TARD-C</th>
+											<th style="padding:12px 16px;text-align:left;font-weight:600;color:#4a5568;border-bottom:2px solid #e2e8f0;">Status</th>
+											<th style="padding:12px 16px;text-align:left;font-weight:600;color:#4a5568;border-bottom:2px solid #e2e8f0;">Ações</th>
+										</tr>
+									</thead>
+									<tbody id="ras-tbody">
+										<!-- Registros serão carregados dinamicamente -->
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					
+					<!-- Formulário Nova RAS (inicialmente oculto) -->
+					<div id="ras-formulario-container" style="display:none;max-width:1200px;margin:0 auto;padding:24px;">
+						<!-- Etapa 1: Informações Básicas -->
+						<div id="ras-etapa-1">
+							<div style="background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1);margin-bottom:24px;">
+								<div style="background:linear-gradient(135deg, #3498db 0%, #2980b9 100%);color:#fff;padding:20px 24px;border-radius:12px 12px 0 0;">
+									<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+										<div style="font-size:1.5rem;">📝</div>
+										<h3 style="margin:0;font-size:1.4rem;font-weight:700;">Nova RAS - Etapa 1 de 6</h3>
+									</div>
+									<p style="margin:0;opacity:0.9;">Informações Básicas da Reunião</p>
+								</div>
+								
+								<form id="form-ras" autocomplete="off" style="padding:24px;">
 							<div style="text-align:center;margin-bottom:18px">
 								<div style="font-size:1.3rem;font-weight:700;">Informações Básicas</div>
 								<div style="color:#888;font-size:1rem;">Preencha os dados principais da reunião</div>
@@ -289,10 +458,13 @@
 								<label style="font-weight:600;display:block;margin-bottom:4px;color:#3197ab">💬 Algo a ser Compartilhado</label>
 								<textarea id="ras-compartilhar" required rows="2" style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb" placeholder="Informações importantes para compartilhar com a equipe..."></textarea>
 							</div>
-							<div style="text-align:right">
-								<button id="ras-proximo-1" type="button" disabled style="background:#3197ab;color:#fff;padding:10px 36px;font-size:1.1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed">Próximo →</button>
+							<div style="text-align:right;padding-top:12px;border-top:1px solid #e2e8f0;margin-top:24px;">
+								<button id="ras-voltar-formulario" type="button" style="background:#6c757d;color:#fff;padding:12px 24px;font-size:1rem;border:none;border-radius:6px;cursor:pointer;margin-right:12px;">← Voltar</button>
+								<button id="ras-proximo-1" type="button" disabled style="background:#3498db;color:#fff;padding:12px 24px;font-size:1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed;">Próximo →</button>
 							</div>
 						</form>
+							</div>
+						</div>
 					</div>
 
 					<!-- Etapa 2: Participação de Liderança -->
@@ -2484,12 +2656,39 @@
 								e.preventDefault();
 								hideAllSections();
 								document.getElementById('nova-ras').style.display = 'block';
+								// Mostrar lista principal e ocultar formulário
+								document.getElementById('ras-lista-reunioes').style.display = 'block';
+								document.getElementById('ras-formulario-container').style.display = 'none';
 								// Carregar empresas e colaboradores quando abrir RAS
 								carregarEmpresasRAS();
 								carregarColaboradoresRAS();
 								carregarColaboradoresRASEtapa3();
+								carregarFuncionariosRASEtapa6();
+								// Carregar lista de RAS
+								carregarListaRAS();
 								hideSidebarOnMobile();
 							});
+						});
+						
+						// Event listeners para botões do RAS
+						document.addEventListener('DOMContentLoaded', function() {
+							// Botão Nova Reunião
+							if (document.getElementById('ras-nova-reuniao')) {
+								document.getElementById('ras-nova-reuniao').addEventListener('click', function() {
+									document.getElementById('ras-lista-reunioes').style.display = 'none';
+									document.getElementById('ras-formulario-container').style.display = 'block';
+									// Resetar para etapa 1
+									mostrarEtapaRAS(1);
+								});
+							}
+							
+							// Botão Voltar do Formulário
+							if (document.getElementById('ras-voltar-formulario')) {
+								document.getElementById('ras-voltar-formulario').addEventListener('click', function() {
+									document.getElementById('ras-formulario-container').style.display = 'none';
+									document.getElementById('ras-lista-reunioes').style.display = 'block';
+								});
+							}
 						});
 					// Exibir funcionários ao clicar em Funcionários
 						document.querySelectorAll('.nav a[href="#funcionarios"]').forEach(function(link){
@@ -3101,8 +3300,8 @@
 						if (!this.disabled) {
 							document.getElementById('ras-etapa-5').style.display = 'none';
 							document.getElementById('ras-etapa-6').style.display = 'block';
-							// Atualizar contador de presentes
-							atualizarContadorPresentes();
+							// Carregar lista de funcionários
+							carregarFuncionariosRASEtapa6();
 						}
 					});
 
@@ -3120,14 +3319,7 @@
 
 					// Função para marcar/desmarcar todos os funcionários
 					document.getElementById('marcar-todos').addEventListener('click', function() {
-						var checkboxes = document.querySelectorAll('#lista-funcionarios input[type="checkbox"]');
-						var todosMarcados = Array.from(checkboxes).every(cb => cb.checked);
-						
-						checkboxes.forEach(function(checkbox) {
-							checkbox.checked = !todosMarcados;
-						});
-						
-						atualizarContadorPresentes();
+						toggleTodosFuncionarios();
 						this.textContent = todosMarcados ? 'Marcar Todos' : 'Desmarcar Todos';
 					});
 
@@ -3339,30 +3531,51 @@
 					});
 
 					document.getElementById('btn-sair-ras').addEventListener('click', function() {
-						if (confirm('Tem certeza que deseja sair da RAS?\n\nTodos os dados não salvos serão perdidos.')) {
-							// Reset do formulário
-							document.getElementById('ras-relatorio-final').style.display = 'none';
-							document.getElementById('conteudo-principal').style.display = 'block';
+						if (confirm('Deseja salvar esta RAS e sair?\n\nA reunião será registrada como concluída.')) {
+							// Salvar RAS finalizada
+							var salvou = salvarRASFinalizada();
 							
-							// Limpar dados
-							fotosCarregadas = [];
-							evidenciasCarregadas = [];
-							
-							// Reset das etapas
-							for (var i = 1; i <= 6; i++) {
-								document.getElementById('ras-etapa-' + i).style.display = 'none';
-							}
-							
-							// Limpar formulários
-							document.querySelectorAll('#nova-ras input, #nova-ras select, #nova-ras textarea').forEach(function(campo) {
-								if (campo.type === 'checkbox') {
-									campo.checked = false;
-								} else {
-									campo.value = '';
+							if (salvou) {
+								alert('RAS salva com sucesso!');
+								
+								// Atualizar lista de RAS se estivermos na tela principal
+								carregarListaRAS();
+								
+								// Reset do formulário
+								document.getElementById('ras-relatorio-final').style.display = 'none';
+								document.getElementById('nova-ras').style.display = 'block';
+								document.getElementById('ras-lista-reunioes').style.display = 'block';
+								document.getElementById('ras-formulario-container').style.display = 'none';
+								
+								// Limpar dados
+								fotosCarregadas = [];
+								evidenciasCarregadas = [];
+								
+								// Reset das etapas
+								for (var i = 1; i <= 6; i++) {
+									document.getElementById('ras-etapa-' + i).style.display = 'none';
 								}
-							});
-							
-							alert('RAS finalizada e dados limpos com sucesso!');
+								
+								// Mostrar etapa 1 novamente
+								document.getElementById('ras-etapa-1').style.display = 'block';
+								
+								// Limpar formulários
+								document.querySelectorAll('#nova-ras input, #nova-ras select, #nova-ras textarea').forEach(function(campo) {
+									if (campo.type === 'checkbox') {
+										campo.checked = false;
+									} else {
+										campo.value = '';
+									}
+								});
+								
+								// Limpar checkboxes de funcionários presentes
+								document.querySelectorAll('.checkbox-presente').forEach(function(checkbox) {
+									checkbox.checked = false;
+								});
+								
+							} else {
+								alert('Erro ao salvar RAS. Tente novamente.');
+							}
 						}
 					});
 
@@ -3598,6 +3811,10 @@
 							funcionarios = funcionarios.filter(function(f) { return f.matricula !== matricula; });
 							salvarFuncionarios();
 							exibirFuncionarios();
+							// Atualizar lista da RAS Etapa 6 se estiver visível
+							if (document.getElementById('ras-etapa-6').style.display === 'block') {
+								carregarFuncionariosRASEtapa6();
+							}
 							alert('Colaborador excluído com sucesso!');
 						}
 					}
@@ -4181,6 +4398,634 @@
 						});
 						
 						console.log('Colaboradores carregados na RAS Etapa 3:', colaboradoresCadastrados.length);
+					}
+					
+					// Carregar lista de funcionários na RAS Etapa 6
+					function carregarFuncionariosRASEtapa6() {
+						var colaboradoresCadastrados = JSON.parse(localStorage.getItem('funcionarios')) || [];
+						var listaContainer = document.getElementById('lista-funcionarios');
+						var totalPresentesSpan = document.getElementById('total-presentes');
+						
+						if (!listaContainer) return;
+						
+						// Limpar lista existente
+						listaContainer.innerHTML = '';
+						
+						if (colaboradoresCadastrados.length === 0) {
+							listaContainer.innerHTML = '<div style="padding:24px;text-align:center;color:#6b7280">Nenhum colaborador cadastrado</div>';
+							if (totalPresentesSpan) totalPresentesSpan.textContent = '0';
+							return;
+						}
+						
+						// Ordenar colaboradores por nome
+						var colaboradoresOrdenados = colaboradoresCadastrados.slice().sort(function(a, b) {
+							return (a.nome || '').localeCompare(b.nome || '');
+						});
+						
+						// Criar linha para cada colaborador
+						colaboradoresOrdenados.forEach(function(colaborador, index) {
+							var linha = document.createElement('div');
+							linha.style.cssText = 'padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:60px 120px 1fr 1fr 1fr;gap:16px;align-items:center;background:#fff';
+							
+							// Remover border-bottom da última linha
+							if (index === colaboradoresOrdenados.length - 1) {
+								linha.style.borderBottom = 'none';
+							}
+							
+							linha.innerHTML = 
+								'<div><input type="checkbox" id="presente-' + index + '" class="checkbox-presente" style="width:18px;height:18px;cursor:pointer"></div>' +
+								'<div style="color:#374151;font-weight:500">' + (colaborador.matricula || '-') + '</div>' +
+								'<div style="color:#374151;font-weight:500">' + (colaborador.nome || '-') + '</div>' +
+								'<div style="color:#6b7280">' + (colaborador.empresa || '-') + '</div>' +
+								'<div style="color:#6b7280">' + (colaborador.funcao || '-') + '</div>';
+							
+							listaContainer.appendChild(linha);
+						});
+						
+						// Atualizar contador inicial
+						atualizarContadorPresentes();
+						
+						// Adicionar event listeners para checkboxes
+						var checkboxes = document.querySelectorAll('.checkbox-presente');
+						checkboxes.forEach(function(checkbox) {
+							checkbox.addEventListener('change', atualizarContadorPresentes);
+						});
+						
+						console.log('Funcionários carregados na RAS Etapa 6:', colaboradoresOrdenados.length);
+					}
+					
+					// Atualizar contador de presentes
+					function atualizarContadorPresentes() {
+						var checkboxes = document.querySelectorAll('.checkbox-presente:checked');
+						var totalPresentesSpan = document.getElementById('total-presentes');
+						if (totalPresentesSpan) {
+							totalPresentesSpan.textContent = checkboxes.length;
+						}
+					}
+					
+					// Marcar/desmarcar todos os funcionários
+					function toggleTodosFuncionarios() {
+						var checkboxes = document.querySelectorAll('.checkbox-presente');
+						var marcarTodos = document.getElementById('marcar-todos');
+						var todosChecked = Array.from(checkboxes).every(function(cb) { return cb.checked; });
+						
+						checkboxes.forEach(function(checkbox) {
+							checkbox.checked = !todosChecked;
+						});
+						
+						// Atualizar texto do botão
+						if (marcarTodos) {
+							marcarTodos.textContent = todosChecked ? 'Marcar Todos' : 'Desmarcar Todos';
+						}
+						
+						atualizarContadorPresentes();
+					}
+					
+					// Carregar lista de RAS registradas
+					function carregarListaRAS() {
+						var rasRegistradas = JSON.parse(localStorage.getItem('ras-reunioes')) || [];
+						var tbody = document.getElementById('ras-tbody');
+						
+						if (!tbody) return;
+						
+						if (rasRegistradas.length === 0) {
+							tbody.innerHTML = '<tr><td colspan="7" style="padding:24px;text-align:center;color:#6b7280;">Nenhuma RAS registrada ainda</td></tr>';
+							return;
+						}
+						
+						tbody.innerHTML = '';
+						
+						rasRegistradas.forEach(function(ras, index) {
+							var row = document.createElement('tr');
+							row.style.borderBottom = '1px solid #e2e8f0';
+							
+							var statusClass = ras.status === 'Concluída' ? 'background:#10b981;color:#fff' : 'background:#f59e0b;color:#fff';
+							var tardcIcon = ras.tardc ? '⚠️' : '✅';
+							
+							row.innerHTML = 
+								'<td style="padding:12px 16px;color:#2d3748;">' + (ras.data || '-') + '</td>' +
+								'<td style="padding:12px 16px;color:#2d3748;">' + (ras.empresa || '-') + '</td>' +
+								'<td style="padding:12px 16px;color:#2d3748;">' + (ras.efetivo || '0') + '</td>' +
+								'<td style="padding:12px 16px;color:#2d3748;max-width:200px;overflow:hidden;text-overflow:ellipsis;">' + (ras.altoRisco || '-') + '</td>' +
+								'<td style="padding:12px 16px;text-align:center;font-size:1.2rem;">' + tardcIcon + '</td>' +
+								'<td style="padding:12px 16px;"><span style="padding:4px 8px;border-radius:4px;font-size:0.85rem;font-weight:600;' + statusClass + '">' + (ras.status || 'Em Andamento') + '</span></td>' +
+								'<td style="padding:12px 16px;">' +
+									'<button onclick="visualizarRAS(' + index + ')" style="background:#3498db;color:#fff;border:none;border-radius:4px;padding:6px 12px;margin-right:4px;cursor:pointer;font-size:0.85rem;">👁️ Ver</button>' +
+									'<button onclick="editarRAS(' + index + ')" style="background:#f39c12;color:#fff;border:none;border-radius:4px;padding:6px 12px;margin-right:4px;cursor:pointer;font-size:0.85rem;">✏️ Editar</button>' +
+									'<button onclick="excluirRAS(' + index + ')" style="background:#e74c3c;color:#fff;border:none;border-radius:4px;padding:6px 12px;cursor:pointer;font-size:0.85rem;">🗑️</button>' +
+								'</td>';
+								
+							tbody.appendChild(row);
+						});
+					}
+					
+					// Mostrar etapa específica do RAS
+					function mostrarEtapaRAS(etapa) {
+						// Ocultar todas as etapas
+						for (var i = 1; i <= 6; i++) {
+							var etapaElement = document.getElementById('ras-etapa-' + i);
+							if (etapaElement) {
+								etapaElement.style.display = 'none';
+							}
+						}
+						
+						// Mostrar etapa solicitada
+						var etapaAtual = document.getElementById('ras-etapa-' + etapa);
+						if (etapaAtual) {
+							etapaAtual.style.display = 'block';
+						}
+					}
+					
+					// Salvar RAS finalizada no localStorage
+					function salvarRASFinalizada() {
+						try {
+							// Verificar se estamos editando uma RAS existente
+							var isEdicao = typeof window.rasEditandoIndex !== 'undefined';
+							var rasRegistradas = JSON.parse(localStorage.getItem('ras-reunioes')) || [];
+							
+							// Coletar dados de todas as etapas
+							var dadosRAS = {
+								id: isEdicao && rasRegistradas[window.rasEditandoIndex] ? rasRegistradas[window.rasEditandoIndex].id : Date.now(),
+								dataRegistro: isEdicao && rasRegistradas[window.rasEditandoIndex] ? rasRegistradas[window.rasEditandoIndex].dataRegistro : new Date().toISOString(),
+								dataEdicao: isEdicao ? new Date().toISOString() : undefined,
+								status: 'Concluída',
+								// Etapa 1 - Informações Básicas
+								empresa: document.getElementById('ras-empresa')?.value || '',
+								data: document.getElementById('ras-data')?.value || '',
+								inicio: document.getElementById('ras-inicio')?.value || '',
+								termino: document.getElementById('ras-termino')?.value || '',
+								efetivo: document.getElementById('ras-efetivo')?.value || '0',
+								altoRisco: document.getElementById('ras-alto-risco')?.value || '',
+								tardc: document.getElementById('ras-tardc')?.checked || false,
+								compartilhar: document.getElementById('ras-compartilhar')?.value || '',
+								// Etapa 2 - Liderança
+								gerente: document.getElementById('ras-gerente')?.value || '',
+								engenheiro: document.getElementById('ras-engenheiro')?.value || '',
+								supervisor: document.getElementById('ras-supervisor')?.value || '',
+								encarregado: document.getElementById('ras-encarregado')?.value || '',
+								tecnicoSeguranca: document.getElementById('ras-tecnico-seguranca')?.value || '',
+								// Etapa 3 - Designações
+								anjoSemana: document.getElementById('ras-anjo-semana')?.value || '',
+								liderRAS: document.getElementById('ras-lider-ras')?.value || '',
+								liderCPT: document.getElementById('ras-lider-cpt')?.value || '',
+								brigada: document.getElementById('ras-brigada')?.value || '',
+								// Etapa 6 - Presentes (se houver)
+								funcionariosPresentes: coletarFuncionariosPresentes(),
+								// Anexos - Fotos e Documentos
+								fotos: typeof fotosCarregadas !== 'undefined' ? fotosCarregadas.slice() : [],
+								documentos: typeof evidenciasCarregadas !== 'undefined' ? evidenciasCarregadas.slice() : []
+							};
+							
+							if (isEdicao) {
+								// Atualizar RAS existente
+								rasRegistradas[window.rasEditandoIndex] = dadosRAS;
+								// Limpar índice de edição
+								delete window.rasEditandoIndex;
+								console.log('RAS editada com sucesso:', dadosRAS);
+							} else {
+								// Adicionar nova RAS
+								rasRegistradas.push(dadosRAS);
+								console.log('RAS criada com sucesso:', dadosRAS);
+							}
+							
+							// Salvar no localStorage
+							localStorage.setItem('ras-reunioes', JSON.stringify(rasRegistradas));
+							
+							return true;
+						} catch (error) {
+							console.error('Erro ao salvar RAS:', error);
+							return false;
+						}
+					}
+					
+					// Coletar funcionários presentes marcados
+					function coletarFuncionariosPresentes() {
+						var presentes = [];
+						var checkboxes = document.querySelectorAll('.checkbox-presente:checked');
+						
+						checkboxes.forEach(function(checkbox, index) {
+							var linha = checkbox.closest('div');
+							if (linha) {
+								var colunas = linha.querySelectorAll('div');
+								if (colunas.length >= 5) {
+									presentes.push({
+										matricula: colunas[1].textContent.trim(),
+										nome: colunas[2].textContent.trim(),
+										empresa: colunas[3].textContent.trim(),
+										funcao: colunas[4].textContent.trim()
+									});
+								}
+							}
+						});
+						
+						return presentes;
+					}
+					
+					// Visualizar RAS - Escopo Global
+					window.visualizarRAS = function(index) {
+						var rasRegistradas = JSON.parse(localStorage.getItem('ras-reunioes')) || [];
+						var ras = rasRegistradas[index];
+						
+						if (!ras) {
+							alert('RAS não encontrada!');
+							return;
+						}
+						
+						// Criar modal de visualização com relatório final completo
+						var modal = document.createElement('div');
+						modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+						
+						var conteudo = document.createElement('div');
+						conteudo.style.cssText = 'background:#fff;border-radius:16px;max-width:900px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.3);';
+						
+						// Formatação de dados
+						var dataFormatada = ras.data ? new Date(ras.data + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
+						var funcionariosPresentes = ras.funcionariosPresentes || [];
+						var totalPresentes = funcionariosPresentes.length;
+						
+						// Gerar lista de funcionários presentes em formato de tabela
+						var tabelaPresentes = '';
+						if (funcionariosPresentes.length > 0) {
+							tabelaPresentes = '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin:16px 0;">' +
+								'<div style="background:#374151;color:#fff;padding:12px;font-weight:600;">Funcionários Presentes (' + totalPresentes + ')</div>' +
+								'<div style="max-height:200px;overflow-y:auto;">';
+							
+							funcionariosPresentes.forEach(function(funcionario, idx) {
+								var bgColor = idx % 2 === 0 ? '#fff' : '#f9fafb';
+								tabelaPresentes += 
+									'<div style="display:grid;grid-template-columns:100px 1fr 1fr 1fr;gap:12px;padding:10px;border-bottom:1px solid #e5e7eb;background:' + bgColor + ';align-items:center;">' +
+										'<div style="font-weight:500;color:#1f2937;">' + (funcionario.matricula || '-') + '</div>' +
+										'<div style="color:#374151;">' + (funcionario.nome || '-') + '</div>' +
+										'<div style="color:#6b7280;">' + (funcionario.empresa || '-') + '</div>' +
+										'<div style="color:#6b7280;">' + (funcionario.funcao || '-') + '</div>' +
+									'</div>';
+							});
+							
+							tabelaPresentes += '</div></div>';
+						} else {
+							tabelaPresentes = '<div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:16px;margin:16px 0;text-align:center;color:#92400e;">⚠️ Nenhum funcionário registrado como presente</div>';
+						}
+						
+						conteudo.innerHTML = 
+							'<div style="background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);color:#fff;padding:24px;border-radius:16px 16px 0 0;text-align:center;">' +
+								'<div style="font-size:2.5rem;margin-bottom:8px;">📋</div>' +
+								'<h1 style="margin:0;font-size:1.8rem;font-weight:700;">Relatório Final - RAS</h1>' +
+								'<p style="margin:8px 0 0 0;opacity:0.9;font-size:1.1rem;">Reunião de Análise de Segurança</p>' +
+							'</div>' +
+							
+							'<div style="padding:32px;">' +
+								// Seção Informações Básicas
+								'<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:24px;">' +
+									'<h3 style="margin:0 0 16px 0;color:#1f2937;font-size:1.3rem;border-bottom:2px solid #3b82f6;padding-bottom:8px;">📊 Informações Básicas</h3>' +
+									'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">' +
+										'<div><strong style="color:#374151;">📅 Data:</strong><br><span style="color:#1f2937;font-size:1.1rem;">' + dataFormatada + '</span></div>' +
+										'<div><strong style="color:#374151;">🏢 Empresa:</strong><br><span style="color:#1f2937;font-size:1.1rem;">' + (ras.empresa || '-') + '</span></div>' +
+										'<div><strong style="color:#374151;">⏰ Horário:</strong><br><span style="color:#1f2937;font-size:1.1rem;">' + (ras.inicio || '-') + ' às ' + (ras.termino || '-') + '</span></div>' +
+										'<div><strong style="color:#374151;">👥 Efetivo:</strong><br><span style="color:#1f2937;font-size:1.1rem;">' + (ras.efetivo || '0') + ' pessoas</span></div>' +
+									'</div>' +
+								'</div>' +
+								
+								// Seção Liderança
+								'<div style="background:#f0f9ff;border:1px solid #0ea5e9;border-radius:12px;padding:20px;margin-bottom:24px;">' +
+									'<h3 style="margin:0 0 16px 0;color:#1f2937;font-size:1.3rem;border-bottom:2px solid #0ea5e9;padding-bottom:8px;">👔 Participação de Liderança</h3>' +
+									'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">' +
+										'<div><strong>🎯 Gerente:</strong> ' + (ras.gerente || '-') + '</div>' +
+										'<div><strong>🔧 Engenheiro:</strong> ' + (ras.engenheiro || '-') + '</div>' +
+										'<div><strong>👷 Supervisor:</strong> ' + (ras.supervisor || '-') + '</div>' +
+										'<div><strong>⚡ Encarregado:</strong> ' + (ras.encarregado || '-') + '</div>' +
+										'<div><strong>🛡️ Técnico Seg.:</strong> ' + (ras.tecnicoSeguranca || '-') + '</div>' +
+									'</div>' +
+								'</div>' +
+								
+								// Seção Designações
+								'<div style="background:#f0fdf4;border:1px solid #16a34a;border-radius:12px;padding:20px;margin-bottom:24px;">' +
+									'<h3 style="margin:0 0 16px 0;color:#1f2937;font-size:1.3rem;border-bottom:2px solid #16a34a;padding-bottom:8px;">🎯 Designações Especiais</h3>' +
+									'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">' +
+										'<div><strong>💖 Anjo da Semana:</strong> ' + (ras.anjoSemana || '-') + '</div>' +
+										'<div><strong>🎯 Líder da RAS:</strong> ' + (ras.liderRAS || '-') + '</div>' +
+										'<div><strong>👥 Líder CPT:</strong> ' + (ras.liderCPT || '-') + '</div>' +
+										'<div><strong>🚒 Brigada:</strong> ' + (ras.brigada || '-') + '</div>' +
+									'</div>' +
+								'</div>' +
+								
+								// Seção Riscos e Observações
+								'<div style="background:#fef2f2;border:1px solid #ef4444;border-radius:12px;padding:20px;margin-bottom:24px;">' +
+									'<h3 style="margin:0 0 16px 0;color:#1f2937;font-size:1.3rem;border-bottom:2px solid #ef4444;padding-bottom:8px;">⚠️ Análise de Riscos</h3>' +
+									'<div style="margin-bottom:16px;"><strong style="color:#dc2626;">🚨 Tarefas de Alto Risco:</strong><br><div style="background:#fff;border:1px solid #fca5a5;border-radius:6px;padding:12px;margin-top:8px;color:#374151;">' + (ras.altoRisco || 'Não informado') + '</div></div>' +
+									'<div style="margin-bottom:16px;"><strong style="color:#dc2626;">⚠️ TARD-C:</strong> <span style="padding:4px 12px;border-radius:20px;font-weight:600;color:#fff;background:' + (ras.tardc ? '#ef4444' : '#10b981') + ';">' + (ras.tardc ? '🚨 ATIVADO' : '✅ INATIVO') + '</span></div>' +
+									'<div><strong style="color:#dc2626;">💬 Informações para Compartilhar:</strong><br><div style="background:#fff;border:1px solid #fca5a5;border-radius:6px;padding:12px;margin-top:8px;color:#374151;">' + (ras.compartilhar || 'Não informado') + '</div></div>' +
+								'</div>' +
+								
+								// Seção Funcionários Presentes
+								tabelaPresentes +
+								
+								// Seção Anexos - Fotos e Documentos
+								gerarSecaoAnexos(ras) +
+								
+								// Rodapé
+								'<div style="text-align:center;border-top:2px solid #e5e7eb;padding-top:24px;margin-top:32px;">' +
+									'<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">' +
+										'<button onclick="imprimirRelatorio()" style="background:#3b82f6;color:#fff;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;gap:8px;"><span>🖨️</span> Imprimir</button>' +
+										'<button onclick="compartilharRelatorio()" style="background:#10b981;color:#fff;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;gap:8px;"><span>📱</span> Compartilhar</button>' +
+										'<button onclick="fecharModal()" style="background:#6b7280;color:#fff;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;gap:8px;"><span>✕</span> Fechar</button>' +
+									'</div>' +
+									'<div style="margin-top:16px;color:#6b7280;font-size:0.9rem;">' +
+										'<strong>Registrado em:</strong> ' + (ras.dataRegistro ? new Date(ras.dataRegistro).toLocaleString('pt-BR') : '-') +
+										(ras.dataEdicao ? '<br><strong>Última edição:</strong> ' + new Date(ras.dataEdicao).toLocaleString('pt-BR') : '') +
+									'</div>' +
+								'</div>' +
+							'</div>';
+						
+						modal.appendChild(conteudo);
+						document.body.appendChild(modal);
+						
+						// Fechar modal ao clicar fora
+						modal.addEventListener('click', function(e) {
+							if (e.target === modal) {
+								document.body.removeChild(modal);
+							}
+						});
+						
+						// Funções globais para as ações do modal
+						window.fecharModal = function() {
+							if (modal && modal.parentNode) {
+								document.body.removeChild(modal);
+							}
+						}
+						
+						window.imprimirRelatorio = function() {
+							window.print();
+						}
+						
+						window.compartilharRelatorio = function() {
+							if (navigator.share) {
+								navigator.share({
+									title: 'Relatório RAS - ' + (ras.empresa || 'Empresa'),
+									text: 'Relatório da Reunião de Análise de Segurança realizada em ' + dataFormatada,
+									url: window.location.href
+								});
+							} else {
+								// Fallback para dispositivos que não suportam Web Share API
+								var texto = 'Relatório RAS - ' + (ras.empresa || 'Empresa') + '\n' +
+											'Data: ' + dataFormatada + '\n' +
+											'Efetivo: ' + (ras.efetivo || '0') + ' pessoas\n' +
+											'Presentes: ' + totalPresentes + ' funcionários';
+								
+								if (navigator.clipboard) {
+									navigator.clipboard.writeText(texto);
+									alert('Informações copiadas para a área de transferência!');
+								} else {
+									prompt('Copie o texto abaixo:', texto);
+								}
+							}
+						}
+						
+						// Funções globais para visualização de anexos
+						window.abrirImagemModal = function(src, nome) {
+							var modalImg = document.createElement('div');
+							modalImg.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:20000;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+							
+							modalImg.innerHTML = 
+								'<div style="position:relative;max-width:90%;max-height:90%;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);">' +
+									'<div style="background:#374151;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">' +
+										'<h4 style="margin:0;font-size:1rem;">' + nome + '</h4>' +
+										'<button onclick="fecharModalImagem()" style="background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;padding:0;width:24px;height:24px;">×</button>' +
+									'</div>' +
+									'<img src="' + src + '" alt="' + nome + '" style="display:block;max-width:100%;max-height:calc(90vh - 60px);object-fit:contain;">' +
+								'</div>';
+							
+							document.body.appendChild(modalImg);
+							
+							// Fechar ao clicar fora da imagem
+							modalImg.addEventListener('click', function(e) {
+								if (e.target === modalImg) {
+									document.body.removeChild(modalImg);
+								}
+							});
+							
+							window.fecharModalImagem = function() {
+								if (modalImg && modalImg.parentNode) {
+									document.body.removeChild(modalImg);
+								}
+							}
+						}
+						
+						window.abrirDocumento = function(src, nome) {
+							var extensao = nome.split('.').pop().toLowerCase();
+							
+							if (['jpg', 'jpeg', 'png', 'gif'].includes(extensao)) {
+								// Se for imagem, usar o modal de imagem
+								window.abrirImagemModal(src, nome);
+							} else if (extensao === 'pdf') {
+								// Para PDF, tentar abrir em nova aba
+								try {
+									var newWindow = window.open(src, '_blank');
+									if (!newWindow) {
+										alert('Pop-ups bloqueados. Por favor, permita pop-ups para visualizar o documento.');
+									}
+								} catch (error) {
+									alert('Não foi possível abrir o documento. Tente fazer o download.');
+								}
+							} else {
+								// Para outros tipos, fazer download
+								var link = document.createElement('a');
+								link.href = src;
+								link.download = nome;
+								link.style.display = 'none';
+								document.body.appendChild(link);
+								link.click();
+								document.body.removeChild(link);
+							}
+						}
+					}
+					
+					// Editar RAS - Escopo Global
+					window.editarRAS = function(index) {
+						var rasRegistradas = JSON.parse(localStorage.getItem('ras-reunioes')) || [];
+						var ras = rasRegistradas[index];
+						
+						if (!ras) {
+							alert('RAS não encontrada!');
+							return;
+						}
+						
+						if (confirm('Deseja editar esta RAS?\n\nVocê será redirecionado para o formulário com os dados preenchidos.')) {
+							// Mostrar formulário
+							document.getElementById('ras-lista-reunioes').style.display = 'none';
+							document.getElementById('ras-formulario-container').style.display = 'block';
+							
+							// Preencher formulário com dados existentes
+							preencherFormularioRAS(ras);
+							
+							// Mostrar etapa 1
+							mostrarEtapaRAS(1);
+							
+							// Armazenar índice para atualização posterior
+							window.rasEditandoIndex = index;
+						}
+					}
+					
+					// Excluir RAS - Escopo Global
+					window.excluirRAS = function(index) {
+						var rasRegistradas = JSON.parse(localStorage.getItem('ras-reunioes')) || [];
+						var ras = rasRegistradas[index];
+						
+						if (!ras) {
+							alert('RAS não encontrada!');
+							return;
+						}
+						
+						var dataFormatada = ras.data ? new Date(ras.data + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
+						
+						if (confirm('Tem certeza que deseja excluir esta RAS?\n\nData: ' + dataFormatada + '\nEmpresa: ' + (ras.empresa || '-') + '\n\nEsta ação não pode ser desfeita.')) {
+							// Remover do array
+							rasRegistradas.splice(index, 1);
+							
+							// Salvar no localStorage
+							localStorage.setItem('ras-reunioes', JSON.stringify(rasRegistradas));
+							
+							// Atualizar lista
+							carregarListaRAS();
+							
+							alert('RAS excluída com sucesso!');
+						}
+					}
+					
+					// Gerar seção de anexos (fotos e documentos)
+					function gerarSecaoAnexos(ras) {
+						var fotos = ras.fotos || [];
+						var documentos = ras.documentos || [];
+						var temAnexos = fotos.length > 0 || documentos.length > 0;
+						
+						if (!temAnexos) {
+							return '<div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:12px;padding:20px;margin-bottom:24px;text-align:center;">' +
+								'<h3 style="margin:0 0 8px 0;color:#92400e;font-size:1.3rem;">📎 Anexos</h3>' +
+								'<p style="margin:0;color:#92400e;">Nenhum arquivo foi anexado a esta RAS</p>' +
+							'</div>';
+						}
+						
+						var secaoAnexos = '<div style="background:#f8fafc;border:1px solid #64748b;border-radius:12px;padding:20px;margin-bottom:24px;">' +
+							'<h3 style="margin:0 0 16px 0;color:#1f2937;font-size:1.3rem;border-bottom:2px solid #64748b;padding-bottom:8px;">📎 Anexos</h3>';
+						
+						// Seção Fotos
+						if (fotos.length > 0) {
+							secaoAnexos += '<div style="margin-bottom:20px;">' +
+								'<h4 style="margin:0 0 12px 0;color:#374151;display:flex;align-items:center;gap:8px;"><span style="font-size:1.2rem;">📸</span> Fotos (' + fotos.length + ')</h4>' +
+								'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">';
+							
+							fotos.forEach(function(foto, index) {
+								var nomeArquivo = foto.nome || 'foto_' + (index + 1) + '.jpg';
+								secaoAnexos += 
+									'<div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,0.1);">' +
+										'<div style="position:relative;padding-bottom:75%;overflow:hidden;">' +
+											'<img src="' + foto.src + '" alt="' + nomeArquivo + '" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;cursor:pointer;" onclick="abrirImagemModal(\'' + foto.src + '\', \'' + nomeArquivo + '\')">' +
+										'</div>' +
+										'<div style="padding:8px;text-align:center;">' +
+											'<div style="font-size:0.85rem;color:#374151;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + nomeArquivo + '</div>' +
+											'<div style="font-size:0.75rem;color:#6b7280;margin-top:2px;">' + (foto.tamanho || 'Tamanho não disponível') + '</div>' +
+										'</div>' +
+									'</div>';
+							});
+							
+							secaoAnexos += '</div></div>';
+						}
+						
+						// Seção Documentos
+						if (documentos.length > 0) {
+							secaoAnexos += '<div>' +
+								'<h4 style="margin:0 0 12px 0;color:#374151;display:flex;align-items:center;gap:8px;"><span style="font-size:1.2rem;">📄</span> Documentos (' + documentos.length + ')</h4>' +
+								'<div style="display:grid;gap:8px;">';
+							
+							documentos.forEach(function(doc, index) {
+								var nomeArquivo = doc.nome || 'documento_' + (index + 1);
+								var extensao = nomeArquivo.split('.').pop().toLowerCase();
+								var iconeDoc = obterIconeDocumento(extensao);
+								var corDoc = obterCorDocumento(extensao);
+								
+								secaoAnexos += 
+									'<div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:12px;display:flex;align-items:center;gap:12px;transition:all 0.2s;cursor:pointer;" onclick="abrirDocumento(\'' + doc.src + '\', \'' + nomeArquivo + '\')" onmouseover="this.style.backgroundColor=\'#f9fafb\'" onmouseout="this.style.backgroundColor=\'#fff\'">' +
+										'<div style="font-size:2rem;color:' + corDoc + ';">' + iconeDoc + '</div>' +
+										'<div style="flex:1;">' +
+											'<div style="font-weight:500;color:#1f2937;margin-bottom:2px;">' + nomeArquivo + '</div>' +
+											'<div style="font-size:0.85rem;color:#6b7280;">' + (doc.tamanho || 'Tamanho não disponível') + '</div>' +
+										'</div>' +
+										'<div style="color:#6b7280;font-size:0.85rem;">Clique para visualizar</div>' +
+									'</div>';
+							});
+							
+							secaoAnexos += '</div></div>';
+						}
+						
+						secaoAnexos += '</div>';
+						return secaoAnexos;
+					}
+					
+					// Obter ícone do documento baseado na extensão
+					function obterIconeDocumento(extensao) {
+						var icones = {
+							'pdf': '📄',
+							'doc': '📝',
+							'docx': '📝',
+							'xls': '📊',
+							'xlsx': '📊',
+							'ppt': '📽️',
+							'pptx': '📽️',
+							'txt': '📄',
+							'jpg': '🖼️',
+							'jpeg': '🖼️',
+							'png': '🖼️',
+							'gif': '🖼️',
+							'zip': '🗜️',
+							'rar': '🗜️'
+						};
+						return icones[extensao] || '📎';
+					}
+					
+					// Obter cor do documento baseado na extensão
+					function obterCorDocumento(extensao) {
+						var cores = {
+							'pdf': '#dc2626',
+							'doc': '#2563eb',
+							'docx': '#2563eb',
+							'xls': '#16a34a',
+							'xlsx': '#16a34a',
+							'ppt': '#ea580c',
+							'pptx': '#ea580c',
+							'txt': '#6b7280',
+							'jpg': '#7c3aed',
+							'jpeg': '#7c3aed',
+							'png': '#7c3aed',
+							'gif': '#7c3aed',
+							'zip': '#4338ca',
+							'rar': '#4338ca'
+						};
+						return cores[extensao] || '#6b7280';
+					}
+					
+					// Preencher formulário com dados da RAS para edição
+					function preencherFormularioRAS(ras) {
+						// Etapa 1 - Informações Básicas
+						if (document.getElementById('ras-empresa')) document.getElementById('ras-empresa').value = ras.empresa || '';
+						if (document.getElementById('ras-data')) document.getElementById('ras-data').value = ras.data || '';
+						if (document.getElementById('ras-inicio')) document.getElementById('ras-inicio').value = ras.inicio || '';
+						if (document.getElementById('ras-termino')) document.getElementById('ras-termino').value = ras.termino || '';
+						if (document.getElementById('ras-efetivo')) document.getElementById('ras-efetivo').value = ras.efetivo || '';
+						if (document.getElementById('ras-alto-risco')) document.getElementById('ras-alto-risco').value = ras.altoRisco || '';
+						if (document.getElementById('ras-tardc')) document.getElementById('ras-tardc').checked = ras.tardc || false;
+						if (document.getElementById('ras-compartilhar')) document.getElementById('ras-compartilhar').value = ras.compartilhar || '';
+						
+						// Etapa 2 - Liderança
+						if (document.getElementById('ras-gerente')) document.getElementById('ras-gerente').value = ras.gerente || '';
+						if (document.getElementById('ras-engenheiro')) document.getElementById('ras-engenheiro').value = ras.engenheiro || '';
+						if (document.getElementById('ras-supervisor')) document.getElementById('ras-supervisor').value = ras.supervisor || '';
+						if (document.getElementById('ras-encarregado')) document.getElementById('ras-encarregado').value = ras.encarregado || '';
+						if (document.getElementById('ras-tecnico-seguranca')) document.getElementById('ras-tecnico-seguranca').value = ras.tecnicoSeguranca || '';
+						
+						// Etapa 3 - Designações
+						if (document.getElementById('ras-anjo-semana')) document.getElementById('ras-anjo-semana').value = ras.anjoSemana || '';
+						if (document.getElementById('ras-lider-ras')) document.getElementById('ras-lider-ras').value = ras.liderRAS || '';
+						if (document.getElementById('ras-lider-cpt')) document.getElementById('ras-lider-cpt').value = ras.liderCPT || '';
+						if (document.getElementById('ras-brigada')) document.getElementById('ras-brigada').value = ras.brigada || '';
 					}
 					
 					// Salvar empresas no localStorage
