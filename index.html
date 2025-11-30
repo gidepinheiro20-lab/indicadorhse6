@@ -3198,12 +3198,17 @@
 						var botao = document.getElementById('ras-confirmar-presenca');
 						
 						// Verificar se todos os dados essenciais estão preenchidos
+						// Consider participantsRAS (compact UI) as satisfying leadership presence
+						var possuiLideranca = (typeof participantesRAS !== 'undefined' && participantesRAS.length > 0) ||
+											 (dados.gerente && dados.engenheiro && dados.supervisor && dados.encarregado && dados.tecnicoSeguranca);
+
+						var possuiAnexos = (dados.fotos.length > 0 || dados.evidencias.length > 0);
+
 						var dadosCompletos = dados.empresa && dados.data && dados.inicio && dados.termino && 
 											dados.efetivo && dados.altoRisco && dados.compartilhar &&
-											dados.gerente && dados.engenheiro && dados.supervisor && 
-											dados.encarregado && dados.tecnicoSeguranca &&
+											possuiLideranca &&
 											dados.anjoSemana && dados.liderRas && dados.liderCpt && 
-											dados.brigada && (dados.fotos.length > 0 || dados.evidencias.length > 0);
+											dados.brigada && possuiAnexos;
 						
 						if (dadosCompletos) {
 							botao.disabled = false;
@@ -4360,8 +4365,9 @@
 							// HSE or other setores are not assigned to hidden-role fields
 						});
 
-						// Trigger validation after update
+						// Trigger validation after update (Etapa 2 and 5)
 						validarRASEtapa2();
+						if (typeof validarRASEtapa5 === 'function') validarRASEtapa5();
 					}
 
 					// Renderiza a lista de participantes adicionados na Etapa 2
@@ -5114,6 +5120,8 @@
 							if (ras.encarregado) participantesRAS.push({ nome: ras.encarregado, setor: 'Encarregado' });
 							if (ras.tecnicoSeguranca) participantesRAS.push({ nome: ras.tecnicoSeguranca, setor: 'Técnico de Segurança' });
 							renderListaParticipantesRAS();
+							// Atualizar campos hidden e validar (inclui validação da etapa 5)
+							atualizarHiddenPorSetor();
 						
 						// Etapa 3 - Designações
 						if (document.getElementById('ras-anjo-semana')) document.getElementById('ras-anjo-semana').value = ras.anjoSemana || '';
