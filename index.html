@@ -2763,13 +2763,23 @@
 
 					// Validação para Etapa 2 - Participação de Liderança
 					function validarRASEtapa2() {
-						var gerente = document.getElementById('ras-gerente').value;
-						var engenheiro = document.getElementById('ras-engenheiro').value;
-						var supervisor = document.getElementById('ras-supervisor').value;
-						var encarregado = document.getElementById('ras-encarregado').value;
-						var tecnicoSeguranca = document.getElementById('ras-tecnico-seguranca').value;
 						var proximo = document.getElementById('ras-proximo-2');
-						
+
+						// If the compact participants UI is used, allow progressing when at least one participant was added
+						if (typeof participantesRAS !== 'undefined' && participantesRAS.length > 0) {
+							proximo.disabled = false;
+							proximo.style.opacity = '1';
+							proximo.style.cursor = 'pointer';
+							return;
+						}
+
+						// Fallback to legacy hidden-role validation (for compatibility)
+						var gerente = document.getElementById('ras-gerente')?.value || '';
+						var engenheiro = document.getElementById('ras-engenheiro')?.value || '';
+						var supervisor = document.getElementById('ras-supervisor')?.value || '';
+						var encarregado = document.getElementById('ras-encarregado')?.value || '';
+						var tecnicoSeguranca = document.getElementById('ras-tecnico-seguranca')?.value || '';
+
 						if(gerente && engenheiro && supervisor && encarregado && tecnicoSeguranca) {
 							proximo.disabled = false;
 							proximo.style.opacity = '1';
@@ -4392,6 +4402,8 @@
 					function limparParticipantesRAS() {
 						participantesRAS = [];
 						renderListaParticipantesRAS();
+						// Atualizar hidden inputs com participantes e validar etapa 2
+						atualizarHiddenPorSetor();
 						atualizarHiddenPorSetor();
 					}
 
