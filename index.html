@@ -478,55 +478,44 @@
 								<div style="color:#888;font-size:1rem;">Registre os líderes presentes na reunião</div>
 							</div>
 							
-							<div style="margin-bottom:18px">
-								<label style="font-weight:600;display:block;margin-bottom:8px;display:flex;align-items:center;gap:8px">
-									<span style="font-size:1.2rem;">👔</span> Gerente
-								</label>
-								<select id="ras-gerente" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
-									<option value="">Selecione o gerente</option>
-									<!-- Opções carregadas dinamicamente -->
-								</select>
+							<!-- Substituído: vários selects por UI compacta (nome + setor + botão de adicionar) -->
+							<div style="margin-bottom:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+								<div style="flex:1 1 320px">
+									<label style="font-weight:600;display:block;margin-bottom:8px;">Selecione o nome</label>
+									<select id="ras-participante-nome" style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
+										<option value="">Selecione o nome</option>
+										<!-- Opções carregadas dinamicamente (colaboradores) -->
+									</select>
+								</div>
+
+								<div style="width:240px;flex:0 0 240px">
+									<label style="font-weight:600;display:block;margin-bottom:8px;">Selecione o setor</label>
+									<select id="ras-participante-setor" style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
+										<option value="">Selecione o setor</option>
+										<option value="Gerente">Gerente</option>
+										<option value="Engenheiro">Engenheiro</option>
+										<option value="Supervisor">Supervisor</option>
+										<option value="Encarregado">Encarregado</option>
+										<option value="Técnico de Segurança">Técnico de Segurança</option>
+										<option value="HSE">HSE</option>
+									</select>
+								</div>
+
+								<div style="flex:0 0 48px;display:flex;align-items:flex-end;">
+									<button id="ras-add-participante" type="button" title="Adicionar participante" style="background:#111827;color:#fff;border:none;padding:10px;border-radius:8px;font-size:1.4rem;line-height:1;cursor:pointer;">+</button>
+								</div>
 							</div>
 
-							<div style="margin-bottom:18px">
-								<label style="font-weight:600;display:block;margin-bottom:8px;display:flex;align-items:center;gap:8px">
-									<span style="font-size:1.2rem;">👷</span> Engenheiro
-								</label>
-								<select id="ras-engenheiro" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
-									<option value="">Selecione o engenheiro</option>
-									<!-- Opções carregadas dinamicamente -->
-								</select>
+							<div id="ras-participantes-list" style="margin-bottom:18px;display:flex;flex-direction:column;gap:8px;">
+								<!-- Itens adicionados aparecerão aqui -->
 							</div>
 
-							<div style="margin-bottom:18px">
-								<label style="font-weight:600;display:block;margin-bottom:8px;display:flex;align-items:center;gap:8px">
-									<span style="font-size:1.2rem;">🔧</span> Supervisor / Mestre
-								</label>
-								<select id="ras-supervisor" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
-									<option value="">Selecione o supervisor / mestre</option>
-									<!-- Opções carregadas dinamicamente -->
-								</select>
-							</div>
-
-							<div style="margin-bottom:18px">
-								<label style="font-weight:600;display:block;margin-bottom:8px;display:flex;align-items:center;gap:8px">
-									<span style="font-size:1.2rem;">👨‍🔧</span> Encarregado
-								</label>
-								<select id="ras-encarregado" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
-									<option value="">Selecione o encarregado</option>
-									<!-- Opções carregadas dinamicamente -->
-								</select>
-							</div>
-
-							<div style="margin-bottom:24px">
-								<label style="font-weight:600;display:block;margin-bottom:8px;display:flex;align-items:center;gap:8px">
-									<span style="font-size:1.2rem;">🛡️</span> Técnico de Segurança
-								</label>
-								<select id="ras-tecnico-seguranca" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
-									<option value="">Selecione o técnico de segurança</option>
-									<!-- Opções carregadas dinamicamente -->
-								</select>
-							</div>
+							<!-- Hidden inputs (mantêm compatibilidade com coleta de dados existente) -->
+							<input type="hidden" id="ras-gerente" value="">
+							<input type="hidden" id="ras-engenheiro" value="">
+							<input type="hidden" id="ras-supervisor" value="">
+							<input type="hidden" id="ras-encarregado" value="">
+							<input type="hidden" id="ras-tecnico-seguranca" value="">
 
 							<div style="display:flex;gap:12px;justify-content:space-between">
 								<button id="ras-voltar-2" type="button" style="background:#6b7280;color:#fff;padding:10px 24px;font-size:1.1rem;border:none;border-radius:6px;cursor:pointer">← Voltar</button>
@@ -3222,9 +3211,16 @@
 						document.getElementById(id).addEventListener('input',validarRASEtapa1);
 					});
 
-					// Eventos para validação da Etapa 2
+					// Eventos para validação da Etapa 2 (ui compacta: adicionar / remover participantes)
+					// Os inputs "ras-gerente" etc. são hidden e serão atualizados quando itens forem adicionados/removidos
+					document.getElementById('ras-add-participante').addEventListener('click', function() {
+						adicionarParticipanteRAS();
+					});
+
+					// Também validar quando as hidden inputs mudarem (manter compatibilidade)
 					['ras-gerente','ras-engenheiro','ras-supervisor','ras-encarregado','ras-tecnico-seguranca'].forEach(function(id){
-						document.getElementById(id).addEventListener('change',validarRASEtapa2);
+						var el = document.getElementById(id);
+						if (el) el.addEventListener('change', validarRASEtapa2);
 					});
 
 					// Eventos para validação da Etapa 3
@@ -3239,6 +3235,12 @@
 							document.getElementById('ras-etapa-2').style.display = 'block';
 							// Carregar colaboradores quando avançar para Etapa 2
 							carregarColaboradoresRAS();
+							// Se form for criação nova (não edição), limpar lista; caso contrário manter participantes já preenchidos
+							if (typeof window.rasEditandoIndex === 'undefined') {
+								limparParticipantesRAS();
+							} else {
+								renderListaParticipantesRAS();
+							}
 						}
 					});
 
@@ -4284,64 +4286,135 @@
 						console.log('Empresas carregadas no colaborador:', empresasCadastradas.length);
 					}
 					
-					// Carregar colaboradores nos dropdowns da RAS Etapa 2
+					// Participantes RAS armazenados localmente durante criação
+					var participantesRAS = [];
+
+					// Carregar colaboradores apenas no dropdown compacto da Etapa 2 (nome)
 					function carregarColaboradoresRAS() {
-						var selectsLideranca = [
-							'ras-gerente',
-							'ras-engenheiro', 
-							'ras-supervisor',
-							'ras-encarregado',
-							'ras-tecnico-seguranca'
-						];
-						
-						var placeholders = {
-							'ras-gerente': 'Selecione o gerente',
-							'ras-engenheiro': 'Selecione o engenheiro',
-							'ras-supervisor': 'Selecione o supervisor / mestre',
-							'ras-encarregado': 'Selecione o encarregado',
-							'ras-tecnico-seguranca': 'Selecione o técnico de segurança'
-						};
-						
+						var selectNome = document.getElementById('ras-participante-nome');
+						var placeholder = 'Selecione o nome';
+
 						// Recarregar colaboradores do localStorage
 						var colaboradoresCadastrados = JSON.parse(localStorage.getItem('funcionarios')) || [];
-						
-						selectsLideranca.forEach(function(selectId) {
-							var selectElement = document.getElementById(selectId);
-							if (!selectElement) return;
-							
-							// Limpar opções existentes
-							selectElement.innerHTML = '<option value="">' + placeholders[selectId] + '</option>';
-							
-							if (colaboradoresCadastrados.length === 0) {
-								// Se não há colaboradores cadastrados
-								var optionInfo = document.createElement('option');
-								optionInfo.value = '';
-								optionInfo.textContent = 'Nenhum colaborador cadastrado';
-								optionInfo.disabled = true;
-								selectElement.appendChild(optionInfo);
-								return;
-							}
-							
-							// Ordenar colaboradores alfabeticamente por nome
-							var colaboradoresOrdenados = colaboradoresCadastrados.slice().sort(function(a, b) {
-								return (a.nome || '').localeCompare(b.nome || '');
-							});
-							
-							// Adicionar cada colaborador ao dropdown
-							colaboradoresOrdenados.forEach(function(colaborador) {
-								var option = document.createElement('option');
-								option.value = colaborador.nome;
-								// Extrair apenas primeiro nome e sobrenome
-								var partesNome = (colaborador.nome || '').trim().split(' ');
-								var primeiroNome = partesNome[0] || '';
-								var sobrenome = partesNome.length > 1 ? partesNome[partesNome.length - 1] : '';
-								var nomeCompleto = sobrenome ? primeiroNome + ' ' + sobrenome : primeiroNome;
-								option.textContent = nomeCompleto;
-								selectElement.appendChild(option);
-							});
+
+						if (!selectNome) return;
+						selectNome.innerHTML = '<option value="">' + placeholder + '</option>';
+
+						if (colaboradoresCadastrados.length === 0) {
+							var optionInfo = document.createElement('option');
+							optionInfo.value = '';
+							optionInfo.textContent = 'Nenhum colaborador cadastrado';
+							optionInfo.disabled = true;
+							selectNome.appendChild(optionInfo);
+							return;
+						}
+
+						// Ordenar colaboradores alfabeticamente por nome
+						var colaboradoresOrdenados = colaboradoresCadastrados.slice().sort(function(a, b) {
+							return (a.nome || '').localeCompare(b.nome || '');
 						});
-						
-						console.log('Colaboradores carregados na RAS Etapa 2:', colaboradoresCadastrados.length);
+
+						colaboradoresOrdenados.forEach(function(colaborador) {
+							var option = document.createElement('option');
+							option.value = colaborador.nome;
+							var partesNome = (colaborador.nome || '').trim().split(' ');
+							var primeiroNome = partesNome[0] || '';
+							var sobrenome = partesNome.length > 1 ? partesNome[partesNome.length - 1] : '';
+							var nomeExibicao = sobrenome ? primeiroNome + ' ' + sobrenome : primeiroNome;
+							option.textContent = nomeExibicao;
+							selectNome.appendChild(option);
+						});
+
+						console.log('Colaboradores carregados na RAS Etapa 2 (nome):', colaboradoresCadastrados.length);
+					}
+
+					// Atualiza os hidden inputs de liderança com base no array participantesRAS
+					function atualizarHiddenPorSetor() {
+						// Limpar
+						['ras-gerente','ras-engenheiro','ras-supervisor','ras-encarregado','ras-tecnico-seguranca'].forEach(function(id){
+							var el = document.getElementById(id);
+							if (el) el.value = '';
+						});
+
+						// Preencher com o primeiro participante encontrado para cada setor
+						participantesRAS.forEach(function(p) {
+							var setor = p.setor;
+							var nome = p.nome;
+							if (!setor || !nome) return;
+
+							if (setor === 'Gerente') document.getElementById('ras-gerente').value = nome;
+							if (setor === 'Engenheiro') document.getElementById('ras-engenheiro').value = nome;
+							if (setor === 'Supervisor') document.getElementById('ras-supervisor').value = nome;
+							if (setor === 'Encarregado') document.getElementById('ras-encarregado').value = nome;
+							if (setor === 'Técnico de Segurança') document.getElementById('ras-tecnico-seguranca').value = nome;
+							// HSE or other setores are not assigned to hidden-role fields
+						});
+
+						// Trigger validation after update
+						validarRASEtapa2();
+					}
+
+					// Renderiza a lista de participantes adicionados na Etapa 2
+					function renderListaParticipantesRAS() {
+						var container = document.getElementById('ras-participantes-list');
+						if (!container) return;
+						container.innerHTML = '';
+
+						if (participantesRAS.length === 0) {
+							container.innerHTML = '<div style="color:#6b7280;text-align:center;padding:12px;border-radius:6px;background:#f8fafc;border:1px dashed #dbeafe">Nenhum participante adicionado</div>';
+							return;
+						}
+
+						participantesRAS.forEach(function(p, idx){
+							var item = document.createElement('div');
+							item.style.cssText = 'display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px;border:1px solid #e6edf3;background:#fff;justify-content:space-between';
+							var left = document.createElement('div');
+							left.style.cssText = 'display:flex;align-items:center;gap:12px;';
+							left.innerHTML = '<div style="width:8px;height:8px;border-radius:50%;background:#111827;margin-right:6px"></div>' + '<div><strong style="font-size:0.95rem">' + p.nome + '</strong><div style="font-size:0.85rem;color:#6b7280">' + p.setor + '</div></div>';
+							var btn = document.createElement('button');
+							btn.type = 'button';
+							btn.title = 'Remover';
+							btn.style.cssText = 'background:#ef4444;color:#fff;border:none;border-radius:6px;padding:6px 8px;cursor:pointer';
+							btn.textContent = '✕';
+							btn.addEventListener('click', function(){
+								participantesRAS.splice(idx,1);
+								renderListaParticipantesRAS();
+								atualizarHiddenPorSetor();
+							});
+
+							item.appendChild(left);
+							item.appendChild(btn);
+							container.appendChild(item);
+						});
+					}
+
+					// Limpar participantes (ao começar uma nova RAS)
+					function limparParticipantesRAS() {
+						participantesRAS = [];
+						renderListaParticipantesRAS();
+						atualizarHiddenPorSetor();
+					}
+
+					// Função para adicionar participante através da UI compacta
+					function adicionarParticipanteRAS() {
+						var nome = document.getElementById('ras-participante-nome').value;
+						var setor = document.getElementById('ras-participante-setor').value;
+
+						if (!nome) { alert('Por favor selecione um nome.'); return; }
+						if (!setor) { alert('Por favor selecione um setor.'); return; }
+
+						// Evitar duplicados exatos (mesmo nome + setor)
+						var existe = participantesRAS.some(function(p){ return p.nome === nome && p.setor === setor; });
+						if (existe) { alert('Participante já adicionado com este setor.'); return; }
+
+						participantesRAS.push({ nome: nome, setor: setor });
+
+						// Após adicionar, limpar selects
+						document.getElementById('ras-participante-nome').value = '';
+						document.getElementById('ras-participante-setor').value = '';
+
+						renderListaParticipantesRAS();
+						atualizarHiddenPorSetor();
 					}
 					
 					// Carregar colaboradores nos dropdowns da RAS Etapa 3
@@ -5015,11 +5088,20 @@
 						if (document.getElementById('ras-compartilhar')) document.getElementById('ras-compartilhar').value = ras.compartilhar || '';
 						
 						// Etapa 2 - Liderança
-						if (document.getElementById('ras-gerente')) document.getElementById('ras-gerente').value = ras.gerente || '';
-						if (document.getElementById('ras-engenheiro')) document.getElementById('ras-engenheiro').value = ras.engenheiro || '';
-						if (document.getElementById('ras-supervisor')) document.getElementById('ras-supervisor').value = ras.supervisor || '';
-						if (document.getElementById('ras-encarregado')) document.getElementById('ras-encarregado').value = ras.encarregado || '';
-						if (document.getElementById('ras-tecnico-seguranca')) document.getElementById('ras-tecnico-seguranca').value = ras.tecnicoSeguranca || '';
+							if (document.getElementById('ras-gerente')) document.getElementById('ras-gerente').value = ras.gerente || '';
+							if (document.getElementById('ras-engenheiro')) document.getElementById('ras-engenheiro').value = ras.engenheiro || '';
+							if (document.getElementById('ras-supervisor')) document.getElementById('ras-supervisor').value = ras.supervisor || '';
+							if (document.getElementById('ras-encarregado')) document.getElementById('ras-encarregado').value = ras.encarregado || '';
+							if (document.getElementById('ras-tecnico-seguranca')) document.getElementById('ras-tecnico-seguranca').value = ras.tecnicoSeguranca || '';
+
+							// Reconstruir a lista de participantes da etapa 2 para exibição (mantém compatibilidade)
+							participantesRAS = [];
+							if (ras.gerente) participantesRAS.push({ nome: ras.gerente, setor: 'Gerente' });
+							if (ras.engenheiro) participantesRAS.push({ nome: ras.engenheiro, setor: 'Engenheiro' });
+							if (ras.supervisor) participantesRAS.push({ nome: ras.supervisor, setor: 'Supervisor' });
+							if (ras.encarregado) participantesRAS.push({ nome: ras.encarregado, setor: 'Encarregado' });
+							if (ras.tecnicoSeguranca) participantesRAS.push({ nome: ras.tecnicoSeguranca, setor: 'Técnico de Segurança' });
+							renderListaParticipantesRAS();
 						
 						// Etapa 3 - Designações
 						if (document.getElementById('ras-anjo-semana')) document.getElementById('ras-anjo-semana').value = ras.anjoSemana || '';
