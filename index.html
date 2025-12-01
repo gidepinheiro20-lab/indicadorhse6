@@ -864,8 +864,9 @@
 								<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.3rem;display:flex;align-items:center;gap:8px">
 									<span>✅</span> Lista de Presença
 								</h3>
-								<div style="margin-bottom:12px">
-									<strong>Total de Presentes:</strong> <span id="rel-total-presentes" style="color:#10b981;font-weight:600">0</span> funcionário(s)
+								<div style="margin-bottom:12px;display:flex;gap:24px;align-items:center">
+									<div><strong>Total de Presentes:</strong> <span id="rel-total-presentes" style="color:#10b981;font-weight:600">0</span> funcionário(s)</div>
+									<div><strong>Total de Ausentes:</strong> <span id="rel-total-ausentes" style="color:#ef4444;font-weight:600">0</span> funcionário(s)</div>
 								</div>
 								<div id="rel-presentes-lista" style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden"></div>
 							</div>
@@ -3416,6 +3417,17 @@
 						
 						// Lista de presença
 						document.getElementById('rel-total-presentes').textContent = presentes.length;
+						// Calcular ausentes com base no efetivo informado (se existir)
+						var efetivoNum = parseInt(dados.efetivo) || 0;
+						var ausentes = 0;
+						if (efetivoNum > 0) {
+							ausentes = Math.max(0, efetivoNum - presentes.length);
+						} else {
+							// Não há efetivo informado — ausentes calculados como 0 (não sabemos o total esperado)
+							ausentes = 0;
+						}
+						var ausentesSpan = document.getElementById('rel-total-ausentes');
+						if (ausentesSpan) ausentesSpan.textContent = ausentes;
 						exibirListaPresencaRelatorio(presentes);
 						
 						// Salvar dados de frequência no histórico
@@ -4742,12 +4754,17 @@
 						var dataFormatada = ras.data ? new Date(ras.data + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
 						var funcionariosPresentes = ras.funcionariosPresentes || [];
 						var totalPresentes = funcionariosPresentes.length;
+						var efetivoTotal = parseInt(ras.efetivo) || 0;
+						var totalAusentes = efetivoTotal > 0 ? Math.max(0, efetivoTotal - totalPresentes) : 0;
 						
 						// Gerar lista de funcionários presentes em formato de tabela
 						var tabelaPresentes = '';
 						if (funcionariosPresentes.length > 0) {
 							tabelaPresentes = '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin:16px 0;">' +
-								'<div style="background:#374151;color:#fff;padding:12px;font-weight:600;">Funcionários Presentes (' + totalPresentes + ')</div>' +
+								'<div style="background:#374151;color:#fff;padding:12px;font-weight:600;display:flex;justify-content:space-between;align-items:center;">' +
+									'<div>Funcionários Presentes (' + totalPresentes + ')</div>' +
+									'<div style="font-weight:600;color:#fefefe;font-size:0.95rem">Ausentes: ' + totalAusentes + '</div>' +
+								'</div>' +
 								'<div style="max-height:200px;overflow-y:auto;">';
 							
 							funcionariosPresentes.forEach(function(funcionario, idx) {
