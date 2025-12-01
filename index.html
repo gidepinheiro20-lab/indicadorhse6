@@ -3342,27 +3342,35 @@
 
 					// Função para atualizar contador de presentes
 					function atualizarContadorPresentes() {
-						var checkboxes = document.querySelectorAll('#lista-funcionarios input[type="checkbox"]:checked');
+						// Count checked boxes inside rows
+						var checkboxes = document.querySelectorAll('.funcionario-row input[type="checkbox"]:checked');
 						var total = checkboxes.length;
-						document.getElementById('total-presentes').textContent = total;
+						var span = document.getElementById('total-presentes');
+						if (span) span.textContent = total;
 					}
 
 					// Função para coletar funcionários presentes
 					function coletarFuncionariosPresentes() {
 						var presentes = [];
-						var checkboxes = document.querySelectorAll('#lista-funcionarios input[type="checkbox"]:checked');
-						
+						var checkboxes = document.querySelectorAll('.funcionario-row input[type="checkbox"]:checked');
+
 						checkboxes.forEach(function(checkbox) {
-							var row = checkbox.closest('div');
-							var dados = row.children;
+							// Find the row element that represents the employee
+							var row = checkbox.closest('.funcionario-row');
+							if (!row) return;
+
+							// Direct child divs correspond to columns: [checkboxDiv, matriculaDiv, nomeDiv, empresaDiv, funcaoDiv]
+							var cols = Array.prototype.slice.call(row.children || []);
+							if (cols.length < 5) return;
+
 							presentes.push({
-								matricula: dados[1].textContent,
-								nome: dados[2].textContent,
-								empresa: dados[3].textContent,
-								funcao: dados[4].textContent
+								matricula: (cols[1].textContent || '').trim(),
+								nome: (cols[2].textContent || '').trim(),
+								empresa: (cols[3].textContent || '').trim(),
+								funcao: (cols[4].textContent || '').trim()
 							});
 						});
-						
+
 						return presentes;
 					}
 
@@ -4516,6 +4524,7 @@
 						// Criar linha para cada colaborador
 						colaboradoresOrdenados.forEach(function(colaborador, index) {
 							var linha = document.createElement('div');
+							linha.className = 'funcionario-row';
 							linha.style.cssText = 'padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:60px 120px 1fr 1fr 1fr;gap:16px;align-items:center;background:#fff';
 							
 							// Remover border-bottom da última linha
@@ -4692,23 +4701,23 @@
 					// Coletar funcionários presentes marcados
 					function coletarFuncionariosPresentes() {
 						var presentes = [];
-						var checkboxes = document.querySelectorAll('.checkbox-presente:checked');
-						
-						checkboxes.forEach(function(checkbox, index) {
-							var linha = checkbox.closest('div');
-							if (linha) {
-								var colunas = linha.querySelectorAll('div');
-								if (colunas.length >= 5) {
-									presentes.push({
-										matricula: colunas[1].textContent.trim(),
-										nome: colunas[2].textContent.trim(),
-										empresa: colunas[3].textContent.trim(),
-										funcao: colunas[4].textContent.trim()
-									});
-								}
-							}
+						var checkboxes = document.querySelectorAll('.funcionario-row input[type="checkbox"]:checked');
+
+						checkboxes.forEach(function(checkbox) {
+							var linha = checkbox.closest('.funcionario-row');
+							if (!linha) return;
+
+							var colunas = Array.prototype.slice.call(linha.children || []);
+							if (colunas.length < 5) return;
+
+							presentes.push({
+								matricula: (colunas[1].textContent || '').trim(),
+								nome: (colunas[2].textContent || '').trim(),
+								empresa: (colunas[3].textContent || '').trim(),
+								funcao: (colunas[4].textContent || '').trim()
+							});
 						});
-						
+
 						return presentes;
 					}
 					
