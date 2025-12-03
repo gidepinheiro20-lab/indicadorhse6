@@ -472,9 +472,6 @@
 						<h2 style="margin-top:24px;font-size:1.6rem;font-weight:700;color:#222">Nova RAS</h2>
 						<div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança · Etapa 2 de 6</div>
 						<div style="font-size:1.05rem;margin-bottom:18px;color:#888">Participação de Liderança</div>
-						<input type="hidden" id="ras-gerente" value="">
-						<input type="hidden" id="ras-engenheiro" value="">
-						<input type="hidden" id="ras-encarregado" value="">
 						<form autocomplete="off" style="background:#fff;border-radius:12px;padding:24px 24px 16px 24px;box-shadow:0 2px 8px #0001;border:1px solid #e6edf3">
 							<div style="text-align:center;margin-bottom:18px">
 								<div style="font-size:1.3rem;font-weight:700;">Participação de Liderança</div>
@@ -497,7 +494,9 @@
 										<option value="">Selecione o setor</option>
 										<option value="Gerente">Gerente</option>
 										<option value="Engenheiro">Engenheiro</option>
+										<option value="Supervisor">Supervisor</option>
 										<option value="Encarregado">Encarregado</option>
+										<option value="Técnico de Segurança">Técnico de Segurança</option>
 										<option value="HSE">HSE</option>
 									</select>
 								</div>
@@ -514,7 +513,9 @@
 							<!-- Hidden inputs (mantêm compatibilidade com coleta de dados existente) -->
 							<input type="hidden" id="ras-gerente" value="">
 							<input type="hidden" id="ras-engenheiro" value="">
+							<input type="hidden" id="ras-supervisor" value="">
 							<input type="hidden" id="ras-encarregado" value="">
+							<input type="hidden" id="ras-tecnico-seguranca" value="">
 
 							<div style="display:flex;gap:12px;justify-content:space-between">
 								<button id="ras-voltar-2" type="button" style="background:#6b7280;color:#fff;padding:10px 24px;font-size:1.1rem;border:none;border-radius:6px;cursor:pointer">← Voltar</button>
@@ -670,10 +671,12 @@
 									<span style="font-size:1.2rem;">📋</span>
 									<span style="font-weight:600;color:#374151;">Informações Básicas</span>
 								</div>
-								<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.9rem;">
-									<div><strong>👔 Gerente:</strong> <span id="review-gerente">-</span></div>
-									<div><strong>👷 Engenheiro:</strong> <span id="review-engenheiro">-</span></div>
-									<div><strong>👨‍🔧 Encarregado:</strong> <span id="review-encarregado">-</span></div>
+								<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.9rem;">
+									<div><strong>Empresa:</strong> <span id="review-empresa">-</span></div>
+									<div><strong>Data:</strong> <span id="review-data">-</span></div>
+									<div><strong>Horário:</strong> <span id="review-horario">-</span></div>
+									<div><strong>Efetivo:</strong> <span id="review-efetivo">-</span> funcionários</div>
+								</div>
 								<div style="margin-top:12px;">
 									<div style="margin-bottom:8px;"><strong>⚠️ Tarefa de Alto Risco:</strong></div>
 									<div style="background:#fff7f7;padding:8px;border-radius:4px;border-left:3px solid #ef4444;font-size:0.85rem;" id="review-alto-risco">-</div>
@@ -696,7 +699,9 @@
 								<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.9rem;">
 									<div><strong>👔 Gerente:</strong> <span id="review-gerente">-</span></div>
 									<div><strong>👷 Engenheiro:</strong> <span id="review-engenheiro">-</span></div>
+									<div><strong>🔧 Supervisor/Mestre:</strong> <span id="review-supervisor">-</span></div>
 									<div><strong>👨‍🔧 Encarregado:</strong> <span id="review-encarregado">-</span></div>
+									<div><strong>🛡️ Técnico de Segurança:</strong> <span id="review-tecnico-seguranca">-</span></div>
 									<div><strong>💖 Anjo da Semana:</strong> <span id="review-anjo-semana">-</span></div>
 									<div><strong>🎯 Líder da RAS:</strong> <span id="review-lider-ras">-</span></div>
 									<div><strong>👥 Líder CPT:</strong> <span id="review-lider-cpt">-</span></div>
@@ -816,7 +821,9 @@
 								<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
 									<div><strong>Gerente:</strong> <span id="rel-gerente">-</span></div>
 									<div><strong>Engenheiro:</strong> <span id="rel-engenheiro">-</span></div>
+									<div><strong>Supervisor:</strong> <span id="rel-supervisor">-</span></div>
 									<div><strong>Encarregado:</strong> <span id="rel-encarregado">-</span></div>
+									<div><strong>Técnico de Segurança:</strong> <span id="rel-tecnico-seguranca">-</span></div>
 								</div>
 							</div>
 							
@@ -2773,9 +2780,11 @@
 						// Fallback to legacy hidden-role validation (for compatibility)
 						var gerente = document.getElementById('ras-gerente')?.value || '';
 						var engenheiro = document.getElementById('ras-engenheiro')?.value || '';
+						var supervisor = document.getElementById('ras-supervisor')?.value || '';
 						var encarregado = document.getElementById('ras-encarregado')?.value || '';
+						var tecnicoSeguranca = document.getElementById('ras-tecnico-seguranca')?.value || '';
 
-						if(gerente && engenheiro && encarregado) {
+						if(gerente && engenheiro && supervisor && encarregado && tecnicoSeguranca) {
 							proximo.disabled = false;
 							proximo.style.opacity = '1';
 							proximo.style.cursor = 'pointer';
@@ -3098,7 +3107,9 @@
 							// Etapa 2 - Participação de Liderança
 							gerente: document.getElementById('ras-gerente').value,
 							engenheiro: document.getElementById('ras-engenheiro').value,
+							supervisor: document.getElementById('ras-supervisor').value,
 							encarregado: document.getElementById('ras-encarregado').value,
+							tecnicoSeguranca: document.getElementById('ras-tecnico-seguranca').value,
 							
 							// Etapa 3 - Outros Participantes
 							anjoSemana: document.getElementById('ras-anjo-semana').value,
@@ -3137,7 +3148,9 @@
 						// Participantes
 						document.getElementById('review-gerente').textContent = dados.gerente || '-';
 						document.getElementById('review-engenheiro').textContent = dados.engenheiro || '-';
+						document.getElementById('review-supervisor').textContent = dados.supervisor || '-';
 						document.getElementById('review-encarregado').textContent = dados.encarregado || '-';
+						document.getElementById('review-tecnico-seguranca').textContent = dados.tecnicoSeguranca || '-';
 						document.getElementById('review-anjo-semana').textContent = dados.anjoSemana || '-';
 						document.getElementById('review-lider-ras').textContent = dados.liderRas || '-';
 						document.getElementById('review-lider-cpt').textContent = dados.liderCpt || '-';
@@ -3191,7 +3204,7 @@
 						// Verificar se todos os dados essenciais estão preenchidos
 						// Consider participantsRAS (compact UI) as satisfying leadership presence
 						var possuiLideranca = (typeof participantesRAS !== 'undefined' && participantesRAS.length > 0) ||
-											 (dados.gerente && dados.engenheiro && dados.encarregado);
+											 (dados.gerente && dados.engenheiro && dados.supervisor && dados.encarregado && dados.tecnicoSeguranca);
 
 						var possuiAnexos = (dados.fotos.length > 0 || dados.evidencias.length > 0);
 
@@ -3224,7 +3237,7 @@
 					});
 
 					// Também validar quando as hidden inputs mudarem (manter compatibilidade)
-					['ras-gerente','ras-engenheiro','ras-encarregado'].forEach(function(id){
+					['ras-gerente','ras-engenheiro','ras-supervisor','ras-encarregado','ras-tecnico-seguranca'].forEach(function(id){
 						var el = document.getElementById(id);
 						if (el) el.addEventListener('change', validarRASEtapa2);
 					});
@@ -3389,7 +3402,9 @@
 						// Participação de liderança
 						document.getElementById('rel-gerente').textContent = dados.gerente || '-';
 						document.getElementById('rel-engenheiro').textContent = dados.engenheiro || '-';
+						document.getElementById('rel-supervisor').textContent = dados.supervisor || '-';
 						document.getElementById('rel-encarregado').textContent = dados.encarregado || '-';
+						document.getElementById('rel-tecnico-seguranca').textContent = dados.tecnicoSeguranca || '-';
 						
 						// Outros participantes
 						document.getElementById('rel-anjo-semana').textContent = dados.anjoSemana || '-';
@@ -3566,8 +3581,12 @@
 						mensagem += '🎯 LIDERANÇA:\n';
 						mensagem += '• Gerente: ' + (dados.gerente || '-') + '\n';
 						mensagem += '• Engenheiro: ' + (dados.engenheiro || '-') + '\n';
+						mensagem += '• Supervisor: ' + (dados.supervisor || '-') + '\n';
 						mensagem += '• Encarregado: ' + (dados.encarregado || '-') + '\n';
 						mensagem += '________________\n\n';
+						
+						// Segunda seção de participantes
+						mensagem += '✅ Técnico de Segurança: ' + (dados.tecnicoSeguranca || '-') + '\n';
 						mensagem += '😊 Anjo da Semana: ' + (dados.anjoSemana || '-') + '\n';
 						mensagem += '� TARD-C: ' + (dados.tardc ? 'SIM' : 'NÃO') + '\n';
 						mensagem += '🚛 Brigada: ' + (dados.brigada || '-') + '\n';
@@ -4392,7 +4411,7 @@
 					// Atualiza os hidden inputs de liderança com base no array participantesRAS
 					function atualizarHiddenPorSetor() {
 						// Limpar
-						['ras-gerente','ras-engenheiro','ras-encarregado'].forEach(function(id){
+						['ras-gerente','ras-engenheiro','ras-supervisor','ras-encarregado','ras-tecnico-seguranca'].forEach(function(id){
 							var el = document.getElementById(id);
 							if (el) el.value = '';
 						});
@@ -4405,7 +4424,9 @@
 
 							if (setor === 'Gerente') document.getElementById('ras-gerente').value = nome;
 							if (setor === 'Engenheiro') document.getElementById('ras-engenheiro').value = nome;
+							if (setor === 'Supervisor') document.getElementById('ras-supervisor').value = nome;
 							if (setor === 'Encarregado') document.getElementById('ras-encarregado').value = nome;
+							if (setor === 'Técnico de Segurança') document.getElementById('ras-tecnico-seguranca').value = nome;
 							// HSE or other setores are not assigned to hidden-role fields
 						});
 
@@ -4697,7 +4718,9 @@
 								// Etapa 2 - Liderança
 								gerente: document.getElementById('ras-gerente')?.value || '',
 								engenheiro: document.getElementById('ras-engenheiro')?.value || '',
+								supervisor: document.getElementById('ras-supervisor')?.value || '',
 								encarregado: document.getElementById('ras-encarregado')?.value || '',
+								tecnicoSeguranca: document.getElementById('ras-tecnico-seguranca')?.value || '',
 								// Etapa 3 - Designações
 								anjoSemana: document.getElementById('ras-anjo-semana')?.value || '',
 								liderRAS: document.getElementById('ras-lider-ras')?.value || '',
@@ -4883,10 +4906,12 @@
 								'<div style="background:#f0f9ff;border:1px solid #0ea5e9;border-radius:12px;padding:20px;margin-bottom:24px;">' +
 									'<h3 style="margin:0 0 16px 0;color:#1f2937;font-size:1.3rem;border-bottom:2px solid #0ea5e9;padding-bottom:8px;">👔 Participação de Liderança</h3>' +
 									'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">' +
-											'<div><strong>🎯 Gerente:</strong> ' + (ras.gerente || '-') + '</div>' +
-											'<div><strong>🔧 Engenheiro:</strong> ' + (ras.engenheiro || '-') + '</div>' +
-											'<div><strong>⚡ Encarregado:</strong> ' + (ras.encarregado || '-') + '</div>' +
-										'</div>' +
+										'<div><strong>🎯 Gerente:</strong> ' + (ras.gerente || '-') + '</div>' +
+										'<div><strong>🔧 Engenheiro:</strong> ' + (ras.engenheiro || '-') + '</div>' +
+										'<div><strong>👷 Supervisor:</strong> ' + (ras.supervisor || '-') + '</div>' +
+										'<div><strong>⚡ Encarregado:</strong> ' + (ras.encarregado || '-') + '</div>' +
+										'<div><strong>🛡️ Técnico Seg.:</strong> ' + (ras.tecnicoSeguranca || '-') + '</div>' +
+									'</div>' +
 								'</div>' +
 								
 								// Seção Designações
@@ -5206,16 +5231,20 @@
 						if (document.getElementById('ras-tardc')) document.getElementById('ras-tardc').checked = ras.tardc || false;
 						if (document.getElementById('ras-compartilhar')) document.getElementById('ras-compartilhar').value = ras.compartilhar || '';
 						
-								// Etapa 2 - Liderança
-								if (document.getElementById('ras-gerente')) document.getElementById('ras-gerente').value = ras.gerente || '';
-								if (document.getElementById('ras-engenheiro')) document.getElementById('ras-engenheiro').value = ras.engenheiro || '';
-								if (document.getElementById('ras-encarregado')) document.getElementById('ras-encarregado').value = ras.encarregado || '';
+						// Etapa 2 - Liderança
+							if (document.getElementById('ras-gerente')) document.getElementById('ras-gerente').value = ras.gerente || '';
+							if (document.getElementById('ras-engenheiro')) document.getElementById('ras-engenheiro').value = ras.engenheiro || '';
+							if (document.getElementById('ras-supervisor')) document.getElementById('ras-supervisor').value = ras.supervisor || '';
+							if (document.getElementById('ras-encarregado')) document.getElementById('ras-encarregado').value = ras.encarregado || '';
+							if (document.getElementById('ras-tecnico-seguranca')) document.getElementById('ras-tecnico-seguranca').value = ras.tecnicoSeguranca || '';
 
 							// Reconstruir a lista de participantes da etapa 2 para exibição (mantém compatibilidade)
 							participantesRAS = [];
 							if (ras.gerente) participantesRAS.push({ nome: ras.gerente, setor: 'Gerente' });
 							if (ras.engenheiro) participantesRAS.push({ nome: ras.engenheiro, setor: 'Engenheiro' });
+							if (ras.supervisor) participantesRAS.push({ nome: ras.supervisor, setor: 'Supervisor' });
 							if (ras.encarregado) participantesRAS.push({ nome: ras.encarregado, setor: 'Encarregado' });
+							if (ras.tecnicoSeguranca) participantesRAS.push({ nome: ras.tecnicoSeguranca, setor: 'Técnico de Segurança' });
 							renderListaParticipantesRAS();
 							// Atualizar campos hidden e validar (inclui validação da etapa 5)
 							atualizarHiddenPorSetor();
@@ -5452,36 +5481,22 @@
 						
 						// Usar os dados completos da RAS (presentes tem nome, empresa, função)
 						var presentes = rasDoDia.presentes || [];
-
-						// Calcular ausentes a partir da lista completa de colaboradores quando possível
-						var colaboradoresCadastrados = JSON.parse(localStorage.getItem('funcionarios')) || [];
-						var matriculasPresentes = presentes.map(function(p){ return (p.matricula || '').toString().trim(); }).filter(Boolean);
-						var ausentes = [];
-
-						// Se tivermos colaboradores cadastrados, produza a lista de ausentes com base nisso
-						if (colaboradoresCadastrados.length > 0) {
-							colaboradoresCadastrados.forEach(function(f){
-								var m = (f.matricula || '').toString().trim();
-								var estaPresente = m ? (matriculasPresentes.indexOf(m) !== -1) : presentes.some(function(p){ return p.nome === f.nome; });
-								if (!estaPresente) ausentes.push({ matricula: f.matricula || '', nome: f.nome || '', empresa: f.empresa || '', funcao: f.funcao || '' });
-							});
-						}
-
-						exibirFrequencia(presentes, ausentes);
+						
+						exibirFrequencia(presentes, []);
 					}
 					
 					// Exibir listas de frequência
 					function exibirFrequencia(presentes, ausentes) {
 						// Atualizar totais
 						document.getElementById('total-presentes').textContent = presentes.length;
-						document.getElementById('total-ausentes').textContent = ausentes.length;
+						document.getElementById('total-ausentes').textContent = 0; // Sempre 0 pois não temos lista de ausentes
 						document.getElementById('badge-presentes').textContent = presentes.length;
 						document.getElementById('badge-ausentes').textContent = 0;
 						
 						// Resumo
 						document.getElementById('resumo-total').textContent = presentes.length;
 						document.getElementById('resumo-presentes').textContent = presentes.length;
-						document.getElementById('resumo-ausentes').textContent = ausentes.length;
+						document.getElementById('resumo-ausentes').textContent = 0;
 						
 						// Lista de presentes (usando dados completos da RAS)
 						var listaPresentes = document.getElementById('lista-presentes');
@@ -5501,23 +5516,9 @@
 							listaPresentes.innerHTML = htmlPresentes;
 						}
 						
-						// Lista de ausentes
+						// Lista de ausentes (ocultar pois não usamos mais)
 						var listaAusentes = document.getElementById('lista-ausentes');
-						if (ausentes && ausentes.length > 0) {
-							var htmlAusentes = '';
-							ausentes.forEach(function(funcionario) {
-								htmlAusentes += '<div style="padding:12px 16px;border-bottom:1px solid #fee2e2;display:grid;grid-template-columns:100px 2fr 1.5fr 1.5fr 60px;gap:12px;align-items:center;font-size:0.85rem">';
-								htmlAusentes += '<div style="font-weight:500">' + funcionario.matricula + '</div>';
-								htmlAusentes += '<div>' + funcionario.nome + '</div>';
-								htmlAusentes += '<div style="color:#ef4444">' + (funcionario.funcao || '-') + '</div>';
-								htmlAusentes += '<div style="color:#ef4444">' + (funcionario.empresa || '-') + '</div>';
-								htmlAusentes += '<div></div>';
-								htmlAusentes += '</div>';
-							});
-							listaAusentes.innerHTML = htmlAusentes;
-						} else {
-							listaAusentes.innerHTML = '<div style="padding:40px 16px;text-align:center;color:#9ca3af;font-style:italic">Nenhum ausente registrado para esta data</div>';
-						}
+						listaAusentes.innerHTML = '<div style="padding:40px 16px;text-align:center;color:#9ca3af;font-style:italic">Os funcionários ausentes não aparecem aqui.<br>Apenas os presentes confirmados na RAS são exibidos.</div>';
 					}
 					
 
