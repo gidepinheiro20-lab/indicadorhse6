@@ -5472,32 +5472,57 @@
 						var rasDoDia = historicoRAS.find(function(ras) {
 							return ras.data === data;
 						});
-						
+
 						// Se não encontrar RAS, mostrar mensagem de nenhum registro
 						if (!rasDoDia) {
 							exibirFrequencia([], []);
 							return;
 						}
-						
+
 						// Usar os dados completos da RAS (presentes tem nome, empresa, função)
 						var presentes = rasDoDia.presentes || [];
-						
-						exibirFrequencia(presentes, []);
+
+						// Tentar recuperar lista de ausentes salva junto com a RAS
+						var ausentes = rasDoDia.funcionariosAusentes || [];
+
+						// Se não houver lista de ausentes salva, calcular a partir dos colaboradores cadastrados
+						if ((!ausentes || ausentes.length === 0) && (presentes.length > 0)) {
+							try {
+								var colaboradoresCadastrados = JSON.parse(localStorage.getItem('funcionarios')) || [];
+								var matriculasPresentes = presentes.map(function(p){ return (p.matricula || '').toString().trim(); }).filter(Boolean);
+								ausentes = [];
+								colaboradoresCadastrados.forEach(function(f){
+									var m = (f.matricula || '').toString().trim();
+									var estaPresente = m ? (matriculasPresentes.indexOf(m) !== -1) : presentes.some(function(p){ return p.nome === f.nome; });
+									if (!estaPresente) {
+										ausentes.push({ matricula: f.matricula || '', nome: f.nome || '', empresa: f.empresa || '', funcao: f.funcao || '' });
+									}
+								});
+							} catch(e) {
+								ausentes = [];
+							}
+						}
+
+						exibirFrequencia(presentes, ausentes || []);
 					}
-					
+
 					// Exibir listas de frequência
 					function exibirFrequencia(presentes, ausentes) {
+						presentes = presentes || [];
+						ausentes = ausentes || [];
+
 						// Atualizar totais
 						document.getElementById('total-presentes').textContent = presentes.length;
-						document.getElementById('total-ausentes').textContent = 0; // Sempre 0 pois não temos lista de ausentes
+						document.getElementById('total-ausentes').textContent = ausentes.length;
 						document.getElementById('badge-presentes').textContent = presentes.length;
-						document.getElementById('badge-ausentes').textContent = 0;
-						
+						document.getElementById('badge-ausentes').textContent = ausentes.length;
+
 						// Resumo
-						document.getElementById('resumo-total').textContent = presentes.length;
+						var totalGeral = presentes.length + ausentes.length;
+						document.getElementById('resumo-total').textContent = totalGeral;
 						document.getElementById('resumo-presentes').textContent = presentes.length;
-						document.getElementById('resumo-ausentes').textContent = 0;
-						
+						document.getElementById('resumo-ausentes').textContent = ausentes.length;
+
 						// Lista de presentes (usando dados completos da RAS)
 						var listaPresentes = document.getElementById('lista-presentes');
 						if (presentes.length === 0) {
@@ -5506,19 +5531,32 @@
 							var htmlPresentes = '';
 							presentes.forEach(function(funcionario) {
 								htmlPresentes += '<div style="padding:12px 16px;border-bottom:1px solid #bbf7d0;display:grid;grid-template-columns:100px 2fr 1.5fr 1.5fr 60px;gap:12px;align-items:center;font-size:0.85rem">';
-								htmlPresentes += '<div style="font-weight:500">' + funcionario.matricula + '</div>';
-								htmlPresentes += '<div>' + funcionario.nome + '</div>';
-								htmlPresentes += '<div style="color:#059669">' + funcionario.funcao + '</div>';
-								htmlPresentes += '<div style="color:#059669">' + funcionario.empresa + '</div>';
-								htmlPresentes += '<div><button onclick="removerPresencaRAS(\'' + funcionario.matricula + '\')" style="background:#dc2626;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.7rem;cursor:pointer" title="Remover presença">🗑️</button></div>';
+								htmlPresentes += '<div style="font-weight:500">' + (funcionario.matricula || '-') + '</div>';
+								htmlPresentes += '<div>' + (funcionario.nome || '-') + '</div>';
+								htmlPresentes += '<div style="color:#059669">' + (funcionario.funcao || '-') + '</div>';
+								htmlPresentes += '<div style="color:#059669">' + (funcionario.empresa || '-') + '</div>';
+								htmlPresentes += '<div><button onclick="removerPresencaRAS(\'' + (funcionario.matricula || '') + '\')" style="background:#dc2626;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.7rem;cursor:pointer" title="Remover presença">🗑️</button></div>';
 								htmlPresentes += '</div>';
 							});
 							listaPresentes.innerHTML = htmlPresentes;
 						}
-						
-						// Lista de ausentes (ocultar pois não usamos mais)
+
+						// Lista de ausentes (exibir nomes se houver)
 						var listaAusentes = document.getElementById('lista-ausentes');
-						listaAusentes.innerHTML = '<div style="padding:40px 16px;text-align:center;color:#9ca3af;font-style:italic">Os funcionários ausentes não aparecem aqui.<br>Apenas os presentes confirmados na RAS são exibidos.</div>';
+						if (ausentes.length === 0) {
+							listaAusentes.innerHTML = '<div style="padding:40px 16px;text-align:center;color:#9ca3af;font-style:italic">Nenhum funcionário ausente registrado para esta data</div>';
+						} else {
+							var htmlAusentes = '';
+							ausentes.forEach(function(funcionario) {
+								htmlAusentes += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:100px 2fr 1.5fr 1.5fr;gap:12px;align-items:center;font-size:0.85rem">';
+								htmlAusentes += '<div style="font-weight:500">' + (funcionario.matricula || '-') + '</div>';
+								htmlAusentes += '<div>' + (funcionario.nome || '-') + '</div>';
+								htmlAusentes += '<div style="color:#6b7280">' + (funcionario.funcao || '-') + '</div>';
+								htmlAusentes += '<div style="color:#6b7280">' + (funcionario.empresa || '-') + '</div>';
+								htmlAusentes += '</div>';
+							});
+							listaAusentes.innerHTML = htmlAusentes;
+						}
 					}
 					
 
