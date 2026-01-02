@@ -18,17 +18,69 @@
 		<!-- Firebase SDKs (opcional) -->
 		<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-		<!-- Defina a configuração do Firebase para sync automática dos `funcionarios`:
-		window._FIREBASE_CONFIG_FOR_FUNCIONARIOS = {
-			apiKey: "YOUR_API_KEY",
-			authDomain: "YOUR_PROJECT.firebaseapp.com",
-			projectId: "YOUR_PROJECT_ID",
-			storageBucket: "YOUR_PROJECT.appspot.com",
-			messagingSenderId: "SENDER_ID",
-			appId: "APP_ID"
+		<!--
+		Exemplo de configuração (preencha e remova os comentários para ativar):
+		window._FIREBASE_CONFIG = {
+		  apiKey: "YOUR_API_KEY",
+		  authDomain: "YOUR_PROJECT.firebaseapp.com",
+		  projectId: "YOUR_PROJECT_ID",
+		  storageBucket: "YOUR_PROJECT.appspot.com",
+		  messagingSenderId: "SENDER_ID",
+		  appId: "APP_ID"
 		};
-		Substitua os valores acima pelo seu projeto Firebase e o sistema tentará sincronizar `funcionarios` automaticamente.
+		
+		Você também pode definir quais chaves do localStorage mapear para coleções Firestore:
+		window._FIREBASE_SYNC_MAP = [
+		  { localKey: 'funcionarios', collection: 'funcionarios', idField: 'matricula' },
+		  { localKey: 'empresas', collection: 'empresas' },
+		  { localKey: 'ras-reunioes', collection: 'ras-reunioes' },
+		  { localKey: 'usuarios', collection: 'usuarios' }
+		];
 		-->
+		<script>
+		// Funções utilitárias para sincronizar localStorage <-> Firestore
+		window.initFirebaseSync = async function(config, syncMap) {
+		  if(!config) return console.warn('Firebase config não fornecido.');
+		  if(typeof firebase === 'undefined') return console.warn('SDK Firebase não carregado.');
+		  try {
+		    if(!firebase.apps.length) firebase.initializeApp(config);
+		    window._FIREBASE_DB = firebase.firestore();
+		    window._FIREBASE_ENABLED = true;
+		    window._FIREBASE_SYNC_MAP = syncMap || window._FIREBASE_SYNC_MAP || [];
+		    // Carregar cada coleção do Firestore para localStorage
+		    for(const m of window._FIREBASE_SYNC_MAP){
+		      await window.loadFromFirestoreToLocal(m.localKey, m.collection);
+		    }
+		    console.log('Firebase sync inicializado.');
+		  } catch(e){ console.error('Erro initFirebaseSync:', e); }
+		}
+
+		window.loadFromFirestoreToLocal = async function(localKey, collection){
+		  if(!window._FIREBASE_ENABLED) return;
+		  try{
+		    const snap = await window._FIREBASE_DB.collection(collection).get();
+		    const arr = [];
+		    snap.forEach(d=>arr.push(d.data()));
+		    if(arr.length){
+		      localStorage.setItem(localKey, JSON.stringify(arr));
+		      console.log('Carregado do Firestore ->', collection, '->', localKey, arr.length);
+		    }
+		  }catch(e){ console.error('Erro ao carregar', collection, e); }
+		}
+
+		window.pushLocalToFirestore = async function(localKey, collection, idField){
+		  if(!window._FIREBASE_ENABLED) return;
+		  try{
+		    const arr = JSON.parse(localStorage.getItem(localKey) || '[]');
+		    for(let i=0;i<arr.length;i++){
+		      const doc = arr[i];
+		      const id = idField && doc[idField] ? String(doc[idField]) : String(i);
+		      await window._FIREBASE_DB.collection(collection).doc(id).set(doc);
+		    }
+		    console.log('Sincronizado local -> Firestore:', collection, arr.length);
+		  }catch(e){ console.error('Erro ao pushLocalToFirestore', e); }
+		}
+		</script>
 		<style>
 			:root{
 			--sidebar-width:340px;
@@ -4055,7 +4107,11 @@
 
 					// Ao carregar a página, tentar inicializar Firebase automaticamente se existir configuração global
 					window.addEventListener('load', function(){
-						if(window._FIREBASE_CONFIG_FOR_FUNCIONARIOS) {
+						if(window._FIREBASE_CONFIG) {
+							// Se o desenvolvedor definiu um mapa de sincronização, será usado, caso contrário usa o padrão
+							window.initFirebaseSync(window._FIREBASE_CONFIG, window._FIREBASE_SYNC_MAP);
+						} else if(window._FIREBASE_CONFIG_FOR_FUNCIONARIOS) {
+							// Compatibilidade retroativa com configuração antiga
 							window.initFirebaseForFuncionarios(window._FIREBASE_CONFIG_FOR_FUNCIONARIOS);
 						}
 					});
