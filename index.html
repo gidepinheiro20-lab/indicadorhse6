@@ -15,6 +15,20 @@
 		<meta http-equiv="Expires" content="0" />
 		<title>Indicador de HSE - Sistema Completo</title>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+		<!-- Firebase SDKs (opcional) -->
+		<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+		<!-- Defina a configuração do Firebase para sync automática dos `funcionarios`:
+		window._FIREBASE_CONFIG_FOR_FUNCIONARIOS = {
+			apiKey: "YOUR_API_KEY",
+			authDomain: "YOUR_PROJECT.firebaseapp.com",
+			projectId: "YOUR_PROJECT_ID",
+			storageBucket: "YOUR_PROJECT.appspot.com",
+			messagingSenderId: "SENDER_ID",
+			appId: "APP_ID"
+		};
+		Substitua os valores acima pelo seu projeto Firebase e o sistema tentará sincronizar `funcionarios` automaticamente.
+		-->
 		<style>
 			:root{
 			--sidebar-width:340px;
@@ -3962,14 +3976,18 @@
 
 					// ===== SISTEMA DE FUNCIONÁRIOS =====
 					var funcionarios = [];
-					
-					// Carregar funcionários do localStorage
+
+					// Firestore fallback variables
+					var firebaseEnabled = false;
+					var db = null;
+
+					// Carregar funcionários do localStorage inicialmente (fallback enquanto Firestore carrega)
 					if(localStorage.getItem('funcionarios')){
 						try {
 							funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
 						} catch(e){ funcionarios = []; }
 					}
-					
+
 					// Inicializar dados exemplo se não houver colaboradores (apenas uma vez)
 					if (funcionarios.length === 0) {
 						funcionarios = [{
@@ -3982,19 +4000,65 @@
 						}];
 						localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
 					}
-					
-					// Salvar funcionários no localStorage - Escopo Global
-					window.salvarFuncionarios = function() {
+
+					// Funções para integrar com Firebase Firestore (opcional)
+					window.initFirebaseForFuncionarios = function(config) {
+						if(!config) return console.warn('Firebase config não fornecido. Ignorando init Firebase.');
 						try {
+							if(typeof firebase === 'undefined') return console.warn('SDK Firebase não carregado.');
+							if(!firebase.apps.length) firebase.initializeApp(config);
+							db = firebase.firestore();
+							firebaseEnabled = true;
+							// Após inicializar, carregar dados do Firestore e substituir localStorage
+							window.loadFuncionariosFromFirestore();
+						} catch(e) { console.error('Erro ao inicializar Firebase:', e); }
+					}
+
+					window.loadFuncionariosFromFirestore = async function() {
+						if(!firebaseEnabled || !db) return;
+						try {
+							var snapshot = await db.collection('funcionarios').get();
+							var docs = [];
+							snapshot.forEach(function(d){ docs.push(d.data()); });
+							if(docs.length) {
+								funcionarios = docs;
+								localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
+								console.log('Funcionários carregados do Firestore:', funcionarios.length);
+								carregarColaboradoresRAS();
+								carregarEmpresasColaborador();
+							}
+						} catch(e) { console.error('Erro ao carregar funcionarios do Firestore:', e); }
+					}
+
+					// Salvar funcionários: escreve em Firestore (se ativo) e em localStorage
+					window.salvarFuncionarios = async function() {
+						try {
+							// Salvar localmente sempre
 							localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
-							console.log('Funcionários salvos:', funcionarios.length, funcionarios);
-							// Atualizar dropdowns da RAS quando colaboradores forem salvos
+							console.log('Funcionários salvos localmente:', funcionarios.length);
+							// Se Firestore ativo, sincronizar (cada documento terá id = matricula)
+							if(firebaseEnabled && db) {
+								for(var i=0;i<funcionarios.length;i++){
+									var f = funcionarios[i];
+									if(!f.matricula) continue;
+									try { await db.collection('funcionarios').doc(String(f.matricula)).set(f); } catch(e){ console.error('Erro ao salvar funcionario no Firestore', f, e); }
+								}
+								console.log('Funcionários sincronizados com Firestore');
+							}
+							// Atualizar dropdowns da RAS
 							carregarColaboradoresRAS();
 							carregarEmpresasColaborador();
 						} catch(e) {
 							console.error('Erro ao salvar funcionários:', e);
 						}
 					}
+
+					// Ao carregar a página, tentar inicializar Firebase automaticamente se existir configuração global
+					window.addEventListener('load', function(){
+						if(window._FIREBASE_CONFIG_FOR_FUNCIONARIOS) {
+							window.initFirebaseForFuncionarios(window._FIREBASE_CONFIG_FOR_FUNCIONARIOS);
+						}
+					});
 					
 					// Carregar funcionários na RAS (Etapa 6 - Confirmar Presença) - Escopo Global
 					window.carregarFuncionarios = function() {
