@@ -80,6 +80,40 @@
 		    console.log('Sincronizado local -> Firestore:', collection, arr.length);
 		  }catch(e){ console.error('Erro ao pushLocalToFirestore', e); }
 		}
+
+		// Padrão de mapa de sincronização se não definido pelo usuário
+		if(!window._FIREBASE_SYNC_MAP) {
+		  window._FIREBASE_SYNC_MAP = [
+		    { localKey: 'funcionarios', collection: 'funcionarios', idField: 'matricula' },
+		    { localKey: 'empresas', collection: 'empresas' },
+		    { localKey: 'ras-reunioes', collection: 'ras-reunioes' },
+		    { localKey: 'usuarios', collection: 'usuarios' },
+		    { localKey: 'historicoRAS', collection: 'historicoRAS' },
+		    { localKey: 'cpts', collection: 'cpts' },
+		    { localKey: 'inspecoes', collection: 'inspecoes' },
+		    { localKey: 'categoriasHSE', collection: 'categoriasHSE' },
+		    { localKey: 'areasLocais', collection: 'areasLocais' },
+		    { localKey: 'tiposRegistro', collection: 'tiposRegistro' },
+		    { localKey: 'riscosPerigos', collection: 'riscosPerigos' },
+		    { localKey: 'arts', collection: 'arts' }
+		  ];
+		}
+
+		// Substitui localStorage.setItem para sincronizar automaticamente quando Firestore estiver ativo
+		(function(){
+		  try{
+		    const originalSetItem = Storage.prototype.setItem;
+		    Storage.prototype.setItem = function(key, value){
+		      originalSetItem.apply(this, [key, value]);
+		      try{
+		        if(window._FIREBASE_ENABLED && Array.isArray(window._FIREBASE_SYNC_MAP)){
+		          const mapping = window._FIREBASE_SYNC_MAP.find(m => m.localKey === key);
+		          if(mapping){ window.pushLocalToFirestore(mapping.localKey, mapping.collection, mapping.idField); }
+		        }
+		      }catch(e){ console.error('Erro no hook de sync localStorage->Firestore', e); }
+		    };
+		  }catch(e){ console.warn('Não foi possível sobrescrever localStorage.setItem', e); }
+		})();
 		</script>
 		<style>
 			:root{
