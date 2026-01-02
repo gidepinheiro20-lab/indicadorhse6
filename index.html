@@ -52,6 +52,15 @@
 		    for(const m of window._FIREBASE_SYNC_MAP){
 		      await window.loadFromFirestoreToLocal(m.localKey, m.collection);
 		    }
+		    // Se a opção de auto-push estiver habilitada, empurra dados locais para o Firestore
+		    // Evite isto se você prefere que o Firestore seja a fonte de verdade.
+		    if(window._FIREBASE_AUTO_PUSH === undefined) window._FIREBASE_AUTO_PUSH = true; // padrão: true
+		    if(window._FIREBASE_AUTO_PUSH){
+		      for(const m of window._FIREBASE_SYNC_MAP){
+		        try{ await window.pushLocalToFirestore(m.localKey, m.collection, m.idField); } catch(e){ console.error('Auto-push falhou para', m, e); }
+		      }
+		      console.log('Auto-push local -> Firestore concluído.');
+		    }
 		    console.log('Firebase sync inicializado.');
 		  } catch(e){ console.error('Erro initFirebaseSync:', e); }
 		}
