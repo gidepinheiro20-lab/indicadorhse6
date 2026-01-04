@@ -14,118 +14,12 @@
 		<meta http-equiv="Pragma" content="no-cache" />
 		<meta http-equiv="Expires" content="0" />
 		<title>Indicador de HSE - Sistema Completo</title>
+		<!-- Carregamento de configuração da API -->
+		<script src="config.js" defer></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-		<!-- Firebase SDKs (opcional) -->
-		<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-		<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-		<script>
-		// Exemplo pronto para edição: preencha os valores abaixo com os dados do seu projeto
-		// e remova/edite conforme necessário. Não coloque chaves secretas em repositórios públicos.
-		window._FIREBASE_CONFIG = {
-		  apiKey: "AIzaSyC2wVqh4G9LTZMhqJdC90V2rfIgtijsTVA",
-		  authDomain: "indicadorhse6.firebaseapp.com",
-		  projectId: "indicadorhse6",
-		  storageBucket: "indicadorhse6.firebasestorage.app",
-		  messagingSenderId: "759686819432",
-		  appId: "1:759686819432:web:7b5f89c6c557e1095655dd",
-		  measurementId: "G-S5YGS7ENTY"
-		};
 
-		// Mapa de sincronização padrão — ajuste se quiser mapear outras chaves
-		window._FIREBASE_SYNC_MAP = [
-		  { localKey: 'funcionarios', collection: 'funcionarios', idField: 'matricula' },
-		  { localKey: 'empresas', collection: 'empresas' },
-		  { localKey: 'ras-reunioes', collection: 'ras-reunioes' },
-		  { localKey: 'usuarios', collection: 'usuarios' }
-		];
-		</script>
-		<script>
-		// Funções utilitárias para sincronizar localStorage <-> Firestore
-		window.initFirebaseSync = async function(config, syncMap) {
-		  if(!config) return console.warn('Firebase config não fornecido.');
-		  if(typeof firebase === 'undefined') return console.warn('SDK Firebase não carregado.');
-		  try {
-		    if(!firebase.apps.length) firebase.initializeApp(config);
-		    window._FIREBASE_DB = firebase.firestore();
-		    window._FIREBASE_ENABLED = true;
-		    window._FIREBASE_SYNC_MAP = syncMap || window._FIREBASE_SYNC_MAP || [];
-		    // Carregar cada coleção do Firestore para localStorage
-		    for(const m of window._FIREBASE_SYNC_MAP){
-		      await window.loadFromFirestoreToLocal(m.localKey, m.collection);
-		    }
-		    // Se a opção de auto-push estiver habilitada, empurra dados locais para o Firestore
-		    // Evite isto se você prefere que o Firestore seja a fonte de verdade.
-		    if(window._FIREBASE_AUTO_PUSH === undefined) window._FIREBASE_AUTO_PUSH = true; // padrão: true
-		    if(window._FIREBASE_AUTO_PUSH){
-		      for(const m of window._FIREBASE_SYNC_MAP){
-		        try{ await window.pushLocalToFirestore(m.localKey, m.collection, m.idField); } catch(e){ console.error('Auto-push falhou para', m, e); }
-		      }
-		      console.log('Auto-push local -> Firestore concluído.');
-		    }
-		    console.log('Firebase sync inicializado.');
-		  } catch(e){ console.error('Erro initFirebaseSync:', e); }
-		}
 
-		window.loadFromFirestoreToLocal = async function(localKey, collection){
-		  if(!window._FIREBASE_ENABLED) return;
-		  try{
-		    const snap = await window._FIREBASE_DB.collection(collection).get();
-		    const arr = [];
-		    snap.forEach(d=>arr.push(d.data()));
-		    if(arr.length){
-		      localStorage.setItem(localKey, JSON.stringify(arr));
-		      console.log('Carregado do Firestore ->', collection, '->', localKey, arr.length);
-		    }
-		  }catch(e){ console.error('Erro ao carregar', collection, e); }
-		}
 
-		window.pushLocalToFirestore = async function(localKey, collection, idField){
-		  if(!window._FIREBASE_ENABLED) return;
-		  try{
-		    const arr = JSON.parse(localStorage.getItem(localKey) || '[]');
-		    for(let i=0;i<arr.length;i++){
-		      const doc = arr[i];
-		      const id = idField && doc[idField] ? String(doc[idField]) : String(i);
-		      await window._FIREBASE_DB.collection(collection).doc(id).set(doc);
-		    }
-		    console.log('Sincronizado local -> Firestore:', collection, arr.length);
-		  }catch(e){ console.error('Erro ao pushLocalToFirestore', e); }
-		}
-
-		// Padrão de mapa de sincronização se não definido pelo usuário
-		if(!window._FIREBASE_SYNC_MAP) {
-		  window._FIREBASE_SYNC_MAP = [
-		    { localKey: 'funcionarios', collection: 'funcionarios', idField: 'matricula' },
-		    { localKey: 'empresas', collection: 'empresas' },
-		    { localKey: 'ras-reunioes', collection: 'ras-reunioes' },
-		    { localKey: 'usuarios', collection: 'usuarios' },
-		    { localKey: 'historicoRAS', collection: 'historicoRAS' },
-		    { localKey: 'cpts', collection: 'cpts' },
-		    { localKey: 'inspecoes', collection: 'inspecoes' },
-		    { localKey: 'categoriasHSE', collection: 'categoriasHSE' },
-		    { localKey: 'areasLocais', collection: 'areasLocais' },
-		    { localKey: 'tiposRegistro', collection: 'tiposRegistro' },
-		    { localKey: 'riscosPerigos', collection: 'riscosPerigos' },
-		    { localKey: 'arts', collection: 'arts' }
-		  ];
-		}
-
-		// Substitui localStorage.setItem para sincronizar automaticamente quando Firestore estiver ativo
-		(function(){
-		  try{
-		    const originalSetItem = Storage.prototype.setItem;
-		    Storage.prototype.setItem = function(key, value){
-		      originalSetItem.apply(this, [key, value]);
-		      try{
-		        if(window._FIREBASE_ENABLED && Array.isArray(window._FIREBASE_SYNC_MAP)){
-		          const mapping = window._FIREBASE_SYNC_MAP.find(m => m.localKey === key);
-		          if(mapping){ window.pushLocalToFirestore(mapping.localKey, mapping.collection, mapping.idField); }
-		        }
-		      }catch(e){ console.error('Erro no hook de sync localStorage->Firestore', e); }
-		    };
-		  }catch(e){ console.warn('Não foi possível sobrescrever localStorage.setItem', e); }
-		})();
-		</script>
 		<style>
 			:root{
 			--sidebar-width:340px;
@@ -2924,22 +2818,162 @@
 			</main>
 		</div>
 					<script>
-					// Função para verificar se está no mobile
-					function isMobile() {
-						return window.innerWidth <= 720;
+				// ===== CONFIGURAÇÃO DA API =====
+				// Detectar IP local automaticamente
+				const API_BASE_URL = (function() {
+					// Se estiver em localhost ou 127.0.0.1 no navegador
+					if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+						return 'http://localhost:3000';
 					}
-
-					// Função para ocultar sidebar no mobile
-					function hideSidebarOnMobile() {
-						if (isMobile()) {
-							document.querySelector('.sidebar').classList.add('hidden-mobile');
-							document.querySelector('.main').classList.add('full-screen-mobile');
-							document.getElementById('back-to-menu').classList.add('show');
+					// Se estiver acessando via IP (ex: 192.168.x.x)
+					if (window.location.hostname !== 'gidepinheiro20-lab.github.io') {
+						return 'http://' + window.location.hostname + ':3000';
+					}
+					// Se estiver via GitHub, conecta ao servidor remoto via LocalTunnel
+				return 'https://cute-masks-drive.loca.lt';
+				async function sincronizarComServidor(tabela, dados) {
+					if (!API_BASE_URL) return false; // Se não houver API, retorna false
+					try {
+						const response = await fetch(API_BASE_URL + '/api/' + tabela, {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify(dados)
+						});
+						if (response.ok) {
+							console.log('Sincronizado com servidor:', tabela);
+							return true;
 						}
+					} catch (err) {
+						console.warn('Erro ao sincronizar:', err.message);
 					}
+					return false;
+				}
 
-					// Função para mostrar sidebar no mobile
-					function showSidebarOnMobile() {
+				// Função para carregar dados do servidor
+				async function carregarDoServidor(tabela) {
+					if (!API_BASE_URL) return []; // Se não houver API, retorna vazio
+					try {
+						const response = await fetch(API_BASE_URL + '/api/' + tabela);
+						if (response.ok) {
+							const dados = await response.json();
+							console.log('Carregado do servidor:', tabela, dados.length + ' registros');
+							return dados;
+						}
+					} catch (err) {
+						console.warn('Erro ao carregar do servidor:', err.message);
+					}
+					return [];
+				}
+
+			// ===== FUNÇÕES WRAPPER PARA SINCRONIZAÇÃO AUTOMÁTICA =====
+			
+			// Wrapper do localStorage.setItem que sincroniza automaticamente
+			const localStorageOriginal = {
+				setItem: localStorage.setItem.bind(localStorage),
+				getItem: localStorage.getItem.bind(localStorage)
+			};
+
+			// Override do localStorage.setItem para sincronizar automaticamente
+			Storage.prototype.setItemSync = async function(key, value) {
+				// Salvar localmente
+				localStorageOriginal.setItem(key, value);
+				
+				// Sincronizar com servidor (se for um dado do sistema)
+				const tabelasParaSincronizar = [
+					'funcionarios', 'empresas', 'ras_reunioes', 'usuarios', 
+					'historico_ras', 'cpts', 'inspecoes', 'categorias_hse', 
+					'areasLocais', 'tiposRegistro', 'riscosPerigos', 'arts',
+					'frequencias', 'categorias', 'riscos'
+				];
+				
+				if (tabelasParaSincronizar.includes(key)) {
+					try {
+						const dados = JSON.parse(value);
+						// Se for array, sincronizar cada item
+						if (Array.isArray(dados)) {
+							for (let item of dados) {
+								await sincronizarComServidor(key, item);
+							}
+						} else {
+							await sincronizarComServidor(key, dados);
+						}
+					} catch (e) {
+						console.warn('Erro ao sincronizar:', key, e);
+					}
+				}
+			};
+
+			// Função helper para carregar dados (servidor primeiro, depois localStorage)
+			async function loadData(key) {
+				// Tentar carregar do servidor primeiro
+				const dadosServidor = await carregarDoServidor(key);
+				if (dadosServidor && dadosServidor.length > 0) {
+					// Atualizar localStorage com dados do servidor
+					localStorageOriginal.setItem(key, JSON.stringify(dadosServidor));
+					return dadosServidor;
+				}
+				
+				// Fallback para localStorage
+				const dadosLocal = localStorageOriginal.getItem(key);
+				return dadosLocal ? JSON.parse(dadosLocal) : [];
+			}
+
+			// Função helper para salvar dados (localStorage + servidor)
+			async function saveData(key, value) {
+				const valueStr = typeof value === 'string' ? value : JSON.stringify(value);
+				await localStorage.setItemSync(key, valueStr);
+			}
+
+			// ===== FIM DAS FUNÇÕES WRAPPER =====
+
+			// INTERCEPTAR TODAS AS CHAMADAS DE localStorage.setItem
+			(function() {
+				const originalSetItem = localStorage.setItem;
+				
+				localStorage.setItem = function(key, value) {
+					// Chamar o original
+					originalSetItem.call(localStorage, key, value);
+					
+					// Lista de chaves que devem ser sincronizadas
+					const keysParaSincronizar = [
+						'funcionarios', 'empresas', 'ras_reunioes', 'usuarios', 
+						'historico_ras', 'cpts', 'inspecoes', 'categorias_hse', 
+						'areasLocais', 'tiposRegistro', 'riscosPerigos', 'arts',
+						'frequencias', 'categorias', 'riscos', 'categorias-hse'
+					];
+					
+					// Se a chave está na lista, sincronizar
+					if (keysParaSincronizar.includes(key)) {
+						(async function() {
+							try {
+								const dados = JSON.parse(value);
+								// Se for array, sincronizar cada item
+								if (Array.isArray(dados)) {
+									for (let item of dados) {
+										if (!item.id) item.id = Date.now() + Math.random();
+										await sincronizarComServidor(key, item);
+									}
+									console.log(`✅ ${dados.length} itens de "${key}" sincronizados`);
+								} else {
+									if (!dados.id) dados.id = Date.now() + Math.random();
+									await sincronizarComServidor(key, dados);
+									console.log(`✅ Item de "${key}" sincronizado`);
+								}
+							} catch (e) {
+								console.warn(`⚠️ Erro ao sincronizar "${key}":`, e.message);
+							}
+						})();
+					}
+				};
+			})();
+
+			console.log('🔄 Sistema de sincronização automática ativado!');
+			console.log('📡 Servidor:', API_BASE_URL);
+
+			// ===== FIM DA INTERCEPTAÇÃO =====
+			
+			// Mostrar sidebar no mobile
+			function showSidebarOnMobile() {
 						document.querySelector('.sidebar').classList.remove('hidden-mobile');
 						document.querySelector('.main').classList.remove('full-screen-mobile');
 						document.getElementById('back-to-menu').classList.remove('show');
@@ -4152,13 +4186,7 @@
 
 					// Ao carregar a página, tentar inicializar Firebase automaticamente se existir configuração global
 					window.addEventListener('load', function(){
-						if(window._FIREBASE_CONFIG) {
-							// Se o desenvolvedor definiu um mapa de sincronização, será usado, caso contrário usa o padrão
-							window.initFirebaseSync(window._FIREBASE_CONFIG, window._FIREBASE_SYNC_MAP);
-						} else if(window._FIREBASE_CONFIG_FOR_FUNCIONARIOS) {
-							// Compatibilidade retroativa com configuração antiga
-							window.initFirebaseForFuncionarios(window._FIREBASE_CONFIG_FOR_FUNCIONARIOS);
-						}
+
 					});
 					
 					// Carregar funcionários na RAS (Etapa 6 - Confirmar Presença) - Escopo Global
