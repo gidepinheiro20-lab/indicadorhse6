@@ -2830,7 +2830,9 @@
 						return 'http://' + window.location.hostname + ':3000';
 					}
 					// Se estiver via GitHub, conecta ao servidor remoto via LocalTunnel
-				return 'https://cute-masks-drive.loca.lt';
+					return 'https://cute-masks-drive.loca.lt';
+				})();
+
 				async function sincronizarComServidor(tabela, dados) {
 					if (!API_BASE_URL) return false; // Se não houver API, retorna false
 					try {
