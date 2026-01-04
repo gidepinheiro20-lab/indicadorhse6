@@ -2830,7 +2830,7 @@
 						return 'http://' + window.location.hostname + ':3000';
 					}
 					// Se estiver via GitHub, conecta ao servidor remoto via LocalTunnel
-					return 'https://cute-masks-drive.loca.lt';
+					return 'https://quick-sloths-send.loca.lt';
 				})();
 
 				async function sincronizarComServidor(tabela, dados) {
@@ -2990,6 +2990,7 @@
 						document.getElementById('frequencia').style.display = 'none';
 						document.getElementById('cpt').style.display = 'none';
 						document.getElementById('inspecao').style.display = 'none';
+						document.getElementById('art').style.display = 'none';
 						document.getElementById('categorias-hse').style.display = 'none';
 						document.getElementById('areas-locais').style.display = 'none';
 						document.getElementById('gerenciamento-tipos-registro').style.display = 'none';
@@ -2997,11 +2998,85 @@
 						document.getElementById('empresa').style.display = 'none';
 					}
 
+					function abrirSecaoDoHash(hash) {
+						const alvo = (hash || '#').replace('#', '');
+						switch (alvo) {
+							case 'usuario':
+								hideAllSections();
+								document.getElementById('cadastro-usuario').style.display = 'block';
+								break;
+							case 'ras':
+								hideAllSections();
+								document.getElementById('nova-ras').style.display = 'block';
+								document.getElementById('ras-lista-reunioes').style.display = 'block';
+								document.getElementById('ras-formulario-container').style.display = 'none';
+								carregarEmpresasRAS();
+								carregarColaboradoresRAS();
+								carregarColaboradoresRASEtapa3();
+								carregarFuncionariosRASEtapa6();
+								carregarListaRAS();
+								break;
+							case 'funcionarios':
+								hideAllSections();
+								document.getElementById('funcionarios').style.display = 'block';
+								exibirFuncionarios();
+								carregarEmpresasColaborador();
+								break;
+							case 'frequencia':
+								hideAllSections();
+								document.getElementById('frequencia').style.display = 'block';
+								inicializarFrequencia();
+								break;
+							case 'cpt':
+								hideAllSections();
+								document.getElementById('cpt').style.display = 'block';
+								inicializarCPT();
+								break;
+							case 'inspecao':
+								hideAllSections();
+								document.getElementById('inspecao').style.display = 'block';
+								inicializarInspecao();
+								break;
+							case 'art':
+								hideAllSections();
+								document.getElementById('art').style.display = 'block';
+								inicializarART();
+								break;
+							case 'empresa':
+								hideAllSections();
+								document.getElementById('empresa').style.display = 'block';
+								exibirEmpresas();
+								break;
+							default:
+								hideAllSections();
+								document.getElementById('conteudo-principal').style.display = 'block';
+								break;
+						}
+						hideSidebarOnMobile();
+					}
+
+					function navegarParaHash(hash) {
+						if (window.location.hash === hash) {
+							abrirSecaoDoHash(hash);
+						} else {
+							window.location.hash = hash;
+						}
+					}
+
+					window.addEventListener('hashchange', function() {
+						abrirSecaoDoHash(window.location.hash || '#');
+					});
+
+					document.addEventListener('DOMContentLoaded', function() {
+						abrirSecaoDoHash(window.location.hash || '#');
+					});
+
 					// Botão voltar ao menu
 					document.getElementById('back-to-menu').addEventListener('click', function() {
 						// Ocultar todas as seções
 						hideAllSections();
 						document.getElementById('conteudo-principal').style.display = 'block';
+							window.location.hash = '#';
 						
 						// Mostrar sidebar novamente
 						showSidebarOnMobile();
@@ -3011,28 +3086,14 @@
 						document.querySelectorAll('.nav a[href="#usuario"]').forEach(function(link){
 							link.addEventListener('click',function(e){
 								e.preventDefault();
-								hideAllSections();
-								document.getElementById('cadastro-usuario').style.display = 'block';
-								hideSidebarOnMobile();
+								navegarParaHash('#usuario');
 							});
 						});
 					// Exibir formulário Nova RAS ao clicar em +RAS
 						document.querySelectorAll('.nav a[href="#ras"]').forEach(function(link){
 							link.addEventListener('click',function(e){
 								e.preventDefault();
-								hideAllSections();
-								document.getElementById('nova-ras').style.display = 'block';
-								// Mostrar lista principal e ocultar formulário
-								document.getElementById('ras-lista-reunioes').style.display = 'block';
-								document.getElementById('ras-formulario-container').style.display = 'none';
-								// Carregar empresas e colaboradores quando abrir RAS
-								carregarEmpresasRAS();
-								carregarColaboradoresRAS();
-								carregarColaboradoresRASEtapa3();
-								carregarFuncionariosRASEtapa6();
-								// Carregar lista de RAS
-								carregarListaRAS();
-								hideSidebarOnMobile();
+								navegarParaHash('#ras');
 							});
 						});
 						
@@ -3060,70 +3121,48 @@
 						document.querySelectorAll('.nav a[href="#funcionarios"]').forEach(function(link){
 							link.addEventListener('click',function(e){
 								e.preventDefault();
-								hideAllSections();
-								document.getElementById('funcionarios').style.display = 'block';
-								exibirFuncionarios(); // CORRIGIDO: era carregarFuncionarios()
-								// Carregar empresas quando abrir colaboradores
-								carregarEmpresasColaborador();
-								hideSidebarOnMobile();
+								navegarParaHash('#funcionarios');
 							});
 						});
 					// Exibir frequência ao clicar em Frequência
 						document.querySelectorAll('.nav a[href="#frequencia"]').forEach(function(link){
 							link.addEventListener('click',function(e){
 								e.preventDefault();
-								hideAllSections();
-								document.getElementById('frequencia').style.display = 'block';
-								inicializarFrequencia();
-								hideSidebarOnMobile();
+								navegarParaHash('#frequencia');
 							});
 						});
 					// Exibir CPT ao clicar em CPT
 						document.querySelectorAll('.nav a[href="#cpt"]').forEach(function(link){
 							link.addEventListener('click',function(e){
 								e.preventDefault();
-								hideAllSections();
-								document.getElementById('cpt').style.display = 'block';
-								inicializarCPT();
-								hideSidebarOnMobile();
+								navegarParaHash('#cpt');
 							});
 						});
 					// Exibir Inspeção ao clicar em Inspeção de HSE
 						document.querySelectorAll('.nav a[href="#inspecao"]').forEach(function(link){
 							link.addEventListener('click',function(e){
 								e.preventDefault();
-								hideAllSections();
-								document.getElementById('inspecao').style.display = 'block';
-								inicializarInspecao();
-								hideSidebarOnMobile();
+								navegarParaHash('#inspecao');
 							});
 						});
 					// Exibir ART ao clicar em ART
 						document.querySelectorAll('.nav a[href="#art"]').forEach(function(link){
 							link.addEventListener('click',function(e){
 								e.preventDefault();
-								hideAllSections();
-								document.getElementById('art').style.display = 'block';
-								inicializarART();
-								hideSidebarOnMobile();
+								navegarParaHash('#art');
 							});
 						});
 					// Exibir Empresa ao clicar em Empresa
 						document.querySelectorAll('.nav a[href="#empresa"]').forEach(function(link){
 							link.addEventListener('click',function(e){
 								e.preventDefault();
-								hideAllSections();
-								document.getElementById('empresa').style.display = 'block';
-								exibirEmpresas();
-								hideSidebarOnMobile();
+								navegarParaHash('#empresa');
 							});
 						});
 					// Ocultar outras seções ao clicar em outros itens
 						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"]):not([href="#inspecao"]):not([href="#art"]):not([href="#empresa"])').forEach(function(link){
 							link.addEventListener('click',function(){
-								hideAllSections();
-								document.getElementById('conteudo-principal').style.display = 'block';
-								hideSidebarOnMobile();
+								navegarParaHash('#');
 							});
 						});
 
