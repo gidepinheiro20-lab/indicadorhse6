@@ -1,5 +1,6 @@
 const express = require('express');
-const Database = require('better-sqlite3');
+const fs = require('fs');
+const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
@@ -16,16 +17,26 @@ app.use(express.static('.'));
 // API endpoints for each table
 const tables = ['funcionarios', 'empresas', 'ras_reunioes', 'usuarios', 'historico_ras', 'cpts', 'inspecoes', 'categorias_hse', 'areas_locais', 'tipos_registro', 'riscos_perigos', 'arts'];
 
-// SQLite database
-const db = new Database('./indicador_hse.db');
+// JSON file storage
+const DB_FILE = './database.json';
 
-// Initialize tables
-tables.forEach(table => {
-  db.exec(`CREATE TABLE IF NOT EXISTS ${table} (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    data TEXT
-  )`);
-});
+// Initialize database
+if (!fs.existsSync(DB_FILE)) {
+  const initialData = {};
+  tables.forEach(table => {
+    initialData[table] = [];
+  });
+  fs.writeFileSync(DB_FILE, JSON.stringify(initialData, null, 2));
+}
+
+// Helper functions
+function readDB() {
+  return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+}
+
+function writeDB(data) {
+  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
+}
 
 tables.forEach(table => {
   // GET all
