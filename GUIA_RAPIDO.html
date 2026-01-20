@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📘 Guia Rápido - Sistema HSE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .step {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            border-left: 5px solid #667eea;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 50px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-right: 15px;
+            float: left;
+        }
+        
+        .step-title {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .step-description {
+            color: #546e7a;
+            line-height: 1.8;
+            clear: both;
+            margin-top: 10px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .feature-box {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-box:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.2);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .feature-desc {
+            font-size: 0.9rem;
+            color: #546e7a;
+            line-height: 1.6;
+        }
+        
+        .tip-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        
+        .tip-title {
+            font-weight: 700;
+            color: #856404;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .tip-content {
+            color: #856404;
+            line-height: 1.8;
+        }
+        
+        .warning-box {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        
+        .warning-title {
+            font-weight: 700;
+            color: #721c24;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        
+        .success-title {
+            font-weight: 700;
+            color: #155724;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .code-box {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102,126,234,0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #16a085 0%, #2ecc71 100%);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: scale(1.05);
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .button-group {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📘 Guia Rápido - Sistema HSE</h1>
+            <p>Tudo que você precisa saber para começar em 5 minutos!</p>
+        </div>
+        
+        <div class="content">
+            <!-- SEÇÃO 1: INICIALIZAÇÃO -->
+            <div class="section">
+                <div class="section-title">
+                    <span>🚀</span>
+                    Inicialização Rápida
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Abra o Sistema</div>
+                    <div class="step-description">
+                        <strong>Opção A (Recomendada):</strong> Dê duplo clique em <code>INICIAR_SISTEMA.bat</code><br>
+                        <strong>Opção B:</strong> Dê duplo clique em <code>SISTEMA_STANDALONE.html</code>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Aguarde o Carregamento</div>
+                    <div class="step-description">
+                        O sistema abrirá automaticamente no seu navegador padrão. Aguarde alguns segundos para o carregamento completo.
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Clique em "ABRIR SISTEMA COMPLETO"</div>
+                    <div class="step-description">
+                        Na tela inicial, clique no grande botão verde "🚀 ABRIR SISTEMA COMPLETO" para acessar todas as funcionalidades.
+                    </div>
+                </div>
+                
+                <div class="success-box">
+                    <div class="success-title">
+                        <span>✅</span>
+                        Pronto! Você está dentro do sistema!
+                    </div>
+                    <div>Agora você pode começar a configurar e usar todas as ferramentas disponíveis.</div>
+                </div>
+            </div>
+            
+            <!-- SEÇÃO 2: CONFIGURAÇÃO INICIAL -->
+            <div class="section">
+                <div class="section-title">
+                    <span>⚙️</span>
+                    Configuração Inicial (Primeira Vez)
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Cadastre sua Empresa</div>
+                    <div class="step-description">
+                        <strong>Menu Lateral → Empresa → Nova Empresa</strong><br>
+                        Preencha: Nome, CNPJ, CNAE, Ramo de Atividade, Grau de Risco<br>
+                        <em>Este é o primeiro passo obrigatório!</em>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Cadastre Colaboradores</div>
+                    <div class="step-description">
+                        <strong>Menu Lateral → Novo Colaborador</strong><br>
+                        <strong>Opção A:</strong> Cadastro individual (preencha formulário)<br>
+                        <strong>Opção B:</strong> Importar planilha Excel (mais rápido para muitos colaboradores)
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Configure Áreas e Locais</div>
+                    <div class="step-description">
+                        <strong>Menu Lateral → Inspeção → Cadastrar Área/Local</strong><br>
+                        Exemplos: Escritório, Produção, Almoxarifado, BAP 1B, etc.
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Configure Categorias HSE</div>
+                    <div class="step-description">
+                        <strong>Menu Lateral → Inspeção → Cadastrar Categoria</strong><br>
+                        Exemplos: Segurança do Trabalho, Meio Ambiente, Qualidade, etc.
+                    </div>
+                </div>
+                
+                <div class="tip-box">
+                    <div class="tip-title">
+                        <span>💡</span>
+                        Dica Pro
+                    </div>
+                    <div class="tip-content">
+                        Faça TODA a configuração inicial ANTES de começar a usar o sistema. Isso evita retrabalho e garante que seus registros terão todas as informações necessárias!
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEÇÃO 3: FERRAMENTAS DISPONÍVEIS -->
+            <div class="section">
+                <div class="section-title">
+                    <span>🛠️</span>
+                    Ferramentas Disponíveis
+                </div>
+                
+                <div class="feature-grid">
+                    <div class="feature-box">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-name">RAS</div>
+                        <div class="feature-desc">Reunião de Análise de Segurança com controle de presença e relatórios</div>
+                    </div>
+                    
+                    <div class="feature-box">
+                        <div class="feature-icon">👥</div>
+                        <div class="feature-name">CPT</div>
+                        <div class="feature-desc">Conversa Pré-Tarefa para planejamento seguro</div>
+                    </div>
+                    
+                    <div class="feature-box">
+                        <div class="feature-icon">🔍</div>
+                        <div class="feature-name">Inspeção</div>
+                        <div class="feature-desc">Sistema completo de inspeções com fotos e relatórios</div>
+                    </div>
+                    
+                    <div class="feature-box">
+                        <div class="feature-icon">📋</div>
+                        <div class="feature-name">ART</div>
+                        <div class="feature-desc">Análise de Risco da Tarefa detalhada</div>
+                    </div>
+                    
+                    <div class="feature-box">
+                        <div class="feature-icon">🏢</div>
+                        <div class="feature-name">Empresas</div>
+                        <div class="feature-desc">Gestão completa de empresas e contratadas</div>
+                    </div>
+                    
+                    <div class="feature-box">
+                        <div class="feature-icon">👤</div>
+                        <div class="feature-name">Colaboradores</div>
+                        <div class="feature-desc">Cadastro e gestão de equipe completa</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEÇÃO 4: USO DIÁRIO -->
+            <div class="section">
+                <div class="section-title">
+                    <span>📅</span>
+                    Rotina de Uso Diário
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">🌅</div>
+                    <div class="step-title">Início do Dia</div>
+                    <div class="step-description">
+                        <strong>1.</strong> Abra o sistema<br>
+                        <strong>2.</strong> Menu → RAS → Nova Reunião<br>
+                        <strong>3.</strong> Preencha informações básicas<br>
+                        <strong>4.</strong> Registre participação de liderança<br>
+                        <strong>5.</strong> Confirme presença dos colaboradores
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">☀️</div>
+                    <div class="step-title">Durante o Dia</div>
+                    <div class="step-description">
+                        <strong>1.</strong> Registre inspeções de campo<br>
+                        <strong>2.</strong> Tire fotos de desvios (antes/depois)<br>
+                        <strong>3.</strong> Registre CPTs antes de tarefas críticas<br>
+                        <strong>4.</strong> Atualize status de pendências
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">🌙</div>
+                    <div class="step-title">Fim do Dia</div>
+                    <div class="step-description">
+                        <strong>1.</strong> Finalize RAS do dia<br>
+                        <strong>2.</strong> Gere relatórios necessários<br>
+                        <strong>3.</strong> Verifique pendências abertas<br>
+                        <strong>4.</strong> Faça backup se necessário
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEÇÃO 5: IMPORTAÇÃO DE DADOS -->
+            <div class="section">
+                <div class="section-title">
+                    <span>📥</span>
+                    Importação de Colaboradores via Excel
+                </div>
+                
+                <div class="warning-box">
+                    <div class="warning-title">
+                        <span>⚠️</span>
+                        IMPORTANTE: Formato da Planilha
+                    </div>
+                    <div>
+                        A planilha deve ter <strong>EXATAMENTE</strong> estas colunas, nesta ordem:
+                    </div>
+                </div>
+                
+                <div class="code-box">
+| Matrícula | Nome | Função | Setor | Data Admissão | Empresa |
+|-----------|------|--------|-------|---------------|---------|
+| 001       | João | Pedreiro | Obras | 01/01/2024   | ABC     |
+| 002       | Maria | Encarregada | Gestão | 15/02/2024  | ABC     |
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Prepare sua Planilha</div>
+                    <div class="step-description">
+                        Abra Excel ou Google Sheets e crie planilha com as 6 colunas acima
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Preencha os Dados</div>
+                    <div class="step-description">
+                        <strong>Data Admissão:</strong> Formato DD/MM/AAAA<br>
+                        <strong>Empresa:</strong> Deve ser o nome EXATO cadastrado no sistema
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Salve como Excel</div>
+                    <div class="step-description">
+                        Salve arquivo como .xlsx ou .xls
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Importe no Sistema</div>
+                    <div class="step-description">
+                        Menu → Novo Colaborador → Importar Planilha → Selecione arquivo → Confirme
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEÇÃO 6: BACKUPS -->
+            <div class="section">
+                <div class="section-title">
+                    <span>💾</span>
+                    Backups e Segurança de Dados
+                </div>
+                
+                <div class="warning-box">
+                    <div class="warning-title">
+                        <span>🚨</span>
+                        ATENÇÃO: Backup é ESSENCIAL!
+                    </div>
+                    <div>
+                        Seus dados ficam salvos no navegador. Se você limpar o histórico/cache ou formatar o PC, <strong>PERDERÁ TUDO!</strong>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">📆</div>
+                    <div class="step-title">Backup Diário</div>
+                    <div class="step-description">
+                        Exporte dados críticos do dia (RAS, inspeções urgentes)
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">📅</div>
+                    <div class="step-title">Backup Semanal</div>
+                    <div class="step-description">
+                        Exporte todos os dados e salve em local seguro (pendrive, nuvem)
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">🗓️</div>
+                    <div class="step-title">Backup Mensal</div>
+                    <div class="step-description">
+                        Backup completo com cópia em múltiplos locais (nuvem + HD externo)
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEÇÃO 7: DICAS E TRUQUES -->
+            <div class="section">
+                <div class="section-title">
+                    <span>💡</span>
+                    Dicas e Truques Pro
+                </div>
+                
+                <div class="tip-box">
+                    <div class="tip-title">
+                        <span>🖼️</span>
+                        Otimização de Fotos
+                    </div>
+                    <div class="tip-content">
+                        • Comprima fotos grandes antes do upload (use tools online)<br>
+                        • Tire fotos em boa iluminação<br>
+                        • Mantenha fotos entre 500KB - 2MB<br>
+                        • Use JPG para fotos, PNG para capturas de tela
+                    </div>
+                </div>
+                
+                <div class="tip-box">
+                    <div class="tip-title">
+                        <span>⚡</span>
+                        Performance
+                    </div>
+                    <div class="tip-content">
+                        • Feche abas desnecessárias do navegador<br>
+                        • Limpe cache regularmente (mas DEPOIS do backup!)<br>
+                        • Use Chrome ou Edge para melhor desempenho<br>
+                        • Evite modo anônimo (não salva dados)
+                    </div>
+                </div>
+                
+                <div class="tip-box">
+                    <div class="tip-title">
+                        <span>📊</span>
+                        Organização
+                    </div>
+                    <div class="tip-content">
+                        • Padronize nomes de empresas e áreas<br>
+                        • Use códigos para facilitar busca<br>
+                        • Mantenha categorias consistentes<br>
+                        • Revise dados regularmente para manter qualidade
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEÇÃO 8: PROBLEMAS COMUNS -->
+            <div class="section">
+                <div class="section-title">
+                    <span>🆘</span>
+                    Soluções para Problemas Comuns
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">❌</div>
+                    <div class="step-title">Sistema não abre</div>
+                    <div class="step-description">
+                        <strong>Solução:</strong><br>
+                        • Tente outro navegador (Chrome recomendado)<br>
+                        • Desabilite bloqueadores de pop-up<br>
+                        • Clique com botão direito → Abrir com → Chrome
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">💾</div>
+                    <div class="step-title">Dados não salvam</div>
+                    <div class="step-description">
+                        <strong>Solução:</strong><br>
+                        • Não use modo anônimo/privado<br>
+                        • Verifique permissões de armazenamento do navegador<br>
+                        • Limpe cache e tente novamente<br>
+                        • Verifique espaço disponível no HD
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">📁</div>
+                    <div class="step-title">Planilha não importa</div>
+                    <div class="step-description">
+                        <strong>Solução:</strong><br>
+                        • Verifique ordem EXATA das colunas<br>
+                        • Use formato .xlsx ou .xls (não .csv)<br>
+                        • Remova células mescladas<br>
+                        • Certifique-se de que datas estão no formato DD/MM/AAAA
+                    </div>
+                </div>
+            </div>
+            
+            <!-- BOTÕES DE AÇÃO -->
+            <div class="button-group">
+                <button class="btn btn-success" onclick="window.location.href='SISTEMA_STANDALONE.html'">
+                    🚀 Abrir Sistema Agora
+                </button>
+                <button class="btn btn-primary" onclick="window.print()">
+                    🖨️ Imprimir Guia
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
