@@ -1,10 +1,10 @@
 const express = require('express');
-const Database = require('better-sqlite3');
+const { Pool } = require('pg');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -16,48 +16,69 @@ app.use(express.static('.'));
 // API endpoints for each table
 const tables = ['funcionarios', 'empresas', 'ras_reunioes', 'usuarios', 'historico_ras', 'cpts', 'inspecoes', 'categorias_hse', 'areas_locais', 'tipos_registro', 'riscos_perigos', 'arts'];
 
-// SQLite database
-const db = new Database('./indicador_hse.db');
+// PostgreSQL database connection
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 
 // Initialize tables
-tables.forEach(table => {
-  db.exec(`CREATE TABLE IF NOT EXISTS ${table} (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    data TEXT
-  )`);
-});
+const initDB = async () => {
+  const client = await pool.connect();
+  try {
+    for (const table of tables) {
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS ${table} (
+          id SERIAL PRIMARY KEY,
+          data JSONB
+        )
+      `);
+    }
+    console.log('Database initialized successfully');
+  } catch (err) {
+    console.error('Error initializing database:', err);
+  } finally {
+    client.release();
+  }
+};
+
+initDB();
+
 
 tables.forEach(table => {
   // GET all
-  app.get(`/api/${table}`, (req, res) => {
+  app.get(`/api/${table}`, async (req, res) => {
     try {
-      const stmt = db.prepare(`SELECT * FROM ${table}`);
-      const rows = stmt.all();
-      res.json(rows.map(row => ({ id: row.id, ...JSON.parse(row.data) })));
+      const result = await pool.query(`SELECT * FROM ${table}`);
+      res.json(result.rows.map(row => ({ id: row.id, ...row.data })));
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
   });
 
   // POST (insert)
-  app.post(`/api/${table}`, (req, res) => {
+  app.post(`/api/${table}`, async (req, res) => {
     try {
-      const data = JSON.stringify(req.body);
-      const stmt = db.prepare(`INSERT INTO ${table} (data) VALUES (?)`);
-      const result = stmt.run(data);
-      res.json({ id: result.lastInsertRowid });
+      const data = req.body;
+      const result = await pool.query(
+        `INSERT INTO ${table} (data) VALUES ($1) RETURNING id`,
+        [data]
+      );
+      res.json({ id: result.rows[0].id });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
   });
 
   // PUT (update)
-  app.put(`/api/${table}/:id`, (req, res) => {
+  app.put(`/api/${table}/:id`, async (req, res) => {
     try {
       const { id } = req.params;
-      const data = JSON.stringify(req.body);
-      const stmt = db.prepare(`UPDATE ${table} SET data = ? WHERE id = ?`);
-      stmt.run(data, id);
+      const data = req.body;
+      await pool.query(
+        `UPDATE ${table} SET data = $1 WHERE id = $2`,
+        [data, id]
+      );
       res.json({ message: 'Updated' });
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -65,11 +86,10 @@ tables.forEach(table => {
   });
 
   // DELETE
-  app.delete(`/api/${table}/:id`, (req, res) => {
+  app.delete(`/api/${table}/:id`, async (req, res) => {
     try {
       const { id } = req.params;
-      const stmt = db.prepare(`DELETE FROM ${table} WHERE id = ?`);
-      stmt.run(id);
+      await pool.query(`DELETE FROM ${table} WHERE id = $1`, [id]);
       res.json({ message: 'Deleted' });
     } catch (err) {
       res.status(500).json({ error: err.message });
