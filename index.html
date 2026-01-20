@@ -2817,23 +2817,21 @@
 			
 			</main>
 		</div>
-					<script>
-				// ===== CONFIGURAÇÃO DA API =====
-				// Detectar IP local automaticamente
-				const API_BASE_URL = (function() {
-					// Se estiver em localhost ou 127.0.0.1 no navegador
-					if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-						return 'http://localhost:3000';
-					}
-					// Se estiver acessando via IP (ex: 192.168.x.x)
-					if (window.location.hostname !== 'gidepinheiro20-lab.github.io') {
-						return 'http://' + window.location.hostname + ':3000';
-					}
-					// Se estiver via GitHub, conecta ao servidor remoto via LocalTunnel
-					return 'https://quick-sloths-send.loca.lt';
-				})();
-
-				async function sincronizarComServidor(tabela, dados) {
+			<script>
+			// ===== CONFIGURAÇÃO DA API =====
+			// Usar configuração do config.js (se existir) ou detectar automaticamente
+			const API_BASE_URL = window.API_BASE_URL || (function() {
+				// Fallback: Se não houver config.js, detectar IP local automaticamente
+				if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+					return 'http://localhost:3000';
+				}
+				// Se estiver acessando via IP (ex: 192.168.x.x)
+				if (window.location.hostname !== 'gidepinheiro20-lab.github.io') {
+					return 'http://' + window.location.hostname + ':3000';
+				}
+				// Fallback padrão
+				return null;
+			})();				async function sincronizarComServidor(tabela, dados) {
 					if (!API_BASE_URL) return false; // Se não houver API, retorna false
 					try {
 						const response = await fetch(API_BASE_URL + '/api/' + tabela, {
