@@ -2819,17 +2819,18 @@
 		</div>
 			<script>
 			// ===== CONFIGURAÇÃO DA API =====
-			// Usar configuração do config.js (se existir) ou detectar automaticamente
+			// Usar configuração do config.js (PRIORIDADE MÁXIMA)
 			const API_BASE_URL = window.API_BASE_URL || (function() {
-				// Fallback: Se não houver config.js, detectar IP local automaticamente
+				// Fallback: Se não houver config.js, detectar automaticamente
 				if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
 					return 'http://localhost:3000';
 				}
-				// Se estiver acessando via IP (ex: 192.168.x.x)
-				if (window.location.hostname !== 'gidepinheiro20-lab.github.io') {
+				// Se estiver acessando via IP local (ex: 192.168.x.x)
+				if (/^192\.168\.|^10\.|^172\.(1[6-9]|2[0-9]|3[01])\./.test(window.location.hostname)) {
 					return 'http://' + window.location.hostname + ':3000';
 				}
-				// Fallback padrão
+				// Fallback padrão: null (não conecta a servidor)
+				console.warn('⚠️ API_BASE_URL não configurada!');
 				return null;
 			})();				async function sincronizarComServidor(tabela, dados) {
 					if (!API_BASE_URL) return false; // Se não houver API, retorna false

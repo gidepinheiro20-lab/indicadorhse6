@@ -3,6 +3,7 @@
 
 const API_CONFIG = {
   // Servidor online no Render (acesso de qualquer lugar)
+  // IMPORTANTE: NÃO adicionar porta (:3000) - Render usa porta padrão HTTPS
   BASE_URL: 'https://indicadorhse6.onrender.com',
   
   // Alternativos:
