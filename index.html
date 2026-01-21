@@ -2968,12 +2968,36 @@
 				};
 			})();
 
-			console.log('🔄 Sistema de sincronização automática ativado!');
-			console.log('📡 Servidor:', API_BASE_URL);
+		console.log('🔄 Sistema de sincronização automática ativado!');
+		console.log('📡 Servidor:', API_BASE_URL);
 
-			// ===== FIM DA INTERCEPTAÇÃO =====
-			
-			// Mostrar sidebar no mobile
+		// ===== FORÇAR CARREGAMENTO DO SERVIDOR AO INICIAR =====
+		window.addEventListener('DOMContentLoaded', async function() {
+			if (API_BASE_URL) {
+				console.log('🔄 Carregando dados do servidor...');
+				try {
+					// Carregar empresas do servidor
+					const resEmpresas = await fetch(API_BASE_URL + '/api/empresas');
+					if (resEmpresas.ok) {
+						const empresas = await resEmpresas.json();
+						localStorage.setItem('empresas', JSON.stringify(empresas));
+						console.log('✅ Empresas carregadas do servidor:', empresas.length);
+					}
+					
+					// Carregar funcionários do servidor
+					const resFuncionarios = await fetch(API_BASE_URL + '/api/funcionarios');
+					if (resFuncionarios.ok) {
+						const funcionarios = await resFuncionarios.json();
+						localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
+						console.log('✅ Funcionários carregados do servidor:', funcionarios.length);
+					}
+				} catch (err) {
+					console.warn('⚠️ Erro ao carregar dados do servidor:', err.message);
+				}
+			}
+		});
+
+		// ===== FIM DA INTERCEPTAÇÃO =====			// Mostrar sidebar no mobile
 			function showSidebarOnMobile() {
 						document.querySelector('.sidebar').classList.remove('hidden-mobile');
 						document.querySelector('.main').classList.remove('full-screen-mobile');
