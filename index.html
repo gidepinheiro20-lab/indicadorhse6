@@ -4350,10 +4350,18 @@
 						console.log('Exibição concluída. Container innerHTML length:', container.innerHTML.length);
 					}
 					
-					// Excluir colaborador - Escopo Global
-					window.excluirFuncionario = function(matricula) {
-						console.log('Excluindo colaborador:', matricula);
-						if (confirm('Tem certeza que deseja excluir este colaborador?')) {
+				// Excluir colaborador - Escopo Global
+				window.excluirFuncionario = async function(matricula) {
+					console.log('Excluindo colaborador:', matricula);
+					if (confirm('Tem certeza que deseja excluir este colaborador?')) {
+						try {
+							// Excluir do servidor
+							const response = await fetch(`${API_BASE_URL}/api/funcionarios/${matricula}`, {
+								method: 'DELETE'
+							});
+							
+							if (!response.ok) throw new Error('Erro ao excluir funcionário');
+							
 							funcionarios = funcionarios.filter(function(f) { return f.matricula !== matricula; });
 							salvarFuncionarios();
 							exibirFuncionarios();
@@ -4362,10 +4370,12 @@
 								carregarFuncionariosRASEtapa6();
 							}
 							alert('Colaborador excluído com sucesso!');
+						} catch (error) {
+							console.error('Erro ao excluir funcionário:', error);
+							alert('Erro ao excluir funcionário do servidor. Tente novamente.');
 						}
 					}
-					
-					// Editar colaborador - Escopo Global
+				}					// Editar colaborador - Escopo Global
 					window.editarFuncionario = function(matricula) {
 						console.log('Editando colaborador:', matricula);
 						var funcionario = funcionarios.find(function(f) { return f.matricula === matricula; });
@@ -4421,34 +4431,45 @@
 						document.querySelector('#modal-funcionario h2').textContent = 'Novo Colaborador';
 					});
 					
-					// Cadastrar/Editar colaborador
-					document.getElementById('form-funcionario').addEventListener('submit', function(e) {
-						e.preventDefault();
-						
-						var matricula = document.getElementById('func-matricula').value;
-						var nome = document.getElementById('func-nome').value;
-						var funcao = document.getElementById('func-funcao').value;
-						var setor = document.getElementById('func-setor').value;
-						var admissao = document.getElementById('func-admissao').value;
-						var empresa = document.getElementById('func-empresa').value;
-						
-						var modal = document.getElementById('modal-funcionario');
-						var editando = modal.getAttribute('data-editando');
-						
+				// Cadastrar/Editar colaborador
+				document.getElementById('form-funcionario').addEventListener('submit', async function(e) {
+					e.preventDefault();
+					
+					var matricula = document.getElementById('func-matricula').value;
+					var nome = document.getElementById('func-nome').value;
+					var funcao = document.getElementById('func-funcao').value;
+					var setor = document.getElementById('func-setor').value;
+					var admissao = document.getElementById('func-admissao').value;
+					var empresa = document.getElementById('func-empresa').value;
+					
+					var modal = document.getElementById('modal-funcionario');
+					var editando = modal.getAttribute('data-editando');
+					
+					var funcionarioData = {
+						matricula: matricula,
+						nome: nome,
+						funcao: funcao,
+						setor: setor,
+						admissao: admissao,
+						empresa: empresa
+					};
+					
+					try {
 						if (editando) {
 							// Modo edição
+							const response = await fetch(`${API_BASE_URL}/api/funcionarios/${editando}`, {
+								method: 'PUT',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify(funcionarioData)
+							});
+							
+							if (!response.ok) throw new Error('Erro ao atualizar funcionário');
+							
 							var index = funcionarios.findIndex(function(f) { return f.matricula === editando; });
 							if (index !== -1) {
-								funcionarios[index] = {
-									matricula: matricula,
-									nome: nome,
-									funcao: funcao,
-									setor: setor,
-									admissao: admissao,
-									empresa: empresa
-								};
-								alert('Colaborador editado com sucesso!');
+								funcionarios[index] = funcionarioData;
 							}
+							alert('Colaborador editado com sucesso!');
 							modal.removeAttribute('data-editando');
 						} else {
 							// Modo cadastro - verificar se matrícula já existe
@@ -4458,24 +4479,28 @@
 								return;
 							}
 							
-							// Adicionar colaborador
-							funcionarios.push({
-								matricula: matricula,
-								nome: nome,
-								funcao: funcao,
-								setor: setor,
-								admissao: admissao,
-								empresa: empresa
+							// Enviar para o servidor
+							const response = await fetch(`${API_BASE_URL}/api/funcionarios`, {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify(funcionarioData)
 							});
+							
+							if (!response.ok) throw new Error('Erro ao cadastrar funcionário');
+							
+							// Adicionar colaborador
+							funcionarios.push(funcionarioData);
 							alert('Colaborador cadastrado com sucesso!');
 						}
 						
 						salvarFuncionarios();
 						exibirFuncionarios();
 						document.getElementById('modal-funcionario').style.display = 'none';
-					});
-					
-
+					} catch (error) {
+						console.error('Erro ao salvar funcionário:', error);
+						alert('Erro ao salvar funcionário no servidor. Tente novamente.');
+					}
+				});
 					
 					// Variáveis globais para importação
 					var dadosPreview = [];
@@ -5720,20 +5745,18 @@
 						if (document.getElementById('ras-brigada')) document.getElementById('ras-brigada').value = ras.brigada || '';
 					}
 					
-					// Salvar empresas no localStorage
-					function salvarEmpresas() {
-						try {
-							localStorage.setItem('empresas', JSON.stringify(empresas));
-							console.log('Empresas salvas:', empresas.length);
-							// Atualizar dropdowns quando empresas forem salvas
-							carregarEmpresasRAS();
-							carregarEmpresasColaborador();
-						} catch(e) {
-							console.error('Erro ao salvar empresas:', e);
-						}
+				// Salvar empresas no localStorage E NO SERVIDOR
+				async function salvarEmpresas() {
+					try {
+						localStorage.setItem('empresas', JSON.stringify(empresas));
+						console.log('Empresas salvas no localStorage:', empresas.length);
+						// Atualizar dropdowns quando empresas forem salvas
+						carregarEmpresasRAS();
+						carregarEmpresasColaborador();
+					} catch(e) {
+						console.error('Erro ao salvar empresas:', e);
 					}
-					
-					// Exibir lista de empresas
+				}					// Exibir lista de empresas
 					function exibirEmpresas() {
 						var container = document.getElementById('empresas-lista');
 						var total = document.getElementById('total-empresas');
@@ -5805,37 +5828,49 @@
 						document.getElementById('modal-empresa').removeAttribute('data-editando');
 					}
 					
-					// Cadastrar/editar empresa
-					function cadastrarEmpresa() {
-						var nome = document.getElementById('emp-nome').value.trim();
-						var cnpj = document.getElementById('emp-cnpj').value.trim();
-						var cnae = document.getElementById('emp-cnae').value.trim();
-						var ramoAtividade = document.getElementById('emp-ramo-atividade').value.trim();
-						var grauRisco = document.getElementById('emp-grau-risco').value.trim();
-						var contato = document.getElementById('emp-contato').value.trim();
-						
-						if (!nome || !cnpj) {
-							alert('Nome da Empresa e CNPJ são obrigatórios!');
-							return;
-						}
-						
-						var modal = document.getElementById('modal-empresa');
-						var editando = modal.getAttribute('data-editando');
-						
+				
+				// Cadastrar/editar empresa
+				async function cadastrarEmpresa() {
+					var nome = document.getElementById('emp-nome').value.trim();
+					var cnpj = document.getElementById('emp-cnpj').value.trim();
+					var cnae = document.getElementById('emp-cnae').value.trim();
+					var ramoAtividade = document.getElementById('emp-ramo-atividade').value.trim();
+					var grauRisco = document.getElementById('emp-grau-risco').value.trim();
+					var contato = document.getElementById('emp-contato').value.trim();
+					
+					if (!nome || !cnpj) {
+						alert('Nome da Empresa e CNPJ são obrigatórios!');
+						return;
+					}
+					
+					var modal = document.getElementById('modal-empresa');
+					var editando = modal.getAttribute('data-editando');
+					
+					var empresaData = {
+						nome: nome,
+						cnpj: cnpj,
+						cnae: cnae,
+						ramoAtividade: ramoAtividade,
+						grauRisco: grauRisco,
+						contato: contato
+					};
+					
+					try {
 						if (editando) {
 							// Editando empresa existente
+							const response = await fetch(`${API_BASE_URL}/api/empresas/${editando}`, {
+								method: 'PUT',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify(empresaData)
+							});
+							
+							if (!response.ok) throw new Error('Erro ao atualizar empresa');
+							
 							var index = empresas.findIndex(function(e) { return e.cnpj === editando; });
 							if (index !== -1) {
-								empresas[index] = {
-									nome: nome,
-									cnpj: cnpj,
-									cnae: cnae,
-									ramoAtividade: ramoAtividade,
-									grauRisco: grauRisco,
-									contato: contato
-								};
-								alert('Empresa atualizada com sucesso!');
+								empresas[index] = empresaData;
 							}
+							alert('Empresa atualizada com sucesso!');
 						} else {
 							// Nova empresa
 							var existe = empresas.find(function(e) { return e.cnpj === cnpj; });
@@ -5844,34 +5879,51 @@
 								return;
 							}
 							
-							empresas.push({
-								nome: nome,
-								cnpj: cnpj,
-								cnae: cnae,
-								ramoAtividade: ramoAtividade,
-								grauRisco: grauRisco,
-								contato: contato
+							// Enviar para o servidor
+							const response = await fetch(`${API_BASE_URL}/api/empresas`, {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify(empresaData)
 							});
+							
+							if (!response.ok) throw new Error('Erro ao cadastrar empresa');
+							
+							empresas.push(empresaData);
 							alert('Empresa cadastrada com sucesso!');
 						}
 						
 						salvarEmpresas();
 						exibirEmpresas();
 						fecharModalEmpresa();
+				} catch (error) {
+					console.error('Erro ao salvar empresa:', error);
+					alert('Erro ao salvar empresa no servidor. Tente novamente.');
+				}
+			}
+			
+			// Excluir empresa - Escopo Global
+			window.excluirEmpresa = async function(cnpj) {
+				console.log('Excluindo empresa:', cnpj);
+				if (confirm('Tem certeza que deseja excluir esta empresa?')) {
+					try {
+						// Excluir do servidor
+						const response = await fetch(`${API_BASE_URL}/api/empresas/${cnpj}`, {
+							method: 'DELETE'
+						});
+						
+						if (!response.ok) throw new Error('Erro ao excluir empresa');
+						
+						// Excluir localmente
+						empresas = empresas.filter(function(e) { return e.cnpj !== cnpj; });
+						salvarEmpresas();
+						exibirEmpresas();
+						alert('Empresa excluída com sucesso!');
+					} catch (error) {
+						console.error('Erro ao excluir empresa:', error);
+						alert('Erro ao excluir empresa do servidor. Tente novamente.');
 					}
-					
-					// Excluir empresa - Escopo Global
-					window.excluirEmpresa = function(cnpj) {
-						console.log('Excluindo empresa:', cnpj);
-						if (confirm('Tem certeza que deseja excluir esta empresa?')) {
-							empresas = empresas.filter(function(e) { return e.cnpj !== cnpj; });
-							salvarEmpresas();
-							exibirEmpresas();
-							alert('Empresa excluída com sucesso!');
-						}
-					}
-					
-					// Editar empresa - Escopo Global
+				}
+			}					// Editar empresa - Escopo Global
 					window.editarEmpresa = function(cnpj) {
 						console.log('Editando empresa:', cnpj);
 						var empresa = empresas.find(function(e) { return e.cnpj === cnpj; });
