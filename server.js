@@ -95,6 +95,16 @@ tables.forEach(table => {
       res.status(500).json({ error: err.message });
     }
   });
+
+  // DELETE ALL (limpar tabela)
+  app.delete(`/api/${table}`, async (req, res) => {
+    try {
+      await pool.query(`DELETE FROM ${table}`);
+      res.json({ message: `All data deleted from ${table}` });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
 });
 
 app.listen(port, '0.0.0.0', () => {
