@@ -2925,49 +2925,20 @@
 				await localStorage.setItemSync(key, valueStr);
 			}
 
-			// ===== FIM DAS FUNÇÕES WRAPPER =====
+		// ===== FIM DAS FUNÇÕES WRAPPER =====
 
-			// INTERCEPTAR TODAS AS CHAMADAS DE localStorage.setItem
-			(function() {
-				const originalSetItem = localStorage.setItem;
+		// INTERCEPTAR TODAS AS CHAMADAS DE localStorage.setItem
+		(function() {
+			const originalSetItem = localStorage.setItem;
+			
+			localStorage.setItem = function(key, value) {
+				// Chamar o original
+				originalSetItem.call(localStorage, key, value);
 				
-				localStorage.setItem = function(key, value) {
-					// Chamar o original
-					originalSetItem.call(localStorage, key, value);
-					
-					// Lista de chaves que devem ser sincronizadas
-					const keysParaSincronizar = [
-						'funcionarios', 'empresas', 'ras_reunioes', 'usuarios', 
-						'historico_ras', 'cpts', 'inspecoes', 'categorias_hse', 
-						'areasLocais', 'tiposRegistro', 'riscosPerigos', 'arts',
-						'frequencias', 'categorias', 'riscos', 'categorias-hse'
-					];
-					
-					// Se a chave está na lista, sincronizar
-					if (keysParaSincronizar.includes(key)) {
-						(async function() {
-							try {
-								const dados = JSON.parse(value);
-								// Se for array, sincronizar cada item
-								if (Array.isArray(dados)) {
-									for (let item of dados) {
-										if (!item.id) item.id = Date.now() + Math.random();
-										await sincronizarComServidor(key, item);
-									}
-									console.log(`✅ ${dados.length} itens de "${key}" sincronizados`);
-								} else {
-									if (!dados.id) dados.id = Date.now() + Math.random();
-									await sincronizarComServidor(key, dados);
-									console.log(`✅ Item de "${key}" sincronizado`);
-								}
-							} catch (e) {
-								console.warn(`⚠️ Erro ao sincronizar "${key}":`, e.message);
-							}
-						})();
-					}
-				};
-			})();
-
+				// DESABILITADO: Sincronização automática no setItem causa duplicação
+				// A sincronização é feita apenas no carregamento inicial da página
+			};
+		})();
 		console.log('🔄 Sistema de sincronização automática ativado!');
 		console.log('📡 Servidor:', API_BASE_URL);
 
