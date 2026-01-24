@@ -4254,15 +4254,16 @@
 				async function salvarAlteracoesFuncionarios() {
 					try {
 						for (const op of pendingOpsFuncionarios) {
+							const targetId = op.id || op.key;
 							if (op.type === 'edit') {
-								const resp = await fetch(`${API_BASE_URL}/api/funcionarios/${op.key}`, {
+								const resp = await fetch(`${API_BASE_URL}/api/funcionarios/${targetId}`, {
 									method: 'PUT',
 									headers: { 'Content-Type': 'application/json' },
 									body: JSON.stringify(op.data)
 								});
 								if (!resp.ok) throw new Error('Falha ao salvar edição de funcionário');
 							} else if (op.type === 'delete') {
-								const resp = await fetch(`${API_BASE_URL}/api/funcionarios/${op.key}`, { method: 'DELETE' });
+								const resp = await fetch(`${API_BASE_URL}/api/funcionarios/${targetId}`, { method: 'DELETE' });
 								if (!resp.ok) throw new Error('Falha ao excluir funcionário no servidor');
 							}
 						}
@@ -4421,8 +4422,9 @@
 				window.excluirFuncionario = function(matricula) {
 					console.log('Excluindo colaborador:', matricula);
 					if (confirm('Tem certeza que deseja excluir este colaborador?')) {
+						var alvo = funcionarios.find(function(f) { return f.matricula === matricula; });
 						funcionarios = funcionarios.filter(function(f) { return f.matricula !== matricula; });
-						pendingOpsFuncionarios.push({ type: 'delete', key: matricula });
+						pendingOpsFuncionarios.push({ type: 'delete', key: matricula, id: alvo && alvo.id });
 						showFuncionariosSaveBar();
 						salvarFuncionarios();
 						exibirFuncionarios();
@@ -4513,11 +4515,12 @@
 					
 					try {
 						if (editando) {
-							// Editar localmente e marcar como pendente
+							// Editar localmente e marcar como pendente (preserva id)
 							var index = funcionarios.findIndex(function(f) { return f.matricula === editando; });
 							if (index !== -1) {
+								if (funcionarios[index].id) funcionarioData.id = funcionarios[index].id;
 								funcionarios[index] = funcionarioData;
-								pendingOpsFuncionarios.push({ type: 'edit', key: editando, data: funcionarioData });
+								pendingOpsFuncionarios.push({ type: 'edit', key: editando, id: funcionarioData.id, data: funcionarioData });
 								showFuncionariosSaveBar();
 							}
 							alert('Colaborador editado. Clique em "Salvar alterações" para enviar ao servidor.');
@@ -4538,7 +4541,9 @@
 							});
 							
 							if (!response.ok) throw new Error('Erro ao cadastrar funcionário');
-							
+							const resJson = await response.json();
+							if (resJson && resJson.id) funcionarioData.id = resJson.id;
+						
 							// Adicionar colaborador
 							funcionarios.push(funcionarioData);
 							alert('Colaborador cadastrado com sucesso!');
@@ -5822,15 +5827,16 @@
 				async function salvarAlteracoesEmpresas() {
 					try {
 						for (const op of pendingOpsEmpresas) {
+							const targetId = op.id || op.key;
 							if (op.type === 'edit') {
-								const resp = await fetch(`${API_BASE_URL}/api/empresas/${op.key}`, {
+								const resp = await fetch(`${API_BASE_URL}/api/empresas/${targetId}`, {
 									method: 'PUT',
 									headers: { 'Content-Type': 'application/json' },
 									body: JSON.stringify(op.data)
 								});
 								if (!resp.ok) throw new Error('Falha ao salvar edição de empresa');
 							} else if (op.type === 'delete') {
-								const resp = await fetch(`${API_BASE_URL}/api/empresas/${op.key}`, { method: 'DELETE' });
+								const resp = await fetch(`${API_BASE_URL}/api/empresas/${targetId}`, { method: 'DELETE' });
 								if (!resp.ok) throw new Error('Falha ao excluir empresa no servidor');
 							}
 						}
@@ -5956,11 +5962,12 @@
 					
 					try {
 						if (editando) {
-							// Editar localmente e marcar como pendente
+							// Editar localmente e marcar como pendente (preserva id)
 							var index = empresas.findIndex(function(e) { return e.cnpj === editando; });
 							if (index !== -1) {
+								if (empresas[index].id) empresaData.id = empresas[index].id;
 								empresas[index] = empresaData;
-								pendingOpsEmpresas.push({ type: 'edit', key: editando, data: empresaData });
+								pendingOpsEmpresas.push({ type: 'edit', key: editando, id: empresaData.id, data: empresaData });
 								showEmpresasSaveBar();
 							}
 							alert('Empresa editada. Clique em "Salvar alterações" para enviar ao servidor.');
@@ -5980,7 +5987,9 @@
 							});
 							
 							if (!response.ok) throw new Error('Erro ao cadastrar empresa');
-							
+							const resJson = await response.json();
+							if (resJson && resJson.id) empresaData.id = resJson.id;
+						
 							empresas.push(empresaData);
 							alert('Empresa cadastrada com sucesso!');
 						}
@@ -5998,9 +6007,10 @@
 			window.excluirEmpresa = function(cnpj) {
 				console.log('Excluindo empresa:', cnpj);
 				if (confirm('Tem certeza que deseja excluir esta empresa?')) {
-					// Excluir localmente e marcar como pendente
+					// Excluir localmente e marcar como pendente (com id se existir)
+					var alvo = empresas.find(function(e) { return e.cnpj === cnpj; });
 					empresas = empresas.filter(function(e) { return e.cnpj !== cnpj; });
-					pendingOpsEmpresas.push({ type: 'delete', key: cnpj });
+					pendingOpsEmpresas.push({ type: 'delete', key: cnpj, id: alvo && alvo.id });
 					showEmpresasSaveBar();
 					salvarEmpresas();
 					exibirEmpresas();
