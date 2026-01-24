@@ -945,6 +945,17 @@
 						</div>
 						
 						<div style="padding:24px">
+							<!-- Barra de salvar alterações (Empresa) -->
+							<div id="empresas-save-bar" style="display:none;margin-bottom:16px;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;padding:12px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:12px">
+								<div style="display:flex;align-items:center;gap:8px">
+									<span>💾</span>
+									<span><strong>Alterações não salvas</strong> em empresas.</span>
+								</div>
+								<div style="display:flex;gap:8px">
+									<button type="button" onclick="salvarAlteracoesEmpresas()" style="background:#f59e0b;color:#fff;padding:8px 12px;border:none;border-radius:6px;cursor:pointer">Salvar alterações</button>
+									<button type="button" onclick="descartarAlteracoesEmpresas()" style="background:#6b7280;color:#fff;padding:8px 12px;border:none;border-radius:6px;cursor:pointer">Descartar</button>
+								</div>
+							</div>
 							<!-- Lista de Empresas -->
 							<div id="lista-empresas-secao" style="margin-bottom:24px">
 								<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem">Lista de Empresas</h3>
@@ -1056,6 +1067,17 @@
 						</div>
 						
 						<div style="padding:24px">
+							<!-- Barra de salvar alterações (Funcionários) -->
+							<div id="funcionarios-save-bar" style="display:none;margin-bottom:16px;background:#eff6ff;border:1px solid #93c5fd;color:#1e3a8a;padding:12px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:12px">
+								<div style="display:flex;align-items:center;gap:8px">
+									<span>💾</span>
+									<span><strong>Alterações não salvas</strong> em colaboradores.</span>
+								</div>
+								<div style="display:flex;gap:8px">
+									<button type="button" onclick="salvarAlteracoesFuncionarios()" style="background:#3b82f6;color:#fff;padding:8px 12px;border:none;border-radius:6px;cursor:pointer">Salvar alterações</button>
+									<button type="button" onclick="descartarAlteracoesFuncionarios()" style="background:#6b7280;color:#fff;padding:8px 12px;border:none;border-radius:6px;cursor:pointer">Descartar</button>
+								</div>
+							</div>
 							<!-- Lista de Colaboradores -->
 							<div id="lista-funcionarios-secao" style="margin-bottom:24px">
 								<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem">Lista de Colaboradores</h3>
@@ -4196,29 +4218,74 @@
 						} catch(e) { console.error('Erro ao carregar funcionarios do Firestore:', e); }
 					}
 
-					// Salvar funcionários: escreve em Firestore (se ativo) e em localStorage
-					window.salvarFuncionarios = async function() {
-						try {
-							// Salvar localmente sempre
-							localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
-							console.log('Funcionários salvos localmente:', funcionarios.length);
-							// Se Firestore ativo, sincronizar (cada documento terá id = matricula)
-							if(firebaseEnabled && db) {
-								for(var i=0;i<funcionarios.length;i++){
-									var f = funcionarios[i];
-									if(!f.matricula) continue;
-									try { await db.collection('funcionarios').doc(String(f.matricula)).set(f); } catch(e){ console.error('Erro ao salvar funcionario no Firestore', f, e); }
-								}
-								console.log('Funcionários sincronizados com Firestore');
+				// Salvar funcionários: escreve em Firestore (se ativo) e em localStorage
+				window.salvarFuncionarios = async function() {
+					try {
+						// Salvar localmente sempre
+						localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
+						console.log('Funcionários salvos localmente:', funcionarios.length);
+						// Se Firestore ativo, sincronizar (cada documento terá id = matricula)
+						if(firebaseEnabled && db) {
+							for(var i=0;i<funcionarios.length;i++){
+								var f = funcionarios[i];
+								if(!f.matricula) continue;
+								try { await db.collection('funcionarios').doc(String(f.matricula)).set(f); } catch(e){ console.error('Erro ao salvar funcionario no Firestore', f, e); }
 							}
-							// Atualizar dropdowns da RAS
-							carregarColaboradoresRAS();
-							carregarEmpresasColaborador();
-						} catch(e) {
-							console.error('Erro ao salvar funcionários:', e);
+							console.log('Funcionários sincronizados com Firestore');
 						}
+						// Atualizar dropdowns da RAS
+						carregarColaboradoresRAS();
+						carregarEmpresasColaborador();
+					} catch(e) {
+						console.error('Erro ao salvar funcionários:', e);
 					}
+				}
 
+				// Controle de alterações pendentes (Funcionários)
+				var pendingOpsFuncionarios = [];
+				function showFuncionariosSaveBar() {
+					var bar = document.getElementById('funcionarios-save-bar');
+					if (bar) bar.style.display = 'flex';
+				}
+				function hideFuncionariosSaveBar() {
+					var bar = document.getElementById('funcionarios-save-bar');
+					if (bar) bar.style.display = 'none';
+				}
+				async function salvarAlteracoesFuncionarios() {
+					try {
+						for (const op of pendingOpsFuncionarios) {
+							if (op.type === 'edit') {
+								const resp = await fetch(`${API_BASE_URL}/api/funcionarios/${op.key}`, {
+									method: 'PUT',
+									headers: { 'Content-Type': 'application/json' },
+									body: JSON.stringify(op.data)
+								});
+								if (!resp.ok) throw new Error('Falha ao salvar edição de funcionário');
+							} else if (op.type === 'delete') {
+								const resp = await fetch(`${API_BASE_URL}/api/funcionarios/${op.key}`, { method: 'DELETE' });
+								if (!resp.ok) throw new Error('Falha ao excluir funcionário no servidor');
+							}
+						}
+						pendingOpsFuncionarios = [];
+						hideFuncionariosSaveBar();
+						exibirFuncionarios();
+						alert('Alterações de colaboradores salvas no servidor.');
+					} catch (err) {
+						console.error('Erro ao salvar alterações de funcionários:', err);
+						alert('Erro ao salvar alterações de funcionários. Tente novamente.');
+					}
+				}
+				function descartarAlteracoesFuncionarios() {
+					pendingOpsFuncionarios = [];
+					hideFuncionariosSaveBar();
+					// Recarregar do servidor se disponível
+					if (typeof carregarFuncionariosDoServidor === 'function') {
+						carregarFuncionariosDoServidor();
+					}
+					else {
+						window.location.reload();
+					}
+				}
 					// Ao carregar a página, tentar inicializar Firebase automaticamente se existir configuração global
 					window.addEventListener('load', function(){
 
@@ -4351,29 +4418,19 @@
 					}
 					
 				// Excluir colaborador - Escopo Global
-				window.excluirFuncionario = async function(matricula) {
+				window.excluirFuncionario = function(matricula) {
 					console.log('Excluindo colaborador:', matricula);
 					if (confirm('Tem certeza que deseja excluir este colaborador?')) {
-						try {
-							// Excluir do servidor
-							const response = await fetch(`${API_BASE_URL}/api/funcionarios/${matricula}`, {
-								method: 'DELETE'
-							});
-							
-							if (!response.ok) throw new Error('Erro ao excluir funcionário');
-							
-							funcionarios = funcionarios.filter(function(f) { return f.matricula !== matricula; });
-							salvarFuncionarios();
-							exibirFuncionarios();
-							// Atualizar lista da RAS Etapa 6 se estiver visível
-							if (document.getElementById('ras-etapa-6').style.display === 'block') {
-								carregarFuncionariosRASEtapa6();
-							}
-							alert('Colaborador excluído com sucesso!');
-						} catch (error) {
-							console.error('Erro ao excluir funcionário:', error);
-							alert('Erro ao excluir funcionário do servidor. Tente novamente.');
+						funcionarios = funcionarios.filter(function(f) { return f.matricula !== matricula; });
+						pendingOpsFuncionarios.push({ type: 'delete', key: matricula });
+						showFuncionariosSaveBar();
+						salvarFuncionarios();
+						exibirFuncionarios();
+						// Atualizar lista da RAS Etapa 6 se estiver visível
+						if (document.getElementById('ras-etapa-6').style.display === 'block') {
+							carregarFuncionariosRASEtapa6();
 						}
+						alert('Exclusão marcada. Clique em \"Salvar alterações\" para enviar ao servidor.');
 					}
 				}					// Editar colaborador - Escopo Global
 					window.editarFuncionario = function(matricula) {
@@ -4456,20 +4513,14 @@
 					
 					try {
 						if (editando) {
-							// Modo edição
-							const response = await fetch(`${API_BASE_URL}/api/funcionarios/${editando}`, {
-								method: 'PUT',
-								headers: { 'Content-Type': 'application/json' },
-								body: JSON.stringify(funcionarioData)
-							});
-							
-							if (!response.ok) throw new Error('Erro ao atualizar funcionário');
-							
+							// Editar localmente e marcar como pendente
 							var index = funcionarios.findIndex(function(f) { return f.matricula === editando; });
 							if (index !== -1) {
 								funcionarios[index] = funcionarioData;
+								pendingOpsFuncionarios.push({ type: 'edit', key: editando, data: funcionarioData });
+								showFuncionariosSaveBar();
 							}
-							alert('Colaborador editado com sucesso!');
+							alert('Colaborador editado. Clique em "Salvar alterações" para enviar ao servidor.');
 							modal.removeAttribute('data-editando');
 						} else {
 							// Modo cadastro - verificar se matrícula já existe
@@ -5756,23 +5807,71 @@
 					} catch(e) {
 						console.error('Erro ao salvar empresas:', e);
 					}
-				}					// Exibir lista de empresas
-					function exibirEmpresas() {
-						var container = document.getElementById('empresas-lista');
-						var total = document.getElementById('total-empresas');
-						
-						if (!container || !total) {
-							console.error('Elementos não encontrados:', {container: !!container, total: !!total});
-							return;
+				}
+
+				// Controle de alterações pendentes (Empresa)
+				var pendingOpsEmpresas = [];
+				function showEmpresasSaveBar() {
+					var bar = document.getElementById('empresas-save-bar');
+					if (bar) bar.style.display = 'flex';
+				}
+				function hideEmpresasSaveBar() {
+					var bar = document.getElementById('empresas-save-bar');
+					if (bar) bar.style.display = 'none';
+				}
+				async function salvarAlteracoesEmpresas() {
+					try {
+						for (const op of pendingOpsEmpresas) {
+							if (op.type === 'edit') {
+								const resp = await fetch(`${API_BASE_URL}/api/empresas/${op.key}`, {
+									method: 'PUT',
+									headers: { 'Content-Type': 'application/json' },
+									body: JSON.stringify(op.data)
+								});
+								if (!resp.ok) throw new Error('Falha ao salvar edição de empresa');
+							} else if (op.type === 'delete') {
+								const resp = await fetch(`${API_BASE_URL}/api/empresas/${op.key}`, { method: 'DELETE' });
+								if (!resp.ok) throw new Error('Falha ao excluir empresa no servidor');
+							}
 						}
-						
-						// Sempre recarregar do localStorage
-						try {
-							empresas = JSON.parse(localStorage.getItem('empresas')) || [];
-						} catch(e) { 
-							console.error('Erro ao carregar empresas:', e);
-							empresas = []; 
-						}
+						pendingOpsEmpresas = [];
+						hideEmpresasSaveBar();
+						exibirEmpresas();
+						alert('Alterações de empresas salvas no servidor.');
+					} catch (err) {
+						console.error('Erro ao salvar alterações de empresas:', err);
+						alert('Erro ao salvar alterações de empresas. Tente novamente.');
+					}
+				}
+				function descartarAlteracoesEmpresas() {
+					pendingOpsEmpresas = [];
+					hideEmpresasSaveBar();
+					// Recarregar do servidor se disponível
+					if (typeof carregarEmpresasDoServidor === 'function') {
+						carregarEmpresasDoServidor();
+					}
+					else {
+						window.location.reload();
+					}
+				}
+
+				// Exibir lista de empresas
+				function exibirEmpresas() {
+					var container = document.getElementById('empresas-lista');
+					var total = document.getElementById('total-empresas');
+					
+					if (!container || !total) {
+						console.error('Elementos não encontrados:', {container: !!container, total: !!total});
+						return;
+					}
+					
+					// Sempre recarregar do localStorage
+					try {
+						empresas = JSON.parse(localStorage.getItem('empresas')) || [];
+					} catch(e) { 
+						console.error('Erro ao carregar empresas:', e);
+						empresas = []; 
+					}
 						
 						console.log('EXIBIR: Total de empresas:', empresas.length, empresas);
 						
@@ -5857,20 +5956,14 @@
 					
 					try {
 						if (editando) {
-							// Editando empresa existente
-							const response = await fetch(`${API_BASE_URL}/api/empresas/${editando}`, {
-								method: 'PUT',
-								headers: { 'Content-Type': 'application/json' },
-								body: JSON.stringify(empresaData)
-							});
-							
-							if (!response.ok) throw new Error('Erro ao atualizar empresa');
-							
+							// Editar localmente e marcar como pendente
 							var index = empresas.findIndex(function(e) { return e.cnpj === editando; });
 							if (index !== -1) {
 								empresas[index] = empresaData;
+								pendingOpsEmpresas.push({ type: 'edit', key: editando, data: empresaData });
+								showEmpresasSaveBar();
 							}
-							alert('Empresa atualizada com sucesso!');
+							alert('Empresa editada. Clique em "Salvar alterações" para enviar ao servidor.');
 						} else {
 							// Nova empresa
 							var existe = empresas.find(function(e) { return e.cnpj === cnpj; });
@@ -5902,26 +5995,16 @@
 			}
 			
 			// Excluir empresa - Escopo Global
-			window.excluirEmpresa = async function(cnpj) {
+			window.excluirEmpresa = function(cnpj) {
 				console.log('Excluindo empresa:', cnpj);
 				if (confirm('Tem certeza que deseja excluir esta empresa?')) {
-					try {
-						// Excluir do servidor
-						const response = await fetch(`${API_BASE_URL}/api/empresas/${cnpj}`, {
-							method: 'DELETE'
-						});
-						
-						if (!response.ok) throw new Error('Erro ao excluir empresa');
-						
-						// Excluir localmente
-						empresas = empresas.filter(function(e) { return e.cnpj !== cnpj; });
-						salvarEmpresas();
-						exibirEmpresas();
-						alert('Empresa excluída com sucesso!');
-					} catch (error) {
-						console.error('Erro ao excluir empresa:', error);
-						alert('Erro ao excluir empresa do servidor. Tente novamente.');
-					}
+					// Excluir localmente e marcar como pendente
+					empresas = empresas.filter(function(e) { return e.cnpj !== cnpj; });
+					pendingOpsEmpresas.push({ type: 'delete', key: cnpj });
+					showEmpresasSaveBar();
+					salvarEmpresas();
+					exibirEmpresas();
+					alert('Exclusão marcada. Clique em "Salvar alterações" para enviar ao servidor.');
 				}
 			}					// Editar empresa - Escopo Global
 					window.editarEmpresa = function(cnpj) {
