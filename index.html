@@ -9040,7 +9040,7 @@
 					}
 				}
 				
-				// Processar PDF e extrair dados com IA (simulado)
+				// Processar PDF e extrair dados
 				function procesarPDFYExtraerDatos(event) {
 					var file = event.target.files[0];
 					if (!file) return;
@@ -9048,13 +9048,21 @@
 					document.getElementById('pdf-status').style.display = 'block';
 					document.getElementById('pdf-status').innerHTML = '⏳ Processando PDF...';
 					
-					// Usar PDF.js para extrair texto
+					// Extrair texto do PDF usando FileReader
 					var reader = new FileReader();
 					reader.onload = function(e) {
 						var arrayBuffer = e.target.result;
+						var uint8Array = new Uint8Array(arrayBuffer);
+						var textoExtraido = '';
 						
-						// Simular extração de dados de PDF
-						var textoExtraido = 'Participação da CPT\nAutor: Niltomar Marinho Barbosa de Almeida\nData: 26/01/2026\nSetor: HSE';
+						// Extrair texto do PDF (método simplificado para texto não codificado)
+						for (var i = 0; i < uint8Array.length; i++) {
+							var char = String.fromCharCode(uint8Array[i]);
+							if (char.match(/[\x20-\x7E\xC0-\xFF\n\r]/)) {
+								textoExtraido += char;
+							}
+						}
+						
 						var dadosExtraidos = extrairDadosDoTexto(textoExtraido);
 						
 						// Preencher campos automaticamente
