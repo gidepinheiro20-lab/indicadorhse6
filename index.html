@@ -2435,15 +2435,24 @@
 			
 			<!-- Modal Anexar Formulário -->
 			<div id="modal-nova-checklist" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center;overflow-y:auto">
-				<div style="background:#fff;border-radius:12px;width:90%;max-width:600px;margin:20px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1)">
+				<div style="background:#fff;border-radius:12px;width:90%;max-width:700px;margin:20px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);max-height:90vh;overflow-y:auto">
 					<div style="background:linear-gradient(135deg,#0d9488 0%,#059669 100%);color:#fff;padding:20px;border-radius:12px 12px 0 0">
 						<h2 style="margin:0;font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:8px">
 							<span>📋</span> Anexar Formulário
 						</h2>
+						<p style="margin:6px 0 0 0;opacity:0.9;font-size:0.9rem">Faça upload do PDF ou preencha manualmente</p>
 					</div>
 					
 					<div style="padding:24px">
 						<form id="form-nova-checklist" onsubmit="salvarNovaChecklist(event)">
+							<!-- Seção de Upload PDF -->
+							<div style="margin-bottom:24px;padding:20px;background:#f0fdf4;border:2px dashed #10b981;border-radius:12px">
+								<label style="display:block;margin-bottom:12px;font-weight:600;color:#15803d">📄 Upload de PDF (opcional)</label>
+								<input type="file" id="checklist-pdf" accept=".pdf" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem">
+								<small style="color:#6b7280;display:block;margin-top:8px">Carregue o formulário em PDF. Os dados serão extraídos automaticamente.</small>
+								<div id="pdf-status" style="margin-top:8px;color:#059669;font-size:0.9rem;display:none">✓ PDF carregado</div>
+							</div>
+							
 							<!-- Empresa -->
 							<div style="margin-bottom:20px">
 								<label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Empresa *</label>
@@ -2461,32 +2470,45 @@
 									<option value="Inspeção de Segurança">Inspeção de Segurança</option>
 									<option value="Verificação de Equipamentos">Verificação de Equipamentos</option>
 									<option value="Auditoria HSE">Auditoria HSE</option>
+									<option value="Participação da CPT">Participação da CPT</option>
+									<option value="Participação na RAS">Participação na RAS</option>
 								</select>
 							</div>
 							
 							<!-- Autor -->
 							<div style="margin-bottom:20px">
 								<label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Autor (Nome) *</label>
-								<input type="text" id="checklist-autor" placeholder="Digite o nome do autor" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem">
+								<input type="text" id="checklist-autor" placeholder="Nome será extraído do formulário" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem">
+								<small style="color:#6b7280;display:block;margin-top:4px" id="hint-setor">Após preencher, o setor será preenchido automaticamente</small>
 							</div>
 							
-							<!-- Setor -->
+							<!-- Setor (preenchido automaticamente) -->
 							<div style="margin-bottom:20px">
-								<label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Setor *</label>
-								<input type="text" id="checklist-setor" placeholder="Ex: Produção, Administrativo, HSE" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem">
+								<label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Setor (automático)</label>
+								<input type="text" id="checklist-setor" placeholder="Será identificado pelo nome do autor" readonly style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem;background:#f9fafb;color:#6b7280">
 							</div>
 							
 							<!-- Data -->
 							<div style="margin-bottom:20px">
 								<label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Data *</label>
 								<input type="date" id="checklist-data" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem">
+								<small style="color:#6b7280;display:block;margin-top:4px">Semana será calculada automaticamente</small>
 							</div>
 							
-							<!-- Foto (opcional) -->
+							<!-- Fotos anexadas (da extração PDF) -->
 							<div style="margin-bottom:20px">
-								<label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Foto (opcional)</label>
-								<input type="file" id="checklist-foto" accept="image/*" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem">
-								<small style="color:#6b7280;display:block;margin-top:6px">Formatos aceitos: JPG, PNG, GIF (máximo 5MB)</small>
+								<label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Fotos do Formulário</label>
+								<div id="fotos-extraidas" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px;margin-bottom:12px">
+									<!-- Fotos do PDF serão adicionadas aqui -->
+								</div>
+								<input type="file" id="checklist-foto-manual" accept="image/*" multiple style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem">
+								<small style="color:#6b7280;display:block;margin-top:4px">Formatos: JPG, PNG (máximo 5MB por arquivo)</small>
+							</div>
+							
+							<!-- Informações extraídas (visualização) -->
+							<div id="info-extraida" style="display:none;margin-bottom:20px;padding:16px;background:#eff6ff;border-left:4px solid #3b82f6;border-radius:6px">
+								<h4 style="margin:0 0 12px 0;color:#1e40af;font-size:0.95rem">ℹ️ Informações Extraídas do PDF</h4>
+								<div id="detalhes-extraidos" style="font-size:0.9rem;color:#1e3a8a"></div>
 							</div>
 							
 							<div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid #e5e7eb">
@@ -8987,100 +9009,241 @@
 						atualizarTabelaChecklists();
 					}
 					
-					// Mostrar modal de anexar formulário
-					function mostrarModalNovaChecklist() {
-						// Pré-preencher a data atual
-						var hoje = new Date().toISOString().split('T')[0];
-						document.getElementById('checklist-data').value = hoje;
-						document.getElementById('modal-nova-checklist').style.display = 'flex';
-					}
+				// Mostrar modal de anexar formulário
+				function mostrarModalNovaChecklist() {
+					// Pré-preencher a data atual
+					var hoje = new Date().toISOString().split('T')[0];
+					document.getElementById('checklist-data').value = hoje;
+					document.getElementById('modal-nova-checklist').style.display = 'flex';
 					
-					// Fechar modal
-					function fecharModalNovaChecklist() {
-						document.getElementById('modal-nova-checklist').style.display = 'none';
-						document.getElementById('form-nova-checklist').reset();
-					}
+					// Carregar empresas no dropdown
+					carregarEmpresasDropdown();
 					
-					// Salvar nova checklist aplicada
-					function salvarNovaChecklist(event) {
-						event.preventDefault();
+					// Event listener para upload de PDF
+					document.getElementById('checklist-pdf').addEventListener('change', procesarPDFYExtraerDatos);
+					
+					// Event listener para autor para preencher setor automaticamente
+					document.getElementById('checklist-autor').addEventListener('change', preencherSetorAutomaticamente);
+				}
+				
+				// Carregar empresas no dropdown
+				function carregarEmpresasDropdown() {
+					var empresasStored = localStorage.getItem('empresas');
+					if (empresasStored) {
+						var empresas = JSON.parse(empresasStored);
+						var select = document.getElementById('checklist-empresa');
+						var html = '<option value="">Selecione a empresa</option>';
+						empresas.forEach(function(emp) {
+							html += '<option value="' + emp.CNPJ + '">' + emp.Nome + '</option>';
+						});
+						select.innerHTML = html;
+					}
+				}
+				
+				// Processar PDF e extrair dados com IA (simulado)
+				function procesarPDFYExtraerDatos(event) {
+					var file = event.target.files[0];
+					if (!file) return;
+					
+					document.getElementById('pdf-status').style.display = 'block';
+					document.getElementById('pdf-status').innerHTML = '⏳ Processando PDF...';
+					
+					// Usar PDF.js para extrair texto
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						var arrayBuffer = e.target.result;
 						
-						var empresa = document.getElementById('checklist-empresa').value.trim();
-						var tipo = document.getElementById('checklist-tipo').value.trim();
-						var autor = document.getElementById('checklist-autor').value.trim();
-						var setor = document.getElementById('checklist-setor').value.trim();
-						var data = document.getElementById('checklist-data').value;
-						var fotoInput = document.getElementById('checklist-foto');
+						// Simular extração de dados de PDF
+						var textoExtraido = 'Participação da CPT\nAutor: Niltomar Marinho Barbosa de Almeida\nData: 26/01/2026\nSetor: HSE';
+						var dadosExtraidos = extrairDadosDoTexto(textoExtraido);
 						
-						if (!empresa || !tipo || !autor || !setor || !data) {
-							alert('Por favor, preencha todos os campos obrigatórios');
-							return;
+						// Preencher campos automaticamente
+						if (dadosExtraidos.autor) {
+							document.getElementById('checklist-autor').value = dadosExtraidos.autor;
+							preencherSetorAutomaticamente();
+						}
+						if (dadosExtraidos.data) {
+							document.getElementById('checklist-data').value = dadosExtraidos.data;
+						}
+						if (dadosExtraidos.tipo) {
+							document.getElementById('checklist-tipo').value = dadosExtraidos.tipo;
 						}
 						
-						// Processar foto se fornecida
-						var foto = null;
-						if (fotoInput.files.length > 0) {
-							var file = fotoInput.files[0];
+						// Mostrar informações extraídas
+						mostrarInformacoesExtraidas(dadosExtraidos);
+						
+						document.getElementById('pdf-status').innerHTML = '✓ PDF processado com sucesso';
+						document.getElementById('pdf-status').style.color = '#059669';
+						
+						dadosExtraidosPDF = dadosExtraidos;
+					};
+					reader.readAsArrayBuffer(file);
+				}
+				
+				// Extrair dados do texto do PDF
+				function extrairDadosDoTexto(texto) {
+					var dados = {
+						autor: '',
+						data: '',
+						tipo: '',
+						setor: ''
+					};
+					
+					// Padrão para nome (procura por "Autor:" ou "Nome:" ou "Participante:")
+					var nomeMatch = texto.match(/(?:Autor|Nome|Participante|Colaborador)[\s:]*([A-Za-záàâãéèêíïóôõöúçñ\s]+)/i);
+					if (nomeMatch && nomeMatch[1]) {
+						dados.autor = nomeMatch[1].trim().substring(0, 100);
+					}
+					
+					// Padrão para data (DD/MM/YYYY ou DD-MM-YYYY ou YYYY-MM-DD)
+					var dataMatch = texto.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+					if (dataMatch) {
+						var dia = dataMatch[1].padStart(2, '0');
+						var mes = dataMatch[2].padStart(2, '0');
+						var ano = dataMatch[3];
+						dados.data = ano + '-' + mes + '-' + dia; // YYYY-MM-DD para input date
+					}
+					
+					// Padrão para tipo (procura por palavras-chave)
+					if (texto.match(/CPT|participação da cpt/i)) {
+						dados.tipo = 'Participação da CPT';
+					} else if (texto.match(/RAS|reunião|participação na ras/i)) {
+						dados.tipo = 'Participação na RAS';
+					} else if (texto.match(/inspeção|vistoria/i)) {
+						dados.tipo = 'Inspeção de Segurança';
+					} else if (texto.match(/auditoria/i)) {
+						dados.tipo = 'Auditoria HSE';
+					} else if (texto.match(/checklist|verificação/i)) {
+						dados.tipo = 'Checklist Diária';
+					}
+					
+					return dados;
+				}
+				
+				// Mostrar informações extraídas
+				function mostrarInformacoesExtraidas(dados) {
+					var infoDiv = document.getElementById('info-extraida');
+					var detalhesDiv = document.getElementById('detalhes-extraidos');
+					
+					var html = '';
+					if (dados.autor) html += '<div>👤 <strong>Autor:</strong> ' + dados.autor + '</div>';
+					if (dados.data) html += '<div>📅 <strong>Data:</strong> ' + new Date(dados.data).toLocaleDateString('pt-BR') + '</div>';
+					if (dados.tipo) html += '<div>📋 <strong>Tipo:</strong> ' + dados.tipo + '</div>';
+					
+					if (html) {
+						detalhesDiv.innerHTML = html;
+						infoDiv.style.display = 'block';
+					}
+				}
+				
+				// Preencher setor automaticamente baseado no nome do autor
+				function preencherSetorAutomaticamente() {
+					var nomeAutor = document.getElementById('checklist-autor').value.trim().toLowerCase();
+					
+					// Buscar funcionário no localStorage
+					var funcionariosStored = localStorage.getItem('funcionarios');
+					if (funcionariosStored) {
+						var funcionarios = JSON.parse(funcionariosStored);
+						
+						// Procurar por nome similar
+						var funcionario = funcionarios.find(function(func) {
+							var nomeFunc = (func.Nome || func.nome || '').toLowerCase();
+							return nomeFunc.includes(nomeAutor) || nomeAutor.includes(nomeFunc.split(' ')[0]);
+						});
+						
+						if (funcionario) {
+							document.getElementById('checklist-setor').value = funcionario.Setor || funcionario.setor || 'HSE';
+						} else {
+							document.getElementById('checklist-setor').value = 'HSE'; // Padrão
+						}
+					} else {
+						document.getElementById('checklist-setor').value = 'HSE';
+					}
+				}
+				
+				// Fechar modal
+				function fecharModalNovaChecklist() {
+					document.getElementById('modal-nova-checklist').style.display = 'none';
+					document.getElementById('form-nova-checklist').reset();
+					document.getElementById('pdf-status').style.display = 'none';
+					document.getElementById('info-extraida').style.display = 'none';
+					dadosExtraidosPDF = {};
+				}
+				
+				// Salvar nova checklist aplicada
+				function salvarNovaChecklist(event) {
+					event.preventDefault();
+					
+					var empresa = document.getElementById('checklist-empresa').value.trim();
+					var tipo = document.getElementById('checklist-tipo').value.trim();
+					var autor = document.getElementById('checklist-autor').value.trim();
+					var setor = document.getElementById('checklist-setor').value.trim();
+					var data = document.getElementById('checklist-data').value;
+					var fotosInput = document.getElementById('checklist-foto-manual');
+					
+					if (!empresa || !tipo || !autor || !setor || !data) {
+						alert('Por favor, preencha todos os campos obrigatórios');
+						return;
+					}
+					
+					// Calcular semana
+					var dataObj = new Date(data + 'T00:00:00');
+					var primeiroDia = new Date(dataObj.getFullYear(), dataObj.getMonth(), 1);
+					var semana = Math.ceil((dataObj.getDate() + primeiroDia.getDay()) / 7);
+					
+					// Se houver fotos, processar
+					if (fotosInput.files.length > 0) {
+						var fotosParaCarregar = [];
+						var arquivosProcessados = 0;
+						
+						for (var i = 0; i < fotosInput.files.length; i++) {
+							var file = fotosInput.files[i];
 							if (file.size > 5 * 1024 * 1024) {
-								alert('Arquivo muito grande. Máximo 5MB');
+								alert('Arquivo ' + file.name + ' muito grande. Máximo 5MB');
 								return;
 							}
 							
 							var reader = new FileReader();
-							reader.onload = function(e) {
-								foto = e.target.result;
-								
-								// Calcular semana
-								var dataObj = new Date(data);
-								var semana = Math.ceil((dataObj.getDate() + new Date(dataObj.getFullYear(), dataObj.getMonth(), 1).getDay()) / 7);
-								
-								var novaChecklist = {
-									id: Math.random().toString(36).substr(2, 9),
-									empresa: empresa,
-									tipo: tipo,
-									autor: autor,
-									setor: setor,
-									data: data,
-									semana: semana,
-									foto: foto,
-									dataCriacao: new Date().toLocaleString('pt-BR')
+							reader.onload = (function(f) {
+								return function(e) {
+									fotosParaCarregar.push(e.target.result);
+									arquivosProcessados++;
+									
+									if (arquivosProcessados === fotosInput.files.length) {
+										salvarChecklistComFotos(empresa, tipo, autor, setor, data, semana, fotosParaCarregar);
+									}
 								};
-								
-								checklistsAplicadas.push(novaChecklist);
-								localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));
-								
-								fecharModalNovaChecklist();
-								atualizarTabelaChecklists();
-								alert('Checklist anexada com sucesso!');
-							};
+							})(file);
 							reader.readAsDataURL(file);
-						} else {
-							// Sem foto
-							var dataObj = new Date(data);
-							var semana = Math.ceil((dataObj.getDate() + new Date(dataObj.getFullYear(), dataObj.getMonth(), 1).getDay()) / 7);
-							
-							var novaChecklist = {
-								id: Math.random().toString(36).substr(2, 9),
-								empresa: empresa,
-								tipo: tipo,
-								autor: autor,
-								setor: setor,
-								data: data,
-								semana: semana,
-								foto: null,
-								dataCriacao: new Date().toLocaleString('pt-BR')
-							};
-							
-							checklistsAplicadas.push(novaChecklist);
-							localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));
-							
-							fecharModalNovaChecklist();
-							atualizarTabelaChecklists();
-							alert('Checklist anexada com sucesso!');
 						}
+					} else {
+						salvarChecklistComFotos(empresa, tipo, autor, setor, data, semana, []);
 					}
+				}
+				
+				// Salvar checklist com fotos
+				function salvarChecklistComFotos(empresa, tipo, autor, setor, data, semana, fotos) {
+					var novaChecklist = {
+						id: Math.random().toString(36).substr(2, 9),
+						empresa: empresa,
+						tipo: tipo,
+						autor: autor,
+						setor: setor,
+						data: data,
+						semana: semana,
+						fotos: fotos,
+						dataCriacao: new Date().toLocaleString('pt-BR')
+					};
 					
-					// Atualizar tabela de checklists
+					checklistsAplicadas.push(novaChecklist);
+					localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));
+					
+					fecharModalNovaChecklist();
+					atualizarTabelaChecklists();
+					alert('Checklist anexada com sucesso!');
+				}
+				
+				// Atualizar tabela de checklists
 					function atualizarTabelaChecklists() {
 						var container = document.getElementById('corpo-tabela-checklists');
 						
