@@ -9097,30 +9097,46 @@
 						setor: ''
 					};
 					
-					// Padrão para nome (procura por "Autor:" ou "Nome:" ou "Participante:")
-					var nomeMatch = texto.match(/(?:Autor|Nome|Participante|Colaborador)[\s:]*([A-Za-záàâãéèêíïóôõöúçñ\s]+)/i);
+					// Limpar texto para melhor processamento
+					texto = texto.replace(/\0/g, '');
+					
+					// Padrão para nome do líder/autor (específico para ChecklistFácil)
+					var nomeMatch = texto.match(/(?:Nome do Líder|Nome do User|Autor|Nome|Participante|Colaborador)[\s:\n]*([A-Za-záàâãéèêíïóôõöúçñ\s]{3,})/i);
 					if (nomeMatch && nomeMatch[1]) {
-						dados.autor = nomeMatch[1].trim().substring(0, 100);
+						dados.autor = nomeMatch[1].trim().split('\n')[0].substring(0, 100);
 					}
 					
-					// Padrão para data (DD/MM/YYYY ou DD-MM-YYYY ou YYYY-MM-DD)
-					var dataMatch = texto.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-					if (dataMatch) {
-						var dia = dataMatch[1].padStart(2, '0');
-						var mes = dataMatch[2].padStart(2, '0');
-						var ano = dataMatch[3];
-						dados.data = ano + '-' + mes + '-' + dia; // YYYY-MM-DD para input date
+					// Padrão para data de participação (específico para ChecklistFácil)
+					var dataPartMatch = texto.match(/(?:Data da Participação da CPT|Data da Participação|Data)[\s:\n]*(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/i);
+					if (dataPartMatch) {
+						var dia = dataPartMatch[1].padStart(2, '0');
+						var mes = dataPartMatch[2].padStart(2, '0');
+						var ano = dataPartMatch[3];
+						dados.data = ano + '-' + mes + '-' + dia;
+					} else {
+						// Padrão genérico para data (DD/MM/YYYY ou DD-MM-YYYY)
+						var dataMatch = texto.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+						if (dataMatch) {
+							var dia = dataMatch[1].padStart(2, '0');
+							var mes = dataMatch[2].padStart(2, '0');
+							var ano = dataMatch[3];
+							dados.data = ano + '-' + mes + '-' + dia;
+						}
 					}
 					
-					// Padrão para tipo (procura por palavras-chave)
-					if (texto.match(/CPT|participação da cpt/i)) {
-						dados.tipo = 'Participação da CPT';
-					} else if (texto.match(/RAS|reunião|participação na ras/i)) {
-						dados.tipo = 'Participação na RAS';
+					// Padrão para tipo (procura por palavras-chave com prioridade)
+					if (texto.match(/Participação da CPT|participação\s+da\s+cpt/i)) {
+						dados.tipo = 'Participação CPT';
+					} else if (texto.match(/CPT/i)) {
+						dados.tipo = 'Participação CPT';
+					} else if (texto.match(/Participação da RAS|participação\s+na\s+ras/i)) {
+						dados.tipo = 'Participação RAS';
+					} else if (texto.match(/RAS|reunião/i)) {
+						dados.tipo = 'Participação RAS';
 					} else if (texto.match(/inspeção|vistoria/i)) {
-						dados.tipo = 'Inspeção de Segurança';
+						dados.tipo = 'Inspeção';
 					} else if (texto.match(/auditoria/i)) {
-						dados.tipo = 'Auditoria HSE';
+						dados.tipo = 'Auditoria';
 					} else if (texto.match(/checklist|verificação/i)) {
 						dados.tipo = 'Checklist Diária';
 					}
