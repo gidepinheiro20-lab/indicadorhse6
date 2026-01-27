@@ -9063,7 +9063,17 @@
 							}
 						}
 						
+						// DEBUG: Mostrar texto extraído
+						console.log('=== TEXTO EXTRAÍDO DO PDF ===');
+						console.log(textoExtraido.substring(0, 2000)); // Primeiros 2000 caracteres
+						
 						var dadosExtraidos = extrairDadosDoTexto(textoExtraido);
+						
+						// DEBUG: Mostrar dados extraídos
+						console.log('=== DADOS EXTRAÍDOS ===');
+						console.log('Autor:', dadosExtraidos.autor);
+						console.log('Data:', dadosExtraidos.data);
+						console.log('Tipo:', dadosExtraidos.tipo);
 						
 						// Preencher campos automaticamente
 						if (dadosExtraidos.autor) {
