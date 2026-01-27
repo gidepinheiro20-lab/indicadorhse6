@@ -3217,24 +3217,23 @@
 						document.getElementById('back-to-menu').classList.remove('show');
 					}
 
-					// Função para ocultar todas as seções
-					function hideAllSections() {
-						document.getElementById('conteudo-principal').style.display = 'none';
-						document.getElementById('cadastro-usuario').style.display = 'none';
-						document.getElementById('nova-ras').style.display = 'none';
-						document.getElementById('funcionarios').style.display = 'none';
-						document.getElementById('frequencia').style.display = 'none';
-						document.getElementById('cpt').style.display = 'none';
-						document.getElementById('inspecao').style.display = 'none';
-						document.getElementById('art').style.display = 'none';
-						document.getElementById('categorias-hse').style.display = 'none';
-						document.getElementById('areas-locais').style.display = 'none';
-						document.getElementById('gerenciamento-tipos-registro').style.display = 'none';
-						document.getElementById('gerenciamento-riscos-perigos').style.display = 'none';
-						document.getElementById('empresa').style.display = 'none';
-					}
-
-					function abrirSecaoDoHash(hash) {
+				// Função para ocultar todas as seções
+				function hideAllSections() {
+					document.getElementById('conteudo-principal').style.display = 'none';
+					document.getElementById('cadastro-usuario').style.display = 'none';
+					document.getElementById('nova-ras').style.display = 'none';
+					document.getElementById('funcionarios').style.display = 'none';
+					document.getElementById('frequencia').style.display = 'none';
+					document.getElementById('cpt').style.display = 'none';
+					document.getElementById('inspecao').style.display = 'none';
+					document.getElementById('art').style.display = 'none';
+					document.getElementById('checklist').style.display = 'none';
+					document.getElementById('categorias-hse').style.display = 'none';
+					document.getElementById('areas-locais').style.display = 'none';
+					document.getElementById('gerenciamento-tipos-registro').style.display = 'none';
+					document.getElementById('gerenciamento-riscos-perigos').style.display = 'none';
+					document.getElementById('empresa').style.display = 'none';
+				}					function abrirSecaoDoHash(hash) {
 						const alvo = (hash || '#').replace('#', '');
 						switch (alvo) {
 							case 'usuario':
@@ -3277,6 +3276,11 @@
 								hideAllSections();
 								document.getElementById('art').style.display = 'block';
 								inicializarART();
+								break;
+							case 'checklist':
+								hideAllSections();
+								document.getElementById('checklist').style.display = 'block';
+								carregarChecklists();
 								break;
 							case 'empresa':
 								hideAllSections();
