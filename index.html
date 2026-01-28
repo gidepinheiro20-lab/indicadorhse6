@@ -9001,13 +9001,13 @@
 						atualizarTabelaChecklists();
 					}
 					
-				// Mostrar modal de anexar formulário
-				function mostrarModalNovaChecklist() {
-					// Pré-preencher a data atual
-					var hoje = new Date().toISOString().split('T')[0];
-					document.getElementById('checklist-data').value = hoje;
-					document.getElementById('modal-nova-checklist').style.display = 'flex';
-					
+				
+			// Mostrar modal de anexar formulário
+			function mostrarModalNovaChecklist() {
+				// Pré-preencher a data atual
+				var hoje = new Date().toISOString().split('T')[0];
+				document.getElementById('checklist-data').value = hoje;
+				document.getElementById('modal-nova-checklist').style.display = 'flex';
 				
 				// Carregar empresas no dropdown
 				carregarEmpresasDropdown();
@@ -9020,9 +9020,7 @@
 				
 				// Event listener para autor para preencher setor automaticamente
 				document.getElementById('checklist-autor').addEventListener('change', preencherSetorAutomaticamente);
-			}
-			
-			// Carregar empresas no dropdown
+			}			// Carregar empresas no dropdown
 			function carregarEmpresasDropdown() {
 				var empresasStored = localStorage.getItem('empresas');
 				if (empresasStored) {
