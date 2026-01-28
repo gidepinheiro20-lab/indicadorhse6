@@ -2457,28 +2457,24 @@
 								</select>
 							</div>
 							
-							<!-- Tipo de Formulário -->
-							<div style="margin-bottom:20px">
-								<label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Tipo de Formulário *</label>
-								<select id="checklist-tipo" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem;background:#fff">
-									<option value="">Selecione o tipo</option>
-									<option value="Checklist Diária">Checklist Diária</option>
-									<option value="Inspeção de Segurança">Inspeção de Segurança</option>
-									<option value="Verificação de Equipamentos">Verificação de Equipamentos</option>
-									<option value="Auditoria HSE">Auditoria HSE</option>
-									<option value="Participação da CPT">Participação da CPT</option>
-									<option value="Participação na RAS">Participação na RAS</option>
-								</select>
-							</div>
-							
-							<!-- Autor -->
-							<div style="margin-bottom:20px">
-								<label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Autor (Nome) *</label>
-								<input type="text" id="checklist-autor" placeholder="Nome será extraído do formulário" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem">
-								<small style="color:#6b7280;display:block;margin-top:4px" id="hint-setor">Após preencher, o setor será preenchido automaticamente</small>
-							</div>
-							
-							<!-- Setor (preenchido automaticamente) -->
+						<!-- Tipo de Formulário -->
+						<div style="margin-bottom:20px">
+							<label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Tipo de Formulário *</label>
+							<select id="checklist-tipo" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem;background:#fff">
+								<option value="">Selecione o tipo</option>
+								<option value="Participação na RAS">Participação na RAS</option>
+								<option value="Participação na CPT">Participação na CPT</option>
+								<option value="WOC MDHO">WOC MDHO</option>
+							</select>
+						</div>
+						
+						<!-- Autor -->
+						<div style="margin-bottom:20px">
+							<label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Nome do Funcionário *</label>
+							<select id="checklist-autor" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem;background:#fff">
+								<option value="">Selecione o funcionário</option>
+							</select>
+						</div>							<!-- Setor (preenchido automaticamente) -->
 							<div style="margin-bottom:20px">
 								<label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Setor (automático)</label>
 								<input type="text" id="checklist-setor" placeholder="Será identificado pelo nome do autor" readonly style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem;background:#f9fafb;color:#6b7280">
@@ -9012,31 +9008,51 @@
 					document.getElementById('checklist-data').value = hoje;
 					document.getElementById('modal-nova-checklist').style.display = 'flex';
 					
-					// Carregar empresas no dropdown
-					carregarEmpresasDropdown();
-					
-					// Event listener para upload de PDF
-					document.getElementById('checklist-pdf').addEventListener('change', procesarPDFYExtraerDatos);
-					
-					// Event listener para autor para preencher setor automaticamente
-					document.getElementById('checklist-autor').addEventListener('change', preencherSetorAutomaticamente);
-				}
 				
 				// Carregar empresas no dropdown
-				function carregarEmpresasDropdown() {
-					var empresasStored = localStorage.getItem('empresas');
-					if (empresasStored) {
-						var empresas = JSON.parse(empresasStored);
-						var select = document.getElementById('checklist-empresa');
-						var html = '<option value="">Selecione a empresa</option>';
-						empresas.forEach(function(emp) {
-							html += '<option value="' + emp.CNPJ + '">' + emp.Nome + '</option>';
-						});
-						select.innerHTML = html;
-					}
-				}
+				carregarEmpresasDropdown();
 				
-				// Processar PDF e salvar para visualização
+				// Carregar funcionários no dropdown
+				carregarFuncionariosDropdown();
+				
+				// Event listener para upload de PDF
+				document.getElementById('checklist-pdf').addEventListener('change', procesarPDFYExtraerDatos);
+				
+				// Event listener para autor para preencher setor automaticamente
+				document.getElementById('checklist-autor').addEventListener('change', preencherSetorAutomaticamente);
+			}
+			
+			// Carregar empresas no dropdown
+			function carregarEmpresasDropdown() {
+				var empresasStored = localStorage.getItem('empresas');
+				if (empresasStored) {
+					var empresas = JSON.parse(empresasStored);
+					var select = document.getElementById('checklist-empresa');
+					var html = '<option value="">Selecione a empresa</option>';
+					empresas.forEach(function(emp) {
+						html += '<option value="' + emp.CNPJ + '">' + emp.Nome + '</option>';
+					});
+					select.innerHTML = html;
+				}
+			}
+			
+			// Carregar funcionários no dropdown
+			function carregarFuncionariosDropdown() {
+				var funcionariosStored = localStorage.getItem('funcionarios');
+				if (funcionariosStored) {
+					var funcionarios = JSON.parse(funcionariosStored);
+					var select = document.getElementById('checklist-autor');
+					var html = '<option value="">Selecione o funcionário</option>';
+					funcionarios.forEach(function(func) {
+						var nome = func.Nome || func.nome || '';
+						var setor = func.Setor || func.setor || '';
+						if (nome) {
+							html += '<option value="' + nome + '" data-setor="' + setor + '">' + nome + '</option>';
+						}
+					});
+					select.innerHTML = html;
+				}
+			}				// Processar PDF e salvar para visualização
 				var pdfAnexado = null;
 				
 				function procesarPDFYExtraerDatos(event) {
@@ -9131,32 +9147,19 @@
 					}
 				}
 				
-				// Preencher setor automaticamente baseado no nome do autor
-				function preencherSetorAutomaticamente() {
-					var nomeAutor = document.getElementById('checklist-autor').value.trim().toLowerCase();
-					
-					// Buscar funcionário no localStorage
-					var funcionariosStored = localStorage.getItem('funcionarios');
-					if (funcionariosStored) {
-						var funcionarios = JSON.parse(funcionariosStored);
-						
-						// Procurar por nome similar
-						var funcionario = funcionarios.find(function(func) {
-							var nomeFunc = (func.Nome || func.nome || '').toLowerCase();
-							return nomeFunc.includes(nomeAutor) || nomeAutor.includes(nomeFunc.split(' ')[0]);
-						});
-						
-						if (funcionario) {
-							document.getElementById('checklist-setor').value = funcionario.Setor || funcionario.setor || 'HSE';
-						} else {
-							document.getElementById('checklist-setor').value = 'HSE'; // Padrão
-						}
-					} else {
-						document.getElementById('checklist-setor').value = 'HSE';
-					}
-				}
+			// Preencher setor automaticamente baseado no nome do funcionário selecionado
+			function preencherSetorAutomaticamente() {
+				var selectAutor = document.getElementById('checklist-autor');
+				var setorInput = document.getElementById('checklist-setor');
 				
-				// Fechar modal
+				// Pegar o setor do option selecionado
+				var selectedOption = selectAutor.options[selectAutor.selectedIndex];
+				if (selectedOption && selectedOption.dataset.setor) {
+					setorInput.value = selectedOption.dataset.setor;
+				} else {
+					setorInput.value = '';
+				}
+			}				// Fechar modal
 				function fecharModalNovaChecklist() {
 					document.getElementById('modal-nova-checklist').style.display = 'none';
 					document.getElementById('form-nova-checklist').reset();
