@@ -9021,20 +9021,22 @@
 				// Event listener para autor para preencher setor automaticamente
 				document.getElementById('checklist-autor').addEventListener('change', preencherSetorAutomaticamente);
 			}			// Carregar empresas no dropdown
-			function carregarEmpresasDropdown() {
-				var empresasStored = localStorage.getItem('empresas');
-				if (empresasStored) {
-					var empresas = JSON.parse(empresasStored);
-					var select = document.getElementById('checklist-empresa');
-					var html = '<option value="">Selecione a empresa</option>';
-					empresas.forEach(function(emp) {
-						html += '<option value="' + emp.CNPJ + '">' + emp.Nome + '</option>';
-					});
-					select.innerHTML = html;
-				}
+		function carregarEmpresasDropdown() {
+			var empresasStored = localStorage.getItem('empresas');
+			if (empresasStored) {
+				var empresas = JSON.parse(empresasStored);
+				var select = document.getElementById('checklist-empresa');
+				var html = '<option value="">Selecione a empresa</option>';
+				empresas.forEach(function(emp) {
+					var cnpj = emp.cnpj || emp.CNPJ || '';
+					var nome = emp.nome || emp.Nome || '';
+					if (nome) {
+						html += '<option value="' + cnpj + '">' + nome + '</option>';
+					}
+				});
+				select.innerHTML = html;
 			}
-			
-			// Carregar funcionários no dropdown
+		}			// Carregar funcionários no dropdown
 			function carregarFuncionariosDropdown() {
 				var funcionariosStored = localStorage.getItem('funcionarios');
 				if (funcionariosStored) {
