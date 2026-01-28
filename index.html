@@ -2357,9 +2357,14 @@
 								</h1>
 								<p style="margin:6px 0 0 0;font-size:0.95rem;opacity:0.95">Controle e acompanhamento de listas de verificação</p>
 							</div>
-							<button onclick="mostrarModalNovaChecklist()" style="background:#fff;color:#0d9488;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem;display:flex;align-items:center;gap:8px">
-								<span>📋</span> Anexar formulário
-							</button>
+							<div style="display:flex;gap:12px;flex-wrap:wrap">
+								<button onclick="abrirAcompanhamentoSemanal()" style="background:#10b981;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem;display:flex;align-items:center;gap:8px">
+									<span>📊</span> Acompanhamento Semanal
+								</button>
+								<button onclick="mostrarModalNovaChecklist()" style="background:#fff;color:#0d9488;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem;display:flex;align-items:center;gap:8px">
+									<span>📋</span> Anexar formulário
+								</button>
+							</div>
 						</div>
 					</div>
 					
@@ -8987,23 +8992,37 @@
 					
 					// ===== FUNÇÕES CHECK LIST FÁCIL =====
 					
-					// Variável global para armazenar checklists aplicados
-					var checklistsAplicadas = [];
-					
-				// Carregar checklists do localStorage na inicialização
-				function carregarChecklists() {
+				// Variável global para armazenar checklists aplicados
+				var checklistsAplicadas = [];
+				
+			// Carregar checklists do servidor e localStorage
+			async function carregarChecklists() {
+				try {
+					// Tentar carregar do servidor primeiro
+					const response = await fetch(`${API_BASE_URL}/api/checklists`);
+					if (response.ok) {
+						const dados = await response.json();
+						checklistsAplicadas = dados;
+						localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));
+						console.log('✅ Checklists carregados do servidor:', checklistsAplicadas.length);
+					} else {
+						throw new Error('Erro ao carregar do servidor');
+					}
+				} catch(error) {
+					console.warn('⚠️ Falha ao carregar do servidor, usando localStorage:', error);
+					// Fallback para localStorage
 					var stored = localStorage.getItem('checklistsAplicadas');
 					if (stored) {
 						checklistsAplicadas = JSON.parse(stored);
 					} else {
 						checklistsAplicadas = [];
 					}
-					popularFiltros();
-					configurarEventListenersFiltros();
-					atualizarTabelaChecklists();
 				}
 				
-				// Popular dropdowns de filtros
+				popularFiltros();
+				configurarEventListenersFiltros();
+				atualizarTabelaChecklists();
+			}				// Popular dropdowns de filtros
 				function popularFiltros() {
 					// Filtro de empresas
 					var empresasStored = localStorage.getItem('empresas');
@@ -9391,14 +9410,101 @@
 				}
 			}
 			
-			// Excluir checklist
-			function excluirChecklist(id) {
-				if (confirm('Deseja excluir esta checklist?')) {
-					checklistsAplicadas = checklistsAplicadas.filter(function(c) { return c.id != id; });
-					localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));
-					atualizarTabelaChecklists();
-					alert('Checklist excluída com sucesso!');
+			// Acompanhamento Semanal
+			function abrirAcompanhamentoSemanal() {
+				if (!checklistsAplicadas || checklistsAplicadas.length === 0) {
+					alert('Nenhuma checklist registrada para acompanhamento.');
+					return;
 				}
+				
+				// Agrupar por semana
+				var semanaMap = {};
+				checklistsAplicadas.forEach(function(checklist) {
+					var semana = checklist.semana || 'Sem semana';
+					if (!semanaMap[semana]) {
+						semanaMap[semana] = [];
+					}
+					semanaMap[semana].push(checklist);
+				});
+				
+				// Ordenar semanas numericamente
+				var semanas = Object.keys(semanaMap).sort(function(a, b) {
+					var numA = parseInt(a);
+					var numB = parseInt(b);
+					if (!isNaN(numA) && !isNaN(numB)) {
+						return numB - numA; // Semanas mais recentes primeiro
+					}
+					return a.localeCompare(b);
+				});
+				
+				// Gerar relatório em nova janela
+				var relatorio = '<html><head><meta charset="UTF-8"><title>Acompanhamento Semanal</title>';
+				relatorio += '<style>';
+				relatorio += 'body{font-family:Arial,sans-serif;margin:20px;background:#f5f5f5}';
+				relatorio += '.header{background:linear-gradient(135deg,#0d9488 0%,#059669 100%);color:#fff;padding:20px;border-radius:8px;margin-bottom:20px}';
+				relatorio += '.header h1{margin:0;font-size:2rem}';
+				relatorio += '.semana-card{background:#fff;border-radius:8px;margin-bottom:20px;box-shadow:0 2px 4px rgba(0,0,0,0.1);padding:20px}';
+				relatorio += '.semana-titulo{background:#0d9488;color:#fff;padding:12px;border-radius:4px;margin-bottom:15px;font-weight:bold;font-size:1.1rem}';
+				relatorio += '.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;margin-bottom:15px}';
+				relatorio += '.stat-box{background:#f0fdf4;border-left:4px solid #10b981;padding:12px;border-radius:4px}';
+				relatorio += '.stat-label{font-size:0.85rem;color:#666;margin-bottom:5px}';
+				relatorio += '.stat-value{font-size:1.5rem;font-weight:bold;color:#0d9488}';
+				relatorio += '.checklist-item{background:#f9fafb;padding:12px;margin:8px 0;border-radius:4px;border-left:3px solid #10b981}';
+				relatorio += '.checklist-item .tipo{color:#0d9488;font-weight:bold;font-size:0.95rem}';
+				relatorio += '.checklist-item .autor{color:#666;font-size:0.85rem}';
+				relatorio += '.checklist-item .data{color:#999;font-size:0.8rem}';
+				relatorio += '.print-btn{background:#0d9488;color:#fff;padding:12px 24px;border:none;border-radius:4px;cursor:pointer;font-weight:bold;margin:20px 0}';
+				relatorio += '.print-btn:hover{background:#059669}';
+				relatorio += '@media print{.print-btn{display:none}}';
+				relatorio += '</style></head><body>';
+				
+				relatorio += '<div class="header"><h1>📊 Acompanhamento Semanal de Checklists</h1><p>Relatório de controle por semana</p></div>';
+				
+				semanas.forEach(function(semana) {
+					var checklistsSemana = semanaMap[semana];
+					var tipos = {};
+					var autores = new Set();
+					
+					checklistsSemana.forEach(function(c) {
+						autores.add(c.autor || 'Não informado');
+						if (!tipos[c.tipo]) {
+							tipos[c.tipo] = 0;
+						}
+						tipos[c.tipo]++;
+					});
+					
+					relatorio += '<div class="semana-card">';
+					relatorio += '<div class="semana-titulo">Semana ' + semana + ' (' + checklistsSemana.length + ' checklist' + (checklistsSemana.length !== 1 ? 's' : '') + ')</div>';
+					
+					relatorio += '<div class="stats">';
+					relatorio += '<div class="stat-box"><div class="stat-label">Total</div><div class="stat-value">' + checklistsSemana.length + '</div></div>';
+					relatorio += '<div class="stat-box"><div class="stat-label">Responsáveis</div><div class="stat-value">' + autores.size + '</div></div>';
+					Object.keys(tipos).forEach(function(tipo) {
+						relatorio += '<div class="stat-box"><div class="stat-label">' + tipo + '</div><div class="stat-value">' + tipos[tipo] + '</div></div>';
+					});
+					relatorio += '</div>';
+					
+					relatorio += '<div>';
+					checklistsSemana.sort(function(a, b) {
+						return new Date(b.data + 'T00:00:00') - new Date(a.data + 'T00:00:00');
+					}).forEach(function(c) {
+						var dataFormatada = new Date(c.data + 'T00:00:00').toLocaleDateString('pt-BR');
+						relatorio += '<div class="checklist-item">';
+						relatorio += '<div class="tipo">' + (c.tipo || 'Não informado') + '</div>';
+						relatorio += '<div class="autor">Responsável: ' + (c.autor || 'Não informado') + ' • Setor: ' + (c.setor || 'Não informado') + '</div>';
+						relatorio += '<div class="data">Data: ' + dataFormatada + ' • Empresa: ' + (c.empresa || 'Não informada') + '</div>';
+						relatorio += '</div>';
+					});
+					relatorio += '</div>';
+					relatorio += '</div>';
+				});
+				
+				relatorio += '<button class="print-btn" onclick="window.print()">🖨️ Imprimir Relatório</button>';
+				relatorio += '</body></html>';
+				
+				var novaJanela = window.open('', 'AcompanhamentoSemanal', 'width=900,height=700');
+				novaJanela.document.write(relatorio);
+				novaJanela.document.close();
 			}					// Inicializar checklists ao carregar
 					carregarChecklists();
 					</script>
