@@ -9275,25 +9275,27 @@
 					}
 				}
 				
-				// Salvar checklist com fotos e PDF
-			function salvarChecklistComFotos(empresa, tipo, autor, setor, data, semana, fotos) {
-				var novaChecklist = {
-					id: Math.random().toString(36).substr(2, 9),
-					empresa: empresa,
-					tipo: tipo,
-					autor: autor,
-					setor: setor,
-					data: data,
-					semana: semana,
-					fotos: fotos,
-					pdf: pdfAnexado,
-					dataCriacao: new Date().toLocaleString('pt-BR')
-				};
-				
-				checklistsAplicadas.push(novaChecklist);
-				localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));
-				
-				fecharModalNovaChecklist();
+			// Salvar checklist com fotos e PDF
+		function salvarChecklistComFotos(empresa, tipo, autor, setor, data, semana, fotos) {
+			console.log('Salvando checklist - Data recebida:', data, 'Semana:', semana);
+			
+			var novaChecklist = {
+				id: Math.random().toString(36).substr(2, 9),
+				empresa: empresa,
+				tipo: tipo,
+				autor: autor,
+				setor: setor,
+				data: data,
+				semana: semana,
+				fotos: fotos,
+				pdf: pdfAnexado,
+				dataCriacao: new Date().toLocaleString('pt-BR')
+			};
+			
+			console.log('Checklist criado:', novaChecklist);
+			
+			checklistsAplicadas.push(novaChecklist);
+			localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));				fecharModalNovaChecklist();
 				popularFiltros();
 				atualizarTabelaChecklists();
 				alert('Checklist anexada com sucesso!');
