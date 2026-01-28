@@ -9339,7 +9339,7 @@
 					
 				var html = '';
 				checklistsFiltradas.forEach(function(checklist) {
-					var dataFormatada = new Date(checklist.data).toLocaleDateString('pt-BR');
+					var dataFormatada = new Date(checklist.data + 'T00:00:00').toLocaleDateString('pt-BR');
 					
 					html += '<div style="display:grid;grid-template-columns:100px 80px 180px 220px 120px 80px 150px;gap:16px;padding:16px;border-bottom:1px solid #e5e7eb;font-size:0.9rem;align-items:center">';
 					html += '<div>' + dataFormatada + '</div>';
