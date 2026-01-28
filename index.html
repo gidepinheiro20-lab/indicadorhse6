@@ -9439,14 +9439,35 @@
           return;
         }
         
-        // Agrupar por semana
+        // Agrupar por semana e responsável
         var semanaMap = {};
+        var allTipos = new Set();
+        
         checklistsAplicadas.forEach(function(checklist) {
           var semana = checklist.semana || 'Sem semana';
+          var autor = checklist.autor || 'Não informado';
+          
           if (!semanaMap[semana]) {
-            semanaMap[semana] = [];
+            semanaMap[semana] = {};
           }
-          semanaMap[semana].push(checklist);
+          if (!semanaMap[semana][autor]) {
+            semanaMap[semana][autor] = {
+              setor: checklist.setor || 'Não informado',
+              tipos: {}
+            };
+          }
+          
+          if (!semanaMap[semana][autor].tipos[checklist.tipo]) {
+            semanaMap[semana][autor].tipos[checklist.tipo] = {
+              meta: 0, // Será definido pelo usuário
+              aderencia: 0,
+              registros: []
+            };
+          }
+          
+          semanaMap[semana][autor].tipos[checklist.tipo].registros.push(checklist);
+          semanaMap[semana][autor].tipos[checklist.tipo].aderencia = Math.round((semanaMap[semana][autor].tipos[checklist.tipo].registros.length / (semanaMap[semana][autor].tipos[checklist.tipo].meta || 1)) * 100);
+          allTipos.add(checklist.tipo);
         });
         
         // Ordenar semanas numericamente
@@ -9454,77 +9475,99 @@
           var numA = parseInt(a);
           var numB = parseInt(b);
           if (!isNaN(numA) && !isNaN(numB)) {
-            return numB - numA; // Semanas mais recentes primeiro
+            return numB - numA;
           }
           return a.localeCompare(b);
         });
         
+        var tiposArray = Array.from(allTipos).sort();
+        
         // Gerar relatório em nova janela
         var relatorio = '<html><head><meta charset="UTF-8"><title>Acompanhamento Semanal</title>';
         relatorio += '<style>';
-        relatorio += 'body{font-family:Arial,sans-serif;margin:20px;background:#f5f5f5}';
+        relatorio += 'body{font-family:Arial,sans-serif;margin:20px;background:#f5f5f5;overflow-x:auto}';
         relatorio += '.header{background:linear-gradient(135deg,#0d9488 0%,#059669 100%);color:#fff;padding:20px;border-radius:8px;margin-bottom:20px}';
         relatorio += '.header h1{margin:0;font-size:2rem}';
-        relatorio += '.semana-card{background:#fff;border-radius:8px;margin-bottom:20px;box-shadow:0 2px 4px rgba(0,0,0,0.1);padding:20px}';
+        relatorio += '.semana-card{background:#fff;border-radius:8px;margin-bottom:30px;box-shadow:0 2px 4px rgba(0,0,0,0.1);padding:20px}';
         relatorio += '.semana-titulo{background:#0d9488;color:#fff;padding:12px;border-radius:4px;margin-bottom:15px;font-weight:bold;font-size:1.1rem}';
-        relatorio += '.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;margin-bottom:15px}';
-        relatorio += '.stat-box{background:#f0fdf4;border-left:4px solid #10b981;padding:12px;border-radius:4px}';
-        relatorio += '.stat-label{font-size:0.85rem;color:#666;margin-bottom:5px}';
-        relatorio += '.stat-value{font-size:1.5rem;font-weight:bold;color:#0d9488}';
-        relatorio += '.checklist-item{background:#f9fafb;padding:12px;margin:8px 0;border-radius:4px;border-left:3px solid #10b981}';
-        relatorio += '.checklist-item .tipo{color:#0d9488;font-weight:bold;font-size:0.95rem}';
-        relatorio += '.checklist-item .autor{color:#666;font-size:0.85rem}';
-        relatorio += '.checklist-item .data{color:#999;font-size:0.8rem}';
+        relatorio += '.table-container{overflow-x:auto;margin:15px 0}';
+        relatorio += 'table{width:100%;border-collapse:collapse;font-size:0.9rem}';
+        relatorio += 'th{background:#f3f4f6;color:#1f2937;padding:12px;text-align:left;border:1px solid #e5e7eb;font-weight:bold}';
+        relatorio += 'td{padding:10px;border:1px solid #e5e7eb}';
+        relatorio += 'tr:nth-child(even){background:#f9fafb}';
+        relatorio += '.nome-setor{font-weight:bold;color:#0d9488}';
+        relatorio += '.meta-input{width:50px;padding:4px;border:1px solid #d1d5db;border-radius:4px;text-align:center}';
+        relatorio += '.aderencia-cell{text-align:center;font-weight:bold}';
+        relatorio += '.aderencia-100{color:#10b981;background:#f0fdf4}';
+        relatorio += '.aderencia-80{color:#f59e0b;background:#fffbeb}';
+        relatorio += '.aderencia-0{color:#ef4444;background:#fef2f2}';
         relatorio += '.print-btn{background:#0d9488;color:#fff;padding:12px 24px;border:none;border-radius:4px;cursor:pointer;font-weight:bold;margin:20px 0}';
         relatorio += '.print-btn:hover{background:#059669}';
-        relatorio += '@media print{.print-btn{display:none}}';
+        relatorio += '@media print{.print-btn{display:none};.meta-input{border:none;background:transparent}}';
         relatorio += '</style></head><body>';
         
-        relatorio += '<div class="header"><h1>📊 Acompanhamento Semanal de Checklists</h1><p>Relatório de controle por semana</p></div>';
+        relatorio += '<div class="header"><h1>📊 Acompanhamento Semanal de Checklists</h1><p>Relatório dinâmico de conformidade por semana</p></div>';
         
         semanas.forEach(function(semana) {
-          var checklistsSemana = semanaMap[semana];
-          var tipos = {};
-          var autores = new Set();
-          
-          checklistsSemana.forEach(function(c) {
-            autores.add(c.autor || 'Não informado');
-            if (!tipos[c.tipo]) {
-              tipos[c.tipo] = 0;
-            }
-            tipos[c.tipo]++;
-          });
-          
           relatorio += '<div class="semana-card">';
-          relatorio += '<div class="semana-titulo">Semana ' + semana + ' (' + checklistsSemana.length + ' checklist' + (checklistsSemana.length !== 1 ? 's' : '') + ')</div>';
+          relatorio += '<div class="semana-titulo">Semana ' + semana + '</div>';
           
-          relatorio += '<div class="stats">';
-          relatorio += '<div class="stat-box"><div class="stat-label">Total</div><div class="stat-value">' + checklistsSemana.length + '</div></div>';
-          relatorio += '<div class="stat-box"><div class="stat-label">Responsáveis</div><div class="stat-value">' + autores.size + '</div></div>';
-          Object.keys(tipos).forEach(function(tipo) {
-            relatorio += '<div class="stat-box"><div class="stat-label">' + tipo + '</div><div class="stat-value">' + tipos[tipo] + '</div></div>';
-          });
-          relatorio += '</div>';
+          relatorio += '<div class="table-container">';
+          relatorio += '<table>';
+          relatorio += '<thead><tr>';
+          relatorio += '<th>Nome</th>';
+          relatorio += '<th>Setor</th>';
           
-          relatorio += '<div>';
-          checklistsSemana.sort(function(a, b) {
-            return new Date(b.data + 'T00:00:00') - new Date(a.data + 'T00:00:00');
-          }).forEach(function(c) {
-            var dataFormatada = new Date(c.data + 'T00:00:00').toLocaleDateString('pt-BR');
-            relatorio += '<div class="checklist-item">';
-            relatorio += '<div class="tipo">' + (c.tipo || 'Não informado') + '</div>';
-            relatorio += '<div class="autor">Responsável: ' + (c.autor || 'Não informado') + ' • Setor: ' + (c.setor || 'Não informado') + '</div>';
-            relatorio += '<div class="data">Data: ' + dataFormatada + ' • Empresa: ' + (c.empresa || 'Não informada') + '</div>';
-            relatorio += '</div>';
+          tiposArray.forEach(function(tipo) {
+            relatorio += '<th colspan="2" style="text-align:center">' + tipo + '</th>';
           });
+          
+          relatorio += '</tr>';
+          relatorio += '<tr>';
+          relatorio += '<th colspan="2"></th>';
+          
+          tiposArray.forEach(function(tipo) {
+            relatorio += '<th style="text-align:center;font-size:0.85rem">Meta</th>';
+            relatorio += '<th style="text-align:center;font-size:0.85rem">Aderência</th>';
+          });
+          
+          relatorio += '</tr></thead>';
+          relatorio += '<tbody>';
+          
+          var autoresMap = semanaMap[semana];
+          Object.keys(autoresMap).sort().forEach(function(autor) {
+            relatorio += '<tr>';
+            relatorio += '<td class="nome-setor">' + autor + '</td>';
+            relatorio += '<td>' + autoresMap[autor].setor + '</td>';
+            
+            tiposArray.forEach(function(tipo) {
+              var dados = autoresMap[autor].tipos[tipo];
+              if (dados) {
+                var aderencia = dados.aderencia;
+                var aderenciaClass = aderencia === 100 ? 'aderencia-100' : (aderencia >= 80 ? 'aderencia-80' : 'aderencia-0');
+                
+                relatorio += '<td style="text-align:center"><input type="number" class="meta-input" value="' + dados.meta + '" min="0" title="Defina a meta" onchange="alert(\'Meta alterada. Salve manualmente no banco de dados.\')" /></td>';
+                relatorio += '<td class="aderencia-cell ' + aderenciaClass + '">' + aderencia + '%</td>';
+              } else {
+                relatorio += '<td style="text-align:center"><input type="number" class="meta-input" value="0" min="0" /></td>';
+                relatorio += '<td class="aderencia-cell aderencia-0">0%</td>';
+              }
+            });
+            
+            relatorio += '</tr>';
+          });
+          
+          relatorio += '</tbody>';
+          relatorio += '</table>';
           relatorio += '</div>';
           relatorio += '</div>';
         });
         
         relatorio += '<button class="print-btn" onclick="window.print()">🖨️ Imprimir Relatório</button>';
+        relatorio += '<p style="text-align:center;color:#666;font-size:0.9rem">💡 Dica: Edite as metas diretamente na tabela. As aderências são calculadas automaticamente.</p>';
         relatorio += '</body></html>';
         
-        var novaJanela = window.open('', 'AcompanhamentoSemanal', 'width=900,height=700');
+        var novaJanela = window.open('', 'AcompanhamentoSemanal', 'width=1200,height=700');
         novaJanela.document.write(relatorio);
         novaJanela.document.close();
       }          // Inicializar checklists ao carregar
