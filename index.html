@@ -9040,62 +9040,27 @@
 					}
 				}
 				
-				// Processar PDF e extrair dados
+				// Processar PDF e salvar para visualização
+				var pdfAnexado = null;
+				
 				function procesarPDFYExtraerDatos(event) {
 					var file = event.target.files[0];
-					if (!file) return;
+					if (!file) {
+						pdfAnexado = null;
+						return;
+					}
 					
 					document.getElementById('pdf-status').style.display = 'block';
-					document.getElementById('pdf-status').innerHTML = '⏳ Processando PDF...';
+					document.getElementById('pdf-status').innerHTML = '⏳ Carregando PDF...';
 					
-					// Extrair texto do PDF usando FileReader
+					// Salvar PDF como base64 para visualização posterior
 					var reader = new FileReader();
 					reader.onload = function(e) {
-						var arrayBuffer = e.target.result;
-						var uint8Array = new Uint8Array(arrayBuffer);
-						var textoExtraido = '';
-						
-						// Extrair texto do PDF (método simplificado para texto não codificado)
-						for (var i = 0; i < uint8Array.length; i++) {
-							var char = String.fromCharCode(uint8Array[i]);
-							if (char.match(/[\x20-\x7E\xC0-\xFF\n\r]/)) {
-								textoExtraido += char;
-							}
-						}
-						
-						// DEBUG: Mostrar texto extraído
-						console.log('=== TEXTO EXTRAÍDO DO PDF ===');
-						console.log(textoExtraido.substring(0, 2000)); // Primeiros 2000 caracteres
-						
-						var dadosExtraidos = extrairDadosDoTexto(textoExtraido);
-						
-						// DEBUG: Mostrar dados extraídos
-						console.log('=== DADOS EXTRAÍDOS ===');
-						console.log('Autor:', dadosExtraidos.autor);
-						console.log('Data:', dadosExtraidos.data);
-						console.log('Tipo:', dadosExtraidos.tipo);
-						
-						// Preencher campos automaticamente
-						if (dadosExtraidos.autor) {
-							document.getElementById('checklist-autor').value = dadosExtraidos.autor;
-							preencherSetorAutomaticamente();
-						}
-						if (dadosExtraidos.data) {
-							document.getElementById('checklist-data').value = dadosExtraidos.data;
-						}
-						if (dadosExtraidos.tipo) {
-							document.getElementById('checklist-tipo').value = dadosExtraidos.tipo;
-						}
-						
-						// Mostrar informações extraídas
-						mostrarInformacoesExtraidas(dadosExtraidos);
-						
-						document.getElementById('pdf-status').innerHTML = '✓ PDF processado com sucesso';
+						pdfAnexado = e.target.result;
+						document.getElementById('pdf-status').innerHTML = '✓ PDF anexado com sucesso';
 						document.getElementById('pdf-status').style.color = '#059669';
-						
-						dadosExtraidosPDF = dadosExtraidos;
 					};
-					reader.readAsArrayBuffer(file);
+					reader.readAsDataURL(file);
 				}
 				
 				// Extrair dados do texto do PDF
@@ -9201,7 +9166,7 @@
 					document.getElementById('form-nova-checklist').reset();
 					document.getElementById('pdf-status').style.display = 'none';
 					document.getElementById('info-extraida').style.display = 'none';
-					dadosExtraidosPDF = {};
+					pdfAnexado = null;
 				}
 				
 				// Salvar nova checklist aplicada
@@ -9255,7 +9220,7 @@
 					}
 				}
 				
-				// Salvar checklist com fotos
+				// Salvar checklist com fotos e PDF
 				function salvarChecklistComFotos(empresa, tipo, autor, setor, data, semana, fotos) {
 					var novaChecklist = {
 						id: Math.random().toString(36).substr(2, 9),
@@ -9266,6 +9231,7 @@
 						data: data,
 						semana: semana,
 						fotos: fotos,
+						pdf: pdfAnexado,
 						dataCriacao: new Date().toLocaleString('pt-BR')
 					};
 					
@@ -9286,51 +9252,69 @@
 							return;
 						}
 						
-						var html = '';
-						checklistsAplicadas.forEach(function(checklist) {
-							var dataFormatada = new Date(checklist.data).toLocaleDateString('pt-BR');
-							
-							html += '<div style="display:grid;grid-template-columns:100px 80px 180px 220px 120px 80px 150px;gap:16px;padding:16px;border-bottom:1px solid #e5e7eb;font-size:0.9rem;align-items:center">';
-							html += '<div>' + dataFormatada + '</div>';
-							html += '<div><span style="background:#e0f2fe;color:#0369a1;padding:4px 8px;border-radius:4px;font-weight:500">Semana ' + checklist.semana + '</span></div>';
-							html += '<div style="color:#374151">' + checklist.tipo + '</div>';
-							html += '<div style="color:#374151">' + checklist.autor + '</div>';
-							html += '<div style="color:#6b7280">' + checklist.setor + '</div>';
-							html += '<div>';
-							if (checklist.foto) {
-								html += '<button onclick="abrirFotoChecklist(\'' + checklist.id + '\')" style="background:none;border:none;font-size:1.2rem;cursor:pointer" title="Visualizar foto">👁️</button>';
-							} else {
-								html += '<span style="color:#d1d5db">-</span>';
-							}
-							html += '</div>';
-							html += '<div style="display:flex;gap:8px">';
-							html += '<button onclick="editarChecklist(\'' + checklist.id + '\')" style="background:#ef4444;color:#fff;padding:6px 10px;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem">🗑️</button>';
-							html += '</div>';
-							html += '</div>';
-						});
+					var html = '';
+					checklistsAplicadas.forEach(function(checklist) {
+						var dataFormatada = new Date(checklist.data).toLocaleDateString('pt-BR');
 						
-						container.innerHTML = html;
-					}
-					
-					// Abrir foto de checklist
-					function abrirFotoChecklist(id) {
-						var checklist = checklistsAplicadas.find(function(c) { return c.id == id; });
-						if (checklist && checklist.foto) {
-							window.open(checklist.foto, '_blank');
+						html += '<div style="display:grid;grid-template-columns:100px 80px 180px 220px 120px 80px 150px;gap:16px;padding:16px;border-bottom:1px solid #e5e7eb;font-size:0.9rem;align-items:center">';
+						html += '<div>' + dataFormatada + '</div>';
+						html += '<div><span style="background:#e0f2fe;color:#0369a1;padding:4px 8px;border-radius:4px;font-weight:500">Semana ' + checklist.semana + '</span></div>';
+						html += '<div style="color:#374151">' + checklist.tipo + '</div>';
+						html += '<div style="color:#374151">' + checklist.autor + '</div>';
+						html += '<div style="color:#6b7280">' + checklist.setor + '</div>';
+						html += '<div>';
+						if (checklist.fotos && checklist.fotos.length > 0) {
+							html += '<span style="color:#10b981;font-size:0.85rem">📷 ' + checklist.fotos.length + '</span>';
+						} else {
+							html += '<span style="color:#d1d5db">-</span>';
 						}
-					}
-					
-					// Editar checklist (placeholder)
-					function editarChecklist(id) {
-						if (confirm('Deseja excluir esta checklist?')) {
-							checklistsAplicadas = checklistsAplicadas.filter(function(c) { return c.id != id; });
-							localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));
-							atualizarTabelaChecklists();
-							alert('Checklist excluída com sucesso!');
+						html += '</div>';
+						html += '<div style="display:flex;gap:8px">';
+						if (checklist.pdf) {
+							html += '<button onclick="abrirPDFChecklist(\'' + checklist.id + '\')" style="background:#3b82f6;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem" title="Visualizar PDF">📄 PDF</button>';
 						}
-					}
+						if (checklist.fotos && checklist.fotos.length > 0) {
+							html += '<button onclick="abrirFotosChecklist(\'' + checklist.id + '\')" style="background:#10b981;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem" title="Visualizar fotos">📷</button>';
+						}
+						html += '<button onclick="excluirChecklist(\'' + checklist.id + '\')" style="background:#ef4444;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem" title="Excluir">🗑️</button>';
+						html += '</div>';
+						html += '</div>';
+					});
 					
-					// Inicializar checklists ao carregar
+					container.innerHTML = html;
+			}
+			
+			// Abrir PDF de checklist
+			function abrirPDFChecklist(id) {
+				var checklist = checklistsAplicadas.find(function(c) { return c.id == id; });
+				if (checklist && checklist.pdf) {
+					var win = window.open();
+					win.document.write('<iframe src="' + checklist.pdf + '" frameborder="0" style="width:100%;height:100%"></iframe>');
+				}
+			}
+			
+			// Abrir fotos de checklist
+			function abrirFotosChecklist(id) {
+				var checklist = checklistsAplicadas.find(function(c) { return c.id == id; });
+				if (checklist && checklist.fotos && checklist.fotos.length > 0) {
+					var win = window.open('', '_blank', 'width=800,height=600');
+					win.document.write('<html><head><title>Fotos - ' + checklist.autor + '</title></head><body style="margin:0;padding:20px;background:#000;display:flex;flex-wrap:wrap;gap:10px;justify-content:center">');
+					checklist.fotos.forEach(function(foto) {
+						win.document.write('<img src="' + foto + '" style="max-width:100%;height:auto;border:2px solid #fff">');
+					});
+					win.document.write('</body></html>');
+				}
+			}
+			
+			// Excluir checklist
+			function excluirChecklist(id) {
+				if (confirm('Deseja excluir esta checklist?')) {
+					checklistsAplicadas = checklistsAplicadas.filter(function(c) { return c.id != id; });
+					localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));
+					atualizarTabelaChecklists();
+					alert('Checklist excluída com sucesso!');
+				}
+			}					// Inicializar checklists ao carregar
 					carregarChecklists();
 					</script>
 
