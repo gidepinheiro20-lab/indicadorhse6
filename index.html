@@ -9439,6 +9439,34 @@
           return;
         }
         
+        // Carregar metas salvas
+        var metasSalvas = {};
+        try {
+          var metasStored = localStorage.getItem('metasAcompanhamento');
+          if (metasStored) {
+            metasSalvas = JSON.parse(metasStored);
+          }
+        } catch(e) {
+          console.log('Erro ao carregar metas:', e);
+        }
+        
+        // Se houver conexão com servidor, tentar carregar de lá
+        if (API_BASE_URL) {
+          fetch(API_BASE_URL + '/api/metas')
+            .then(function(response) { return response.json(); })
+            .then(function(dados) {
+              console.log('Metas carregadas do servidor:', dados);
+              dados.forEach(function(m) {
+                var chave = m.data.semana + '_' + m.data.autor + '_' + m.data.tipo;
+                metasSalvas[chave] = m.data.meta;
+              });
+              localStorage.setItem('metasAcompanhamento', JSON.stringify(metasSalvas));
+            })
+            .catch(function(error) {
+              console.log('Servidor indisponível, usando localStorage');
+            });
+        }
+        
         // Agrupar por semana e responsável
         var semanaMap = {};
         var allTipos = new Set();
@@ -9458,15 +9486,21 @@
           }
           
           if (!semanaMap[semana][autor].tipos[checklist.tipo]) {
+            var chave = semana + '_' + autor + '_' + checklist.tipo;
+            var metaSalva = metasSalvas[chave] ? parseInt(metasSalvas[chave]) : 0;
+            
             semanaMap[semana][autor].tipos[checklist.tipo] = {
-              meta: 0, // Será definido pelo usuário
+              meta: metaSalva,
               aderencia: 0,
-              registros: []
+              registros: [],
+              chave: chave
             };
           }
           
           semanaMap[semana][autor].tipos[checklist.tipo].registros.push(checklist);
-          semanaMap[semana][autor].tipos[checklist.tipo].aderencia = Math.round((semanaMap[semana][autor].tipos[checklist.tipo].registros.length / (semanaMap[semana][autor].tipos[checklist.tipo].meta || 1)) * 100);
+          var meta = semanaMap[semana][autor].tipos[checklist.tipo].meta;
+          var registros = semanaMap[semana][autor].tipos[checklist.tipo].registros.length;
+          semanaMap[semana][autor].tipos[checklist.tipo].aderencia = meta > 0 ? Math.round((registros / meta) * 100) : 0;
           allTipos.add(checklist.tipo);
         });
         
@@ -9496,17 +9530,39 @@
         relatorio += 'td{padding:10px;border:1px solid #e5e7eb}';
         relatorio += 'tr:nth-child(even){background:#f9fafb}';
         relatorio += '.nome-setor{font-weight:bold;color:#0d9488}';
-        relatorio += '.meta-input{width:50px;padding:4px;border:1px solid #d1d5db;border-radius:4px;text-align:center}';
+        relatorio += '.meta-input{width:50px;padding:4px;border:1px solid #d1d5db;border-radius:4px;text-align:center;font-weight:bold}';
         relatorio += '.aderencia-cell{text-align:center;font-weight:bold}';
         relatorio += '.aderencia-100{color:#10b981;background:#f0fdf4}';
         relatorio += '.aderencia-80{color:#f59e0b;background:#fffbeb}';
         relatorio += '.aderencia-0{color:#ef4444;background:#fef2f2}';
+        relatorio += '.salvo{color:#10b981;font-size:0.8rem;margin-top:5px}';
         relatorio += '.print-btn{background:#0d9488;color:#fff;padding:12px 24px;border:none;border-radius:4px;cursor:pointer;font-weight:bold;margin:20px 0}';
         relatorio += '.print-btn:hover{background:#059669}';
         relatorio += '@media print{.print-btn{display:none};.meta-input{border:none;background:transparent}}';
-        relatorio += '</style></head><body>';
+        relatorio += '</style>';
+        relatorio += '<script>';
+        relatorio += 'function salvarMeta(chave, valor) {';
+        relatorio += '  var metasSalvas = {};';
+        relatorio += '  var stored = localStorage.getItem("metasAcompanhamento");';
+        relatorio += '  if (stored) { metasSalvas = JSON.parse(stored); }';
+        relatorio += '  metasSalvas[chave] = valor;';
+        relatorio += '  localStorage.setItem("metasAcompanhamento", JSON.stringify(metasSalvas));';
+        relatorio += '  if (API_BASE_URL) {';
+        relatorio += '    var partes = chave.split("_");';
+        relatorio += '    fetch(API_BASE_URL + "/api/metas", {';
+        relatorio += '      method: "POST",';
+        relatorio += '      headers: { "Content-Type": "application/json" },';
+        relatorio += '      body: JSON.stringify({ semana: partes[0], autor: partes[1], tipo: partes[2], meta: valor })';
+        relatorio += '    }).catch(function() { console.log("Servidor indisponível, meta salva localmente"); });';
+        relatorio += '  }';
+        relatorio += '  var elem = document.getElementById("status-" + chave);';
+        relatorio += '  if (elem) { elem.style.display = "block"; setTimeout(function() { elem.style.display = "none"; }, 2000); }';
+        relatorio += '  location.reload();';
+        relatorio += '}';
+        relatorio += '</script>';
+        relatorio += '</head><body>';
         
-        relatorio += '<div class="header"><h1>📊 Acompanhamento Semanal de Checklists</h1><p>Relatório dinâmico de conformidade por semana</p></div>';
+        relatorio += '<div class="header"><h1>📊 Acompanhamento Semanal de Checklists</h1><p>Defina as metas e acompanhe a aderência</p></div>';
         
         semanas.forEach(function(semana) {
           relatorio += '<div class="semana-card">';
@@ -9545,8 +9601,12 @@
               if (dados) {
                 var aderencia = dados.aderencia;
                 var aderenciaClass = aderencia === 100 ? 'aderencia-100' : (aderencia >= 80 ? 'aderencia-80' : 'aderencia-0');
+                var chave = dados.chave;
                 
-                relatorio += '<td style="text-align:center"><input type="number" class="meta-input" value="' + dados.meta + '" min="0" title="Defina a meta" onchange="alert(\'Meta alterada. Salve manualmente no banco de dados.\')" /></td>';
+                relatorio += '<td style="text-align:center">';
+                relatorio += '<input type="number" class="meta-input" value="' + dados.meta + '" min="0" onchange="salvarMeta(\'' + chave + '\', this.value)" />';
+                relatorio += '<div id="status-' + chave + '" class="salvo" style="display:none">✓ Salvo</div>';
+                relatorio += '</td>';
                 relatorio += '<td class="aderencia-cell ' + aderenciaClass + '">' + aderencia + '%</td>';
               } else {
                 relatorio += '<td style="text-align:center"><input type="number" class="meta-input" value="0" min="0" /></td>';
@@ -9564,7 +9624,7 @@
         });
         
         relatorio += '<button class="print-btn" onclick="window.print()">🖨️ Imprimir Relatório</button>';
-        relatorio += '<p style="text-align:center;color:#666;font-size:0.9rem">💡 Dica: Edite as metas diretamente na tabela. As aderências são calculadas automaticamente.</p>';
+        relatorio += '<p style="text-align:center;color:#666;font-size:0.9rem">💡 Edite as metas e clique fora da célula para salvar automaticamente</p>';
         relatorio += '</body></html>';
         
         var novaJanela = window.open('', 'AcompanhamentoSemanal', 'width=1200,height=700');
