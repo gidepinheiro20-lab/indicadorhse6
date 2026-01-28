@@ -8990,18 +8990,74 @@
 					// Variável global para armazenar checklists aplicados
 					var checklistsAplicadas = [];
 					
-					// Carregar checklists do localStorage na inicialização
-					function carregarChecklists() {
-						var stored = localStorage.getItem('checklistsAplicadas');
-						if (stored) {
-							checklistsAplicadas = JSON.parse(stored);
-						} else {
-							checklistsAplicadas = [];
-						}
-						atualizarTabelaChecklists();
+				// Carregar checklists do localStorage na inicialização
+				function carregarChecklists() {
+					var stored = localStorage.getItem('checklistsAplicadas');
+					if (stored) {
+						checklistsAplicadas = JSON.parse(stored);
+					} else {
+						checklistsAplicadas = [];
+					}
+					popularFiltros();
+					configurarEventListenersFiltros();
+					atualizarTabelaChecklists();
+				}
+				
+				// Popular dropdowns de filtros
+				function popularFiltros() {
+					// Filtro de empresas
+					var empresasStored = localStorage.getItem('empresas');
+					if (empresasStored) {
+						var empresas = JSON.parse(empresasStored);
+						var selectEmpresa = document.getElementById('filtro-empresa');
+						var htmlEmpresa = '<option value="">Selecione(s)</option>';
+						empresas.forEach(function(emp) {
+							var nome = emp.nome || emp.Nome || '';
+							var cnpj = emp.cnpj || emp.CNPJ || '';
+							if (nome) {
+								htmlEmpresa += '<option value="' + cnpj + '">' + nome + '</option>';
+							}
+						});
+						selectEmpresa.innerHTML = htmlEmpresa;
 					}
 					
+					// Filtro de tipos (baseado nos tipos cadastrados)
+					var tipos = [];
+					checklistsAplicadas.forEach(function(c) {
+						if (c.tipo && tipos.indexOf(c.tipo) === -1) {
+							tipos.push(c.tipo);
+						}
+					});
+					var selectTipo = document.getElementById('filtro-tipo');
+					var htmlTipo = '<option value="">Selecione(s)</option>';
+					tipos.forEach(function(tipo) {
+						htmlTipo += '<option value="' + tipo + '">' + tipo + '</option>';
+					});
+					selectTipo.innerHTML = htmlTipo;
+					
+					// Filtro de autores (baseado nos autores cadastrados)
+					var autores = [];
+					checklistsAplicadas.forEach(function(c) {
+						if (c.autor && autores.indexOf(c.autor) === -1) {
+							autores.push(c.autor);
+						}
+					});
+					var selectAutor = document.getElementById('filtro-autor');
+					var htmlAutor = '<option value="">Selecione(s)</option>';
+					autores.forEach(function(autor) {
+						htmlAutor += '<option value="' + autor + '">' + autor + '</option>';
+					});
+					selectAutor.innerHTML = htmlAutor;
+				}
 				
+				// Configurar event listeners dos filtros
+				function configurarEventListenersFiltros() {
+					document.getElementById('filtro-empresa').addEventListener('change', atualizarTabelaChecklists);
+					document.getElementById('filtro-tipo').addEventListener('change', atualizarTabelaChecklists);
+					document.getElementById('filtro-autor').addEventListener('change', atualizarTabelaChecklists);
+					document.getElementById('filtro-periodo').addEventListener('change', atualizarTabelaChecklists);
+					document.getElementById('filtro-periodo-final').addEventListener('change', atualizarTabelaChecklists);
+				}				
 			// Mostrar modal de anexar formulário
 			function mostrarModalNovaChecklist() {
 				// Pré-preencher a data atual
@@ -9220,70 +9276,98 @@
 				}
 				
 				// Salvar checklist com fotos e PDF
-				function salvarChecklistComFotos(empresa, tipo, autor, setor, data, semana, fotos) {
-					var novaChecklist = {
-						id: Math.random().toString(36).substr(2, 9),
-						empresa: empresa,
-						tipo: tipo,
-						autor: autor,
-						setor: setor,
-						data: data,
-						semana: semana,
-						fotos: fotos,
-						pdf: pdfAnexado,
-						dataCriacao: new Date().toLocaleString('pt-BR')
-					};
-					
-					checklistsAplicadas.push(novaChecklist);
-					localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));
-					
-					fecharModalNovaChecklist();
-					atualizarTabelaChecklists();
-					alert('Checklist anexada com sucesso!');
-				}
+			function salvarChecklistComFotos(empresa, tipo, autor, setor, data, semana, fotos) {
+				var novaChecklist = {
+					id: Math.random().toString(36).substr(2, 9),
+					empresa: empresa,
+					tipo: tipo,
+					autor: autor,
+					setor: setor,
+					data: data,
+					semana: semana,
+					fotos: fotos,
+					pdf: pdfAnexado,
+					dataCriacao: new Date().toLocaleString('pt-BR')
+				};
 				
-				// Atualizar tabela de checklists
-					function atualizarTabelaChecklists() {
-						var container = document.getElementById('corpo-tabela-checklists');
+				checklistsAplicadas.push(novaChecklist);
+				localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));
+				
+				fecharModalNovaChecklist();
+				popularFiltros();
+				atualizarTabelaChecklists();
+				alert('Checklist anexada com sucesso!');
+			}				// Atualizar tabela de checklists
+				function atualizarTabelaChecklists() {
+					var container = document.getElementById('corpo-tabela-checklists');
+					
+					if (checklistsAplicadas.length === 0) {
+						container.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#9ca3af;grid-column:1/-1"><div style="font-size:2.5rem;margin-bottom:12px;opacity:0.5">✓</div><div style="font-size:1rem;font-weight:500;margin-bottom:6px">Nenhum checklist aplicado ainda</div><div style="font-size:0.9rem">Clique em "Anexar formulário" para começar</div></div>';
+						return;
+					}
+					
+					// Aplicar filtros
+					var filtroEmpresa = document.getElementById('filtro-empresa').value;
+					var filtroTipo = document.getElementById('filtro-tipo').value;
+					var filtroAutor = document.getElementById('filtro-autor').value;
+					var filtroPeriodo = document.getElementById('filtro-periodo').value;
+					var filtroPeriodoFinal = document.getElementById('filtro-periodo-final').value;
+					
+					var checklistsFiltradas = checklistsAplicadas.filter(function(checklist) {
+						// Filtro por empresa
+						if (filtroEmpresa && checklist.empresa !== filtroEmpresa) return false;
 						
-						if (checklistsAplicadas.length === 0) {
-							container.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#9ca3af;grid-column:1/-1"><div style="font-size:2.5rem;margin-bottom:12px;opacity:0.5">✓</div><div style="font-size:1rem;font-weight:500;margin-bottom:6px">Nenhum checklist aplicado ainda</div><div style="font-size:0.9rem">Clique em "Anexar formulário" para começar</div></div>';
-							return;
-						}
+						// Filtro por tipo
+						if (filtroTipo && checklist.tipo !== filtroTipo) return false;
 						
-					var html = '';
-					checklistsAplicadas.forEach(function(checklist) {
-						var dataFormatada = new Date(checklist.data).toLocaleDateString('pt-BR');
+						// Filtro por autor
+						if (filtroAutor && checklist.autor !== filtroAutor) return false;
 						
-						html += '<div style="display:grid;grid-template-columns:100px 80px 180px 220px 120px 80px 150px;gap:16px;padding:16px;border-bottom:1px solid #e5e7eb;font-size:0.9rem;align-items:center">';
-						html += '<div>' + dataFormatada + '</div>';
-						html += '<div><span style="background:#e0f2fe;color:#0369a1;padding:4px 8px;border-radius:4px;font-weight:500">Semana ' + checklist.semana + '</span></div>';
-						html += '<div style="color:#374151">' + checklist.tipo + '</div>';
-						html += '<div style="color:#374151">' + checklist.autor + '</div>';
-						html += '<div style="color:#6b7280">' + checklist.setor + '</div>';
-						html += '<div>';
-						if (checklist.fotos && checklist.fotos.length > 0) {
-							html += '<span style="color:#10b981;font-size:0.85rem">📷 ' + checklist.fotos.length + '</span>';
-						} else {
-							html += '<span style="color:#d1d5db">-</span>';
-						}
-						html += '</div>';
-						html += '<div style="display:flex;gap:8px">';
-						if (checklist.pdf) {
-							html += '<button onclick="abrirPDFChecklist(\'' + checklist.id + '\')" style="background:#3b82f6;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem" title="Visualizar PDF">📄 PDF</button>';
-						}
-						if (checklist.fotos && checklist.fotos.length > 0) {
-							html += '<button onclick="abrirFotosChecklist(\'' + checklist.id + '\')" style="background:#10b981;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem" title="Visualizar fotos">📷</button>';
-						}
-						html += '<button onclick="excluirChecklist(\'' + checklist.id + '\')" style="background:#ef4444;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem" title="Excluir">🗑️</button>';
-						html += '</div>';
-						html += '</div>';
+						// Filtro por período inicial
+						if (filtroPeriodo && checklist.data < filtroPeriodo) return false;
+						
+						// Filtro por período final
+						if (filtroPeriodoFinal && checklist.data > filtroPeriodoFinal) return false;
+						
+						return true;
 					});
 					
-					container.innerHTML = html;
-			}
-			
-			// Abrir PDF de checklist
+					if (checklistsFiltradas.length === 0) {
+						container.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#9ca3af;grid-column:1/-1"><div style="font-size:2.5rem;margin-bottom:12px;opacity:0.5">🔍</div><div style="font-size:1rem;font-weight:500;margin-bottom:6px">Nenhum checklist encontrado</div><div style="font-size:0.9rem">Tente ajustar os filtros</div></div>';
+						return;
+					}
+					
+				var html = '';
+				checklistsFiltradas.forEach(function(checklist) {
+					var dataFormatada = new Date(checklist.data).toLocaleDateString('pt-BR');
+					
+					html += '<div style="display:grid;grid-template-columns:100px 80px 180px 220px 120px 80px 150px;gap:16px;padding:16px;border-bottom:1px solid #e5e7eb;font-size:0.9rem;align-items:center">';
+					html += '<div>' + dataFormatada + '</div>';
+					html += '<div><span style="background:#e0f2fe;color:#0369a1;padding:4px 8px;border-radius:4px;font-weight:500">Semana ' + checklist.semana + '</span></div>';
+					html += '<div style="color:#374151">' + checklist.tipo + '</div>';
+					html += '<div style="color:#374151">' + checklist.autor + '</div>';
+					html += '<div style="color:#6b7280">' + checklist.setor + '</div>';
+					html += '<div>';
+					if (checklist.fotos && checklist.fotos.length > 0) {
+						html += '<span style="color:#10b981;font-size:0.85rem">📷 ' + checklist.fotos.length + '</span>';
+					} else {
+						html += '<span style="color:#d1d5db">-</span>';
+					}
+					html += '</div>';
+					html += '<div style="display:flex;gap:8px">';
+					if (checklist.pdf) {
+						html += '<button onclick="abrirPDFChecklist(\'' + checklist.id + '\')" style="background:#3b82f6;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem" title="Visualizar PDF">📄 PDF</button>';
+					}
+					if (checklist.fotos && checklist.fotos.length > 0) {
+						html += '<button onclick="abrirFotosChecklist(\'' + checklist.id + '\')" style="background:#10b981;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem" title="Visualizar fotos">📷</button>';
+					}
+					html += '<button onclick="excluirChecklist(\'' + checklist.id + '\')" style="background:#ef4444;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem" title="Excluir">🗑️</button>';
+					html += '</div>';
+					html += '</div>';
+				});
+				
+				container.innerHTML = html;
+			}			// Abrir PDF de checklist
 			function abrirPDFChecklist(id) {
 				var checklist = checklistsAplicadas.find(function(c) { return c.id == id; });
 				if (checklist && checklist.pdf) {
