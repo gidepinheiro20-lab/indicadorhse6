@@ -9575,7 +9575,7 @@
           relatorio += '<th>Setor</th>';
           
           tiposArray.forEach(function(tipo) {
-            relatorio += '<th colspan="2" style="text-align:center">' + tipo + '</th>';
+            relatorio += '<th colspan="3" style="text-align:center">' + tipo + '</th>';
           });
           
           relatorio += '</tr>';
@@ -9584,6 +9584,7 @@
           
           tiposArray.forEach(function(tipo) {
             relatorio += '<th style="text-align:center;font-size:0.85rem">Meta</th>';
+            relatorio += '<th style="text-align:center;font-size:0.85rem">Qtd</th>';
             relatorio += '<th style="text-align:center;font-size:0.85rem">Aderência</th>';
           });
           
@@ -9600,6 +9601,7 @@
               var dados = autoresMap[autor].tipos[tipo];
               if (dados) {
                 var aderencia = dados.aderencia;
+                var quantidade = dados.registros.length;
                 var aderenciaClass = aderencia === 100 ? 'aderencia-100' : (aderencia >= 80 ? 'aderencia-80' : 'aderencia-0');
                 var chave = dados.chave;
                 
@@ -9607,9 +9609,11 @@
                 relatorio += '<input type="number" class="meta-input" value="' + dados.meta + '" min="0" onchange="salvarMeta(\'' + chave + '\', this.value)" />';
                 relatorio += '<div id="status-' + chave + '" class="salvo" style="display:none">✓ Salvo</div>';
                 relatorio += '</td>';
+                relatorio += '<td style="text-align:center;font-weight:bold">' + quantidade + '</td>';
                 relatorio += '<td class="aderencia-cell ' + aderenciaClass + '">' + aderencia + '%</td>';
               } else {
                 relatorio += '<td style="text-align:center"><input type="number" class="meta-input" value="0" min="0" /></td>';
+                relatorio += '<td style="text-align:center">0</td>';
                 relatorio += '<td class="aderencia-cell aderencia-0">0%</td>';
               }
             });
