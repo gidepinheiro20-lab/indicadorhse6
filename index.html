@@ -9017,8 +9017,14 @@
         
         // Tentar sincronizar com servidor em background (não bloqueia o carregamento)
         if (API_BASE_URL) {
-          fetch(API_BASE_URL + '/api/checklists', { signal: AbortSignal.timeout(3000) })
-            .then(r => r.ok ? r.json() : null)
+          var controller = new AbortController();
+          var timeoutId = setTimeout(() => controller.abort(), 3000);
+          
+          fetch(API_BASE_URL + '/api/checklists', { signal: controller.signal })
+            .then(r => {
+              clearTimeout(timeoutId);
+              return r.ok ? r.json() : null;
+            })
             .then(dados => {
               if (dados && dados.length > 0) {
                 checklistsAplicadas = dados;
@@ -9027,7 +9033,10 @@
                 atualizarTabelaChecklists();
               }
             })
-            .catch(() => console.log('Servidor indisponível (offline mode)'));
+            .catch(() => {
+              clearTimeout(timeoutId);
+              console.log('Servidor indisponível (offline mode)');
+            });
         }
         
         popularFiltros();
@@ -9463,8 +9472,14 @@
         
         // Tentar sincronizar metas com servidor em background
         if (API_BASE_URL) {
-          fetch(API_BASE_URL + '/api/metas', { signal: AbortSignal.timeout(2000) })
-            .then(r => r.ok ? r.json() : null)
+          var controller = new AbortController();
+          var timeoutId = setTimeout(() => controller.abort(), 2000);
+          
+          fetch(API_BASE_URL + '/api/metas', { signal: controller.signal })
+            .then(r => {
+              clearTimeout(timeoutId);
+              return r.ok ? r.json() : null;
+            })
             .then(dados => {
               if (dados && dados.length > 0) {
                 dados.forEach(function(m) {
@@ -9475,7 +9490,10 @@
                 console.log('✅ Metas sincronizadas:', dados.length);
               }
             })
-            .catch(() => console.log('Servidor de metas indisponível'));
+            .catch(() => {
+              clearTimeout(timeoutId);
+              console.log('Servidor de metas indisponível');
+            });
         }
         
         // Agrupar por semana e responsável
