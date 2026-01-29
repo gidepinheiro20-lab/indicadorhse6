@@ -3090,9 +3090,13 @@
         if (/^192\.168\.|^10\.|^172\.(1[6-9]|2[0-9]|3[01])\./.test(window.location.hostname)) {
           return 'http://' + window.location.hostname + ':3000';
         }
-        // Fallback padrão: null (não conecta a servidor)
-        console.warn('⚠️ API_BASE_URL não configurada!');
-        return null;
+        // Se estiver acessando via domínio Render
+        if (window.location.hostname.includes('onrender.com')) {
+          return 'https://' + window.location.hostname;
+        }
+        // Fallback padrão: tenta usar o mesmo domínio
+        console.warn('⚠️ API_BASE_URL não configurada, usando domínio atual');
+        return window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
       })();        async function sincronizarComServidor(tabela, dados) {
           if (!API_BASE_URL) return false; // Se não houver API, retorna false
           try {
