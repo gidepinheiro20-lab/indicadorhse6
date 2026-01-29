@@ -8868,6 +8868,13 @@
           
           // Inicializar conteúdo principal (dashboard)
           function inicializarDashboard() {
+            // Remover loading screen imediatamente
+            var loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+              loadingScreen.classList.add('hidden');
+              loadingScreen.style.display = 'none';
+            }
+            
             var conteudoPrincipal = document.getElementById('conteudo-principal');
             if (conteudoPrincipal) {
               conteudoPrincipal.innerHTML = `
