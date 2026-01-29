@@ -17,64 +17,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
-      /* Loading Screen */
-      #loading-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        transition: opacity 0.5s ease-out;
-      }
-      #loading-screen.hidden {
-        opacity: 0;
-        pointer-events: none;
-      }
-      .loading-logo {
-        width: 100px;
-        height: 100px;
-        background: #fff;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 48px;
-        font-weight: bold;
-        color: #667eea;
-        margin-bottom: 30px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-      }
-      .loading-text {
-        color: #fff;
-        font-size: 24px;
-        font-weight: 600;
-        margin-bottom: 10px;
-      }
-      .loading-subtext {
-        color: rgba(255,255,255,0.8);
-        font-size: 14px;
-        margin-bottom: 30px;
-      }
-      .loading-spinner {
-        width: 50px;
-        height: 50px;
-        border: 4px solid rgba(255,255,255,0.3);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-    </style>
-
-    <style>
       :root{
       --sidebar-width:340px;
         --bg:#ffffff;
@@ -368,14 +310,6 @@
     </style>
   </head>
   <body>
-    <!-- Loading Screen -->
-    <div id="loading-screen">
-      <div class="loading-logo">HSE</div>
-      <div class="loading-text">Indicador de HSE</div>
-      <div class="loading-subtext">Carregando sistema...</div>
-      <div class="loading-spinner"></div>
-    </div>
-
     <div class="app" id="app-sistema">
       <aside class="sidebar" aria-label="Barra lateral">
         <div class="brand">
@@ -4534,16 +4468,7 @@
       }
         // Ao carregar a página, tentar inicializar Firebase automaticamente se existir configuração global
         window.addEventListener('load', function(){
-          // Esconder loading screen após 1 segundo
-          setTimeout(function() {
-            var loadingScreen = document.getElementById('loading-screen');
-            if (loadingScreen) {
-              loadingScreen.classList.add('hidden');
-              setTimeout(function() {
-                loadingScreen.style.display = 'none';
-              }, 500);
-            }
-          }, 1000);
+          // Sistema carregado
         });
           // Carregar funcionários na RAS (Etapa 6 - Confirmar Presença) - Escopo Global
           window.carregarFuncionarios = function() {
@@ -8868,13 +8793,6 @@
           
           // Inicializar conteúdo principal (dashboard)
           function inicializarDashboard() {
-            // Remover loading screen imediatamente
-            var loadingScreen = document.getElementById('loading-screen');
-            if (loadingScreen) {
-              loadingScreen.classList.add('hidden');
-              loadingScreen.style.display = 'none';
-            }
-            
             var conteudoPrincipal = document.getElementById('conteudo-principal');
             if (conteudoPrincipal) {
               conteudoPrincipal.innerHTML = `
