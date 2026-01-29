@@ -8999,33 +8999,35 @@
         // Variável global para armazenar checklists aplicados
         var checklistsAplicadas = [];
         
-      // Carregar checklists do servidor e localStorage
-      async function carregarChecklists() {
-        try {
-          // Tentar carregar do servidor primeiro (com timeout de 5 segundos)
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          
-          const response = await fetch(`${API_BASE_URL}/api/checklists`, { signal: controller.signal });
-          clearTimeout(timeoutId);
-          
-          if (response.ok) {
-            const dados = await response.json();
-            checklistsAplicadas = dados;
-            localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));
-            console.log('✅ Checklists carregados do servidor:', checklistsAplicadas.length);
-          } else {
-            throw new Error('Erro ao carregar do servidor');
-          }
-        } catch(error) {
-          console.warn('⚠️ Falha ao carregar do servidor, usando localStorage:', error);
-          // Fallback para localStorage
-          var stored = localStorage.getItem('checklistsAplicadas');
-          if (stored) {
+      // Carregar checklists do localStorage
+      function carregarChecklists() {
+        // Carregar do localStorage
+        var stored = localStorage.getItem('checklistsAplicadas');
+        if (stored) {
+          try {
             checklistsAplicadas = JSON.parse(stored);
-          } else {
+            console.log('✅ Checklists carregados do localStorage:', checklistsAplicadas.length);
+          } catch(e) {
+            console.warn('Erro ao parsear localStorage');
             checklistsAplicadas = [];
           }
+        } else {
+          checklistsAplicadas = [];
+        }
+        
+        // Tentar sincronizar com servidor em background (não bloqueia o carregamento)
+        if (API_BASE_URL) {
+          fetch(API_BASE_URL + '/api/checklists', { signal: AbortSignal.timeout(3000) })
+            .then(r => r.ok ? r.json() : null)
+            .then(dados => {
+              if (dados && dados.length > 0) {
+                checklistsAplicadas = dados;
+                localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));
+                console.log('✅ Sincronizado com servidor:', dados.length);
+                atualizarTabelaChecklists();
+              }
+            })
+            .catch(() => console.log('Servidor indisponível (offline mode)'));
         }
         
         popularFiltros();
@@ -9442,13 +9444,13 @@
       }
       
       // Acompanhamento Semanal
-      async function abrirAcompanhamentoSemanal() {
+      function abrirAcompanhamentoSemanal() {
         if (!checklistsAplicadas || checklistsAplicadas.length === 0) {
           alert('Nenhuma checklist registrada para acompanhamento.');
           return;
         }
         
-        // Carregar metas salvas
+        // Carregar metas salvas do localStorage
         var metasSalvas = {};
         try {
           var metasStored = localStorage.getItem('metasAcompanhamento');
@@ -9459,28 +9461,21 @@
           console.log('Erro ao carregar metas:', e);
         }
         
-        // Se houver conexão com servidor, tentar carregar de lá
+        // Tentar sincronizar metas com servidor em background
         if (API_BASE_URL) {
-          try {
-            // Timeout de 3 segundos para não travar
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
-            
-            var response = await fetch(API_BASE_URL + '/api/metas', { signal: controller.signal });
-            clearTimeout(timeoutId);
-            
-            if (response.ok) {
-              var dados = await response.json();
-              console.log('Metas carregadas do servidor:', dados);
-              dados.forEach(function(m) {
-                var chave = m.data.semana + '_' + m.data.autor + '_' + m.data.tipo;
-                metasSalvas[chave] = m.data.meta;
-              });
-              localStorage.setItem('metasAcompanhamento', JSON.stringify(metasSalvas));
-            }
-          } catch(error) {
-            console.log('Servidor indisponível ou timeout, usando localStorage');
-          }
+          fetch(API_BASE_URL + '/api/metas', { signal: AbortSignal.timeout(2000) })
+            .then(r => r.ok ? r.json() : null)
+            .then(dados => {
+              if (dados && dados.length > 0) {
+                dados.forEach(function(m) {
+                  var chave = m.data.semana + '_' + m.data.autor + '_' + m.data.tipo;
+                  metasSalvas[chave] = m.data.meta;
+                });
+                localStorage.setItem('metasAcompanhamento', JSON.stringify(metasSalvas));
+                console.log('✅ Metas sincronizadas:', dados.length);
+              }
+            })
+            .catch(() => console.log('Servidor de metas indisponível'));
         }
         
         // Agrupar por semana e responsável
