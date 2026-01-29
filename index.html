@@ -9575,15 +9575,16 @@
         relatorio += '@media print{.print-btn{display:none};.meta-input{border:none;background:transparent}}';
         relatorio += '</style>';
         relatorio += '<script>';
+        relatorio += 'var API_URL = "' + (API_BASE_URL || '') + '";';
         relatorio += 'function salvarMeta(chave, valor) {';
         relatorio += '  var metasSalvas = {};';
         relatorio += '  var stored = localStorage.getItem("metasAcompanhamento");';
         relatorio += '  if (stored) { metasSalvas = JSON.parse(stored); }';
         relatorio += '  metasSalvas[chave] = valor;';
         relatorio += '  localStorage.setItem("metasAcompanhamento", JSON.stringify(metasSalvas));';
-        relatorio += '  if (API_BASE_URL) {';
+        relatorio += '  if (API_URL) {';
         relatorio += '    var partes = chave.split("_");';
-        relatorio += '    fetch(API_BASE_URL + "/api/metas", {';
+        relatorio += '    fetch(API_URL + "/api/metas", {';
         relatorio += '      method: "POST",';
         relatorio += '      headers: { "Content-Type": "application/json" },';
         relatorio += '      body: JSON.stringify({ semana: partes[0], autor: partes[1], tipo: partes[2], meta: valor })';
