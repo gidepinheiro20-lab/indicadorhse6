@@ -8998,8 +8998,13 @@
       // Carregar checklists do servidor e localStorage
       async function carregarChecklists() {
         try {
-          // Tentar carregar do servidor primeiro
-          const response = await fetch(`${API_BASE_URL}/api/checklists`);
+          // Tentar carregar do servidor primeiro (com timeout de 5 segundos)
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000);
+          
+          const response = await fetch(`${API_BASE_URL}/api/checklists`, { signal: controller.signal });
+          clearTimeout(timeoutId);
+          
           if (response.ok) {
             const dados = await response.json();
             checklistsAplicadas = dados;
@@ -9453,7 +9458,13 @@
         // Se houver conexão com servidor, tentar carregar de lá
         if (API_BASE_URL) {
           try {
-            var response = await fetch(API_BASE_URL + '/api/metas');
+            // Timeout de 3 segundos para não travar
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            
+            var response = await fetch(API_BASE_URL + '/api/metas', { signal: controller.signal });
+            clearTimeout(timeoutId);
+            
             if (response.ok) {
               var dados = await response.json();
               console.log('Metas carregadas do servidor:', dados);
@@ -9464,7 +9475,7 @@
               localStorage.setItem('metasAcompanhamento', JSON.stringify(metasSalvas));
             }
           } catch(error) {
-            console.log('Servidor indisponível, usando localStorage');
+            console.log('Servidor indisponível ou timeout, usando localStorage');
           }
         }
         
