@@ -9433,7 +9433,7 @@
       }
       
       // Acompanhamento Semanal
-      function abrirAcompanhamentoSemanal() {
+      async function abrirAcompanhamentoSemanal() {
         if (!checklistsAplicadas || checklistsAplicadas.length === 0) {
           alert('Nenhuma checklist registrada para acompanhamento.');
           return;
@@ -9452,19 +9452,20 @@
         
         // Se houver conexão com servidor, tentar carregar de lá
         if (API_BASE_URL) {
-          fetch(API_BASE_URL + '/api/metas')
-            .then(function(response) { return response.json(); })
-            .then(function(dados) {
+          try {
+            var response = await fetch(API_BASE_URL + '/api/metas');
+            if (response.ok) {
+              var dados = await response.json();
               console.log('Metas carregadas do servidor:', dados);
               dados.forEach(function(m) {
                 var chave = m.data.semana + '_' + m.data.autor + '_' + m.data.tipo;
                 metasSalvas[chave] = m.data.meta;
               });
               localStorage.setItem('metasAcompanhamento', JSON.stringify(metasSalvas));
-            })
-            .catch(function(error) {
-              console.log('Servidor indisponível, usando localStorage');
-            });
+            }
+          } catch(error) {
+            console.log('Servidor indisponível, usando localStorage');
+          }
         }
         
         // Agrupar por semana e responsável
