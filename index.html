@@ -4528,21 +4528,27 @@
           // Recarregar do servidor se disponível
           if (typeof carregarFuncionariosDoServidor === 'function') {
             carregarFuncionariosDoServidor();
-          }
-          else {
+          } else {
             window.location.reload();
+          }
         }
-      }
         // Ao carregar a página, tentar inicializar Firebase automaticamente se existir configuração global
         window.addEventListener('load', function(){
           // Esconder loading screen após 1 segundo
           setTimeout(function() {
-            var loadingScreen = document.getElementById('loading-screen');
-            if (loadingScreen) {
-              loadingScreen.classList.add('hidden');
-              setTimeout(function() {
-                loadingScreen.style.display = 'none';
-              }, 500);
+            try {
+              var loadingScreen = document.getElementById('loading-screen');
+              if (loadingScreen) {
+                loadingScreen.classList.add('hidden');
+                setTimeout(function() {
+                  loadingScreen.style.display = 'none';
+                }, 500);
+              }
+            } catch(e) {
+              console.error('Erro ao esconder loading:', e);
+              // Forçar remoção mesmo com erro
+              var ls = document.getElementById('loading-screen');
+              if (ls) ls.remove();
             }
           }, 1000);
         });
