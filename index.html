@@ -9437,7 +9437,152 @@
       
       // Matriz de Ferramentas
       function abrirMatrizFerramentas() {
-        alert('Matriz de Ferramentas - Em desenvolvimento');
+        // Dados padrão das matrizes (podem ser editados)
+        var matrizMensal = {
+          'PARTICIPAÇÃO NA RAS': [1, 8, 15, 15, 15],
+          'PARTICIPAÇÃO NA CPT': [1, 4, 10, 15, 4],
+          'WOC MDHO': [2, 8, 12, 8, 4],
+          'INSPEÇÃO DE SEGURANÇA': [1, 4, 8, 4, 0],
+          'REUNIÃO MENSAL DE HSE ALBRAS': [1, 1, 1, 1, 0],
+          'REUNIÃO SEMANAL DE CONTRATADAS COM O HSE CAPEX': [0, 0, 4, 0, 0],
+          'REUNIÃO DA CIPA INTEGRADA / CONSTITUÍDA': [0, 0, 0, 0, 1]
+        };
+        
+        var matrizSemanal = {
+          'PARTICIPAÇÃO NA RAS': [1, 2, 4, 4, 4],
+          'PARTICIPAÇÃO NA CPT': [1, 1, 3, 4, 1],
+          'WOC MDHO': [1, 2, 3, 2, 1],
+          'INSPEÇÃO DE SEGURANÇA': [1, 1, 2, 1, 0],
+          'REUNIÃO MENSAL DE HSE ALBRAS': [1, 1, 1, 1, 0],
+          'REUNIÃO SEMANAL DE CONTRATADAS COM O HSE CAPEX': [0, 0, 1, 0, 0],
+          'REUNIÃO DA CIPA INTEGRADA / CONSTITUÍDA': [0, 0, 0, 0, 1]
+        };
+        
+        var colunas = ['GERENTE', 'ENGENHEIRO', 'HSE', 'ENCARREGADO', 'CIPA'];
+        
+        // Gerar HTML
+        var html = '<html><head><meta charset="UTF-8"><title>Matriz de Ferramentas HSE</title>';
+        html += '<style>';
+        html += 'body{font-family:Arial,sans-serif;margin:20px;background:#f0f2f5}';
+        html += '.container{max-width:1600px;margin:0 auto}';
+        html += '.header{background:linear-gradient(135deg,#0d9488 0%,#059669 100%);color:#fff;padding:20px;border-radius:8px;margin-bottom:20px;text-align:center}';
+        html += '.header h1{margin:0;font-size:2rem}';
+        html += '.matriz-wrapper{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}';
+        html += '.matriz-card{background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);padding:20px}';
+        html += '.matriz-titulo{background:#1e40af;color:#fff;padding:15px;text-align:center;font-size:1.3rem;font-weight:bold;border-radius:4px;margin-bottom:15px}';
+        html += '.btn-group{text-align:center;margin-bottom:20px}';
+        html += '.btn-salvar{background:#1e40af;color:#fff;padding:12px 30px;border:none;border-radius:4px;cursor:pointer;font-weight:bold;font-size:1rem;margin:5px}';
+        html += '.btn-salvar:hover{background:#1e3a8a}';
+        html += 'table{width:100%;border-collapse:collapse;margin-top:10px}';
+        html += 'th,td{border:1px solid #ccc;padding:10px;text-align:center}';
+        html += 'th{background:#1e40af;color:#fff;font-weight:bold}';
+        html += 'th.tipo-col{background:#1e40af;color:#fff;text-align:left;padding-left:15px}';
+        html += 'th.meta-header{background:#6b9ef5;color:#fff;font-size:0.9rem}';
+        html += 'td:first-child{text-align:left;font-weight:bold;background:#f8f9fa;padding-left:15px}';
+        html += 'input[type="number"]{width:50px;padding:6px;border:1px solid #d1d5db;border-radius:4px;text-align:center;font-weight:bold;font-size:0.95rem}';
+        html += 'input[type="number"]:focus{outline:2px solid #1e40af;background:#fffbeb}';
+        html += '@media print{.btn-group{display:none}}';
+        html += '@media (max-width:1200px){.matriz-wrapper{grid-template-columns:1fr}}';
+        html += '</style></head><body>';
+        
+        html += '<div class="container">';
+        html += '<div class="header"><h1>🔧 Matriz de Ferramentas HSE</h1><p>Configuração de Metas por Função</p></div>';
+        
+        html += '<div class="matriz-wrapper">';
+        
+        // Matriz Mensal
+        html += '<div class="matriz-card">';
+        html += '<div class="matriz-titulo">Matriz Mensal</div>';
+        html += '<table>';
+        html += '<thead>';
+        html += '<tr><th class="tipo-col">TIPO</th>';
+        colunas.forEach(function(col) {
+          html += '<th>' + col + '</th>';
+        });
+        html += '</tr>';
+        html += '<tr><th class="tipo-col"></th>';
+        for(var i = 0; i < 5; i++) {
+          html += '<th class="meta-header">META</th>';
+        }
+        html += '</tr>';
+        html += '</thead><tbody>';
+        
+        Object.keys(matrizMensal).forEach(function(tipo) {
+          html += '<tr><td>' + tipo + '</td>';
+          matrizMensal[tipo].forEach(function(valor, idx) {
+            html += '<td><input type="number" value="' + valor + '" min="0" data-matriz="mensal" data-tipo="' + tipo + '" data-coluna="' + idx + '" /></td>';
+          });
+          html += '</tr>';
+        });
+        
+        html += '</tbody></table>';
+        html += '</div>';
+        
+        // Matriz Semanal
+        html += '<div class="matriz-card">';
+        html += '<div class="matriz-titulo">Matriz Semanal</div>';
+        html += '<table>';
+        html += '<thead>';
+        html += '<tr><th class="tipo-col">TIPO</th>';
+        colunas.forEach(function(col) {
+          html += '<th>' + col + '</th>';
+        });
+        html += '</tr>';
+        html += '<tr><th class="tipo-col"></th>';
+        for(var i = 0; i < 5; i++) {
+          html += '<th class="meta-header">META</th>';
+        }
+        html += '</tr>';
+        html += '</thead><tbody>';
+        
+        Object.keys(matrizSemanal).forEach(function(tipo) {
+          html += '<tr><td>' + tipo + '</td>';
+          matrizSemanal[tipo].forEach(function(valor, idx) {
+            html += '<td><input type="number" value="' + valor + '" min="0" data-matriz="semanal" data-tipo="' + tipo + '" data-coluna="' + idx + '" /></td>';
+          });
+          html += '</tr>';
+        });
+        
+        html += '</tbody></table>';
+        html += '</div>';
+        
+        html += '</div>'; // fim matriz-wrapper
+        
+        html += '<div class="btn-group">';
+        html += '<button class="btn-salvar" onclick="salvarMatrizes()">💾 Salvar Matriz Mensal</button>';
+        html += '<button class="btn-salvar" onclick="salvarMatrizes()">💾 Salvar Matriz Semanal</button>';
+        html += '<button class="btn-salvar" onclick="window.print()">🖨️ Imprimir</button>';
+        html += '</div>';
+        
+        html += '<script>';
+        html += 'function salvarMatrizes() {';
+        html += '  var inputs = document.querySelectorAll("input[type=number]");';
+        html += '  var mensal = {};';
+        html += '  var semanal = {};';
+        html += '  inputs.forEach(function(input) {';
+        html += '    var matriz = input.dataset.matriz;';
+        html += '    var tipo = input.dataset.tipo;';
+        html += '    var coluna = input.dataset.coluna;';
+        html += '    var valor = parseInt(input.value) || 0;';
+        html += '    if(matriz === "mensal") {';
+        html += '      if(!mensal[tipo]) mensal[tipo] = [];';
+        html += '      mensal[tipo][coluna] = valor;';
+        html += '    } else {';
+        html += '      if(!semanal[tipo]) semanal[tipo] = [];';
+        html += '      semanal[tipo][coluna] = valor;';
+        html += '    }';
+        html += '  });';
+        html += '  localStorage.setItem("matrizMensal", JSON.stringify(mensal));';
+        html += '  localStorage.setItem("matrizSemanal", JSON.stringify(semanal));';
+        html += '  alert("✅ Matrizes salvas com sucesso!");';
+        html += '}';
+        html += '</script>';
+        
+        html += '</div></body></html>';
+        
+        var novaJanela = window.open('', 'MatrizFerramentas', 'width=1600,height=900');
+        novaJanela.document.write(html);
+        novaJanela.document.close();
       }
       
       // Acompanhamento Semanal
