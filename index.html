@@ -9439,135 +9439,161 @@
           return;
         }
         
-        // Agrupar por semana e responsável
-        var semanaMap = {};
+        // Estrutura: {nome_setor_semana_mes_ano: {nome, setor, semana, mes, ano, tipos: {tipo: {meta, realizado, aderencia}}}}
+        var registrosMap = {};
         var allTipos = new Set();
         
         checklistsAplicadas.forEach(function(checklist) {
+          var tipo = checklist.tipo || 'Não informado';
+          var nome = checklist.autor || 'Não informado';
+          var setor = checklist.setor || 'Não informado';
           var semana = checklist.semana || 'Sem semana';
-          var autor = checklist.autor || 'Não informado';
           
-          if (!semanaMap[semana]) {
-            semanaMap[semana] = {};
-          }
-          if (!semanaMap[semana][autor]) {
-            semanaMap[semana][autor] = {
-              setor: checklist.setor || 'Não informado',
+          // Extrair mês e ano da data
+          var data = new Date(checklist.data + 'T00:00:00');
+          var mes = String(data.getMonth() + 1).padStart(2, '0');
+          var ano = data.getFullYear();
+          
+          // Chave única
+          var chave = nome + '|' + setor + '|' + semana + '|' + mes + '|' + ano;
+          
+          if (!registrosMap[chave]) {
+            registrosMap[chave] = {
+              nome: nome,
+              setor: setor,
+              semana: semana,
+              mes: mes,
+              ano: ano,
               tipos: {}
             };
           }
           
-          if (!semanaMap[semana][autor].tipos[checklist.tipo]) {
-            semanaMap[semana][autor].tipos[checklist.tipo] = {
-              meta: 0, // Será definido pelo usuário
-              aderencia: 0,
-              registros: []
+          if (!registrosMap[chave].tipos[tipo]) {
+            registrosMap[chave].tipos[tipo] = {
+              meta: 0,
+              realizado: 0,
+              aderencia: 0
             };
           }
           
-          semanaMap[semana][autor].tipos[checklist.tipo].registros.push(checklist);
-          semanaMap[semana][autor].tipos[checklist.tipo].aderencia = Math.round((semanaMap[semana][autor].tipos[checklist.tipo].registros.length / (semanaMap[semana][autor].tipos[checklist.tipo].meta || 1)) * 100);
-          allTipos.add(checklist.tipo);
-        });
-        
-        // Ordenar semanas numericamente
-        var semanas = Object.keys(semanaMap).sort(function(a, b) {
-          var numA = parseInt(a);
-          var numB = parseInt(b);
-          if (!isNaN(numA) && !isNaN(numB)) {
-            return numB - numA;
-          }
-          return a.localeCompare(b);
+          // Incrementar realizado (somar duplicações)
+          registrosMap[chave].tipos[tipo].realizado++;
+          allTipos.add(tipo);
+          
+          // Calcular aderência automaticamente
+          var meta = registrosMap[chave].tipos[tipo].meta || 1;
+          registrosMap[chave].tipos[tipo].aderencia = Math.round((registrosMap[chave].tipos[tipo].realizado / meta) * 100);
         });
         
         var tiposArray = Array.from(allTipos).sort();
+        var registros = Object.values(registrosMap);
+        
+        // Ordenar por ano, mês, semana descendente
+        registros.sort(function(a, b) {
+          var aKey = a.ano + a.mes + String(a.semana).padStart(2, '0');
+          var bKey = b.ano + b.mes + String(b.semana).padStart(2, '0');
+          return bKey.localeCompare(aKey);
+        });
         
         // Gerar relatório em nova janela
         var relatorio = '<html><head><meta charset="UTF-8"><title>Acompanhamento Semanal</title>';
         relatorio += '<style>';
-        relatorio += 'body{font-family:Arial,sans-serif;margin:20px;background:#f5f5f5;overflow-x:auto}';
-        relatorio += '.header{background:linear-gradient(135deg,#0d9488 0%,#059669 100%);color:#fff;padding:20px;border-radius:8px;margin-bottom:20px}';
+        relatorio += 'body{font-family:Arial,sans-serif;margin:15px;background:#f5f5f5;overflow-x:auto}';
+        relatorio += '.header{background:linear-gradient(135deg,#0d9488 0%,#059669 100%);color:#fff;padding:20px;border-radius:8px;margin-bottom:20px;text-align:center}';
         relatorio += '.header h1{margin:0;font-size:2rem}';
-        relatorio += '.semana-card{background:#fff;border-radius:8px;margin-bottom:30px;box-shadow:0 2px 4px rgba(0,0,0,0.1);padding:20px}';
-        relatorio += '.semana-titulo{background:#0d9488;color:#fff;padding:12px;border-radius:4px;margin-bottom:15px;font-weight:bold;font-size:1.1rem}';
-        relatorio += '.table-container{overflow-x:auto;margin:15px 0}';
-        relatorio += 'table{width:100%;border-collapse:collapse;font-size:0.9rem}';
-        relatorio += 'th{background:#f3f4f6;color:#1f2937;padding:12px;text-align:left;border:1px solid #e5e7eb;font-weight:bold}';
-        relatorio += 'td{padding:10px;border:1px solid #e5e7eb}';
+        relatorio += '.header p{margin:5px 0 0 0;opacity:0.9}';
+        relatorio += '.table-wrapper{background:#fff;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);padding:20px;overflow-x:auto}';
+        relatorio += 'table{width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:20px}';
+        relatorio += 'th{background:#e5e7eb;color:#1f2937;padding:10px 8px;text-align:center;border:1px solid #d1d5db;font-weight:bold;white-space:nowrap}';
+        relatorio += 'td{padding:8px;border:1px solid #d1d5db;text-align:center}';
+        relatorio += 'td:first-child, td:nth-child(2){text-align:left;font-weight:500}';
         relatorio += 'tr:nth-child(even){background:#f9fafb}';
-        relatorio += '.nome-setor{font-weight:bold;color:#0d9488}';
-        relatorio += '.meta-input{width:50px;padding:4px;border:1px solid #d1d5db;border-radius:4px;text-align:center}';
-        relatorio += '.aderencia-cell{text-align:center;font-weight:bold}';
-        relatorio += '.aderencia-100{color:#10b981;background:#f0fdf4}';
-        relatorio += '.aderencia-80{color:#f59e0b;background:#fffbeb}';
-        relatorio += '.aderencia-0{color:#ef4444;background:#fef2f2}';
-        relatorio += '.print-btn{background:#0d9488;color:#fff;padding:12px 24px;border:none;border-radius:4px;cursor:pointer;font-weight:bold;margin:20px 0}';
+        relatorio += '.header-group{background:#d1d5db;font-weight:bold;text-align:center;padding:10px}';
+        relatorio += '.meta-cell{background:#fff3cd}';
+        relatorio += '.realizado-cell{background:#cfe2ff}';
+        relatorio += '.aderencia-100{background:#d1e7dd;color:#0d3b66;font-weight:bold}';
+        relatorio += '.aderencia-80{background:#fff3cd;color:#856404;font-weight:bold}';
+        relatorio += '.aderencia-0{background:#f8d7da;color:#721c24;font-weight:bold}';
+        relatorio += '.meta-input{width:45px;padding:4px;border:1px solid #d1d5db;border-radius:4px;text-align:center;font-weight:bold}';
+        relatorio += '.print-btn{background:#0d9488;color:#fff;padding:12px 24px;border:none;border-radius:4px;cursor:pointer;font-weight:bold;margin:20px auto;display:block}';
         relatorio += '.print-btn:hover{background:#059669}';
-        relatorio += '@media print{.print-btn{display:none};.meta-input{border:none;background:transparent}}';
+        relatorio += '.info-text{text-align:center;color:#666;font-size:0.9rem;margin-top:20px}';
+        relatorio += '@media print{.print-btn{display:none};.meta-input{border:none;background:transparent;width:auto}}';
         relatorio += '</style></head><body>';
         
-        relatorio += '<div class="header"><h1>📊 Acompanhamento Semanal de Checklists</h1><p>Relatório dinâmico de conformidade por semana</p></div>';
+        relatorio += '<div class="header"><h1>📊 Acompanhamento Semanal de Checklists</h1><p>Relatório de Conformidade - Metas e Aderência</p></div>';
         
-        semanas.forEach(function(semana) {
-          relatorio += '<div class="semana-card">';
-          relatorio += '<div class="semana-titulo">Semana ' + semana + '</div>';
-          
-          relatorio += '<div class="table-container">';
-          relatorio += '<table>';
-          relatorio += '<thead><tr>';
-          relatorio += '<th>Nome</th>';
-          relatorio += '<th>Setor</th>';
+        relatorio += '<div class="table-wrapper">';
+        relatorio += '<table>';
+        
+        // Header da tabela
+        relatorio += '<thead>';
+        relatorio += '<tr>';
+        relatorio += '<th>Nome</th>';
+        relatorio += '<th>Setor</th>';
+        relatorio += '<th>Semana</th>';
+        relatorio += '<th>Mês</th>';
+        relatorio += '<th>Ano</th>';
+        
+        tiposArray.forEach(function(tipo) {
+          relatorio += '<th colspan="3" style="text-align:center">' + tipo + '</th>';
+        });
+        
+        relatorio += '</tr>';
+        
+        // Sub-header (Meta, Realizado, Aderência)
+        relatorio += '<tr>';
+        relatorio += '<th colspan="5"></th>';
+        
+        tiposArray.forEach(function(tipo) {
+          relatorio += '<th style="background:#ffd700;color:#000">Meta</th>';
+          relatorio += '<th style="background:#87ceeb;color:#000">Realizado</th>';
+          relatorio += '<th style="background:#90ee90;color:#000">Aderência</th>';
+        });
+        
+        relatorio += '</tr>';
+        relatorio += '</thead>';
+        
+        // Body da tabela
+        relatorio += '<tbody>';
+        
+        registros.forEach(function(registro) {
+          relatorio += '<tr>';
+          relatorio += '<td><strong>' + registro.nome + '</strong></td>';
+          relatorio += '<td>' + registro.setor + '</td>';
+          relatorio += '<td style="text-align:center">' + registro.semana + '</td>';
+          relatorio += '<td style="text-align:center">' + registro.mes + '</td>';
+          relatorio += '<td style="text-align:center">' + registro.ano + '</td>';
           
           tiposArray.forEach(function(tipo) {
-            relatorio += '<th colspan="2" style="text-align:center">' + tipo + '</th>';
+            var dados = registro.tipos[tipo];
+            
+            if (dados) {
+              var aderenciaClass = dados.aderencia >= 100 ? 'aderencia-100' : 
+                                  (dados.aderencia >= 80 ? 'aderencia-80' : 'aderencia-0');
+              
+              relatorio += '<td class="meta-cell"><input type="number" class="meta-input" value="' + dados.meta + '" min="0" data-chave="' + registro.nome + '|' + tipo + '" onchange="this.style.backgroundColor=\'#90EE90\'" /></td>';
+              relatorio += '<td class="realizado-cell"><strong>' + dados.realizado + '</strong></td>';
+              relatorio += '<td class="' + aderenciaClass + '">' + dados.aderencia + '%</td>';
+            } else {
+              relatorio += '<td class="meta-cell"><input type="number" class="meta-input" value="0" min="0" /></td>';
+              relatorio += '<td class="realizado-cell">0</td>';
+              relatorio += '<td class="aderencia-0">0%</td>';
+            }
           });
           
           relatorio += '</tr>';
-          relatorio += '<tr>';
-          relatorio += '<th colspan="2"></th>';
-          
-          tiposArray.forEach(function(tipo) {
-            relatorio += '<th style="text-align:center;font-size:0.85rem">Meta</th>';
-            relatorio += '<th style="text-align:center;font-size:0.85rem">Aderência</th>';
-          });
-          
-          relatorio += '</tr></thead>';
-          relatorio += '<tbody>';
-          
-          var autoresMap = semanaMap[semana];
-          Object.keys(autoresMap).sort().forEach(function(autor) {
-            relatorio += '<tr>';
-            relatorio += '<td class="nome-setor">' + autor + '</td>';
-            relatorio += '<td>' + autoresMap[autor].setor + '</td>';
-            
-            tiposArray.forEach(function(tipo) {
-              var dados = autoresMap[autor].tipos[tipo];
-              if (dados) {
-                var aderencia = dados.aderencia;
-                var aderenciaClass = aderencia === 100 ? 'aderencia-100' : (aderencia >= 80 ? 'aderencia-80' : 'aderencia-0');
-                
-                relatorio += '<td style="text-align:center"><input type="number" class="meta-input" value="' + dados.meta + '" min="0" title="Defina a meta" onchange="alert(\'Meta alterada. Salve manualmente no banco de dados.\')" /></td>';
-                relatorio += '<td class="aderencia-cell ' + aderenciaClass + '">' + aderencia + '%</td>';
-              } else {
-                relatorio += '<td style="text-align:center"><input type="number" class="meta-input" value="0" min="0" /></td>';
-                relatorio += '<td class="aderencia-cell aderencia-0">0%</td>';
-              }
-            });
-            
-            relatorio += '</tr>';
-          });
-          
-          relatorio += '</tbody>';
-          relatorio += '</table>';
-          relatorio += '</div>';
-          relatorio += '</div>';
         });
         
+        relatorio += '</tbody>';
+        relatorio += '</table>';
+        relatorio += '</div>';
+        
         relatorio += '<button class="print-btn" onclick="window.print()">🖨️ Imprimir Relatório</button>';
-        relatorio += '<p style="text-align:center;color:#666;font-size:0.9rem">💡 Dica: Edite as metas diretamente na tabela. As aderências são calculadas automaticamente.</p>';
+        relatorio += '<div class="info-text">💡 <strong>Legenda:</strong> Meta (amarelo) | Realizado (azul) | Aderência (verde/laranja/vermelho)<br/>📝 Edite as metas diretamente. Aderência é calculada automaticamente: (Realizado ÷ Meta) × 100%</div>';
         relatorio += '</body></html>';
         
-        var novaJanela = window.open('', 'AcompanhamentoSemanal', 'width=1200,height=700');
+        var novaJanela = window.open('', 'AcompanhamentoSemanal', 'width=1600,height=800');
         novaJanela.document.write(relatorio);
         novaJanela.document.close();
       }          // Inicializar checklists ao carregar
