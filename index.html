@@ -377,6 +377,28 @@
       <div class="loading-subtext">Carregando sistema...</div>
       <div class="loading-spinner"></div>
     </div>
+    <script>
+      (function() {
+        function hideLoadingScreen() {
+          var loadingScreen = document.getElementById('loading-screen');
+          if (!loadingScreen) return;
+          loadingScreen.classList.add('hidden');
+          setTimeout(function() {
+            loadingScreen.style.display = 'none';
+          }, 500);
+        }
+
+        if (document.readyState === 'complete') {
+          setTimeout(hideLoadingScreen, 800);
+        } else {
+          window.addEventListener('load', function() {
+            setTimeout(hideLoadingScreen, 800);
+          });
+        }
+
+        setTimeout(hideLoadingScreen, 2500);
+      })();
+    </script>
 
     <div class="app" id="app-sistema">
       <aside class="sidebar" aria-label="Barra lateral">
