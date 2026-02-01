@@ -14,7 +14,67 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <title>Indicador de HSE - Sistema Completo</title>
+    <!-- Carregamento de configuração da API -->
+    <script src="config.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+      /* Loading Screen */
+      #loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
+      }
+      #loading-screen.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .loading-logo {
+        width: 100px;
+        height: 100px;
+        background: #fff;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      }
+      .loading-text {
+        color: #fff;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      .loading-subtext {
+        color: rgba(255,255,255,0.8);
+        font-size: 14px;
+        margin-bottom: 30px;
+      }
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255,255,255,0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
 
     <style>
       :root{
@@ -310,6 +370,14 @@
     </style>
   </head>
   <body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+      <div class="loading-logo">HSE</div>
+      <div class="loading-text">Indicador de HSE</div>
+      <div class="loading-subtext">Carregando sistema...</div>
+      <div class="loading-spinner"></div>
+    </div>
+
     <div class="app" id="app-sistema">
       <aside class="sidebar" aria-label="Barra lateral">
         <div class="brand">
@@ -3022,13 +3090,9 @@
         if (/^192\.168\.|^10\.|^172\.(1[6-9]|2[0-9]|3[01])\./.test(window.location.hostname)) {
           return 'http://' + window.location.hostname + ':3000';
         }
-        // Se estiver acessando via domínio Render
-        if (window.location.hostname.includes('onrender.com')) {
-          return 'https://' + window.location.hostname;
-        }
-        // Fallback padrão: tenta usar o mesmo domínio
-        console.warn('⚠️ API_BASE_URL não configurada, usando domínio atual');
-        return window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+        // Fallback padrão: null (não conecta a servidor)
+        console.warn('⚠️ API_BASE_URL não configurada!');
+        return null;
       })();        async function sincronizarComServidor(tabela, dados) {
           if (!API_BASE_URL) return false; // Se não houver API, retorna false
           try {
@@ -4468,8 +4532,16 @@
       }
         // Ao carregar a página, tentar inicializar Firebase automaticamente se existir configuração global
         window.addEventListener('load', function(){
-          carregarDados();
-          inicializarDashboard();
+          // Esconder loading screen após 1 segundo
+          setTimeout(function() {
+            var loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+              loadingScreen.classList.add('hidden');
+              setTimeout(function() {
+                loadingScreen.style.display = 'none';
+              }, 500);
+            }
+          }, 1000);
         });
           // Carregar funcionários na RAS (Etapa 6 - Confirmar Presença) - Escopo Global
           window.carregarFuncionarios = function() {
@@ -8923,44 +8995,28 @@
         // Variável global para armazenar checklists aplicados
         var checklistsAplicadas = [];
         
-      // Carregar checklists do localStorage
-      function carregarChecklists() {
-        // Carregar do localStorage
-        var stored = localStorage.getItem('checklistsAplicadas');
-        if (stored) {
-          try {
+      // Carregar checklists do servidor e localStorage
+      async function carregarChecklists() {
+        try {
+          // Tentar carregar do servidor primeiro
+          const response = await fetch(`${API_BASE_URL}/api/checklists`);
+          if (response.ok) {
+            const dados = await response.json();
+            checklistsAplicadas = dados;
+            localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));
+            console.log('✅ Checklists carregados do servidor:', checklistsAplicadas.length);
+          } else {
+            throw new Error('Erro ao carregar do servidor');
+          }
+        } catch(error) {
+          console.warn('⚠️ Falha ao carregar do servidor, usando localStorage:', error);
+          // Fallback para localStorage
+          var stored = localStorage.getItem('checklistsAplicadas');
+          if (stored) {
             checklistsAplicadas = JSON.parse(stored);
-            console.log('✅ Checklists carregados do localStorage:', checklistsAplicadas.length);
-          } catch(e) {
-            console.warn('Erro ao parsear localStorage');
+          } else {
             checklistsAplicadas = [];
           }
-        } else {
-          checklistsAplicadas = [];
-        }
-        
-        // Tentar sincronizar com servidor em background (não bloqueia o carregamento)
-        if (API_BASE_URL) {
-          var controller = new AbortController();
-          var timeoutId = setTimeout(() => controller.abort(), 3000);
-          
-          fetch(API_BASE_URL + '/api/checklists', { signal: controller.signal })
-            .then(r => {
-              clearTimeout(timeoutId);
-              return r.ok ? r.json() : null;
-            })
-            .then(dados => {
-              if (dados && dados.length > 0) {
-                checklistsAplicadas = dados;
-                localStorage.setItem('checklistsAplicadas', JSON.stringify(checklistsAplicadas));
-                console.log('✅ Sincronizado com servidor:', dados.length);
-                atualizarTabelaChecklists();
-              }
-            })
-            .catch(() => {
-              clearTimeout(timeoutId);
-              console.log('Servidor indisponível (offline mode)');
-            });
         }
         
         popularFiltros();
@@ -9383,216 +9439,136 @@
           return;
         }
         
-        // Carregar metas salvas do localStorage
-        var metasSalvas = {};
-        try {
-          var metasStored = localStorage.getItem('metasAcompanhamento');
-          if (metasStored) {
-            metasSalvas = JSON.parse(metasStored);
-          }
-        } catch(e) {
-          console.log('Erro ao carregar metas:', e);
-        }
-        
-        // Sincronizar metas com servidor em background
-        if (API_BASE_URL) {
-          var controller = new AbortController();
-          var timeoutId = setTimeout(() => controller.abort(), 2000);
-          
-          fetch(API_BASE_URL + '/api/metas', { signal: controller.signal })
-            .then(r => {
-              clearTimeout(timeoutId);
-              return r.ok ? r.json() : null;
-            })
-            .then(dados => {
-              if (dados && dados.length > 0) {
-                dados.forEach(function(m) {
-                  var chave = m.data.semana + '_' + m.data.autor + '_' + m.data.tipo;
-                  metasSalvas[chave] = m.data.meta;
-                });
-                localStorage.setItem('metasAcompanhamento', JSON.stringify(metasSalvas));
-              }
-            })
-            .catch(() => {
-              clearTimeout(timeoutId);
-            });
-        }
-        
-        // Estrutura: { "nome_semana_mes_ano": { nome, setor, empresa, semana, mes, ano, tipos: { tipo: [checklists] } } }
-        var linhasMap = {};
+        // Agrupar por semana e responsável
+        var semanaMap = {};
         var allTipos = new Set();
         
         checklistsAplicadas.forEach(function(checklist) {
-          var nome = checklist.autor || 'Não informado';
-          var setor = checklist.setor || 'Não informado';
-          var empresa = checklist.empresa || 'Não informado';
           var semana = checklist.semana || 'Sem semana';
-          var data = new Date(checklist.data + 'T00:00:00');
-          var mes = ('0' + (data.getMonth() + 1)).slice(-2);
-          var ano = data.getFullYear();
-          var tipo = checklist.tipo || 'Não informado';
+          var autor = checklist.autor || 'Não informado';
           
-          var chaveLinhaMap = nome + '|' + semana + '|' + mes + '|' + ano;
-          
-          if (!linhasMap[chaveLinhaMap]) {
-            linhasMap[chaveLinhaMap] = {
-              nome: nome,
-              setor: setor,
-              empresa: empresa,
-              semana: semana,
-              mes: mes,
-              ano: ano,
+          if (!semanaMap[semana]) {
+            semanaMap[semana] = {};
+          }
+          if (!semanaMap[semana][autor]) {
+            semanaMap[semana][autor] = {
+              setor: checklist.setor || 'Não informado',
               tipos: {}
             };
           }
           
-          if (!linhasMap[chaveLinhaMap].tipos[tipo]) {
-            linhasMap[chaveLinhaMap].tipos[tipo] = [];
+          if (!semanaMap[semana][autor].tipos[checklist.tipo]) {
+            semanaMap[semana][autor].tipos[checklist.tipo] = {
+              meta: 0, // Será definido pelo usuário
+              aderencia: 0,
+              registros: []
+            };
           }
           
-          linhasMap[chaveLinhaMap].tipos[tipo].push(checklist);
-          allTipos.add(tipo);
+          semanaMap[semana][autor].tipos[checklist.tipo].registros.push(checklist);
+          semanaMap[semana][autor].tipos[checklist.tipo].aderencia = Math.round((semanaMap[semana][autor].tipos[checklist.tipo].registros.length / (semanaMap[semana][autor].tipos[checklist.tipo].meta || 1)) * 100);
+          allTipos.add(checklist.tipo);
+        });
+        
+        // Ordenar semanas numericamente
+        var semanas = Object.keys(semanaMap).sort(function(a, b) {
+          var numA = parseInt(a);
+          var numB = parseInt(b);
+          if (!isNaN(numA) && !isNaN(numB)) {
+            return numB - numA;
+          }
+          return a.localeCompare(b);
         });
         
         var tiposArray = Array.from(allTipos).sort();
         
-        // Gerar HTML da tabela
-        var html = '<html><head><meta charset="UTF-8"><title>Acompanhamento Semanal - HSE</title>';
-        html += '<style>';
-        html += 'body{font-family:Arial,sans-serif;margin:0;padding:20px;background:#f5f5f5;overflow-x:auto}';
-        html += '.container{max-width:100%;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);padding:20px}';
-        html += '.header{background:linear-gradient(135deg,#0d9488 0%,#059669 100%);color:#fff;padding:20px;border-radius:8px;margin-bottom:30px}';
-        html += '.header h1{margin:0;font-size:2rem;text-align:center}';
-        html += '.header p{margin:10px 0 0 0;text-align:center;opacity:0.9}';
-        html += '.table-wrapper{overflow-x:auto;margin:20px 0}';
-        html += 'table{width:100%;border-collapse:collapse;font-size:0.9rem}';
-        html += 'thead{background:#f3f4f6}';
-        html += 'th{padding:12px;text-align:left;border:1px solid #e5e7eb;font-weight:bold;color:#1f2937;background:#e5e7eb}';
-        html += 'td{padding:12px;border:1px solid #e5e7eb}';
-        html += 'tr:nth-child(even){background:#f9fafb}';
-        html += 'tr:hover{background:#eff6ff}';
-        html += '.coluna-fixa{min-width:120px;font-weight:bold;color:#0d9488}';
-        html += '.col-tipo-header{text-align:center;font-weight:bold;background:#0d9488;color:#fff}';
-        html += '.col-realizado{text-align:center;font-weight:bold;background:#e0f2fe;color:#0369a1}';
-        html += '.col-meta{text-align:center}';
-        html += '.col-meta input{width:60px;padding:6px;border:1px solid #cbd5e1;border-radius:4px;text-align:center;font-weight:bold}';
-        html += '.col-aderencia{text-align:center;font-weight:bold}';
-        html += '.ader-100{color:#15803d;background:#dcfce7}';
-        html += '.ader-80{color:#b45309;background:#fef3c7}';
-        html += '.ader-0{color:#dc2626;background:#fee2e2}';
-        html += '.btn-print{background:#0d9488;color:#fff;padding:12px 24px;border:none;border-radius:4px;cursor:pointer;font-weight:bold;margin:20px 0;font-size:1rem}';
-        html += '.btn-print:hover{background:#059669}';
-        html += '.nota{text-align:center;color:#666;font-size:0.9rem;margin-top:20px;font-style:italic}';
-        html += '@media print{.btn-print,.nota{display:none}.col-meta input{border:none;background:transparent;font-weight:bold}}';
-        html += '</style>';
-        html += '<script>';
-        html += 'var API_URL = "' + (API_BASE_URL || '') + '";';
-        html += 'function salvarMeta(chave, valor) {';
-        html += '  var metasSalvas = {};';
-        html += '  var stored = localStorage.getItem("metasAcompanhamento");';
-        html += '  if (stored) { metasSalvas = JSON.parse(stored); }';
-        html += '  metasSalvas[chave] = parseInt(valor);';
-        html += '  localStorage.setItem("metasAcompanhamento", JSON.stringify(metasSalvas));';
-        html += '  if (API_URL && valor) {';
-        html += '    var partes = chave.split("_");';
-        html += '    fetch(API_URL + "/api/metas", {';
-        html += '      method: "POST",';
-        html += '      headers: { "Content-Type": "application/json" },';
-        html += '      body: JSON.stringify({ semana: partes[0], autor: partes[1], tipo: partes[2], meta: parseInt(valor) })';
-        html += '    }).catch(function() { });';
-        html += '  }';
-        html += '  atualizarAderencia(chave);';
-        html += '}';
-        html += 'function atualizarAderencia(chave) {';
-        html += '  var partes = chave.split("_");';
-        html += '  var tipo = partes[2];';
-        html += '  var linhaId = chave.substring(0, chave.lastIndexOf("_"));';
-        html += '  var colRealizado = document.getElementById("realizado_" + linhaId + "_" + tipo);';
-        html += '  var colMeta = document.getElementById("meta_input_" + chave);';
-        html += '  var colAderencia = document.getElementById("aderencia_" + chave);';
-        html += '  if (colRealizado && colMeta && colAderencia) {';
-        html += '    var realizado = parseInt(colRealizado.textContent) || 0;';
-        html += '    var meta = parseInt(colMeta.value) || 0;';
-        html += '    var aderencia = meta > 0 ? Math.round((realizado / meta) * 100) : 0;';
-        html += '    colAderencia.textContent = aderencia + "%";';
-        html += '    colAderencia.className = "col-aderencia";';
-        html += '    if (aderencia === 100) colAderencia.classList.add("ader-100");';
-        html += '    else if (aderencia >= 80) colAderencia.classList.add("ader-80");';
-        html += '    else colAderencia.classList.add("ader-0");';
-        html += '  }';
-        html += '}';
-        html += '</script>';
-        html += '</head><body>';
+        // Gerar relatório em nova janela
+        var relatorio = '<html><head><meta charset="UTF-8"><title>Acompanhamento Semanal</title>';
+        relatorio += '<style>';
+        relatorio += 'body{font-family:Arial,sans-serif;margin:20px;background:#f5f5f5;overflow-x:auto}';
+        relatorio += '.header{background:linear-gradient(135deg,#0d9488 0%,#059669 100%);color:#fff;padding:20px;border-radius:8px;margin-bottom:20px}';
+        relatorio += '.header h1{margin:0;font-size:2rem}';
+        relatorio += '.semana-card{background:#fff;border-radius:8px;margin-bottom:30px;box-shadow:0 2px 4px rgba(0,0,0,0.1);padding:20px}';
+        relatorio += '.semana-titulo{background:#0d9488;color:#fff;padding:12px;border-radius:4px;margin-bottom:15px;font-weight:bold;font-size:1.1rem}';
+        relatorio += '.table-container{overflow-x:auto;margin:15px 0}';
+        relatorio += 'table{width:100%;border-collapse:collapse;font-size:0.9rem}';
+        relatorio += 'th{background:#f3f4f6;color:#1f2937;padding:12px;text-align:left;border:1px solid #e5e7eb;font-weight:bold}';
+        relatorio += 'td{padding:10px;border:1px solid #e5e7eb}';
+        relatorio += 'tr:nth-child(even){background:#f9fafb}';
+        relatorio += '.nome-setor{font-weight:bold;color:#0d9488}';
+        relatorio += '.meta-input{width:50px;padding:4px;border:1px solid #d1d5db;border-radius:4px;text-align:center}';
+        relatorio += '.aderencia-cell{text-align:center;font-weight:bold}';
+        relatorio += '.aderencia-100{color:#10b981;background:#f0fdf4}';
+        relatorio += '.aderencia-80{color:#f59e0b;background:#fffbeb}';
+        relatorio += '.aderencia-0{color:#ef4444;background:#fef2f2}';
+        relatorio += '.print-btn{background:#0d9488;color:#fff;padding:12px 24px;border:none;border-radius:4px;cursor:pointer;font-weight:bold;margin:20px 0}';
+        relatorio += '.print-btn:hover{background:#059669}';
+        relatorio += '@media print{.print-btn{display:none};.meta-input{border:none;background:transparent}}';
+        relatorio += '</style></head><body>';
         
-        html += '<div class="container">';
-        html += '<div class="header">';
-        html += '<h1>📊 Acompanhamento Semanal de Checklists</h1>';
-        html += '<p>Defina as metas para cada tipo de checklist e acompanhe a aderência</p>';
-        html += '</div>';
+        relatorio += '<div class="header"><h1>📊 Acompanhamento Semanal de Checklists</h1><p>Relatório dinâmico de conformidade por semana</p></div>';
         
-        html += '<div class="table-wrapper">';
-        html += '<table>';
-        html += '<thead><tr>';
-        html += '<th class="coluna-fixa">Nome</th>';
-        html += '<th>Empresa</th>';
-        html += '<th style="text-align:center;min-width:80px">Semana</th>';
-        html += '<th style="text-align:center;min-width:70px">Mês/Ano</th>';
-        
-        tiposArray.forEach(function(tipo) {
-          html += '<th colspan="3" class="col-tipo-header">' + tipo + '</th>';
-        });
-        
-        html += '</tr><tr>';
-        html += '<th colspan="4" style="text-align:center;background:#f3f4f6"></th>';
-        
-        tiposArray.forEach(function(tipo) {
-          html += '<th style="text-align:center;background:#e5e7eb;font-size:0.85rem">Realizado</th>';
-          html += '<th style="text-align:center;background:#e5e7eb;font-size:0.85rem">Meta</th>';
-          html += '<th style="text-align:center;background:#e5e7eb;font-size:0.85rem">Aderência</th>';
-        });
-        
-        html += '</tr></thead>';
-        html += '<tbody>';
-        
-        // Ordenar linhas
-        var chaves = Object.keys(linhasMap).sort();
-        
-        chaves.forEach(function(chaveLinhaMap) {
-          var linha = linhasMap[chaveLinhaMap];
+        semanas.forEach(function(semana) {
+          relatorio += '<div class="semana-card">';
+          relatorio += '<div class="semana-titulo">Semana ' + semana + '</div>';
           
-          html += '<tr>';
-          html += '<td class="coluna-fixa">' + linha.nome + '</td>';
-          html += '<td>' + linha.empresa + '</td>';
-          html += '<td style="text-align:center;font-weight:bold">' + linha.semana + '</td>';
-          html += '<td style="text-align:center">' + linha.mes + '/' + linha.ano + '</td>';
+          relatorio += '<div class="table-container">';
+          relatorio += '<table>';
+          relatorio += '<thead><tr>';
+          relatorio += '<th>Nome</th>';
+          relatorio += '<th>Setor</th>';
           
           tiposArray.forEach(function(tipo) {
-            var registros = linha.tipos[tipo] || [];
-            var chaveAcompanhamento = linha.semana + '_' + linha.nome + '_' + tipo;
-            var metaSalva = metasSalvas[chaveAcompanhamento] ? parseInt(metasSalvas[chaveAcompanhamento]) : 0;
-            var realizado = registros.length;
-            var aderencia = metaSalva > 0 ? Math.round((realizado / metaSalva) * 100) : 0;
-            var aderenciaClass = aderencia === 100 ? 'ader-100' : (aderencia >= 80 ? 'ader-80' : 'ader-0');
-            
-            html += '<td class="col-realizado" id="realizado_' + chaveLinhaMap + '_' + tipo + '">' + realizado + '</td>';
-            html += '<td class="col-meta"><input type="number" id="meta_input_' + chaveAcompanhamento + '" value="' + metaSalva + '" min="0" onchange="salvarMeta(\'' + chaveAcompanhamento + '\', this.value)" /></td>';
-            html += '<td class="col-aderencia ' + aderenciaClass + '" id="aderencia_' + chaveAcompanhamento + '">' + aderencia + '%</td>';
+            relatorio += '<th colspan="2" style="text-align:center">' + tipo + '</th>';
           });
           
-          html += '</tr>';
+          relatorio += '</tr>';
+          relatorio += '<tr>';
+          relatorio += '<th colspan="2"></th>';
+          
+          tiposArray.forEach(function(tipo) {
+            relatorio += '<th style="text-align:center;font-size:0.85rem">Meta</th>';
+            relatorio += '<th style="text-align:center;font-size:0.85rem">Aderência</th>';
+          });
+          
+          relatorio += '</tr></thead>';
+          relatorio += '<tbody>';
+          
+          var autoresMap = semanaMap[semana];
+          Object.keys(autoresMap).sort().forEach(function(autor) {
+            relatorio += '<tr>';
+            relatorio += '<td class="nome-setor">' + autor + '</td>';
+            relatorio += '<td>' + autoresMap[autor].setor + '</td>';
+            
+            tiposArray.forEach(function(tipo) {
+              var dados = autoresMap[autor].tipos[tipo];
+              if (dados) {
+                var aderencia = dados.aderencia;
+                var aderenciaClass = aderencia === 100 ? 'aderencia-100' : (aderencia >= 80 ? 'aderencia-80' : 'aderencia-0');
+                
+                relatorio += '<td style="text-align:center"><input type="number" class="meta-input" value="' + dados.meta + '" min="0" title="Defina a meta" onchange="alert(\'Meta alterada. Salve manualmente no banco de dados.\')" /></td>';
+                relatorio += '<td class="aderencia-cell ' + aderenciaClass + '">' + aderencia + '%</td>';
+              } else {
+                relatorio += '<td style="text-align:center"><input type="number" class="meta-input" value="0" min="0" /></td>';
+                relatorio += '<td class="aderencia-cell aderencia-0">0%</td>';
+              }
+            });
+            
+            relatorio += '</tr>';
+          });
+          
+          relatorio += '</tbody>';
+          relatorio += '</table>';
+          relatorio += '</div>';
+          relatorio += '</div>';
         });
         
-        html += '</tbody>';
-        html += '</table>';
-        html += '</div>';
+        relatorio += '<button class="print-btn" onclick="window.print()">🖨️ Imprimir Relatório</button>';
+        relatorio += '<p style="text-align:center;color:#666;font-size:0.9rem">💡 Dica: Edite as metas diretamente na tabela. As aderências são calculadas automaticamente.</p>';
+        relatorio += '</body></html>';
         
-        html += '<button class="btn-print" onclick="window.print()">🖨️ Imprimir Relatório</button>';
-        html += '<p class="nota">💡 Edite as metas e a aderência será atualizada automaticamente</p>';
-        html += '</div>';
-        html += '</body></html>';
-        
-        var novaJanela = window.open('', 'AcompanhamentoSemanal', 'width=1400,height=800');
-        novaJanela.document.write(html);
+        var novaJanela = window.open('', 'AcompanhamentoSemanal', 'width=1200,height=700');
+        novaJanela.document.write(relatorio);
         novaJanela.document.close();
       }          // Inicializar checklists ao carregar
           carregarChecklists();

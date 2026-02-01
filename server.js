@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(express.static('.'));
 
 // API endpoints for each table
-const tables = ['funcionarios', 'empresas', 'ras_reunioes', 'usuarios', 'historico_ras', 'cpts', 'inspecoes', 'categorias_hse', 'areas_locais', 'tipos_registro', 'riscos_perigos', 'arts'];
+const tables = ['funcionarios', 'empresas', 'ras_reunioes', 'usuarios', 'historico_ras', 'cpts', 'inspecoes', 'categorias_hse', 'areas_locais', 'tipos_registro', 'riscos_perigos', 'arts', 'checklists'];
 
 // PostgreSQL database connection
 const pool = new Pool({
