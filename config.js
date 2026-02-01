@@ -11,7 +11,8 @@ const API_CONFIG = {
   // Use http://localhost:3000 para acesso local
   
   // Ativar/desativar sincronização com servidor
-  SYNC_ENABLED: true,
+  // Se estiver em localhost sem servidor rodando, defina como false
+  SYNC_ENABLED: (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'),
   
   // Timeout em milissegundos
   TIMEOUT: 10000
