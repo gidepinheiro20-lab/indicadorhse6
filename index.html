@@ -3564,7 +3564,7 @@
                 
                 var botaoRemover = document.createElement('button');
                 botaoRemover.style.cssText = 'background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;';
-                botaoRemover.textContent = '
+                botaoRemover.textContent = 'X';
                 botaoRemover.onclick = function() {
                   fotosCarregadas.splice(index, 1);
                   exibirFotos();
@@ -3608,7 +3608,7 @@
                 
                 var botaoRemover = document.createElement('button');
                 botaoRemover.style.cssText = 'background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;';
-                botaoRemover.textContent = '
+                botaoRemover.textContent = 'X';
                 botaoRemover.onclick = function() {
                   evidenciasCarregadas.splice(index, 1);
                   exibirEvidencias();
@@ -5003,9 +5003,9 @@
           function mostrarStatus(mensagem, tipo) {
             var statusDiv = document.getElementById('status-importacao');
             var cores = {
-              'sucesso': { bg: '#f0fdf4', border: '#bbf7d0', text: '#166534', icon: ' },
-              'erro': { bg: '#fef2f2', border: '#fecaca', text: '#dc2626', icon: ' },
-              'carregando': { bg: '#eff6ff', border: '#bfdbfe', text: '#1d4ed8', icon: ' }
+              'sucesso': { bg: '#f0fdf4', border: '#bbf7d0', text: '#166534', icon: '✓' },
+              'erro': { bg: '#fef2f2', border: '#fecaca', text: '#dc2626', icon: '✕' },
+              'carregando': { bg: '#eff6ff', border: '#bfdbfe', text: '#1d4ed8', icon: '⏳' }
             };
             
             var cor = cores[tipo] || cores['carregando'];
@@ -5255,7 +5255,7 @@
               btn.type = 'button';
               btn.title = 'Remover';
               btn.style.cssText = 'background:#ef4444;color:#fff;border:none;border-radius:6px;padding:6px 8px;cursor:pointer';
-              btn.textContent = '
+              btn.textContent = 'X';
               btn.addEventListener('click', function(){
                 participantesRAS.splice(idx,1);
                 renderListaParticipantesRAS();
@@ -5456,7 +5456,7 @@
               row.style.borderBottom = '1px solid #e2e8f0';
               
               var statusClass = ras.status === 'ConcluÃ­da' ? 'background:#10b981;color:#fff' : 'background:#f59e0b;color:#fff';
-              var tardcIcon = ras.tardc ? ' ï¸' : '
+              var tardcIcon = ras.tardc ? '✓' : '';
               
               row.innerHTML = 
                 '<td style="padding:12px 16px;color:#2d3748;">' + (ras.data || '-') + '</td>' +
@@ -5979,22 +5979,22 @@
           // Obter Ã­cone do documento baseado na extensÃ£o
           function obterIconeDocumento(extensao) {
             var icones = {
-              'pdf': '
-              'doc': '
-              'docx': '
-              'xls': '
-              'xlsx': '
-              'ppt': '
-              'pptx': '
-              'txt': '
-              'jpg': '
-              'jpeg': '
-              'png': '
-              'gif': '
-              'zip': '
-              'rar': '
+              'pdf': '📄',
+              'doc': '📄',
+              'docx': '📄',
+              'xls': '📊',
+              'xlsx': '📊',
+              'ppt': '📊',
+              'pptx': '📊',
+              'txt': '📝',
+              'jpg': '🖼️',
+              'jpeg': '🖼️',
+              'png': '🖼️',
+              'gif': '🖼️',
+              'zip': '🗂️',
+              'rar': '🗂️'
             };
-            return icones[extensao] || '
+            return icones[extensao] || '📎';
           }
           
           // Obter cor do documento baseado na extensÃ£o
@@ -6968,7 +6968,7 @@
             riscosAtivos.forEach(function(item) {
               var option = document.createElement('option');
               option.value = item.nome;
-              var tipoIcon = item.tipo === 'risco' ? ' ï¸' : '
+              var tipoIcon = item.tipo === 'risco' ? '🚫' : '';
               var categoriaText = item.categoria ? ' - ' + item.categoria.charAt(0).toUpperCase() + item.categoria.slice(1) : '';
               option.textContent = tipoIcon + ' ' + item.nome + categoriaText;
               selectRisco.appendChild(option);
@@ -8525,7 +8525,7 @@
             var html = '';
             tiposRegistro.forEach(function(tipo) {
               var statusClass = tipo.status === 'ativo' ? 'background:#10b981;color:#fff' : 'background:#6b7280;color:#fff';
-              var statusIcon = tipo.status === 'ativo' ? ' : '
+              var statusIcon = tipo.status === 'ativo' ? '✓' : '○';
               
               html += '<div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid #e5e7eb;justify-content:space-between">';
               html += '<div style="flex:1">';
@@ -8726,22 +8726,22 @@
             
             var html = '';
             riscosPerigos.forEach(function(item) {
-              var tipoIcon = item.tipo === 'risco' ? ' ï¸' : '
+              var tipoIcon = item.tipo === 'risco' ? '🚫' : '';
               var statusClass = '';
               var statusIcon = '';
               
               switch(item.status) {
                 case 'ativo':
                   statusClass = 'background:#ef4444;color:#fff';
-                  statusIcon = '
+                  statusIcon = '🔴';
                   break;
                 case 'controlado':
                   statusClass = 'background:#f59e0b;color:#fff';
-                  statusIcon = '
+                  statusIcon = '🟡';
                   break;
                 case 'eliminado':
                   statusClass = 'background:#10b981;color:#fff';
-                  statusIcon = '
+                  statusIcon = '🟢';
                   break;
               }
               
@@ -9728,6 +9728,10 @@
       }          // Inicializar checklists ao carregar
           carregarChecklists();
           </script>
+
+
+
+
 
 
 
