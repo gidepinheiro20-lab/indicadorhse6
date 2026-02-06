@@ -409,7 +409,7 @@
             <li><a href="#melhorias"><span class="icon" aria-hidden="true"></span><span class="label">Melhorias</span></a></li>
             <li><a href="#reuniao"><span class="icon" aria-hidden="true"></span><span class="label">Reunião Mensal</span></a></li>
             <li><a href="#art"><span class="icon" aria-hidden="true"></span><span class="label">ART</span></a></li>
-            <li><a href="#checklist"><span class="icon" aria-hidden="true"></span><span class="label">Check List FÃ¡cil</span></a></li>
+            <li><a href="#checklist"><span class="icon" aria-hidden="true"></span><span class="label">Check List Fácil</span></a></li>
           </ul>
         </div>
       </aside>
@@ -2345,7 +2345,7 @@
           </div>
         </div>
       
-      <!-- SeÃ§Ã£o Check List FÃ¡cil -->
+      <!-- Seção Check List Fácil -->
       <div id="checklist" style="display:none;max-width:none;margin:0;">
         <div style="background:#fff;border-radius:16px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);overflow:hidden">
           <!-- Header com gradiente teal -->
@@ -2355,7 +2355,7 @@
                 <h1 style="margin:0;font-size:1.8rem;font-weight:700;display:flex;align-items:center;gap:10px">
                   <span></span> Checklists Aplicados
                 </h1>
-                <p style="margin:6px 0 0 0;font-size:0.95rem;opacity:0.95">Controle e acompanhamento de listas de verificaÃ§Ã£o</p>
+                <p style="margin:6px 0 0 0;font-size:0.95rem;opacity:0.95">Controle e acompanhamento de listas de verificação</p>
               </div>
               <div style="display:flex;gap:12px;flex-wrap:wrap">
                 <button onclick="abrirAcompanhamentoSemanal()" style="background:#10b981;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem;display:flex;align-items:center;gap:8px">
@@ -2365,13 +2365,13 @@
                   <span></span> Matriz de Ferramentas
                 </button>
                 <button onclick="mostrarModalNovaChecklist()" style="background:#fff;color:#0d9488;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem;display:flex;align-items:center;gap:8px">
-                  <span></span> Anexar formulÃ¡rio
+                  <span></span> Anexar formulário
                 </button>
               </div>
             </div>
           </div>
           
-          <!-- ConteÃºdo -->
+          <!-- Conteúdo -->
           <div style="padding:28px;max-width:100%;margin:0 auto">
             <!-- Filtros -->
             <div style="background:#f9fafb;padding:20px;border-radius:12px;margin-bottom:24px">
@@ -2400,15 +2400,15 @@
                   </select>
                 </div>
                 
-                <!-- Filtro PerÃ­odo (Data Inicial) -->
+                <!-- Filtro Período (Data Inicial) -->
                 <div>
-                  <label style="display:block;font-size:0.85rem;color:#6b7280;margin-bottom:6px;font-weight:500">PerÃ­odo</label>
+                  <label style="display:block;font-size:0.85rem;color:#6b7280;margin-bottom:6px;font-weight:500">Período</label>
                   <input type="date" id="filtro-periodo" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
                 </div>
                 
-                <!-- Filtro PerÃ­odo Final -->
+                <!-- Filtro Período Final -->
                 <div>
-                  <label style="display:block;font-size:0.85rem;color:#6b7280;margin-bottom:6px;font-weight:500">PerÃ­odo Final</label>
+                  <label style="display:block;font-size:0.85rem;color:#6b7280;margin-bottom:6px;font-weight:500">Período Final</label>
                   <input type="date" id="filtro-periodo-final" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
                 </div>
               </div>
@@ -2429,11 +2429,11 @@
               
               <!-- Corpo da Tabela -->
               <div id="corpo-tabela-checklists" style="max-height:500px;overflow-y:auto">
-                <!-- Linhas serÃ£o adicionadas aqui -->
+                <!-- Linhas serão adicionadas aqui -->
                 <div style="padding:40px 20px;text-align:center;color:#9ca3af;grid-column:1/-1">
                   <div style="font-size:2.5rem;margin-bottom:12px;opacity:0.5"></div>
                   <div style="font-size:1rem;font-weight:500;margin-bottom:6px">Nenhum checklist aplicado ainda</div>
-                  <div style="font-size:0.9rem">Clique em "Anexar formulÃ¡rio" para comeÃ§ar</div>
+                  <div style="font-size:0.9rem">Clique em "Anexar formulário" para começar</div>
                 </div>
               </div>
             </div>
@@ -2441,18 +2441,18 @@
         </div>
       </div>
       
-      <!-- Modal Anexar FormulÃ¡rio -->
+      <!-- Modal Anexar Formulário -->
       <div id="modal-nova-checklist" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center;overflow-y:auto">
       <div style="background:#fff;border-radius:12px;width:90%;max-width:700px;margin:20px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);max-height:90vh;overflow-y:auto">
         <div style="background:linear-gradient(135deg,#0d9488 0%,#059669 100%);color:#fff;padding:20px;border-radius:12px 12px 0 0">
           <h2 style="margin:0;font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:8px">
-            <span></span> Anexar FormulÃ¡rio
+            <span></span> Anexar Formulário
           </h2>
         </div>
         
         <div style="padding:24px">
           <form id="form-nova-checklist" onsubmit="salvarNovaChecklist(event)">
-            <!-- SeÃ§Ã£o de Upload PDF -->
+            <!-- Seção de Upload PDF -->
             <div style="margin-bottom:24px;padding:20px;background:#f0fdf4;border:2px dashed #10b981;border-radius:12px">
               <label style="display:block;margin-bottom:12px;font-weight:600;color:#15803d"> Upload de PDF (opcional)</label>
               <input type="file" id="checklist-pdf" accept=".pdf" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem">
@@ -2465,49 +2465,49 @@
                 </select>
               </div>
               
-            <!-- Tipo de FormulÃ¡rio -->
+            <!-- Tipo de Formulário -->
             <div style="margin-bottom:20px">
-              <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Tipo de FormulÃ¡rio *</label>
+              <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Tipo de Formulário *</label>
               <select id="checklist-tipo" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem;background:#fff">
                 <option value="">Selecione o tipo</option>
-                <option value="ParticipaÃ§Ã£o na RAS">ParticipaÃ§Ã£o na RAS</option>
-                <option value="ParticipaÃ§Ã£o na CPT">ParticipaÃ§Ã£o na CPT</option>
+                <option value="Participação na RAS">Participação na RAS</option>
+                <option value="Participação na CPT">Participação na CPT</option>
                 <option value="WOC MDHO">WOC MDHO</option>
               </select>
             </div>
             
             <!-- Autor -->
             <div style="margin-bottom:20px">
-              <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Nome do FuncionÃ¡rio *</label>
+              <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Nome do Funcionário *</label>
               <select id="checklist-autor" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem;background:#fff">
-                <option value="">Selecione o funcionÃ¡rio</option>
+                <option value="">Selecione o funcionário</option>
               </select>
             </div>              <!-- Setor (preenchido automaticamente) -->
               <div style="margin-bottom:20px">
-                <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Setor (automÃ¡tico)</label>
-                <input type="text" id="checklist-setor" placeholder="SerÃ¡ identificado pelo nome do autor" readonly style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem;background:#f9fafb;color:#6b7280">
+                <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Setor (automático)</label>
+                <input type="text" id="checklist-setor" placeholder="Será identificado pelo nome do autor" readonly style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem;background:#f9fafb;color:#6b7280">
               </div>
               
               <!-- Data -->
               <div style="margin-bottom:20px">
                 <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Data *</label>
                 <input type="date" id="checklist-data" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem">
-                <small style="color:#6b7280;display:block;margin-top:4px">Semana serÃ¡ calculada automaticamente</small>
+                <small style="color:#6b7280;display:block;margin-top:4px">Semana será calculada automaticamente</small>
               </div>
               
-              <!-- Fotos anexadas (da extraÃ§Ã£o PDF) -->
+              <!-- Fotos anexadas (da extração PDF) -->
               <div style="margin-bottom:20px">
-                <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Fotos do FormulÃ¡rio</label>
+                <label style="display:block;margin-bottom:8px;font-weight:600;color:#374151">Fotos do Formulário</label>
                 <div id="fotos-extraidas" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px;margin-bottom:12px">
-                  <!-- Fotos do PDF serÃ£o adicionadas aqui -->
+                  <!-- Fotos do PDF serão adicionadas aqui -->
                 </div>
                 <input type="file" id="checklist-foto-manual" accept="image/*" multiple style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95rem">
-                <small style="color:#6b7280;display:block;margin-top:4px">Formatos: JPG, PNG (mÃ¡ximo 5MB por arquivo)</small>
+                <small style="color:#6b7280;display:block;margin-top:4px">Formatos: JPG, PNG (máximo 5MB por arquivo)</small>
               </div>
               
-              <!-- InformaÃ§Ãµes extraÃ­das (visualizaÃ§Ã£o) -->
+              <!-- Informações extraídas (visualização) -->
               <div id="info-extraida" style="display:none;margin-bottom:20px;padding:16px;background:#eff6ff;border-left:4px solid #3b82f6;border-radius:6px">
-                <h4 style="margin:0 0 12px 0;color:#1e40af;font-size:0.95rem"> InformaÃ§Ãµes ExtraÃ­das do PDF</h4>
+                <h4 style="margin:0 0 12px 0;color:#1e40af;font-size:0.95rem"> Informações Extraídas do PDF</h4>
                 <div id="detalhes-extraidos" style="font-size:0.9rem;color:#1e3a8a"></div>
               </div>
               
@@ -2516,7 +2516,7 @@
                   Cancelar
                 </button>
                 <button type="submit" style="background:#0d9488;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500">
-                  Anexar FormulÃ¡rio
+                  Anexar Formulário
                 </button>
               </div>
             </form>
@@ -2524,7 +2524,7 @@
         </div>
       </div>
       
-      <!-- SeÃ§Ã£o Categorias HSE -->
+      <!-- Seção Categorias HSE -->
       <div id="categorias-hse" style="display:none;padding:20px">
         <div style="max-width:1200px;margin:0 auto">
           <!-- Cabeçalho -->
@@ -2534,7 +2534,7 @@
                 <h1 style="margin:0;font-size:1.8rem;font-weight:700;display:flex;align-items:center;gap:10px">
                   <span></span> Categorias de HSE
                 </h1>
-                <div style="font-size:1rem;opacity:0.9">Sistema de classificaÃ§Ã£o e categorias para inspeÃ§Ãµes</div>
+                <div style="font-size:1rem;opacity:0.9">Sistema de classificação e categorias para inspeções</div>
               </div>
               <div style="display:flex;gap:12px;flex-wrap:wrap">
                 <button id="btn-voltar-inspecao" type="button" style="background:#047857;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
@@ -9167,21 +9167,21 @@
           // Limpar texto para melhor processamento
           texto = texto.replace(/\0/g, '');
           
-          // PadrÃ£o para nome do lÃ­der/autor (especÃ­fico para ChecklistFÃ¡cil)
-          var nomeMatch = texto.match(/(?:Nome do LÃ­der|Nome do User|Autor|Nome|Participante|Colaborador)[\s:\n]*([A-Za-zÃ¡Ã Ã¢Ã£Ã©Ã¨ÃªÃ­Ã¯Ã³Ã´ÃµÃ¶ÃºÃ§Ã±\s]{3,})/i);
+          // Padrão para nome do líder/autor (específico para ChecklistFácil)
+          var nomeMatch = texto.match(/(?:Nome do Líder|Nome do User|Autor|Nome|Participante|Colaborador)[\s:\n]*([A-Za-záàâãéèêíïóôõöúçñ\s]{3,})/i);
           if (nomeMatch && nomeMatch[1]) {
             dados.autor = nomeMatch[1].trim().split('\n')[0].substring(0, 100);
           }
           
-          // PadrÃ£o para data de participaÃ§Ã£o (especÃ­fico para ChecklistFÃ¡cil)
-          var dataPartMatch = texto.match(/(?:Data da ParticipaÃ§Ã£o da CPT|Data da ParticipaÃ§Ã£o|Data)[\s:\n]*(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/i);
+          // Padrão para data de participação (específico para ChecklistFácil)
+          var dataPartMatch = texto.match(/(?:Data da Participação da CPT|Data da Participação|Data)[\s:\n]*(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/i);
           if (dataPartMatch) {
             var dia = dataPartMatch[1].padStart(2, '0');
             var mes = dataPartMatch[2].padStart(2, '0');
             var ano = dataPartMatch[3];
             dados.data = ano + '-' + mes + '-' + dia;
           } else {
-            // PadrÃ£o genÃ©rico para data (DD/MM/YYYY ou DD-MM-YYYY)
+            // Padrão genérico para data (DD/MM/YYYY ou DD-MM-YYYY)
             var dataMatch = texto.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
             if (dataMatch) {
               var dia = dataMatch[1].padStart(2, '0');
@@ -9191,27 +9191,27 @@
             }
           }
           
-          // PadrÃ£o para tipo (procura por palavras-chave com prioridade)
-          if (texto.match(/ParticipaÃ§Ã£o da CPT|participaÃ§Ã£o\s+da\s+cpt/i)) {
-            dados.tipo = 'ParticipaÃ§Ã£o CPT';
+          // Padrão para tipo (procura por palavras-chave com prioridade)
+          if (texto.match(/Participação da CPT|participação\s+da\s+cpt/i)) {
+            dados.tipo = 'Participação CPT';
           } else if (texto.match(/CPT/i)) {
-            dados.tipo = 'ParticipaÃ§Ã£o CPT';
-          } else if (texto.match(/ParticipaÃ§Ã£o da RAS|participaÃ§Ã£o\s+na\s+ras/i)) {
-            dados.tipo = 'ParticipaÃ§Ã£o RAS';
-          } else if (texto.match(/RAS|reuniÃ£o/i)) {
-            dados.tipo = 'ParticipaÃ§Ã£o RAS';
-          } else if (texto.match(/inspeÃ§Ã£o|vistoria/i)) {
+            dados.tipo = 'Participação CPT';
+          } else if (texto.match(/Participação da RAS|participação\s+na\s+ras/i)) {
+            dados.tipo = 'Participação RAS';
+          } else if (texto.match(/RAS|reunião/i)) {
+            dados.tipo = 'Participação RAS';
+          } else if (texto.match(/inspeção|vistoria/i)) {
             dados.tipo = 'Inspeção';
           } else if (texto.match(/auditoria/i)) {
             dados.tipo = 'Auditoria';
-          } else if (texto.match(/checklist|verificaÃ§Ã£o/i)) {
-            dados.tipo = 'Checklist DiÃ¡ria';
+          } else if (texto.match(/checklist|verificação/i)) {
+            dados.tipo = 'Checklist Diária';
           }
           
           return dados;
         }
         
-        // Mostrar informaÃ§Ãµes extraÃ­das
+        // Mostrar informações extraídas
         function mostrarInformacoesExtraidas(dados) {
           var infoDiv = document.getElementById('info-extraida');
           var detalhesDiv = document.getElementById('detalhes-extraidos');
@@ -9227,7 +9227,7 @@
           }
         }
         
-      // Preencher setor automaticamente baseado no nome do funcionÃ¡rio selecionado
+      // Preencher setor automaticamente baseado no nome do funcionário selecionado
       function preencherSetorAutomaticamente() {
         var selectAutor = document.getElementById('checklist-autor');
         var setorInput = document.getElementById('checklist-setor');
@@ -9348,7 +9348,7 @@
           var container = document.getElementById('corpo-tabela-checklists');
           
           if (checklistsAplicadas.length === 0) {
-            container.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#9ca3af;grid-column:1/-1"><div style="font-size:2.5rem;margin-bottom:12px;opacity:0.5"></div><div style="font-size:1rem;font-weight:500;margin-bottom:6px">Nenhum checklist aplicado ainda</div><div style="font-size:0.9rem">Clique em "Anexar formulÃ¡rio" para comeÃ§ar</div></div>';
+            container.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#9ca3af;grid-column:1/-1"><div style="font-size:2.5rem;margin-bottom:12px;opacity:0.5"></div><div style="font-size:1rem;font-weight:500;margin-bottom:6px">Nenhum checklist aplicado ainda</div><div style="font-size:0.9rem">Clique em "Anexar formulário" para começar</div></div>';
             return;
           }
           
@@ -9573,12 +9573,12 @@
         var allTipos = new Set();
         
         checklistsAplicadas.forEach(function(checklist) {
-          var tipo = checklist.tipo || 'NÃ£o informado';
-          var nome = checklist.autor || 'NÃ£o informado';
-          var setor = checklist.setor || 'NÃ£o informado';
+          var tipo = checklist.tipo || 'Não informado';
+          var nome = checklist.autor || 'Não informado';
+          var setor = checklist.setor || 'Não informado';
           var semana = checklist.semana || 'Sem semana';
           
-          // Extrair mÃªs e ano da data
+          // Extrair mês e ano da data
           var data = new Date(checklist.data + 'T00:00:00');
           var mes = String(data.getMonth() + 1).padStart(2, '0');
           var ano = data.getFullYear();
