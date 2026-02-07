@@ -1130,14 +1130,14 @@
             </div>
             
             <div style="padding:24px">
-              <!-- Barra de salvar alteraÃ§Ãµes (FuncionÃ¡rios) -->
+              <!-- Barra de salvar alterações (Funcionários) -->
               <div id="funcionarios-save-bar" style="display:none;margin-bottom:16px;background:#eff6ff;border:1px solid #93c5fd;color:#1e3a8a;padding:12px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:12px">
                 <div style="display:flex;align-items:center;gap:8px">
                   <span></span>
-                  <span><strong>AlteraÃ§Ãµes nÃ£o salvas</strong> em colaboradores.</span>
+                  <span><strong>Alterações não salvas</strong> em colaboradores.</span>
                 </div>
                 <div style="display:flex;gap:8px">
-                  <button type="button" onclick="salvarAlteracoesFuncionarios()" style="background:#3b82f6;color:#fff;padding:8px 12px;border:none;border-radius:6px;cursor:pointer">Salvar alteraÃ§Ãµes</button>
+                  <button type="button" onclick="salvarAlteracoesFuncionarios()" style="background:#3b82f6;color:#fff;padding:8px 12px;border:none;border-radius:6px;cursor:pointer">Salvar alterações</button>
                   <button type="button" onclick="descartarAlteracoesFuncionarios()" style="background:#6b7280;color:#fff;padding:8px 12px;border:none;border-radius:6px;cursor:pointer">Descartar</button>
                 </div>
               </div>
@@ -1148,18 +1148,18 @@
                 <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">
                   <!-- Cabeçalho da tabela -->
                   <div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:120px 2fr 1.5fr 1.5fr 120px 1.5fr 100px;gap:16px;font-weight:600;color:#374151">
-                    <div>MatrÃ­cula</div>
+                    <div>Matrícula</div>
                     <div>Nome</div>
-                    <div>FunÃ§Ã£o</div>
+                    <div>Função</div>
                     <div>Setor</div>
-                    <div>Data AdmissÃ£o</div>
+                    <div>Data Admissão</div>
                     <div>Empresa</div>
                     <div>Ações</div>
                   </div>
                   
                   <!-- Lista de colaboradores cadastrados -->
                   <div id="funcionarios-lista">
-                    <!-- Colaboradores serÃ£o carregados dinamicamente aqui -->
+                    <!-- Colaboradores serão carregados dinamicamente aqui -->
                   </div>
                 </div>
                 
@@ -1176,12 +1176,12 @@
           <div style="background:#fff;border-radius:12px;padding:24px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
               <h3 style="margin:0;color:#374151"> Novo Colaborador</h3>
-              <button id="fechar-modal" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#6b7280">Ã—</button>
+              <button id="fechar-modal" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#6b7280">×</button>
             </div>
             
             <form id="form-funcionario" style="display:grid;gap:16px">
               <div>
-                <label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">MatrÃ­cula *</label>
+                <label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Matrícula *</label>
                 <input type="text" id="func-matricula" required style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
               </div>
               
@@ -1191,7 +1191,7 @@
               </div>
               
               <div>
-                <label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">FunÃ§Ã£o *</label>
+                <label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Função *</label>
                 <input type="text" id="func-funcao" required style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
               </div>
               
@@ -1201,7 +1201,7 @@
               </div>
               
               <div>
-                <label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Data de AdmissÃ£o *</label>
+                <label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Data de Admissão *</label>
                 <input type="date" id="func-admissao" required style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px">
               </div>
               
@@ -1209,7 +1209,7 @@
                 <label style="display:block;margin-bottom:4px;font-weight:600;color:#374151">Empresa *</label>
                 <select id="func-empresa" required style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;background:#fff">
                   <option value="">Selecione a empresa</option>
-                  <!-- OpÃ§Ãµes carregadas dinamicamente -->
+                  <!-- Opções carregadas dinamicamente -->
                 </select>
               </div>
               
@@ -1232,16 +1232,16 @@
             </div>
             
             <div style="padding:20px">
-              <!-- InstruÃ§Ãµes -->
+              <!-- Instruções -->
               <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin-bottom:20px">
                 <h4 style="margin:0 0 8px 0;color:#166534;font-size:1rem"> Formato da Planilha</h4>
                 <p style="margin:0 0 8px 0;color:#166534;font-size:0.9rem">A planilha deve conter as seguintes colunas <strong>na ordem exata</strong>:</p>
                 <ol style="margin:0;color:#166534;font-size:0.9rem">
-                  <li><strong>MatrÃ­cula</strong> - NÃºmero de identificaÃ§Ã£o do colaborador</li>
+                  <li><strong>Matrícula</strong> - Número de identificação do colaborador</li>
                   <li><strong>Nome</strong> - Nome completo do colaborador</li>
-                  <li><strong>FunÃ§Ã£o</strong> - Cargo ou funÃ§Ã£o exercida</li>
+                  <li><strong>Função</strong> - Cargo ou função exercida</li>
                   <li><strong>Setor</strong> - Setor ou departamento de trabalho</li>
-                  <li><strong>Data AdmissÃ£o</strong> - Data no formato DD/MM/AAAA</li>
+                  <li><strong>Data Admissão</strong> - Data no formato DD/MM/AAAA</li>
                   <li><strong>Empresa</strong> - Nome da empresa</li>
                 </ol>
               </div>
@@ -1250,7 +1250,7 @@
               <div id="upload-area-planilha" style="border:2px dashed #d1d5db;border-radius:8px;padding:40px 20px;text-align:center;cursor:pointer;transition:all 0.3s ease;background:#fafafa">
                 <div style="font-size:2rem;margin-bottom:12px;color:#9ca3af"></div>
                 <div style="font-size:1.1rem;font-weight:600;color:#374151;margin-bottom:8px">Clique aqui ou arraste o arquivo</div>
-                <div style="font-size:0.9rem;color:#6b7280;margin-bottom:16px">Formatos aceitos: .xlsx, .xls (mÃ¡x. 5MB)</div>
+                <div style="font-size:0.9rem;color:#6b7280;margin-bottom:16px">Formatos aceitos: .xlsx, .xls (máx. 5MB)</div>
                 <input type="file" id="input-planilha" accept=".xlsx,.xls" style="display:none">
                 <button type="button" onclick="document.getElementById('input-planilha').click()" style="background:#10b981;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:0.9rem;font-weight:600;cursor:pointer">
                   Selecionar Arquivo
@@ -1259,17 +1259,17 @@
               
               <!-- Preview da planilha -->
               <div id="preview-planilha" style="display:none;margin-top:20px">
-                <h4 style="margin:0 0 12px 0;color:#374151"> PrÃ©via dos Dados</h4>
+                <h4 style="margin:0 0 12px 0;color:#374151"> Prévia dos Dados</h4>
                 <div style="max-height:200px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:6px">
                   <table id="tabela-preview" style="width:100%;border-collapse:collapse;font-size:0.8rem">
-                    <!-- Preview serÃ¡ inserido aqui -->
+                    <!-- Preview será inserido aqui -->
                   </table>
                 </div>
               </div>
               
               <!-- Status -->
               <div id="status-importacao" style="margin-top:16px;display:none">
-                <!-- Status serÃ¡ inserido aqui -->
+                <!-- Status será inserido aqui -->
               </div>
             </div>
             
@@ -1284,7 +1284,7 @@
           </div>
         </div>
         
-        <!-- SeÃ§Ã£o Controle de Frequência -->
+        <!-- Seção Controle de Frequência -->
         <div id="frequencia" style="display:none;max-width:none;margin:0;">
           <div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3">
             <div style="background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%);color:#fff;padding:20px 24px;border-radius:16px 16px 0 0">
@@ -1293,7 +1293,7 @@
                   <div style="font-size:1.4rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px">
                     <span></span> Controle de Frequência
                   </div>
-                  <div style="font-size:1rem;opacity:0.9">Visualize presenÃ§a e ausÃªncia dos funcionÃ¡rios por data</div>
+                  <div style="font-size:1rem;opacity:0.9">Visualize presença e ausência dos funcionários por data</div>
                 </div>
               </div>
             </div>
