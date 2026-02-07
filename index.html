@@ -424,7 +424,7 @@
                 <div style="font-size:2rem;"></div>
                 <h1 style="margin:0;font-size:2rem;font-weight:700;">RAS - Reunião de Análise de Segurança</h1>
               </div>
-              <p style="margin:0;font-size:1.1rem;opacity:0.9;">Sistema de registros e controle de reuniões de seguranÃ§a</p>
+              <p style="margin:0;font-size:1.1rem;opacity:0.9;">Sistema de registros e controle de reuniões de segurança</p>
             </div>
           </div>
           
@@ -446,7 +446,7 @@
             </div>
           </div>
           
-          <!-- ConteÃºdo Principal -->
+          <!-- Conteúdo Principal -->
           <div style="max-width:1200px;margin:0 auto;padding:24px;">
             
             <!-- Lista de RAS Registradas -->
@@ -469,16 +469,16 @@
                     </tr>
                   </thead>
                   <tbody id="ras-tbody">
-                    <!-- Registros serÃ£o carregados dinamicamente -->
+                    <!-- Registros serão carregados dinamicamente -->
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
           
-          <!-- FormulÃ¡rio Nova RAS (inicialmente oculto) -->
+          <!-- Formulário Nova RAS (inicialmente oculto) -->
           <div id="ras-formulario-container" style="display:none;max-width:1200px;margin:0 auto;padding:24px;">
-            <!-- Etapa 1: InformaÃ§Ãµes BÃ¡sicas -->
+            <!-- Etapa 1: Informações Básicas -->
             <div id="ras-etapa-1">
               <div style="background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1);margin-bottom:24px;">
                 <div style="background:linear-gradient(135deg, #3498db 0%, #2980b9 100%);color:#fff;padding:20px 24px;border-radius:12px 12px 0 0;">
@@ -486,19 +486,19 @@
                     <div style="font-size:1.5rem;"></div>
                     <h3 style="margin:0;font-size:1.4rem;font-weight:700;">Nova RAS - Etapa 1 de 6</h3>
                   </div>
-                  <p style="margin:0;opacity:0.9;">InformaÃ§Ãµes BÃ¡sicas da Reunião</p>
+                  <p style="margin:0;opacity:0.9;">Informações Básicas da Reunião</p>
                 </div>
                 
                 <form id="form-ras" autocomplete="off" style="padding:24px;">
               <div style="text-align:center;margin-bottom:18px">
-                <div style="font-size:1.3rem;font-weight:700;">InformaÃ§Ãµes BÃ¡sicas</div>
-                <div style="color:#888;font-size:1rem;">Preencha os dados principais da reuniÃ£o</div>
+                <div style="font-size:1.3rem;font-weight:700;">Informações Básicas</div>
+                <div style="color:#888;font-size:1rem;">Preencha os dados principais da reunião</div>
               </div>
               <div style="margin-bottom:18px">
                 <label style="font-weight:600;display:block;margin-bottom:4px">Empresa</label>
                 <select id="ras-empresa" required style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
                   <option value="">Selecione a empresa</option>
-                  <!-- OpÃ§Ãµes carregadas dinamicamente -->
+                  <!-- Opções carregadas dinamicamente -->
                 </select>
               </div>
               <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
@@ -507,11 +507,11 @@
                   <input type="date" id="ras-data" required style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
                 </div>
                 <div style="flex:1 1 100px">
-                  <label style="font-weight:600;display:block;margin-bottom:4px">InÃ­cio</label>
+                  <label style="font-weight:600;display:block;margin-bottom:4px">Início</label>
                   <input type="time" id="ras-inicio" required style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
                 </div>
                 <div style="flex:1 1 100px">
-                  <label style="font-weight:600;display:block;margin-bottom:4px">TÃ©rmino</label>
+                  <label style="font-weight:600;display:block;margin-bottom:4px">Término</label>
                   <input type="time" id="ras-termino" required style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
                 </div>
               </div>
@@ -520,47 +520,47 @@
                 <input type="number" id="ras-efetivo" min="0" required style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb">
               </div>
               <div style="margin-bottom:18px;border:1px solid #fbb4b4;background:#fff7f7;border-radius:8px;padding:12px">
-                <label style="font-weight:600;display:block;margin-bottom:4px;color:#d32f2f"> ï¸ Tarefa de Alto Risco</label>
+                <label style="font-weight:600;display:block;margin-bottom:4px;color:#d32f2f">⚠️ Tarefa de Alto Risco</label>
                 <textarea id="ras-alto-risco" required rows="2" style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb" placeholder="Descreva as tarefas de alto risco identificadas..."></textarea>
               </div>
               <div style="margin-bottom:18px;border:1px solid #fbb4b4;background:#fff7f7;border-radius:8px;padding:12px;display:flex;align-items:center;justify-content:space-between">
                 <div>
-                  <label style="font-weight:600;display:block;margin-bottom:2px;color:#d32f2f"> ï¸ TARD-C</label>
-                  <span style="color:#b77;font-size:0.98rem">Ative se houver Tarefa de Alto Risco CrÃ­tica</span>
+                  <label style="font-weight:600;display:block;margin-bottom:2px;color:#d32f2f">⚠️ TARD-C</label>
+                  <span style="color:#b77;font-size:0.98rem">Ative se houver Tarefa de Alto Risco Crítica</span>
                 </div>
                 <input type="checkbox" id="ras-tardc" style="width:22px;height:22px">
               </div>
               <div style="margin-bottom:18px;border:1px solid #b4e2fb;background:#f7fbff;border-radius:8px;padding:12px">
                 <label style="font-weight:600;display:block;margin-bottom:4px;color:#3197ab"> Algo a ser Compartilhado</label>
-                <textarea id="ras-compartilhar" required rows="2" style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb" placeholder="InformaÃ§Ãµes importantes para compartilhar com a equipe..."></textarea>
+                <textarea id="ras-compartilhar" required rows="2" style="width:100%;padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #bbb" placeholder="Informações importantes para compartilhar com a equipe..."></textarea>
               </div>
               <div style="text-align:right;padding-top:12px;border-top:1px solid #e2e8f0;margin-top:24px;">
                 <button id="ras-voltar-formulario" type="button" style="background:#6c757d;color:#fff;padding:12px 24px;font-size:1rem;border:none;border-radius:6px;cursor:pointer;margin-right:12px;"> Voltar</button>
-                <button id="ras-proximo-1" type="button" disabled style="background:#3498db;color:#fff;padding:12px 24px;font-size:1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed;">PrÃ³ximo </button>
+                <button id="ras-proximo-1" type="button" disabled style="background:#3498db;color:#fff;padding:12px 24px;font-size:1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed;">Próximo </button>
               </div>
             </form>
               </div>
             </div>
           </div>
 
-          <!-- Etapa 2: ParticipaÃ§Ã£o de LideranÃ§a -->
+          <!-- Etapa 2: Participação de Liderança -->
           <div id="ras-etapa-2" style="display:none;">
             <h2 style="margin-top:24px;font-size:1.6rem;font-weight:700;color:#222">Nova RAS</h2>
-            <div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança Â· Etapa 2 de 6</div>
-            <div style="font-size:1.05rem;margin-bottom:18px;color:#888">ParticipaÃ§Ã£o de LideranÃ§a</div>
+            <div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança · Etapa 2 de 6</div>
+            <div style="font-size:1.05rem;margin-bottom:18px;color:#888">Participação de Liderança</div>
             <form autocomplete="off" style="background:#fff;border-radius:12px;padding:24px 24px 16px 24px;box-shadow:0 2px 8px #0001;border:1px solid #e6edf3">
               <div style="text-align:center;margin-bottom:18px">
-                <div style="font-size:1.3rem;font-weight:700;">ParticipaÃ§Ã£o de LideranÃ§a</div>
-                <div style="color:#888;font-size:1rem;">Registre os lÃ­deres presentes na reuniÃ£o</div>
+                <div style="font-size:1.3rem;font-weight:700;">Participação de Liderança</div>
+                <div style="color:#888;font-size:1rem;">Registre os líderes presentes na reunião</div>
               </div>
               
-              <!-- SubstituÃ­do: vÃ¡rios selects por UI compacta (nome + setor + botÃ£o de adicionar) -->
+              <!-- Substituído: vários selects por UI compacta (nome + setor + botão de adicionar) -->
               <div style="margin-bottom:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
                 <div style="flex:1 1 320px">
                   <label style="font-weight:600;display:block;margin-bottom:8px;">Selecione o nome</label>
                   <select id="ras-participante-nome" style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
                     <option value="">Selecione o nome</option>
-                    <!-- OpÃ§Ãµes carregadas dinamicamente (colaboradores) -->
+                    <!-- Opções carregadas dinamicamente (colaboradores) -->
                   </select>
                 </div>
 
@@ -572,7 +572,7 @@
                     <option value="Engenheiro">Engenheiro</option>
                     <option value="Supervisor">Supervisor</option>
                     <option value="Encarregado">Encarregado</option>
-                    <option value="TÃ©cnico de Segurança">TÃ©cnico de Segurança</option>
+                    <option value="Técnico de Segurança">Técnico de Segurança</option>
                     <option value="HSE">HSE</option>
                   </select>
                 </div>
@@ -583,10 +583,10 @@
               </div>
 
               <div id="ras-participantes-list" style="margin-bottom:18px;display:flex;flex-direction:column;gap:8px;">
-                <!-- Itens adicionados aparecerÃ£o aqui -->
+                <!-- Itens adicionados aparecerão aqui -->
               </div>
 
-              <!-- Hidden inputs (mantÃªm compatibilidade com coleta de dados existente) -->
+              <!-- Hidden inputs (mantêm compatibilidade com coleta de dados existente) -->
               <input type="hidden" id="ras-gerente" value="">
               <input type="hidden" id="ras-engenheiro" value="">
               <input type="hidden" id="ras-supervisor" value="">
@@ -595,7 +595,7 @@
 
               <div style="display:flex;gap:12px;justify-content:space-between">
                 <button id="ras-voltar-2" type="button" style="background:#6b7280;color:#fff;padding:10px 24px;font-size:1.1rem;border:none;border-radius:6px;cursor:pointer"> Voltar</button>
-                <button id="ras-proximo-2" type="button" disabled style="background:#3197ab;color:#fff;padding:10px 36px;font-size:1.1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed">PrÃ³ximo </button>
+                <button id="ras-proximo-2" type="button" disabled style="background:#3197ab;color:#fff;padding:10px 36px;font-size:1.1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed">Próximo </button>
               </div>
             </form>
           </div>
@@ -603,12 +603,12 @@
           <!-- Etapa 3: Outros Participantes -->
           <div id="ras-etapa-3" style="display:none;">
             <h2 style="margin-top:24px;font-size:1.6rem;font-weight:700;color:#222">Nova RAS</h2>
-            <div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança Â· Etapa 3 de 6</div>
+            <div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança · Etapa 3 de 6</div>
             <div style="font-size:1.05rem;margin-bottom:18px;color:#888">Outros Participantes</div>
             <form autocomplete="off" style="background:#fff;border-radius:12px;padding:24px 24px 16px 24px;box-shadow:0 2px 8px #0001;border:1px solid #e6edf3">
               <div style="text-align:center;margin-bottom:18px">
                 <div style="font-size:1.3rem;font-weight:700;">Outros Participantes</div>
-                <div style="color:#888;font-size:1rem;">Complete com os demais envolvidos na reuniÃ£o</div>
+                <div style="color:#888;font-size:1rem;">Complete com os demais envolvidos na reunião</div>
               </div>
               
               <div style="margin-bottom:18px">
@@ -622,19 +622,19 @@
 
               <div style="margin-bottom:18px">
                 <label style="font-weight:600;display:block;margin-bottom:8px;display:flex;align-items:center;gap:8px">
-                  <span style="font-size:1.2rem;"></span> LÃ­der da RAS
+                  <span style="font-size:1.2rem;"></span> Líder da RAS
                 </label>
                 <select id="ras-lider-ras" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
-                  <option value="">Selecione o lÃ­der da ras</option>
+                  <option value="">Selecione o líder da ras</option>
                 </select>
               </div>
 
               <div style="margin-bottom:18px">
                 <label style="font-weight:600;display:block;margin-bottom:8px;display:flex;align-items:center;gap:8px">
-                  <span style="font-size:1.2rem;"></span> LÃ­der CPT
+                  <span style="font-size:1.2rem;"></span> Líder CPT
                 </label>
                 <select id="ras-lider-cpt" required style="width:100%;padding:12px;font-size:1rem;border-radius:6px;border:1px solid #bbb;background:#fff">
-                  <option value="">Selecione o lÃ­der cpt</option>
+                  <option value="">Selecione o líder cpt</option>
                 </select>
               </div>
 
@@ -647,7 +647,7 @@
 
               <div style="display:flex;gap:12px;justify-content:space-between">
                 <button id="ras-voltar-3" type="button" style="background:#6b7280;color:#fff;padding:10px 24px;font-size:1.1rem;border:none;border-radius:6px;cursor:pointer"> Voltar</button>
-                <button id="ras-proximo-3" type="button" disabled style="background:#3197ab;color:#fff;padding:10px 36px;font-size:1.1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed">PrÃ³ximo </button>
+                <button id="ras-proximo-3" type="button" disabled style="background:#3197ab;color:#fff;padding:10px 36px;font-size:1.1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed">Próximo </button>
               </div>
             </form>
           </div>
@@ -655,26 +655,26 @@
           <!-- Etapa 4: Anexos -->
           <div id="ras-etapa-4" style="display:none;">
             <h2 style="margin-top:24px;font-size:1.6rem;font-weight:700;color:#222">Nova RAS</h2>
-            <div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança Â· Etapa 4 de 6</div>
+            <div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança · Etapa 4 de 6</div>
             <div style="font-size:1.05rem;margin-bottom:18px;color:#888">Anexos</div>
             <form autocomplete="off" style="background:#fff;border-radius:12px;padding:24px 24px 16px 24px;box-shadow:0 2px 8px #0001;border:1px solid #e6edf3">
               <div style="text-align:center;margin-bottom:24px">
                 <div style="font-size:1.3rem;font-weight:700;">Anexos</div>
-                <div style="color:#888;font-size:1rem;">Adicione fotos e evidÃªncias da reuniÃ£o</div>
-                <div style="color:#e53e3e;font-size:0.9rem;margin-top:4px;font-weight:600;">Itens obrigatÃ³rios</div>
+                <div style="color:#888;font-size:1rem;">Adicione fotos e evidências da reunião</div>
+                <div style="color:#e53e3e;font-size:0.9rem;margin-top:4px;font-weight:600;">Itens obrigatórios</div>
               </div>
               
-              <!-- SeÃ§Ã£o 1: Carregar Foto da RAS -->
+              <!-- Seção 1: Carregar Foto da RAS -->
               <div style="margin-bottom:24px;padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;">
                 <div style="margin-bottom:16px;">
                   <div style="font-size:1.1rem;font-weight:600;color:#374151;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
                     <span style="font-size:1.3rem;"></span> Carregar Foto da RAS
                   </div>
-                  <div style="color:#6b7280;font-size:0.9rem;">Adicione fotos da reuniÃ£o (JPG, PNG)</div>
+                  <div style="color:#6b7280;font-size:0.9rem;">Adicione fotos da reunião (JPG, PNG)</div>
                 </div>
                 
                 <div style="border:2px dashed #bfdbfe;border-radius:8px;padding:30px 20px;text-align:center;background:#eff6ff;transition:all 0.3s ease;" id="upload-area-fotos">
-                  <div style="font-size:2.5rem;color:#60a5fa;margin-bottom:8px;">ï¿½</div>
+                  <div style="font-size:2.5rem;color:#60a5fa;margin-bottom:8px;">📷</div>
                   <div style="font-size:1rem;font-weight:600;color:#1e40af;margin-bottom:6px;">Carregar Fotos</div>
                   <div style="color:#6b7280;font-size:0.9rem;margin-bottom:12px;">Selecione ou arraste fotos da RAS</div>
                   
@@ -691,18 +691,18 @@
                 </div>
               </div>
 
-              <!-- SeÃ§Ã£o 2: Carregar EvidÃªncia da RAS -->
+              <!-- Seção 2: Carregar Evidência da RAS -->
               <div style="margin-bottom:24px;padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#fef2f2;">
                 <div style="margin-bottom:16px;">
                   <div style="font-size:1.1rem;font-weight:600;color:#374151;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
-                    <span style="font-size:1.3rem;"></span> Carregar EvidÃªncia da RAS
+                    <span style="font-size:1.3rem;"></span> Carregar Evidência da RAS
                   </div>
-                  <div style="color:#6b7280;font-size:0.9rem;">Adicione documentos PDF como evidÃªncia</div>
+                  <div style="color:#6b7280;font-size:0.9rem;">Adicione documentos PDF como evidência</div>
                 </div>
                 
                 <div style="border:2px dashed #fca5a5;border-radius:8px;padding:30px 20px;text-align:center;background:#fef2f2;transition:all 0.3s ease;" id="upload-area-evidencias">
                   <div style="font-size:2.5rem;color:#f87171;margin-bottom:8px;"></div>
-                  <div style="font-size:1rem;font-weight:600;color:#dc2626;margin-bottom:6px;">Carregar EvidÃªncias</div>
+                  <div style="font-size:1rem;font-weight:600;color:#dc2626;margin-bottom:6px;">Carregar Evidências</div>
                   <div style="color:#6b7280;font-size:0.9rem;margin-bottom:12px;">Selecione ou arraste documentos PDF</div>
                   
                   <button type="button" id="select-evidencias" style="background:#dc2626;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;margin-bottom:6px;">Selecionar PDFs</button>
@@ -711,25 +711,25 @@
                   <div style="color:#6b7280;font-size:0.8rem;">Formato: PDF</div>
                 </div>
 
-                <!-- Lista de EvidÃªncias Carregadas -->
+                <!-- Lista de Evidências Carregadas -->
                 <div id="evidencias-list" style="margin-top:16px;display:none;">
-                  <div style="font-weight:600;margin-bottom:8px;color:#374151;">ï¿½ EvidÃªncias Selecionadas:</div>
+                  <div style="font-weight:600;margin-bottom:8px;color:#374151;">📎 Evidências Selecionadas:</div>
                   <div id="evidencias-container" style="max-height:150px;overflow-y:auto;"></div>
                 </div>
               </div>
 
               <div style="display:flex;gap:12px;justify-content:space-between">
                 <button id="ras-voltar-4" type="button" style="background:#6b7280;color:#fff;padding:10px 24px;font-size:1.1rem;border:none;border-radius:6px;cursor:pointer"> Voltar</button>
-                <button id="ras-proximo-4" type="button" disabled style="background:#3197ab;color:#fff;padding:10px 36px;font-size:1.1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed">PrÃ³ximo </button>
+                <button id="ras-proximo-4" type="button" disabled style="background:#3197ab;color:#fff;padding:10px 36px;font-size:1.1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed">Próximo </button>
               </div>
             </form>
           </div>
 
-          <!-- Etapa 5: Revisar InformaÃ§Ãµes -->
+          <!-- Etapa 5: Revisar Informações -->
           <div id="ras-etapa-5" style="display:none;">
             <h2 style="margin-top:24px;font-size:1.6rem;font-weight:700;color:#222">Nova RAS</h2>
-            <div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança Â· Etapa 5 de 6</div>
-            <div style="font-size:1.05rem;margin-bottom:18px;color:#888">Revisar InformaÃ§Ãµes</div>
+            <div style="color:#3197ab;font-size:1.1rem;margin-bottom:8px">Reunião de Análise de Segurança · Etapa 5 de 6</div>
+            <div style="font-size:1.05rem;margin-bottom:18px;color:#888">Revisar Informações</div>
             
             <div style="background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px #0001;border:1px solid #e6edf3">
               <!-- Cabeçalho -->
@@ -737,28 +737,28 @@
                 <div style="width:60px;height:60px;background:#10b981;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
                   <span style="font-size:24px;color:#fff;"></span>
                 </div>
-                <div style="font-size:1.4rem;font-weight:700;color:#374151;">Revisar InformaÃ§Ãµes</div>
-                <div style="color:#6b7280;font-size:1rem;">Verifique os dados antes de confirmar a presenÃ§a</div>
+                <div style="font-size:1.4rem;font-weight:700;color:#374151;">Revisar Informações</div>
+                <div style="color:#6b7280;font-size:1rem;">Verifique os dados antes de confirmar a presença</div>
               </div>
 
-              <!-- InformaÃ§Ãµes BÃ¡sicas -->
+              <!-- Informações Básicas -->
               <div style="margin-bottom:20px;padding:16px;border:1px solid #e5e7eb;border-radius:8px;background:#f9fafb;">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
                   <span style="font-size:1.2rem;"></span>
-                  <span style="font-weight:600;color:#374151;">InformaÃ§Ãµes BÃ¡sicas</span>
+                  <span style="font-weight:600;color:#374151;">Informações Básicas</span>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.9rem;">
                   <div><strong>Empresa:</strong> <span id="review-empresa">-</span></div>
                   <div><strong>Data:</strong> <span id="review-data">-</span></div>
-                  <div><strong>HorÃ¡rio:</strong> <span id="review-horario">-</span></div>
-                  <div><strong>Efetivo:</strong> <span id="review-efetivo">-</span> funcionÃ¡rios</div>
+                  <div><strong>Horário:</strong> <span id="review-horario">-</span></div>
+                  <div><strong>Efetivo:</strong> <span id="review-efetivo">-</span> funcionários</div>
                 </div>
                 <div style="margin-top:12px;">
-                  <div style="margin-bottom:8px;"><strong> ï¸ Tarefa de Alto Risco:</strong></div>
+                  <div style="margin-bottom:8px;"><strong>⚠️ Tarefa de Alto Risco:</strong></div>
                   <div style="background:#fff7f7;padding:8px;border-radius:4px;border-left:3px solid #ef4444;font-size:0.85rem;" id="review-alto-risco">-</div>
                 </div>
                 <div style="margin-top:12px;">
-                  <div style="margin-bottom:4px;"><strong>TARD-C:</strong> <span id="review-tardc">NÃƒO</span></div>
+                  <div style="margin-bottom:4px;"><strong>TARD-C:</strong> <span id="review-tardc">NÃO</span></div>
                 </div>
                 <div style="margin-top:12px;">
                   <div style="margin-bottom:8px;"><strong> Algo a ser Compartilhado:</strong></div>
@@ -777,10 +777,10 @@
                   <div><strong> Engenheiro:</strong> <span id="review-engenheiro">-</span></div>
                   <div><strong> Supervisor/Mestre:</strong> <span id="review-supervisor">-</span></div>
                   <div><strong> Encarregado:</strong> <span id="review-encarregado">-</span></div>
-                  <div><strong> TÃ©cnico de Segurança:</strong> <span id="review-tecnico-seguranca">-</span></div>
+                  <div><strong> Técnico de Segurança:</strong> <span id="review-tecnico-seguranca">-</span></div>
                   <div><strong> Anjo da Semana:</strong> <span id="review-anjo-semana">-</span></div>
-                  <div><strong> LÃ­der da RAS:</strong> <span id="review-lider-ras">-</span></div>
-                  <div><strong> LÃ­der CPT:</strong> <span id="review-lider-cpt">-</span></div>
+                  <div><strong> Líder da RAS:</strong> <span id="review-lider-ras">-</span></div>
+                  <div><strong> Líder CPT:</strong> <span id="review-lider-cpt">-</span></div>
                   <div><strong> Brigada:</strong> <span id="review-brigada">-</span></div>
                 </div>
               </div>
@@ -796,16 +796,16 @@
                 </div>
               </div>
 
-              <!-- BotÃµes -->
+              <!-- Botões -->
               <div style="display:flex;gap:12px;justify-content:space-between">
                 <button id="ras-voltar-5" type="button" style="background:#6b7280;color:#fff;padding:10px 24px;font-size:1.1rem;border:none;border-radius:6px;cursor:pointer"> Voltar</button>
-                <button id="ras-confirmar-presenca" type="button" disabled style="background:#10b981;color:#fff;padding:10px 24px;font-size:1.1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed">Confirmar PresenÃ§a </button>
+                <button id="ras-confirmar-presenca" type="button" disabled style="background:#10b981;color:#fff;padding:10px 24px;font-size:1.1rem;border:none;border-radius:6px;opacity:0.5;cursor:not-allowed">Confirmar Presença </button>
               </div>
             </div>
           </div>
         </div>
         
-        <!-- Etapa 6: Confirmar PresenÃ§a -->
+        <!-- Etapa 6: Confirmar Presença -->
         <div id="ras-etapa-6" style="display:none">
           <div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3;max-width:1000px;margin:0 auto">
             <div style="background:linear-gradient(135deg,#3197ab 0%,#2563eb 100%);color:#fff;padding:20px 24px;border-radius:16px 16px 0 0;text-align:center">
@@ -816,13 +816,13 @@
             <div style="padding:32px 24px">
               <div style="text-align:center;margin-bottom:32px">
                 <div style="font-size:3rem;color:#3b82f6;margin-bottom:12px"></div>
-                <div style="font-size:1.6rem;font-weight:700;color:#374151;margin-bottom:8px">Confirmar PresenÃ§a</div>
-                <div style="color:#6b7280;font-size:1rem">Marque os funcionÃ¡rios presentes na reuniÃ£o.</div>
+                <div style="font-size:1.6rem;font-weight:700;color:#374151;margin-bottom:8px">Confirmar Presença</div>
+                <div style="color:#6b7280;font-size:1rem">Marque os funcionários presentes na reunião.</div>
               </div>
               
               <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:24px">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-                  <h3 style="margin:0;font-size:1.2rem;color:#374151">Lista de FuncionÃ¡rios</h3>
+                  <h3 style="margin:0;font-size:1.2rem;color:#374151">Lista de Funcionários</h3>
                   <button id="marcar-todos" type="button" style="background:#3b82f6;color:#fff;padding:8px 16px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer">Marcar Todos</button>
                 </div>
                 
@@ -830,15 +830,15 @@
                   <!-- Cabeçalho da tabela -->
                   <div style="background:#f9fafb;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:60px 120px 1fr 1fr 1fr;gap:16px;font-weight:600;color:#374151">
                     <div></div>
-                    <div>MatrÃ­cula</div>
+                    <div>Matrícula</div>
                     <div>Nome</div>
                     <div>Empresa</div>
-                    <div>FunÃ§Ã£o</div>
+                    <div>Função</div>
                   </div>
                   
-                  <!-- Lista de funcionÃ¡rios -->
+                  <!-- Lista de funcionários -->
                   <div id="lista-funcionarios">
-                    <!-- Lista serÃ¡ carregada dinamicamente -->
+                    <!-- Lista será carregada dinamicamente -->
                   </div>
                 </div>
                 
@@ -849,7 +849,7 @@
                 </div>
               </div>
               
-              <!-- BotÃµes -->
+              <!-- Botões -->
               <div style="display:flex;gap:12px;justify-content:space-between">
                 <button id="ras-voltar-6" type="button" style="background:#6b7280;color:#fff;padding:12px 24px;font-size:1.1rem;border:none;border-radius:6px;cursor:pointer"> Voltar</button>
                 <button id="ras-finalizar" type="button" style="background:#10b981;color:#fff;padding:12px 24px;font-size:1.1rem;border:none;border-radius:6px;cursor:pointer"> Finalizar RAS</button>
@@ -870,18 +870,18 @@
               <div style="text-align:center;margin-bottom:32px">
                 <div style="font-size:3rem;color:#10b981;margin-bottom:12px"></div>
                 <div style="font-size:1.6rem;font-weight:700;color:#374151;margin-bottom:8px">Relatório Final da RAS</div>
-                <div style="color:#6b7280;font-size:1rem">Resumo completo da reuniÃ£o realizada</div>
+                <div style="color:#6b7280;font-size:1rem">Resumo completo da reunião realizada</div>
               </div>
               
-              <!-- SeÃ§Ã£o 1: InformaÃ§Ãµes BÃ¡sicas -->
+              <!-- Seção 1: Informações Básicas -->
               <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:24px">
                 <h3 style="margin:0 0 16px 0;color:#374151;font-size:1.3rem;display:flex;align-items:center;gap:8px">
-                  <span></span> InformaÃ§Ãµes BÃ¡sicas
+                  <span></span> Informações Básicas
                 </h3>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
                   <div><strong>Empresa:</strong> <span id="rel-empresa">-</span></div>
                   <div><strong>Data:</strong> <span id="rel-data">-</span></div>
-                  <div><strong>HorÃ¡rio:</strong> <span id="rel-horario">-</span></div>
+                  <div><strong>Horário:</strong> <span id="rel-horario">-</span></div>
                   <div><strong>Efetivo Total:</strong> <span id="rel-efetivo">-</span></div>
                   <div><strong>Atividade de Alto Risco:</strong> <span id="rel-alto-risco">-</span></div>
                   <div><strong>TARDC:</strong> <span id="rel-tardc">-</span></div>
@@ -889,34 +889,34 @@
                 </div>
               </div>
               
-              <!-- SeÃ§Ã£o 2: ParticipaÃ§Ã£o de LideranÃ§a -->
+              <!-- Seção 2: Participação de Liderança -->
               <div style="background:#f0f9ff;border:1px solid #e0f2fe;border-radius:12px;padding:24px;margin-bottom:24px">
                 <h3 style="margin:0 0 16px 0;color:#374151;font-size:1.3rem;display:flex;align-items:center;gap:8px">
-                  <span></span> ParticipaÃ§Ã£o de LideranÃ§a
+                  <span></span> Participação de Liderança
                 </h3>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
                   <div><strong>Gerente:</strong> <span id="rel-gerente">-</span></div>
                   <div><strong>Engenheiro:</strong> <span id="rel-engenheiro">-</span></div>
                   <div><strong>Supervisor:</strong> <span id="rel-supervisor">-</span></div>
                   <div><strong>Encarregado:</strong> <span id="rel-encarregado">-</span></div>
-                  <div><strong>TÃ©cnico de Segurança:</strong> <span id="rel-tecnico-seguranca">-</span></div>
+                  <div><strong>Técnico de Segurança:</strong> <span id="rel-tecnico-seguranca">-</span></div>
                 </div>
               </div>
               
-              <!-- SeÃ§Ã£o 3: Outros Participantes -->
+              <!-- Seção 3: Outros Participantes -->
               <div style="background:#fef7ff;border:1px solid #f3e8ff;border-radius:12px;padding:24px;margin-bottom:24px">
                 <h3 style="margin:0 0 16px 0;color:#374151;font-size:1.3rem;display:flex;align-items:center;gap:8px">
                   <span></span> Outros Participantes
                 </h3>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
                   <div><strong>Anjo da Semana:</strong> <span id="rel-anjo-semana">-</span></div>
-                  <div><strong>LÃ­der RAS:</strong> <span id="rel-lider-ras">-</span></div>
-                  <div><strong>LÃ­der CPT:</strong> <span id="rel-lider-cpt">-</span></div>
+                  <div><strong>Líder RAS:</strong> <span id="rel-lider-ras">-</span></div>
+                  <div><strong>Líder CPT:</strong> <span id="rel-lider-cpt">-</span></div>
                   <div><strong>Brigada:</strong> <span id="rel-brigada">-</span></div>
                 </div>
               </div>
               
-              <!-- SeÃ§Ã£o 4: Anexos -->
+              <!-- Seção 4: Anexos -->
               <div style="background:#fffbeb;border:1px solid #fef3c7;border-radius:12px;padding:24px;margin-bottom:24px">
                 <h3 style="margin:0 0 16px 0;color:#374151;font-size:1.3rem;display:flex;align-items:center;gap:8px">
                   <span></span> Anexos
@@ -928,21 +928,21 @@
                   <div id="rel-fotos-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px"></div>
                 </div>
                 
-                <!-- EvidÃªncias -->
+                <!-- Evidências -->
                 <div id="rel-evidencias-section">
-                  <h4 style="color:#ef4444;margin:0 0 12px 0"> EvidÃªncias da RAS</h4>
+                  <h4 style="color:#ef4444;margin:0 0 12px 0"> Evidências da RAS</h4>
                   <div id="rel-evidencias-container"></div>
                 </div>
               </div>
               
-              <!-- SeÃ§Ã£o 5: Lista de PresenÃ§a -->
+              <!-- Seção 5: Lista de Presença -->
               <div style="background:#f0fdf4;border:1px solid #dcfce7;border-radius:12px;padding:24px;margin-bottom:32px">
                 <h3 style="margin:0 0 16px 0;color:#374151;font-size:1.3rem;display:flex;align-items:center;gap:8px">
-                  <span></span> Lista de PresenÃ§a
+                  <span></span> Lista de Presença
                 </h3>
                 <div style="margin-bottom:12px;display:flex;gap:24px;align-items:center">
-                  <div><strong>Total de Presentes:</strong> <span id="rel-total-presentes" style="color:#10b981;font-weight:600">0</span> funcionÃ¡rio(s)</div>
-                  <div><strong>Total de Ausentes:</strong> <span id="rel-total-ausentes" style="color:#ef4444;font-weight:600">0</span> funcionÃ¡rio(s)</div>
+                  <div><strong>Total de Presentes:</strong> <span id="rel-total-presentes" style="color:#10b981;font-weight:600">0</span> funcionário(s)</div>
+                  <div><strong>Total de Ausentes:</strong> <span id="rel-total-ausentes" style="color:#ef4444;font-weight:600">0</span> funcionário(s)</div>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
                   <div id="rel-presentes-lista" style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden"></div>
@@ -950,7 +950,7 @@
                 </div>
               </div>
               
-              <!-- BotÃµes de AÃ§Ã£o -->
+              <!-- Botões de Ação -->
               <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:16px">
                 <button id="btn-compartilhar-whatsapp" type="button" style="background:#25d366;color:#fff;padding:12px 24px;font-size:1rem;border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:8px">
                   <span></span> Compartilhar no WhatsApp
