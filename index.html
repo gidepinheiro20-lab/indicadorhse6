@@ -1784,7 +1784,7 @@
           </div>
         </div>
         
-        <!-- SeÃ§Ã£o Inspeção de HSE -->
+        <!-- Seção Inspeção de HSE -->
         <div id="inspecao" style="display:none;max-width:none;margin:0;">
           <div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3">
             <div style="background:linear-gradient(135deg,#059669 0%,#047857 100%);color:#fff;padding:20px 24px;border-radius:16px 16px 0 0">
@@ -1793,7 +1793,7 @@
                   <div style="font-size:1.4rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px">
                     <span></span> Inspeção de HSE
                   </div>
-                  <div style="font-size:1rem;opacity:0.9">Sistema de registros e controle de inspeÃ§Ãµes</div>
+                  <div style="font-size:1rem;opacity:0.9">Sistema de registros e controle de inspeções</div>
                 </div>
                 <div style="display:flex;gap:12px;flex-wrap:wrap">
                   <button id="btn-nova-inspecao" type="button" style="background:#fff;color:#059669;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
@@ -1805,11 +1805,11 @@
                   <button id="btn-cadastrar-categoria" type="button" style="background:#059669;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
                     <span></span> Cadastrar Categoria
                   </button>
-                  <!-- BotÃ£o para cadastrar novos tipos de registro -->
+                  <!-- Botão para cadastrar novos tipos de registro -->
                   <button id="btn-cadastrar-tipo-registro" type="button" style="background:#7c3aed;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
                     <span></span> Cadastrar Tipo de Registro
                   </button>
-                  <!-- BotÃ£o para cadastrar riscos e perigos - ATUALIZADO -->
+                  <!-- Botão para cadastrar riscos e perigos - ATUALIZADO -->
                   <button id="btn-cadastrar-riscos-perigos" type="button" style="background:#dc2626;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:0 2px 4px rgba(0,0,0,0.1)">
                     <span> ï¸</span> Cadastrar Riscos / Perigos
                   </button>
@@ -1824,7 +1824,7 @@
                   <h3 style="margin:0;color:#374151;font-size:1.3rem">Registros de Inspeção</h3>
                 </div>
                 
-                <!-- Tabela de InspeÃ§Ãµes -->
+                <!-- Tabela de Inspeções -->
                 <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;overflow-y:hidden">
                   <div style="min-width:1200px">
                   <!-- Cabeçalho da tabela -->
@@ -1843,9 +1843,9 @@
                     <div>Ações</div>
                   </div>
                   
-                  <!-- Lista de inspeÃ§Ãµes -->
+                  <!-- Lista de inspeções -->
                   <div id="lista-inspecoes">
-                    <!-- Exemplo de inspeÃ§Ã£o -->
+                    <!-- Exemplo de inspeção -->
                     <div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:100px 80px 100px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">
                       <div style="color:#374151;font-weight:500">04/11/2025</div>
                       <div style="color:#374151">BAP 1B</div>
@@ -1867,7 +1867,7 @@
                       </div>
                     </div>
                     
-                    <!-- Segunda inspeÃ§Ã£o exemplo -->
+                    <!-- Segunda inspeção exemplo -->
                     <div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:100px 80px 100px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">
                       <div style="color:#374151;font-weight:500">03/11/2025</div>
                       <div style="color:#374151">BAP 1B</div>
@@ -1925,7 +1925,7 @@
                     <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Local</label>
                     <select id="insp-local" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
                       <option value=""></option>
-                      <!-- OpÃ§Ãµes carregadas dinamicamente -->
+                      <!-- Opções carregadas dinamicamente -->
                     </select>
                   </div>
                 </div>
@@ -1945,10 +1945,10 @@
                   </div>
                 </div>
                 
-                <!-- Terceira linha: DescriÃ§Ã£o do Desvio -->
+                <!-- Terceira linha: Descrição do Desvio -->
                 <div style="margin-bottom:16px">
-                  <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">DescriÃ§Ã£o do Desvio</label>
-                  <textarea id="insp-descricao" placeholder="Descreva detalhadamente a situaÃ§Ã£o encontrada..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
+                  <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Descrição do Desvio</label>
+                  <textarea id="insp-descricao" placeholder="Descreva detalhadamente a situação encontrada..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
                 </div>
                 
                 <!-- Quarta linha: Upload de Fotos -->
@@ -1977,24 +1977,24 @@
                 <!-- Quinta linha: Ações Tomadas -->
                 <div style="margin-bottom:16px">
                   <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Ações Tomadas</label>
-                  <textarea id="insp-acoes" placeholder="Descreva as aÃ§Ãµes tomadas para resolver a situaÃ§Ã£o..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
+                  <textarea id="insp-acoes" placeholder="Descreva as ações tomadas para resolver a situação..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
                 </div>
                 
-                <!-- Sexta linha: Categoria, ClassificaÃ§Ã£o, Severidade -->
+                <!-- Sexta linha: Categoria, Classificação, Severidade -->
                 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
                   <div>
                     <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Categoria</label>
                     <select id="insp-categoria" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
                       <option value=""></option>
-                      <!-- OpÃ§Ãµes carregadas dinamicamente -->
+                      <!-- Opções carregadas dinamicamente -->
                     </select>
                   </div>
                   
                   <div>
-                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">ClassificaÃ§Ã£o</label>
+                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Classificação</label>
                     <select id="insp-classificacao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
                       <option value=""></option>
-                      <!-- OpÃ§Ãµes carregadas dinamicamente -->
+                      <!-- Opções carregadas dinamicamente -->
                     </select>
                   </div>
                   
@@ -2003,14 +2003,14 @@
                     <select id="insp-severidade" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
                       <option value=""></option>
                       <option value="Baixa">Baixa</option>
-                      <option value="MÃ©dia">MÃ©dia</option>
+                      <option value="Média">Média</option>
                       <option value="Alta">Alta</option>
-                      <option value="CrÃ­tica">CrÃ­tica</option>
+                      <option value="Crítica">Crítica</option>
                     </select>
                   </div>
                 </div>
                 
-                <!-- SÃ©tima linha: Risco/Perigo, ControlÃ¡vel, InterdiÃ§Ã£o -->
+                <!-- Sétima linha: Risco/Perigo, Controlável, Interdicção -->
                 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
                   <div>
                     <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Risco/Perigo</label>
@@ -2020,25 +2020,25 @@
                   </div>
                   
                   <div>
-                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">ControlÃ¡vel</label>
+                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Controlável</label>
                     <select id="insp-controlavel" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
                       <option value=""></option>
                       <option value="Sim">Sim</option>
-                      <option value="NÃ£o">NÃ£o</option>
+                      <option value="Não">Não</option>
                     </select>
                   </div>
                   
                   <div>
-                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">InterdiÃ§Ã£o</label>
+                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Interdicção</label>
                     <select id="insp-interdicao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
                       <option value=""></option>
                       <option value="Sim">Sim</option>
-                      <option value="NÃ£o">NÃ£o</option>
+                      <option value="Não">Não</option>
                     </select>
                   </div>
                 </div>
                 
-                <!-- Oitava linha: Emissor, ResponsÃ¡vel pela aÃ§Ã£o -->
+                <!-- Oitava linha: Emissor, Responsável pela ação -->
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
                   <div>
                     <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Emissor</label>
@@ -2046,7 +2046,7 @@
                   </div>
                   
                   <div>
-                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">ResponsÃ¡vel pela aÃ§Ã£o</label>
+                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Responsável pela ação</label>
                     <input type="text" id="insp-responsavel" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
                   </div>
                 </div>
@@ -2097,14 +2097,14 @@
                   <h2 style="margin:0;color:#374151;font-size:1.5rem;font-weight:700;display:flex;align-items:center;gap:8px">
                      Relatório de Inspeção
                   </h2>
-                  <p style="margin:4px 0 0 0;color:#6b7280;font-size:0.9rem">InformaÃ§Ãµes detalhadas da inspeÃ§Ã£o</p>
+                  <p style="margin:4px 0 0 0;color:#6b7280;font-size:0.9rem">Informações detalhadas da inspeção</p>
                 </div>
                 <button onclick="fecharModalRelatorio()" style="background:none;border:none;font-size:1.5rem;color:#9ca3af;cursor:pointer;padding:4px"></button>
               </div>
 
-              <!-- ConteÃºdo do Relatório -->
+              <!-- Conteúdo do Relatório -->
               <div id="conteudo-relatorio">
-                <!-- ConteÃºdo serÃ¡ preenchido dinamicamente -->
+                <!-- Conteúdo será preenchido dinamicamente -->
               </div>
 
               <!-- BotÃµes do RodapÃ© -->
@@ -2130,17 +2130,17 @@
                   <h2 style="margin:0;color:#374151;font-size:1.5rem;font-weight:700;display:flex;align-items:center;gap:8px">
                      Fotos da Inspeção
                   </h2>
-                  <p style="margin:4px 0 0 0;color:#6b7280;font-size:0.9rem">Visualize e faÃ§a download das fotos</p>
+                  <p style="margin:4px 0 0 0;color:#6b7280;font-size:0.9rem">Visualize e faça download das fotos</p>
                 </div>
                 <button onclick="fecharModalFotos()" style="background:none;border:none;font-size:1.5rem;color:#9ca3af;cursor:pointer;padding:4px"></button>
               </div>
 
-              <!-- ConteÃºdo das Fotos -->
+              <!-- Conteúdo das Fotos -->
               <div id="conteudo-fotos">
-                <!-- ConteÃºdo serÃ¡ preenchido dinamicamente -->
+                <!-- Conteúdo será preenchido dinamicamente -->
               </div>
 
-              <!-- BotÃµes do RodapÃ© -->
+              <!-- Botões do Rodapé -->
               <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid #e5e7eb">
                 <button onclick="baixarTodasFotos()" style="background:#059669;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem;display:flex;align-items:center;gap:6px">
                    Baixar Todas
@@ -2183,7 +2183,7 @@
                     <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Local</label>
                     <select id="edit-insp-local" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
                       <option value=""></option>
-                      <!-- OpÃ§Ãµes carregadas dinamicamente -->
+                      <!-- Opções carregadas dinamicamente -->
                     </select>
                   </div>
                 </div>
@@ -2203,10 +2203,10 @@
                   </div>
                 </div>
                 
-                <!-- Terceira linha: DescriÃ§Ã£o do Desvio -->
+                <!-- Terceira linha: Descrição do Desvio -->
                 <div style="margin-bottom:16px">
-                  <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">DescriÃ§Ã£o do Desvio</label>
-                  <textarea id="edit-insp-descricao" placeholder="Descreva detalhadamente a situaÃ§Ã£o encontrada..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
+                  <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Descrição do Desvio</label>
+                  <textarea id="edit-insp-descricao" placeholder="Descreva detalhadamente a situação encontrada..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
                 </div>
                 
                 <!-- Quarta linha: Upload de Fotos -->
@@ -2235,24 +2235,24 @@
                 <!-- Quinta linha: Ações Tomadas -->
                 <div style="margin-bottom:16px">
                   <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Ações Tomadas</label>
-                  <textarea id="edit-insp-acoes" placeholder="Descreva as aÃ§Ãµes tomadas para resolver a situaÃ§Ã£o..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
+                  <textarea id="edit-insp-acoes" placeholder="Descreva as ações tomadas para resolver a situação..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
                 </div>
                 
-                <!-- Sexta linha: Categoria, ClassificaÃ§Ã£o, Severidade -->
+                <!-- Sexta linha: Categoria, Classificação, Severidade -->
                 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
                   <div>
                     <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Categoria</label>
                     <select id="edit-insp-categoria" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
                       <option value=""></option>
-                      <!-- OpÃ§Ãµes carregadas dinamicamente -->
+                      <!-- Opções carregadas dinamicamente -->
                     </select>
                   </div>
                   
                   <div>
-                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">ClassificaÃ§Ã£o</label>
+                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Classificação</label>
                     <select id="edit-insp-classificacao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
                       <option value=""></option>
-                      <!-- OpÃ§Ãµes carregadas dinamicamente -->
+                      <!-- Opções carregadas dinamicamente -->
                     </select>
                   </div>
                   
@@ -2261,14 +2261,14 @@
                     <select id="edit-insp-severidade" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
                       <option value=""></option>
                       <option value="Baixa">Baixa</option>
-                      <option value="MÃ©dia">MÃ©dia</option>
+                      <option value="Média">Média</option>
                       <option value="Alta">Alta</option>
-                      <option value="CrÃ­tica">CrÃ­tica</option>
+                      <option value="Crítica">Crítica</option>
                     </select>
                   </div>
                 </div>
                 
-                <!-- SÃ©tima linha: Risco/Perigo, ControlÃ¡vel, InterdiÃ§Ã£o -->
+                <!-- Sétima linha: Risco/Perigo, Controlável, Interdicção -->
                 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
                   <div>
                     <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Risco/Perigo</label>
@@ -2278,25 +2278,25 @@
                   </div>
                   
                   <div>
-                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">ControlÃ¡vel</label>
+                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Controlável</label>
                     <select id="edit-insp-controlavel" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
                       <option value=""></option>
                       <option value="Sim">Sim</option>
-                      <option value="NÃ£o">NÃ£o</option>
+                      <option value="Não">Não</option>
                     </select>
                   </div>
                   
                   <div>
-                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">InterdiÃ§Ã£o</label>
+                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Interdicção</label>
                     <select id="edit-insp-interdicao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
                       <option value=""></option>
                       <option value="Sim">Sim</option>
-                      <option value="NÃ£o">NÃ£o</option>
+                      <option value="Não">Não</option>
                     </select>
                   </div>
                 </div>
                 
-                <!-- Oitava linha: Emissor, ResponsÃ¡vel pela aÃ§Ã£o -->
+                <!-- Oitava linha: Emissor, Responsável pela ação -->
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
                   <div>
                     <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Emissor</label>
@@ -2304,7 +2304,7 @@
                   </div>
                   
                   <div>
-                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">ResponsÃ¡vel pela aÃ§Ã£o</label>
+                    <label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Responsável pela ação</label>
                     <input type="text" id="edit-insp-responsavel" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
                   </div>
                 </div>
