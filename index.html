@@ -6407,7 +6407,7 @@
             // Lista de ausentes (exibir nomes se houver)
             var listaAusentes = document.getElementById('lista-ausentes');
             if (ausentes.length === 0) {
-              listaAusentes.innerHTML = '<div style="padding:40px 16px;text-align:center;color:#9ca3af;font-style:italic">Nenhum funcionÃ¡rio ausente registrado para esta data</div>';
+              listaAusentes.innerHTML = '<div style="padding:40px 16px;text-align:center;color:#9ca3af;font-style:italic">Nenhum funcionário ausente registrado para esta data</div>';
             } else {
               var htmlAusentes = '';
               ausentes.forEach(function(funcionario) {
@@ -6424,9 +6424,9 @@
           
 
           
-          // Salvar dados de frequÃªncia da RAS
+          // Salvar dados de frequência da RAS
           function salvarFrequenciaRAS(data, presentes) {
-            // Converter data para formato DD/MM/AAAA se necessÃ¡rio
+            // Converter data para formato DD/MM/AAAA se necessário
             var dataFormatada = data;
             if (data.includes('-')) {
               var partes = data.split('-');
