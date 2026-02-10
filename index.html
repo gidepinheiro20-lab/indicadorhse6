@@ -1873,9 +1873,9 @@
                         <button onclick="mostrarFotosInspecao('1')" style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer" title="Ver e baixar fotos"> 2 Fotos</button>
                       </div>
                       <div style="display:flex;gap:4px">
-                        <button onclick="mostrarRelatorioInspecao('1')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer" title="Ver Relatório"></button>
-                        <button onclick="editarInspecao('1')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer"></button>
-                        <button onclick="excluirInspecao('1')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer"></button>
+                        <button onclick="mostrarRelatorioInspecao('1')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.9rem;cursor:pointer" title="Ver Relatório"></button>
+                        <button onclick="editarInspecao('1')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.9rem;cursor:pointer"></button>
+                        <button onclick="excluirInspecao('1')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.9rem;cursor:pointer"></button>
                       </div>
                     </div>
                     
@@ -1895,8 +1895,8 @@
                         <button style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer"> Ver Fotos</button>
                       </div>
                       <div style="display:flex;gap:4px">
-                        <button onclick="editarInspecao('2')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer"></button>
-                        <button onclick="excluirInspecao('2')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer"></button>
+                        <button onclick="editarInspecao('2')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.9rem;cursor:pointer"></button>
+                        <button onclick="excluirInspecao('2')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.9rem;cursor:pointer"></button>
                       </div>
                     </div>
                   </div>
@@ -4614,8 +4614,8 @@
               html += '<div style="color:#6b7280">' + formatarDataBR(func.admissao) + '</div>';
               html += '<div style="color:#6b7280">' + func.empresa + '</div>';
               html += '<div>';
-              html += '<button onclick="editarFuncionario(\'' + func.matricula + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;margin-right:4px"></button>';
-              html += '<button onclick="excluirFuncionario(\'' + func.matricula + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer"></button>';
+              html += '<button onclick="editarFuncionario(\'' + func.matricula + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.9rem;cursor:pointer;margin-right:4px"></button>';
+              html += '<button onclick="excluirFuncionario(\'' + func.matricula + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.9rem;cursor:pointer"></button>';
               html += '</div>';
               html += '</div>';
             });
@@ -4666,8 +4666,8 @@
                 html += '<div style="color:#6b7280">' + formatarDataBR(func.admissao) + '</div>';
                 html += '<div style="color:#6b7280">' + (func.empresa || '') + '</div>';
                 html += '<div>';
-                html += '<button onclick="editarFuncionario(\'' + func.matricula + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;margin-right:4px"></button>';
-                html += '<button onclick="excluirFuncionario(\'' + func.matricula + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer"></button>';
+                html += '<button onclick="editarFuncionario(\'' + func.matricula + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.9rem;cursor:pointer;margin-right:4px"></button>';
+                html += '<button onclick="excluirFuncionario(\'' + func.matricula + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.9rem;cursor:pointer"></button>';
                 html += '</div>';
                 html += '</div>';
               } catch(e) {
@@ -6168,8 +6168,8 @@
               html += '<div style="color:#6b7280">' + (emp.grauRisco ? 'Grau ' + emp.grauRisco : '') + '</div>';
               html += '<div style="color:#6b7280">' + (emp.contato || '') + '</div>';
               html += '<div>';
-              html += '<button onclick="editarEmpresa(\'' + emp.cnpj + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;margin-right:4px"></button>';
-              html += '<button onclick="excluirEmpresa(\'' + emp.cnpj + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer"></button>';
+              html += '<button onclick="editarEmpresa(\'' + emp.cnpj + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.9rem;cursor:pointer;margin-right:4px"></button>';
+              html += '<button onclick="excluirEmpresa(\'' + emp.cnpj + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.9rem;cursor:pointer"></button>';
               html += '</div>';
               html += '</div>';
             } catch(e) {
@@ -7286,9 +7286,9 @@
               }
               html += '</div>';
               html += '<div style="display:flex;gap:4px">';
-              html += '<button onclick="mostrarRelatorioInspecao(\'' + inspecao.id + '\')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer" title="Ver Relatório"></button>';
-              html += '<button onclick="editarInspecao(\'' + inspecao.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer"></button>';
-              html += '<button onclick="excluirInspecao(\'' + inspecao.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer"></button>';
+              html += '<button onclick="mostrarRelatorioInspecao(\'' + inspecao.id + '\')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.9rem;cursor:pointer" title="Ver Relatório"></button>';
+              html += '<button onclick="editarInspecao(\'' + inspecao.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.9rem;cursor:pointer"></button>';
+              html += '<button onclick="excluirInspecao(\'' + inspecao.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:8px 12px;font-size:0.9rem;cursor:pointer"></button>';
               html += '</div>';
               html += '</div>';
             });
