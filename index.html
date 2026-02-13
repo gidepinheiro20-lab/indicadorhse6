@@ -390,6 +390,118 @@
       });
     </script>
 
+    <script>
+      (function() {
+        var mojibakeMap = {
+          'Ã§Ã£': 'çã',
+          'Ã§Ãµ': 'çõ',
+          'Ã£o': 'ão',
+          'Ã£': 'ã',
+          'Ã©': 'é',
+          'Ã­': 'í',
+          'Ã³': 'ó',
+          'Ãª': 'ê',
+          'Ã¡': 'á',
+          'Ã§': 'ç',
+          'Ã—': '×',
+          'ï¿½': '',
+          'ï¸': ''
+        };
+
+        function fixMojibake(text) {
+          if (!text || typeof text !== 'string') return text;
+          var result = text;
+          Object.keys(mojibakeMap).forEach(function(bad) {
+            if (result.indexOf(bad) !== -1) {
+              result = result.split(bad).join(mojibakeMap[bad]);
+            }
+          });
+          return result;
+        }
+
+        function fixAttributes(el) {
+          var attrs = ['title', 'placeholder', 'aria-label', 'alt', 'value'];
+          attrs.forEach(function(attr) {
+            if (el.hasAttribute && el.hasAttribute(attr)) {
+              var val = el.getAttribute(attr);
+              var fixed = fixMojibake(val);
+              if (fixed !== val) {
+                el.setAttribute(attr, fixed);
+              }
+            }
+          });
+        }
+
+        function fixNode(node) {
+          if (node.nodeType === Node.TEXT_NODE) {
+            var fixedText = fixMojibake(node.nodeValue);
+            if (fixedText !== node.nodeValue) {
+              node.nodeValue = fixedText;
+            }
+            return;
+          }
+
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            fixAttributes(node);
+          }
+        }
+
+        function fixTree(root) {
+          if (!root) return;
+          var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, null);
+          var current = walker.currentNode;
+          while (current) {
+            fixNode(current);
+            current = walker.nextNode();
+          }
+        }
+
+        function installAlertFixes() {
+          var originalAlert = window.alert;
+          var originalConfirm = window.confirm;
+          var originalPrompt = window.prompt;
+
+          window.alert = function(message) {
+            return originalAlert.call(window, fixMojibake(String(message)));
+          };
+          window.confirm = function(message) {
+            return originalConfirm.call(window, fixMojibake(String(message)));
+          };
+          window.prompt = function(message, defaultValue) {
+            return originalPrompt.call(window, fixMojibake(String(message)), fixMojibake(String(defaultValue || '')));
+          };
+        }
+
+        function startFixes() {
+          fixTree(document.body);
+          installAlertFixes();
+
+          var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              if (mutation.type === 'characterData') {
+                fixNode(mutation.target);
+                return;
+              }
+              Array.prototype.forEach.call(mutation.addedNodes || [], function(node) {
+                fixNode(node);
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                  fixTree(node);
+                }
+              });
+            });
+          });
+
+          observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            characterData: true
+          });
+        }
+
+        window.addEventListener('load', startFixes);
+      })();
+    </script>
+
     <div class="app" id="app-sistema">
       <aside class="sidebar" aria-label="Barra lateral">
         <div class="brand">
@@ -4049,7 +4161,7 @@
             if (span) span.textContent = total;
           }
 
-          // FunÃ§Ã£o para coletar funcionÃ¡rios presentes
+          // Função para coletar funcionários presentes
           function coletarFuncionariosPresentes() {
             var presentes = [];
             var checkboxes = document.querySelectorAll('.funcionario-row input[type="checkbox"]:checked');
