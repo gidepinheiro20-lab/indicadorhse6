@@ -1,0 +1,21 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Corrigir UTF-8 e Commit",
+			"type": "shell",
+			"command": "git add index.html && git commit -m 'Corrigir UTF-8 restantes' && git push origin master"
+		},
+		{
+			"label": "Corrigir UTF-8 e Commit",
+			"type": "shell",
+			"command": "cd 'c:\\Users\\Gidead Pinheiro\\OneDrive - RSC\\Área de Trabalho\\indicadoreshse6'; git add index.html; git commit -m 'Corrigir UTF-8 restantes no arquivo'; git push origin master"
+		},
+		{
+			"label": "Git Commit Final",
+			"type": "shell",
+			"command": "cd 'c:\\Users\\Gidead Pinheiro\\OneDrive - RSC\\Área de Trabalho\\indicadoreshse6'; git add index.html; git commit -m 'Final UTF-8 corrections applied'; git push origin master",
+			"group": "build"
+		}
+	]
+}
