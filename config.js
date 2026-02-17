@@ -2,20 +2,19 @@
 // Edite este arquivo para alterar para qual servidor os dados serão enviados
 
 const API_CONFIG = {
-  // Servidor online no Render (acesso de qualquer lugar)
-  // IMPORTANTE: NÃO adicionar porta (:3000) - Render usa porta padrão HTTPS
-  BASE_URL: 'https://indicadorhse6.onrender.com',
-  
-  // Alternativos:
   // Use http://192.168.3.61:3000 para servidor local na mesma rede
   // Use http://localhost:3000 para acesso local
+  // Use https://seu-dominio.com:3000 para acesso remoto
+  BASE_URL: 'http://192.168.3.61:3000',
+  
+  // Se usar GitHub Pages remotamente, defina seu servidor online aqui
+  // GITHUB_REMOTE_URL: 'https://seu-servidor-remoto.com:3000',
   
   // Ativar/desativar sincronização com servidor
-  // Se estiver em localhost sem servidor rodando, defina como false
-  SYNC_ENABLED: (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'),
+  SYNC_ENABLED: true,
   
   // Timeout em milissegundos
-  TIMEOUT: 10000
+  TIMEOUT: 5000
 };
 
 // Injetar configuração no index.html
