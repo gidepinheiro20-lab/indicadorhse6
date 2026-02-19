@@ -1062,7 +1062,7 @@
 								
 								<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">
 									<!-- Cabeçalho da tabela -->
-									<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:120px 2fr 1.5fr 1.5fr 120px 1.5fr 160px;gap:16px;font-weight:600;color:#374151">
+									<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:120px 2fr 1.5fr 1.5fr 120px 1.5fr 100px;gap:16px;font-weight:600;color:#374151">
 										<div>Matrícula</div>
 										<div>Nome</div>
 										<div>Função</div>
@@ -1775,10 +1775,10 @@
 											<div>
 												<button onclick="mostrarFotosInspecao('1')" style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer" title="Ver e baixar fotos">📷 2 Fotos</button>
 											</div>
-											<div style="display:flex;gap:4px">
-												<button onclick="mostrarRelatorioInspecao('1')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer" title="Ver Relatório">📋</button>
-												<button onclick="editarInspecao('1')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>
-												<button onclick="excluirInspecao('1')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">🗑️</button>
+											<div style="display:flex;gap:6px">
+												<button onclick="mostrarRelatorioInspecao('1')" style="background:#8b5cf6;color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:0.85rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:34px;min-height:32px" title="Ver Relatório">📋 Relatório</button>
+												<button onclick="editarInspecao('1')" style="background:#f59e0b;color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:0.85rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:34px;min-height:32px" title="Editar Inspeção">✏️ Editar</button>
+												<button onclick="excluirInspecao('1')" style="background:#ef4444;color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:0.85rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:34px;min-height:32px" title="Excluir Inspeção">🗑️ Excluir</button>
 											</div>
 										</div>
 										
@@ -1797,9 +1797,9 @@
 											<div>
 												<button style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer">📷 Ver Fotos</button>
 											</div>
-											<div style="display:flex;gap:4px">
-												<button onclick="editarInspecao('2')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>
-												<button onclick="excluirInspecao('2')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">🗑️</button>
+											<div style="display:flex;gap:6px">
+												<button onclick="editarInspecao('2')" style="background:#f59e0b;color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:0.85rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:34px;min-height:32px" title="Editar Inspeção">✏️ Editar</button>
+												<button onclick="excluirInspecao('2')" style="background:#ef4444;color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:0.85rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:34px;min-height:32px" title="Excluir Inspeção">🗑️ Excluir</button>
 											</div>
 										</div>
 									</div>
@@ -4278,16 +4278,16 @@
 						
 						var html = '';
 						funcionarios.forEach(function(func) {
-							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:120px 2fr 1.5fr 1.5fr 120px 1.5fr 160px;gap:16px;align-items:center">';
+							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:120px 2fr 1.5fr 1.5fr 120px 1.5fr 100px;gap:16px;align-items:center">';
 							html += '<div style="color:#374151;font-weight:500">' + func.matricula + '</div>';
 							html += '<div style="color:#374151">' + func.nome + '</div>';
 							html += '<div style="color:#6b7280">' + func.funcao + '</div>';
 							html += '<div style="color:#6b7280">' + (func.setor || 'Não informado') + '</div>';
 							html += '<div style="color:#6b7280">' + formatarDataBR(func.admissao) + '</div>';
 							html += '<div style="color:#6b7280">' + func.empresa + '</div>';
-							html += '<div style="display:flex;gap:8px">';
-							html += '<button onclick="editarFuncionario(\'' + func.matricula + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:600">✏️ <span>Editar</span></button>';
-							html += '<button onclick="excluirFuncionario(\'' + func.matricula + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:600">🗑️ <span>Excluir</span></button>';
+							html += '<div>';
+							html += '<button onclick="editarFuncionario(\'' + func.matricula + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;margin-right:4px">✏️</button>';
+							html += '<button onclick="excluirFuncionario(\'' + func.matricula + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer">🗑️</button>';
 							html += '</div>';
 							html += '</div>';
 						});
@@ -4330,16 +4330,16 @@
 							console.log('Processando funcionário', index + 1, ':', func);
 							
 							try {
-								html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:120px 2fr 1.5fr 1.5fr 120px 1.5fr 160px;gap:16px;align-items:center">';
+								html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:120px 2fr 1.5fr 1.5fr 120px 1.5fr 100px;gap:16px;align-items:center">';
 								html += '<div style="color:#374151;font-weight:500">' + (func.matricula || '') + '</div>';
 								html += '<div style="color:#374151">' + (func.nome || '') + '</div>';
 								html += '<div style="color:#6b7280">' + (func.funcao || '') + '</div>';
 								html += '<div style="color:#6b7280">' + (func.setor || 'Não informado') + '</div>';
 								html += '<div style="color:#6b7280">' + formatarDataBR(func.admissao) + '</div>';
 								html += '<div style="color:#6b7280">' + (func.empresa || '') + '</div>';
-								html += '<div style="display:flex;gap:8px">';
-								html += '<button onclick="editarFuncionario(\'' + func.matricula + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:600">✏️ <span>Editar</span></button>';
-								html += '<button onclick="excluirFuncionario(\'' + func.matricula + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:600">🗑️ <span>Excluir</span></button>';
+								html += '<div>';
+								html += '<button onclick="editarFuncionario(\'' + func.matricula + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;margin-right:4px">✏️</button>';
+								html += '<button onclick="excluirFuncionario(\'' + func.matricula + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer">🗑️</button>';
 								html += '</div>';
 								html += '</div>';
 							} catch(e) {
@@ -6880,10 +6880,10 @@
 								html += '<span style="color:#9ca3af;font-size:0.75rem">Sem fotos</span>';
 							}
 							html += '</div>';
-							html += '<div style="display:flex;gap:4px">';
-							html += '<button onclick="mostrarRelatorioInspecao(\'' + inspecao.id + '\')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer" title="Ver Relatório">📋</button>';
-							html += '<button onclick="editarInspecao(\'' + inspecao.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>';
-							html += '<button onclick="excluirInspecao(\'' + inspecao.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">🗑️</button>';
+							html += '<div style="display:flex;gap:6px">';
+							html += '<button onclick="mostrarRelatorioInspecao(\'' + inspecao.id + '\')" style="background:#8b5cf6;color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:0.85rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:34px;min-height:32px" title="Ver Relatório">📋 Relatório</button>';
+							html += '<button onclick="editarInspecao(\'' + inspecao.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:0.85rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:34px;min-height:32px" title="Editar Inspeção">✏️ Editar</button>';
+							html += '<button onclick="excluirInspecao(\'' + inspecao.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:0.85rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:34px;min-height:32px" title="Excluir Inspeção">🗑️ Excluir</button>';
 							html += '</div>';
 							html += '</div>';
 						});
