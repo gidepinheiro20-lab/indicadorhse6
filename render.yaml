@@ -15,7 +15,7 @@ services:
   - type: web
     name: indicadorhse6
     env: node
-    buildCommand: npm install
+    buildCommand: npm ci --omit=dev && npm rebuild better-sqlite3
     startCommand: npm start
     envVars:
       - key: NODE_VERSION
