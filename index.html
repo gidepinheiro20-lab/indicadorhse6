@@ -347,6 +347,7 @@
 						<li><a href="#melhorias"><span class="icon" aria-hidden="true">⚡</span><span class="label">Melhorias</span></a></li>
 						<li><a href="#reuniao"><span class="icon" aria-hidden="true">📅</span><span class="label">Reunião Mensal</span></a></li>
 						<li><a href="#art"><span class="icon" aria-hidden="true">📋</span><span class="label">ART</span></a></li>
+						<li><a href="#checklist"><span class="icon" aria-hidden="true">✅</span><span class="label">Check List Fácil</span></a></li>
 					</ul>
 				</div>
 			</aside>
@@ -1699,6 +1700,114 @@
 					</div>
 				</div>
 				
+				<!-- Seção Check List Fácil -->
+				<div id="checklist" style="display:none;max-width:none;margin:0;">
+					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);overflow:hidden">
+						<div style="background:linear-gradient(135deg,#0d9488 0%,#059669 100%);color:#fff;padding:28px">
+							<div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+								<div>
+									<h1 style="margin:0;font-size:1.8rem;font-weight:700">Checklists Aplicados</h1>
+									<p style="margin:6px 0 0 0;font-size:0.95rem;opacity:0.95">Controle e acompanhamento de listas de verificação</p>
+								</div>
+								<div style="display:flex;gap:12px;flex-wrap:wrap">
+									<button type="button" onclick="abrirAcompanhamentoSemanal()" style="background:#10b981;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Acompanhamento Semanal</button>
+									<button type="button" onclick="abrirMatrizFerramentas()" style="background:#8b5cf6;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Matriz de Ferramentas</button>
+									<button type="button" onclick="mostrarModalNovaChecklist()" style="background:#fff;color:#0d9488;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Anexar formulário</button>
+								</div>
+							</div>
+						</div>
+
+						<div style="padding:28px;max-width:100%;margin:0 auto">
+							<div style="background:#f3f4f6;padding:20px;border-radius:12px;margin-bottom:24px">
+								<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+									<div>
+										<label style="display:block;font-size:0.85rem;color:#6b7280;margin-bottom:6px;font-weight:600">Empresa</label>
+										<select id="checklist-filtro-empresa" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione(s)</option>
+										</select>
+									</div>
+									<div>
+										<label style="display:block;font-size:0.85rem;color:#6b7280;margin-bottom:6px;font-weight:600">Tipo</label>
+										<select id="checklist-filtro-tipo" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione(s)</option>
+										</select>
+									</div>
+									<div>
+										<label style="display:block;font-size:0.85rem;color:#6b7280;margin-bottom:6px;font-weight:600">Autor</label>
+										<select id="checklist-filtro-autor" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione(s)</option>
+										</select>
+									</div>
+									<div>
+										<label style="display:block;font-size:0.85rem;color:#6b7280;margin-bottom:6px;font-weight:600">Período</label>
+										<input id="checklist-filtro-inicio" type="date" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;background:#fff">
+									</div>
+									<div>
+										<label style="display:block;font-size:0.85rem;color:#6b7280;margin-bottom:6px;font-weight:600">Período Final</label>
+										<input id="checklist-filtro-fim" type="date" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;background:#fff">
+									</div>
+								</div>
+							</div>
+
+							<div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden">
+								<div style="display:grid;grid-template-columns:120px 100px 220px 1.6fr 140px 100px 110px;gap:12px;padding:16px;background:#f9fafb;border-bottom:1px solid #e5e7eb;font-weight:600;color:#374151;font-size:0.9rem;align-items:center">
+									<div>Data</div>
+									<div>Semana</div>
+									<div>Tipo</div>
+									<div>Nome (autor)</div>
+									<div>Setor</div>
+									<div>Foto</div>
+									<div>Ações</div>
+								</div>
+								<div id="checklist-tabela-corpo" style="max-height:500px;overflow-y:auto"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div id="modal-checklist" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,0.5);z-index:9999;align-items:center;justify-content:center;padding:16px">
+					<div style="background:#fff;width:min(680px,100%);border-radius:12px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,0.2)">
+						<div style="padding:16px 20px;background:#0d9488;color:#fff;font-size:1.1rem;font-weight:700">Anexar Formulário</div>
+						<div style="padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+							<div>
+								<label style="display:block;font-weight:600;margin-bottom:6px;color:#374151">Data</label>
+								<input id="checklist-novo-data" type="date" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px">
+							</div>
+							<div>
+								<label style="display:block;font-weight:600;margin-bottom:6px;color:#374151">Semana</label>
+								<input id="checklist-novo-semana" type="text" placeholder="Ex: Semana 1" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px">
+							</div>
+							<div>
+								<label style="display:block;font-weight:600;margin-bottom:6px;color:#374151">Tipo</label>
+								<select id="checklist-novo-tipo" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px">
+									<option value="">Selecione</option>
+									<option value="Participação na CPT">Participação na CPT</option>
+									<option value="Participação na RAS">Participação na RAS</option>
+									<option value="WOC MDHO">WOC MDHO</option>
+									<option value="Melhorias">Melhorias</option>
+									<option value="Reunião Mensal">Reunião Mensal</option>
+								</select>
+							</div>
+							<div>
+								<label style="display:block;font-weight:600;margin-bottom:6px;color:#374151">Autor</label>
+								<input id="checklist-novo-autor" type="text" placeholder="Nome do autor" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px">
+							</div>
+							<div>
+								<label style="display:block;font-weight:600;margin-bottom:6px;color:#374151">Setor</label>
+								<input id="checklist-novo-setor" type="text" placeholder="Ex: Encarregado" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px">
+							</div>
+							<div>
+								<label style="display:block;font-weight:600;margin-bottom:6px;color:#374151">Empresa</label>
+								<input id="checklist-novo-empresa" type="text" placeholder="Empresa" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px">
+							</div>
+						</div>
+						<div style="display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid #e5e7eb;background:#f9fafb">
+							<button type="button" onclick="fecharModalChecklist()" style="background:#6b7280;color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer">Cancelar</button>
+							<button type="button" onclick="salvarNovoChecklist()" style="background:#0d9488;color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:600">Salvar</button>
+						</div>
+					</div>
+				</div>
+				
 				<!-- Seção Inspeção de HSE -->
 				<div id="inspecao" style="display:none;max-width:none;margin:0;">
 					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3">
@@ -2991,6 +3100,7 @@
 						document.getElementById('cpt').style.display = 'none';
 						document.getElementById('inspecao').style.display = 'none';
 						document.getElementById('art').style.display = 'none';
+						document.getElementById('checklist').style.display = 'none';
 						document.getElementById('categorias-hse').style.display = 'none';
 						document.getElementById('areas-locais').style.display = 'none';
 						document.getElementById('gerenciamento-tipos-registro').style.display = 'none';
@@ -3041,6 +3151,11 @@
 								hideAllSections();
 								document.getElementById('art').style.display = 'block';
 								inicializarART();
+								break;
+							case 'checklist':
+								hideAllSections();
+								document.getElementById('checklist').style.display = 'block';
+								carregarChecklistFacil();
 								break;
 							case 'empresa':
 								hideAllSections();
@@ -3152,6 +3267,13 @@
 								navegarParaHash('#art');
 							});
 						});
+					// Exibir Check List Fácil ao clicar no menu
+						document.querySelectorAll('.nav a[href="#checklist"]').forEach(function(link){
+							link.addEventListener('click', function(e){
+								e.preventDefault();
+								navegarParaHash('#checklist');
+							});
+						});
 					// Exibir Empresa ao clicar em Empresa
 						document.querySelectorAll('.nav a[href="#empresa"]').forEach(function(link){
 							link.addEventListener('click',function(e){
@@ -3160,7 +3282,7 @@
 							});
 						});
 					// Ocultar outras seções ao clicar em outros itens
-						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"]):not([href="#inspecao"]):not([href="#art"]):not([href="#empresa"])').forEach(function(link){
+						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"]):not([href="#inspecao"]):not([href="#art"]):not([href="#checklist"]):not([href="#empresa"])').forEach(function(link){
 							link.addEventListener('click',function(){
 								navegarParaHash('#');
 							});
@@ -8464,6 +8586,188 @@
 					
 					// Inicializar exibição de funcionários
 					exibirFuncionarios();
+
+					function obterChecklistFacilStorage() {
+						try {
+							var dados = JSON.parse(localStorage.getItem('checklistFacilRegistros') || '[]');
+							return Array.isArray(dados) ? dados : [];
+						} catch (e) {
+							return [];
+						}
+					}
+
+					function salvarChecklistFacilStorage(lista) {
+						localStorage.setItem('checklistFacilRegistros', JSON.stringify(lista));
+					}
+
+					function formatarDataBR(dataISO) {
+						if (!dataISO) return '-';
+						var partes = dataISO.split('-');
+						if (partes.length !== 3) return dataISO;
+						return partes[2] + '/' + partes[1] + '/' + partes[0];
+					}
+
+					function preencherFiltrosChecklist(lista) {
+						var empresas = Array.from(new Set(lista.map(function(item){ return item.empresa || ''; }).filter(Boolean)));
+						var tipos = Array.from(new Set(lista.map(function(item){ return item.tipo || ''; }).filter(Boolean)));
+						var autores = Array.from(new Set(lista.map(function(item){ return item.autor || ''; }).filter(Boolean)));
+
+						var selectEmpresa = document.getElementById('checklist-filtro-empresa');
+						var selectTipo = document.getElementById('checklist-filtro-tipo');
+						var selectAutor = document.getElementById('checklist-filtro-autor');
+
+						if (!selectEmpresa || !selectTipo || !selectAutor) return;
+
+						var valorEmpresa = selectEmpresa.value;
+						var valorTipo = selectTipo.value;
+						var valorAutor = selectAutor.value;
+
+						selectEmpresa.innerHTML = '<option value="">Selecione(s)</option>' + empresas.map(function(v){ return '<option value="' + v + '">' + v + '</option>'; }).join('');
+						selectTipo.innerHTML = '<option value="">Selecione(s)</option>' + tipos.map(function(v){ return '<option value="' + v + '">' + v + '</option>'; }).join('');
+						selectAutor.innerHTML = '<option value="">Selecione(s)</option>' + autores.map(function(v){ return '<option value="' + v + '">' + v + '</option>'; }).join('');
+
+						selectEmpresa.value = valorEmpresa;
+						selectTipo.value = valorTipo;
+						selectAutor.value = valorAutor;
+					}
+
+					function renderizarTabelaChecklist(lista) {
+						var corpo = document.getElementById('checklist-tabela-corpo');
+						if (!corpo) return;
+
+						if (!lista.length) {
+							corpo.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#9ca3af"><div style="font-size:1rem;font-weight:500;margin-bottom:6px">Nenhum checklist aplicado ainda</div><div style="font-size:0.9rem">Clique em "Anexar formulário" para começar</div></div>';
+							return;
+						}
+
+						corpo.innerHTML = lista.map(function(item, idx){
+							return '<div style="display:grid;grid-template-columns:120px 100px 220px 1.6fr 140px 100px 110px;gap:12px;padding:14px 16px;border-bottom:1px solid #f1f5f9;align-items:center">'
+								+ '<div>' + formatarDataBR(item.data) + '</div>'
+								+ '<div><span style="background:#dbeafe;color:#0369a1;padding:4px 10px;border-radius:8px;font-weight:600">' + (item.semana || '-') + '</span></div>'
+								+ '<div>' + (item.tipo || '-') + '</div>'
+								+ '<div>' + (item.autor || '-') + '</div>'
+								+ '<div>' + (item.setor || '-') + '</div>'
+								+ '<div style="color:#9ca3af">-</div>'
+								+ '<div><button type="button" onclick="excluirChecklistFacil(' + idx + ')" style="background:#ef4444;color:#fff;border:none;border-radius:8px;padding:8px 10px;cursor:pointer">🗑</button></div>'
+								+ '</div>';
+						}).join('');
+					}
+
+					function aplicarFiltrosChecklist() {
+						var lista = obterChecklistFacilStorage();
+						var empresa = document.getElementById('checklist-filtro-empresa')?.value || '';
+						var tipo = document.getElementById('checklist-filtro-tipo')?.value || '';
+						var autor = document.getElementById('checklist-filtro-autor')?.value || '';
+						var inicio = document.getElementById('checklist-filtro-inicio')?.value || '';
+						var fim = document.getElementById('checklist-filtro-fim')?.value || '';
+
+						var filtrada = lista.filter(function(item){
+							if (empresa && item.empresa !== empresa) return false;
+							if (tipo && item.tipo !== tipo) return false;
+							if (autor && item.autor !== autor) return false;
+							if (inicio && item.data && item.data < inicio) return false;
+							if (fim && item.data && item.data > fim) return false;
+							return true;
+						});
+
+						renderizarTabelaChecklist(filtrada);
+					}
+
+					function carregarChecklistFacil() {
+						var lista = obterChecklistFacilStorage();
+						preencherFiltrosChecklist(lista);
+						aplicarFiltrosChecklist();
+					}
+
+					function mostrarModalNovaChecklist() {
+						var modal = document.getElementById('modal-checklist');
+						if (!modal) return;
+						modal.style.display = 'flex';
+						var campoData = document.getElementById('checklist-novo-data');
+						if (campoData && !campoData.value) {
+							campoData.value = new Date().toISOString().split('T')[0];
+						}
+					}
+
+					function fecharModalChecklist() {
+						var modal = document.getElementById('modal-checklist');
+						if (modal) {
+							modal.style.display = 'none';
+						}
+					}
+
+					function salvarNovoChecklist() {
+						var data = document.getElementById('checklist-novo-data')?.value || '';
+						var semana = document.getElementById('checklist-novo-semana')?.value.trim() || '';
+						var tipo = document.getElementById('checklist-novo-tipo')?.value || '';
+						var autor = document.getElementById('checklist-novo-autor')?.value.trim() || '';
+						var setor = document.getElementById('checklist-novo-setor')?.value.trim() || '';
+						var empresa = document.getElementById('checklist-novo-empresa')?.value.trim() || '';
+
+						if (!data || !tipo || !autor) {
+							alert('Preencha Data, Tipo e Autor para salvar.');
+							return;
+						}
+
+						var lista = obterChecklistFacilStorage();
+						lista.unshift({
+							data: data,
+							semana: semana || 'Semana 1',
+							tipo: tipo,
+							autor: autor,
+							setor: setor || '-',
+							empresa: empresa || '-'
+						});
+
+						salvarChecklistFacilStorage(lista);
+						fecharModalChecklist();
+						carregarChecklistFacil();
+					}
+
+					function excluirChecklistFacil(indice) {
+						if (!confirm('Deseja excluir este checklist?')) return;
+						var lista = obterChecklistFacilStorage();
+						if (indice < 0 || indice >= lista.length) return;
+						lista.splice(indice, 1);
+						salvarChecklistFacilStorage(lista);
+						carregarChecklistFacil();
+					}
+
+					function abrirAcompanhamentoSemanal() {
+						var lista = obterChecklistFacilStorage();
+						var total = lista.length;
+						var porTipo = {};
+						lista.forEach(function(item){
+							porTipo[item.tipo] = (porTipo[item.tipo] || 0) + 1;
+						});
+
+						var linhas = Object.keys(porTipo).map(function(tipo){
+							return '<tr><td style="padding:8px;border:1px solid #ddd">' + tipo + '</td><td style="padding:8px;border:1px solid #ddd">' + porTipo[tipo] + '</td></tr>';
+						}).join('');
+
+						var novaJanela = window.open('', '_blank');
+						if (!novaJanela) return;
+						novaJanela.document.write('<html><head><meta charset="UTF-8"><title>Acompanhamento Semanal</title></head><body style="font-family:Arial,sans-serif;padding:24px"><h2>Acompanhamento Semanal de Checklists</h2><p>Total de registros: <b>' + total + '</b></p><table style="border-collapse:collapse;width:100%;max-width:600px"><thead><tr><th style="text-align:left;padding:8px;border:1px solid #ddd">Tipo</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Quantidade</th></tr></thead><tbody>' + (linhas || '<tr><td colspan="2" style="padding:8px;border:1px solid #ddd">Sem dados</td></tr>') + '</tbody></table></body></html>');
+						novaJanela.document.close();
+					}
+
+					function abrirMatrizFerramentas() {
+						var lista = obterChecklistFacilStorage();
+						var linhas = lista.map(function(item){
+							return '<tr><td style="padding:8px;border:1px solid #ddd">' + formatarDataBR(item.data) + '</td><td style="padding:8px;border:1px solid #ddd">' + (item.tipo || '-') + '</td><td style="padding:8px;border:1px solid #ddd">' + (item.autor || '-') + '</td><td style="padding:8px;border:1px solid #ddd">' + (item.setor || '-') + '</td><td style="padding:8px;border:1px solid #ddd">' + (item.empresa || '-') + '</td></tr>';
+						}).join('');
+
+						var novaJanela = window.open('', '_blank');
+						if (!novaJanela) return;
+						novaJanela.document.write('<html><head><meta charset="UTF-8"><title>Matriz de Ferramentas</title></head><body style="font-family:Arial,sans-serif;padding:24px"><h2>Matriz de Ferramentas</h2><table style="border-collapse:collapse;width:100%"><thead><tr><th style="text-align:left;padding:8px;border:1px solid #ddd">Data</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Tipo</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Autor</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Setor</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Empresa</th></tr></thead><tbody>' + (linhas || '<tr><td colspan="5" style="padding:8px;border:1px solid #ddd">Sem dados</td></tr>') + '</tbody></table></body></html>');
+						novaJanela.document.close();
+					}
+
+					document.addEventListener('change', function(e){
+						if (e.target && e.target.id && e.target.id.indexOf('checklist-filtro-') === 0) {
+							aplicarFiltrosChecklist();
+						}
+					});
 					
 					// Verificar se os event listeners de empresa estão funcionando
 					setTimeout(function() {
@@ -8582,6 +8886,13 @@
 												<div style="font-size: 2.5rem; margin-bottom: 12px;">📅</div>
 												<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0; color: #1f2937;">Reunião Mensal</h3>
 												<p style="color: #6b7280; font-size: 0.95rem; margin: 0;">Controle de reuniões mensais HSE</p>
+											</div>
+
+											<!-- Card Check List Fácil -->
+											<div class="dashboard-tool-card" onclick="document.querySelectorAll('.nav a[href=\\\"#checklist\\\"]')[0].click()" style="background: white; border: 2px solid #e5e7eb; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+												<div style="font-size: 2.5rem; margin-bottom: 12px;">✅</div>
+												<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0; color: #1f2937;">Check List Fácil</h3>
+												<p style="color: #6b7280; font-size: 0.95rem; margin: 0;">Acompanhamento de checklists aplicados</p>
 											</div>
 										</div>
 									</div>
