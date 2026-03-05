@@ -8607,6 +8607,106 @@
 						return partes[2] + '/' + partes[1] + '/' + partes[0];
 					}
 
+					var MATRIZ_FERRAMENTAS_STORAGE_KEY = 'hse_matriz_ferramentas_v1';
+					var MATRIZ_FERRAMENTAS_PADRAO = [
+						{ tipo: 'PARTICIPAÇÃO NA RAS', mensal: [1, 8, 15, 15], semanal: [1, 2, 4, 2] },
+						{ tipo: 'PARTICIPAÇÃO NA CPT', mensal: [1, 8, 15, 15], semanal: [1, 2, 4, 2] },
+						{ tipo: 'WOC MHO', mensal: [0, 8, 10, 12], semanal: [0, 2, 3, 4] },
+						{ tipo: 'INSPEÇÃO DE SEGURANÇA', mensal: [0, 0, 0, 0], semanal: [0, 0, 0, 0] },
+						{ tipo: 'REUNIÃO MENSAL DH HSE ALBRAS', mensal: [0, 0, 0, 0], semanal: [0, 0, 0, 0] },
+						{ tipo: 'REUNIÃO SEMANAL DE CONTRATADAS COM CAPEX', mensal: [0, 0, 0, 0], semanal: [0, 0, 0, 0] },
+						{ tipo: 'REUNIÃO DA CIPA INTEGRADA / CONSTITUÍDA', mensal: [0, 0, 0, 1], semanal: [0, 0, 0, 1] }
+					];
+
+					function normalizarNumeroInteiro(valor) {
+						var n = parseInt(valor, 10);
+						return isNaN(n) || n < 0 ? 0 : n;
+					}
+
+					function normalizarTextoComparacao(valor) {
+						var texto = String(valor || '').trim().toLowerCase().replace(/\s+/g, ' ');
+						if (typeof texto.normalize === 'function') {
+							texto = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+						}
+						return texto;
+					}
+
+					function clonarMatrizFerramentasPadrao() {
+						return MATRIZ_FERRAMENTAS_PADRAO.map(function(item) {
+							return {
+								tipo: item.tipo,
+								mensal: item.mensal.slice(),
+								semanal: item.semanal.slice()
+							};
+						});
+					}
+
+					function obterMatrizFerramentasDados() {
+						var base = clonarMatrizFerramentasPadrao();
+						var salvo;
+
+						try {
+							salvo = JSON.parse(localStorage.getItem(MATRIZ_FERRAMENTAS_STORAGE_KEY) || 'null');
+						} catch (e) {
+							salvo = null;
+						}
+
+						if (!Array.isArray(salvo)) return base;
+
+						return base.map(function(item, idx) {
+							var ref = salvo[idx] || {};
+							var mensal = Array.isArray(ref.mensal) ? ref.mensal : item.mensal;
+							var semanal = Array.isArray(ref.semanal) ? ref.semanal : item.semanal;
+
+							return {
+								tipo: item.tipo,
+								mensal: [
+									normalizarNumeroInteiro(mensal[0]),
+									normalizarNumeroInteiro(mensal[1]),
+									normalizarNumeroInteiro(mensal[2]),
+									normalizarNumeroInteiro(mensal[3])
+								],
+								semanal: [
+									normalizarNumeroInteiro(semanal[0]),
+									normalizarNumeroInteiro(semanal[1]),
+									normalizarNumeroInteiro(semanal[2]),
+									normalizarNumeroInteiro(semanal[3])
+								]
+							};
+						});
+					}
+
+					function obterIndiceSetorMatriz(setor) {
+						var setorNormalizado = normalizarTextoComparacao(setor);
+						if (setorNormalizado.indexOf('gerent') !== -1) return 0;
+						if (setorNormalizado.indexOf('engenheir') !== -1) return 1;
+						if (setorNormalizado.indexOf('hse') !== -1 || setorNormalizado.indexOf('seguranca') !== -1) return 2;
+						if (setorNormalizado.indexOf('encarreg') !== -1) return 3;
+						return -1;
+					}
+
+					function normalizarTipoChecklistParaMatriz(tipo) {
+						var t = normalizarTextoComparacao(tipo);
+						if (t === 'woc mdho') return 'woc mho';
+						return t;
+					}
+
+					function obterMetaSemanalMatriz(tipo, setor) {
+						var indiceSetor = obterIndiceSetorMatriz(setor);
+						if (indiceSetor < 0) return 0;
+
+						var tipoNormalizado = normalizarTipoChecklistParaMatriz(tipo);
+						var matriz = obterMatrizFerramentasDados();
+
+						for (var i = 0; i < matriz.length; i++) {
+							if (normalizarTipoChecklistParaMatriz(matriz[i].tipo) === tipoNormalizado) {
+								return normalizarNumeroInteiro(matriz[i].semanal[indiceSetor]);
+							}
+						}
+
+						return 0;
+					}
+
 					function preencherFiltrosChecklist(lista) {
 						var empresas = Array.from(new Set(lista.map(function(item){ return item.empresa || ''; }).filter(Boolean)));
 						var tipos = Array.from(new Set(lista.map(function(item){ return item.tipo || ''; }).filter(Boolean)));
@@ -8748,6 +8848,7 @@
 							var nome = checklist.autor || 'Não informado';
 							var setor = checklist.setor || 'Não informado';
 							var semana = checklist.semana || 'Sem semana';
+							var metaMatriz = obterMetaSemanalMatriz(tipo, setor);
 
 							var data = new Date((checklist.data || '') + 'T00:00:00');
 							var mes = isNaN(data.getTime()) ? '-' : String(data.getMonth() + 1).padStart(2, '0');
@@ -8768,7 +8869,7 @@
 
 							if (!registrosMap[chave].tipos[tipo]) {
 								registrosMap[chave].tipos[tipo] = {
-									meta: 0,
+									meta: metaMatriz,
 									realizado: 0,
 									aderencia: 0
 								};
@@ -8777,8 +8878,9 @@
 							registrosMap[chave].tipos[tipo].realizado++;
 							allTipos.add(tipo);
 
-							var meta = registrosMap[chave].tipos[tipo].meta || 1;
-							registrosMap[chave].tipos[tipo].aderencia = Math.round((registrosMap[chave].tipos[tipo].realizado / meta) * 100);
+							var meta = normalizarNumeroInteiro(registrosMap[chave].tipos[tipo].meta);
+							var base = meta === 0 ? 1 : meta;
+							registrosMap[chave].tipos[tipo].aderencia = Math.round((registrosMap[chave].tipos[tipo].realizado / base) * 100);
 						});
 
 						var tiposArray = Array.from(allTipos).sort();
@@ -8843,13 +8945,17 @@
 
 							tiposArray.forEach(function(tipo) {
 								var dados = registro.tipos[tipo];
+								var metaPadrao = obterMetaSemanalMatriz(tipo, registro.setor);
 								if (dados) {
-									var aderenciaClass = dados.aderencia >= 100 ? 'aderencia-100' : (dados.aderencia >= 80 ? 'aderencia-80' : 'aderencia-0');
-									relatorio += '<td class="meta-cell"><input type="number" class="meta-input" value="' + dados.meta + '" min="0" onchange="var td=this.parentElement; var realizado=parseInt(td.nextElementSibling.textContent,10)||0; var meta=parseInt(this.value,10); if(isNaN(meta)||meta<0){meta=0; this.value=0;} var base=(meta===0?1:meta); var aderencia=Math.round((realizado/base)*100); var celAderencia=td.nextElementSibling.nextElementSibling; celAderencia.textContent=aderencia+\'%\'; celAderencia.className=(aderencia>=100?\'aderencia-100\':(aderencia>=80?\'aderencia-80\':\'aderencia-0\')); this.style.backgroundColor=\'#90EE90\';" /></td>';
+									var metaInicial = normalizarNumeroInteiro(dados.meta || metaPadrao);
+									var baseAderencia = metaInicial === 0 ? 1 : metaInicial;
+									var aderenciaInicial = Math.round((normalizarNumeroInteiro(dados.realizado) / baseAderencia) * 100);
+									var aderenciaClass = aderenciaInicial >= 100 ? 'aderencia-100' : (aderenciaInicial >= 80 ? 'aderencia-80' : 'aderencia-0');
+									relatorio += '<td class="meta-cell"><input type="number" class="meta-input" value="' + metaInicial + '" min="0" onchange="var td=this.parentElement; var realizado=parseInt(td.nextElementSibling.textContent,10)||0; var meta=parseInt(this.value,10); if(isNaN(meta)||meta<0){meta=0; this.value=0;} var base=(meta===0?1:meta); var aderencia=Math.round((realizado/base)*100); var celAderencia=td.nextElementSibling.nextElementSibling; celAderencia.textContent=aderencia+\'%\'; celAderencia.className=(aderencia>=100?\'aderencia-100\':(aderencia>=80?\'aderencia-80\':\'aderencia-0\')); this.style.backgroundColor=\'#90EE90\';" /></td>';
 									relatorio += '<td class="realizado-cell"><strong>' + dados.realizado + '</strong></td>';
-									relatorio += '<td class="' + aderenciaClass + '">' + dados.aderencia + '%</td>';
+									relatorio += '<td class="' + aderenciaClass + '">' + aderenciaInicial + '%</td>';
 								} else {
-									relatorio += '<td class="meta-cell"><input type="number" class="meta-input" value="0" min="0" onchange="var td=this.parentElement; var realizado=parseInt(td.nextElementSibling.textContent,10)||0; var meta=parseInt(this.value,10); if(isNaN(meta)||meta<0){meta=0; this.value=0;} var base=(meta===0?1:meta); var aderencia=Math.round((realizado/base)*100); var celAderencia=td.nextElementSibling.nextElementSibling; celAderencia.textContent=aderencia+\'%\'; celAderencia.className=(aderencia>=100?\'aderencia-100\':(aderencia>=80?\'aderencia-80\':\'aderencia-0\')); this.style.backgroundColor=\'#90EE90\';" /></td>';
+									relatorio += '<td class="meta-cell"><input type="number" class="meta-input" value="' + metaPadrao + '" min="0" onchange="var td=this.parentElement; var realizado=parseInt(td.nextElementSibling.textContent,10)||0; var meta=parseInt(this.value,10); if(isNaN(meta)||meta<0){meta=0; this.value=0;} var base=(meta===0?1:meta); var aderencia=Math.round((realizado/base)*100); var celAderencia=td.nextElementSibling.nextElementSibling; celAderencia.textContent=aderencia+\'%\'; celAderencia.className=(aderencia>=100?\'aderencia-100\':(aderencia>=80?\'aderencia-80\':\'aderencia-0\')); this.style.backgroundColor=\'#90EE90\';" /></td>';
 									relatorio += '<td class="realizado-cell">0</td>';
 									relatorio += '<td class="aderencia-0">0%</td>';
 								}
@@ -8870,68 +8976,7 @@
 					}
 
 					function abrirMatrizFerramentas() {
-						var STORAGE_KEY = 'hse_matriz_ferramentas_v1';
-						var matrizPadrao = [
-							{ tipo: 'PARTICIPAÇÃO NA RAS', mensal: [1, 8, 15, 15], semanal: [1, 2, 4, 2] },
-							{ tipo: 'PARTICIPAÇÃO NA CPT', mensal: [1, 8, 15, 15], semanal: [1, 2, 4, 2] },
-							{ tipo: 'WOC MHO', mensal: [0, 8, 10, 12], semanal: [0, 2, 3, 4] },
-							{ tipo: 'INSPEÇÃO DE SEGURANÇA', mensal: [0, 0, 0, 0], semanal: [0, 0, 0, 0] },
-							{ tipo: 'REUNIÃO MENSAL DH HSE ALBRAS', mensal: [0, 0, 0, 0], semanal: [0, 0, 0, 0] },
-							{ tipo: 'REUNIÃO SEMANAL DE CONTRATADAS COM CAPEX', mensal: [0, 0, 0, 0], semanal: [0, 0, 0, 0] },
-							{ tipo: 'REUNIÃO DA CIPA INTEGRADA / CONSTITUÍDA', mensal: [0, 0, 0, 1], semanal: [0, 0, 0, 1] }
-						];
-
-						function clonarPadrao() {
-							return matrizPadrao.map(function(item) {
-								return {
-									tipo: item.tipo,
-									mensal: item.mensal.slice(),
-									semanal: item.semanal.slice()
-								};
-							});
-						}
-
-						function normalizarNumero(valor) {
-							var n = parseInt(valor, 10);
-							return isNaN(n) || n < 0 ? 0 : n;
-						}
-
-						function obterMatrizSalva() {
-							var base = clonarPadrao();
-							var salvo;
-
-							try {
-								salvo = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-							} catch (e) {
-								salvo = null;
-							}
-
-							if (!Array.isArray(salvo)) return base;
-
-							return base.map(function(item, idx) {
-								var ref = salvo[idx] || {};
-								var mensal = Array.isArray(ref.mensal) ? ref.mensal : item.mensal;
-								var semanal = Array.isArray(ref.semanal) ? ref.semanal : item.semanal;
-
-								return {
-									tipo: item.tipo,
-									mensal: [
-										normalizarNumero(mensal[0]),
-										normalizarNumero(mensal[1]),
-										normalizarNumero(mensal[2]),
-										normalizarNumero(mensal[3])
-									],
-									semanal: [
-										normalizarNumero(semanal[0]),
-										normalizarNumero(semanal[1]),
-										normalizarNumero(semanal[2]),
-										normalizarNumero(semanal[3])
-									]
-								};
-							});
-						}
-
-						var linhasMatriz = obterMatrizSalva();
+						var linhasMatriz = obterMatrizFerramentasDados();
 
 						function gerarTabela(coluna) {
 							var linhas = linhasMatriz.map(function(item, linhaIndex){
@@ -8990,7 +9035,7 @@
 						html += '</div>';
 						html += '<scr' + 'ipt>';
 						html += '(function(){';
-						html += 'var STORAGE_KEY="' + STORAGE_KEY + '";';
+						html += 'var STORAGE_KEY="' + MATRIZ_FERRAMENTAS_STORAGE_KEY + '";';
 						html += 'function normalizarNumero(valor){var n=parseInt(valor,10);return isNaN(n)||n<0?0:n;}';
 						html += 'function setStatus(msg,ok){var el=document.getElementById("status-matriz");if(!el)return;el.textContent=msg;el.style.color=ok?"#065f46":"#92400e";}';
 						html += 'document.addEventListener("input",function(e){if(!(e.target&&e.target.classList&&e.target.classList.contains("meta-input")))return;var v=normalizarNumero(e.target.value);e.target.value=v;});';
