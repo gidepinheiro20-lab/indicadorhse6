@@ -8680,7 +8680,7 @@
 						var setorNormalizado = normalizarTextoComparacao(setor);
 						if (setorNormalizado.indexOf('gerent') !== -1) return 0;
 						if (setorNormalizado.indexOf('engenheir') !== -1) return 1;
-						if (setorNormalizado.indexOf('hse') !== -1 || setorNormalizado.indexOf('seguranca') !== -1) return 2;
+						if (setorNormalizado.indexOf('hse') !== -1 || setorNormalizado.indexOf('seguranca') !== -1 || setorNormalizado.indexOf('ssma') !== -1 || setorNormalizado.indexOf('sms') !== -1 || setorNormalizado.indexOf('sesmt') !== -1) return 2;
 						if (setorNormalizado.indexOf('encarreg') !== -1) return 3;
 						return -1;
 					}
@@ -9028,7 +9028,7 @@
 						html += '@media print{body{background:#fff}.acoes{display:none}.grid{max-width:none;padding:0}.card{break-inside:avoid;box-shadow:none}.topo{margin-bottom:10px}}';
 						html += '</style></head><body>';
 						html += '<div class="topo"><h1>Matriz de Ferramentas HSE</h1><p>Configuração de Metas por Função e Período</p></div>';
-						html += '<div class="acoes"><div class="acoes-wrap"><button class="btn" onclick="window.print()">Imprimir</button><button class="btn btn-save" onclick="salvarMetasMatriz()">Salvar metas</button><button class="btn btn-reset" onclick="restaurarPadraoMatriz()">Restaurar padrão</button><span id="status-matriz" class="status">Edite os campos e clique em Salvar metas.</span></div></div>';
+						html += '<div class="acoes"><div class="acoes-wrap"><button class="btn" onclick="window.print()">Imprimir</button><button class="btn btn-save" onclick="salvarMetasMatriz()">Salvar metas</button><button class="btn btn-reset" onclick="restaurarPadraoMatriz()">Restaurar padrão</button><span id="status-matriz" class="status">Metas com salvamento automático.</span></div></div>';
 						html += '<div class="grid">';
 						html += '<div class="card"><h2>Matriz Mensal</h2>' + gerarTabela('mensal') + '</div>';
 						html += '<div class="card"><h2>Matriz Semanal</h2>' + gerarTabela('semanal') + '</div>';
@@ -9038,8 +9038,9 @@
 						html += 'var STORAGE_KEY="' + MATRIZ_FERRAMENTAS_STORAGE_KEY + '";';
 						html += 'function normalizarNumero(valor){var n=parseInt(valor,10);return isNaN(n)||n<0?0:n;}';
 						html += 'function setStatus(msg,ok){var el=document.getElementById("status-matriz");if(!el)return;el.textContent=msg;el.style.color=ok?"#065f46":"#92400e";}';
-						html += 'document.addEventListener("input",function(e){if(!(e.target&&e.target.classList&&e.target.classList.contains("meta-input")))return;var v=normalizarNumero(e.target.value);e.target.value=v;});';
-						html += 'window.salvarMetasMatriz=function(){var mapa={};document.querySelectorAll(".meta-input").forEach(function(input){var li=parseInt(input.dataset.linha,10);var col=input.dataset.coluna;var idx=parseInt(input.dataset.indice,10);if(!mapa[li]){mapa[li]={mensal:[0,0,0,0],semanal:[0,0,0,0]};}mapa[li][col][idx]=normalizarNumero(input.value);});var dados=[];document.querySelectorAll(".tipo[data-linha]").forEach(function(td){var li=parseInt(td.dataset.linha,10);if(dados[li])return;var base=mapa[li]||{mensal:[0,0,0,0],semanal:[0,0,0,0]};dados[li]={tipo:td.textContent.trim(),mensal:base.mensal,semanal:base.semanal};});localStorage.setItem(STORAGE_KEY,JSON.stringify(dados));setStatus("Metas salvas com sucesso.",true);};';
+						html += 'function coletarDadosMatriz(){var mapa={};document.querySelectorAll(".meta-input").forEach(function(input){var li=parseInt(input.dataset.linha,10);var col=input.dataset.coluna;var idx=parseInt(input.dataset.indice,10);if(!mapa[li]){mapa[li]={mensal:[0,0,0,0],semanal:[0,0,0,0]};}mapa[li][col][idx]=normalizarNumero(input.value);});var dados=[];document.querySelectorAll(".tipo[data-linha]").forEach(function(td){var li=parseInt(td.dataset.linha,10);if(dados[li])return;var base=mapa[li]||{mensal:[0,0,0,0],semanal:[0,0,0,0]};dados[li]={tipo:td.textContent.trim(),mensal:base.mensal,semanal:base.semanal};});return dados;}';
+						html += 'window.salvarMetasMatriz=function(){localStorage.setItem(STORAGE_KEY,JSON.stringify(coletarDadosMatriz()));setStatus("Metas salvas com sucesso.",true);};';
+						html += 'document.addEventListener("input",function(e){if(!(e.target&&e.target.classList&&e.target.classList.contains("meta-input")))return;var v=normalizarNumero(e.target.value);e.target.value=v;localStorage.setItem(STORAGE_KEY,JSON.stringify(coletarDadosMatriz()));setStatus("Metas salvas automaticamente.",true);});';
 						html += 'window.restaurarPadraoMatriz=function(){localStorage.removeItem(STORAGE_KEY);location.reload();};';
 						html += '})();';
 						html += '<\/scr' + 'ipt>';
