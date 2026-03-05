@@ -8735,19 +8735,137 @@
 
 					function abrirAcompanhamentoSemanal() {
 						var lista = obterChecklistFacilStorage();
-						var total = lista.length;
-						var porTipo = {};
-						lista.forEach(function(item){
-							porTipo[item.tipo] = (porTipo[item.tipo] || 0) + 1;
+						if (!lista || lista.length === 0) {
+							alert('Nenhuma checklist registrada para acompanhamento.');
+							return;
+						}
+
+						var registrosMap = {};
+						var allTipos = new Set();
+
+						lista.forEach(function(checklist) {
+							var tipo = checklist.tipo || 'Não informado';
+							var nome = checklist.autor || 'Não informado';
+							var setor = checklist.setor || 'Não informado';
+							var semana = checklist.semana || 'Sem semana';
+
+							var data = new Date((checklist.data || '') + 'T00:00:00');
+							var mes = isNaN(data.getTime()) ? '-' : String(data.getMonth() + 1).padStart(2, '0');
+							var ano = isNaN(data.getTime()) ? '-' : data.getFullYear();
+
+							var chave = nome + '|' + setor + '|' + semana + '|' + mes + '|' + ano;
+
+							if (!registrosMap[chave]) {
+								registrosMap[chave] = {
+									nome: nome,
+									setor: setor,
+									semana: semana,
+									mes: mes,
+									ano: ano,
+									tipos: {}
+								};
+							}
+
+							if (!registrosMap[chave].tipos[tipo]) {
+								registrosMap[chave].tipos[tipo] = {
+									meta: 0,
+									realizado: 0,
+									aderencia: 0
+								};
+							}
+
+							registrosMap[chave].tipos[tipo].realizado++;
+							allTipos.add(tipo);
+
+							var meta = registrosMap[chave].tipos[tipo].meta || 1;
+							registrosMap[chave].tipos[tipo].aderencia = Math.round((registrosMap[chave].tipos[tipo].realizado / meta) * 100);
 						});
 
-						var linhas = Object.keys(porTipo).map(function(tipo){
-							return '<tr><td style="padding:8px;border:1px solid #ddd">' + tipo + '</td><td style="padding:8px;border:1px solid #ddd">' + porTipo[tipo] + '</td></tr>';
-						}).join('');
+						var tiposArray = Array.from(allTipos).sort();
+						var registros = Object.values(registrosMap);
 
-						var novaJanela = window.open('', '_blank');
+						registros.sort(function(a, b) {
+							var aKey = String(a.ano) + String(a.mes) + String(a.semana).padStart(2, '0');
+							var bKey = String(b.ano) + String(b.mes) + String(b.semana).padStart(2, '0');
+							return bKey.localeCompare(aKey);
+						});
+
+						var relatorio = '<html><head><meta charset="UTF-8"><title>Acompanhamento Semanal</title>';
+						relatorio += '<style>';
+						relatorio += 'body{font-family:Arial,sans-serif;margin:0;background:#f5f5f5;overflow-x:auto}';
+						relatorio += '.header{background:linear-gradient(135deg,#0d9488 0%,#059669 100%);color:#fff;padding:20px;border-radius:8px;margin:10px 10px 20px 10px;text-align:center}';
+						relatorio += '.header h1{margin:0;font-size:2.1rem}';
+						relatorio += '.header p{margin:6px 0 0 0;opacity:0.9;font-size:1.2rem}';
+						relatorio += '.table-wrapper{background:#fff;border-radius:10px;box-shadow:0 2px 4px rgba(0,0,0,0.1);padding:22px;margin:0 10px 20px 10px;overflow-x:auto}';
+						relatorio += 'table{width:100%;border-collapse:collapse;font-size:2.3rem;margin-bottom:18px}';
+						relatorio += 'th{background:#e5e7eb;color:#1f2937;padding:10px 8px;text-align:center;border:1px solid #d1d5db;font-weight:bold;white-space:nowrap}';
+						relatorio += 'td{padding:10px;border:1px solid #d1d5db;text-align:center}';
+						relatorio += 'td:first-child, td:nth-child(2){text-align:left;font-weight:600}';
+						relatorio += 'tr:nth-child(even){background:#f9fafb}';
+						relatorio += '.meta-cell{background:#fff3cd}';
+						relatorio += '.realizado-cell{background:#cfe2ff}';
+						relatorio += '.aderencia-100{background:#d1e7dd;color:#0d3b66;font-weight:bold}';
+						relatorio += '.aderencia-80{background:#fff3cd;color:#856404;font-weight:bold}';
+						relatorio += '.aderencia-0{background:#f8d7da;color:#721c24;font-weight:bold}';
+						relatorio += '.meta-input{width:45px;padding:4px;border:1px solid #d1d5db;border-radius:4px;text-align:center;font-weight:bold}';
+						relatorio += '.print-btn{background:#0d9488;color:#fff;padding:12px 24px;border:none;border-radius:4px;cursor:pointer;font-weight:bold;margin:20px auto;display:block}';
+						relatorio += '.print-btn:hover{background:#059669}';
+						relatorio += '.info-text{text-align:center;color:#666;font-size:1rem;margin-top:20px;padding-bottom:20px}';
+						relatorio += '@media print{.print-btn{display:none};.meta-input{border:none;background:transparent;width:auto}}';
+						relatorio += '</style></head><body>';
+
+						relatorio += '<div class="header"><h1>Acompanhamento Semanal de Checklists</h1><p>Relatório de Conformidade - Metas e Aderência</p></div>';
+						relatorio += '<div class="table-wrapper"><table>';
+						relatorio += '<thead><tr>';
+						relatorio += '<th>Nome</th><th>Setor</th><th>Semana</th><th>Mês</th><th>Ano</th>';
+
+						tiposArray.forEach(function(tipo) {
+							relatorio += '<th colspan="3" style="text-align:center">' + tipo + '</th>';
+						});
+
+						relatorio += '</tr><tr><th colspan="5"></th>';
+
+						tiposArray.forEach(function() {
+							relatorio += '<th style="background:#ffd700;color:#000">Meta</th>';
+							relatorio += '<th style="background:#87ceeb;color:#000">Realizado</th>';
+							relatorio += '<th style="background:#90ee90;color:#000">Aderência</th>';
+						});
+
+						relatorio += '</tr></thead><tbody>';
+
+						registros.forEach(function(registro) {
+							relatorio += '<tr>';
+							relatorio += '<td><strong>' + registro.nome + '</strong></td>';
+							relatorio += '<td>' + registro.setor + '</td>';
+							relatorio += '<td>' + registro.semana + '</td>';
+							relatorio += '<td>' + registro.mes + '</td>';
+							relatorio += '<td>' + registro.ano + '</td>';
+
+							tiposArray.forEach(function(tipo) {
+								var dados = registro.tipos[tipo];
+								if (dados) {
+									var aderenciaClass = dados.aderencia >= 100 ? 'aderencia-100' : (dados.aderencia >= 80 ? 'aderencia-80' : 'aderencia-0');
+									relatorio += '<td class="meta-cell"><input type="number" class="meta-input" value="' + dados.meta + '" min="0" onchange="this.style.backgroundColor=\'#90EE90\'" /></td>';
+									relatorio += '<td class="realizado-cell"><strong>' + dados.realizado + '</strong></td>';
+									relatorio += '<td class="' + aderenciaClass + '">' + dados.aderencia + '%</td>';
+								} else {
+									relatorio += '<td class="meta-cell"><input type="number" class="meta-input" value="0" min="0" /></td>';
+									relatorio += '<td class="realizado-cell">0</td>';
+									relatorio += '<td class="aderencia-0">0%</td>';
+								}
+							});
+
+							relatorio += '</tr>';
+						});
+
+						relatorio += '</tbody></table></div>';
+						relatorio += '<button class="print-btn" onclick="window.print()">Imprimir Relatorio</button>';
+						relatorio += '<div class="info-text"><strong>Legenda:</strong> Meta (amarelo) | Realizado (azul) | Aderência (verde/laranja/vermelho)<br/>Edite as metas diretamente. Aderência e calculada automaticamente: (Realizado / Meta) * 100%</div>';
+						relatorio += '</body></html>';
+
+						var novaJanela = window.open('', 'AcompanhamentoSemanal', 'width=1800,height=900');
 						if (!novaJanela) return;
-						novaJanela.document.write('<html><head><meta charset="UTF-8"><title>Acompanhamento Semanal</title></head><body style="font-family:Arial,sans-serif;padding:24px"><h2>Acompanhamento Semanal de Checklists</h2><p>Total de registros: <b>' + total + '</b></p><table style="border-collapse:collapse;width:100%;max-width:600px"><thead><tr><th style="text-align:left;padding:8px;border:1px solid #ddd">Tipo</th><th style="text-align:left;padding:8px;border:1px solid #ddd">Quantidade</th></tr></thead><tbody>' + (linhas || '<tr><td colspan="2" style="padding:8px;border:1px solid #ddd">Sem dados</td></tr>') + '</tbody></table></body></html>');
+						novaJanela.document.write(relatorio);
 						novaJanela.document.close();
 					}
 
