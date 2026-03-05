@@ -8845,11 +8845,11 @@
 								var dados = registro.tipos[tipo];
 								if (dados) {
 									var aderenciaClass = dados.aderencia >= 100 ? 'aderencia-100' : (dados.aderencia >= 80 ? 'aderencia-80' : 'aderencia-0');
-									relatorio += '<td class="meta-cell"><input type="number" class="meta-input" value="' + dados.meta + '" min="0" onchange="this.style.backgroundColor=\'#90EE90\'" /></td>';
+									relatorio += '<td class="meta-cell"><input type="number" class="meta-input" value="' + dados.meta + '" min="0" onchange="var td=this.parentElement; var realizado=parseInt(td.nextElementSibling.textContent,10)||0; var meta=parseInt(this.value,10); if(isNaN(meta)||meta<0){meta=0; this.value=0;} var base=(meta===0?1:meta); var aderencia=Math.round((realizado/base)*100); var celAderencia=td.nextElementSibling.nextElementSibling; celAderencia.textContent=aderencia+\'%\'; celAderencia.className=(aderencia>=100?\'aderencia-100\':(aderencia>=80?\'aderencia-80\':\'aderencia-0\')); this.style.backgroundColor=\'#90EE90\';" /></td>';
 									relatorio += '<td class="realizado-cell"><strong>' + dados.realizado + '</strong></td>';
 									relatorio += '<td class="' + aderenciaClass + '">' + dados.aderencia + '%</td>';
 								} else {
-									relatorio += '<td class="meta-cell"><input type="number" class="meta-input" value="0" min="0" /></td>';
+									relatorio += '<td class="meta-cell"><input type="number" class="meta-input" value="0" min="0" onchange="var td=this.parentElement; var realizado=parseInt(td.nextElementSibling.textContent,10)||0; var meta=parseInt(this.value,10); if(isNaN(meta)||meta<0){meta=0; this.value=0;} var base=(meta===0?1:meta); var aderencia=Math.round((realizado/base)*100); var celAderencia=td.nextElementSibling.nextElementSibling; celAderencia.textContent=aderencia+\'%\'; celAderencia.className=(aderencia>=100?\'aderencia-100\':(aderencia>=80?\'aderencia-80\':\'aderencia-0\')); this.style.backgroundColor=\'#90EE90\';" /></td>';
 									relatorio += '<td class="realizado-cell">0</td>';
 									relatorio += '<td class="aderencia-0">0%</td>';
 								}
