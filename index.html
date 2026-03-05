@@ -1794,7 +1794,13 @@
 							</div>
 							<div>
 								<label style="display:block;font-weight:600;margin-bottom:6px;color:#374151">Setor</label>
-								<input id="checklist-novo-setor" type="text" placeholder="Ex: Encarregado" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px">
+								<select id="checklist-novo-setor" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;background:#fff">
+									<option value="">Selecione</option>
+									<option value="Gerente">Gerente</option>
+									<option value="Engenheiro">Engenheiro</option>
+									<option value="HSE">HSE</option>
+									<option value="Encarregado">Encarregado</option>
+								</select>
 							</div>
 							<div>
 								<label style="display:block;font-weight:600;margin-bottom:6px;color:#374151">Empresa</label>
@@ -8678,6 +8684,10 @@
 
 					function obterIndiceSetorMatriz(setor) {
 						var setorNormalizado = normalizarTextoComparacao(setor);
+						if (setorNormalizado === 'gerente') return 0;
+						if (setorNormalizado === 'engenheiro') return 1;
+						if (setorNormalizado === 'hse') return 2;
+						if (setorNormalizado === 'encarregado') return 3;
 						if (setorNormalizado.indexOf('gerent') !== -1) return 0;
 						if (setorNormalizado.indexOf('engenheir') !== -1) return 1;
 						if (setorNormalizado.indexOf('hse') !== -1 || setorNormalizado.indexOf('seguranca') !== -1 || setorNormalizado.indexOf('ssma') !== -1 || setorNormalizado.indexOf('sms') !== -1 || setorNormalizado.indexOf('sesmt') !== -1) return 2;
@@ -8804,8 +8814,8 @@
 						var setor = document.getElementById('checklist-novo-setor')?.value.trim() || '';
 						var empresa = document.getElementById('checklist-novo-empresa')?.value.trim() || '';
 
-						if (!data || !tipo || !autor) {
-							alert('Preencha Data, Tipo e Autor para salvar.');
+						if (!data || !tipo || !autor || !setor) {
+							alert('Preencha Data, Tipo, Autor e Setor para salvar.');
 							return;
 						}
 
@@ -8815,7 +8825,7 @@
 							semana: semana || 'Semana 1',
 							tipo: tipo,
 							autor: autor,
-							setor: setor || '-',
+							setor: setor,
 							empresa: empresa || '-'
 						});
 
