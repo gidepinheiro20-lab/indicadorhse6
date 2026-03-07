@@ -8925,17 +8925,22 @@
 						if (setorNormalizado === 'engenheiro') return 1;
 						if (setorNormalizado === 'hse') return 2;
 						if (setorNormalizado === 'encarregado') return 3;
+						if (setorNormalizado === 'supervisor') return 3;
 						if (setorNormalizado.indexOf('gerent') !== -1) return 0;
 						if (setorNormalizado.indexOf('engenheir') !== -1) return 1;
 						if (setorNormalizado.indexOf('hse') !== -1 || setorNormalizado.indexOf('seguranca') !== -1 || setorNormalizado.indexOf('ssma') !== -1 || setorNormalizado.indexOf('sms') !== -1 || setorNormalizado.indexOf('sesmt') !== -1) return 2;
+						if (setorNormalizado.indexOf('supervis') !== -1) return 3;
 						if (setorNormalizado.indexOf('encarreg') !== -1) return 3;
 						return -1;
 					}
 
 					function normalizarTipoChecklistParaMatriz(tipo) {
 						var t = normalizarTextoComparacao(tipo);
-						if (t === 'woc mdho') return 'woc mho';
-						return t;
+						var aliases = {
+							'woc mdho': 'woc mho',
+							'reuniao mensal': 'reuniao mensal dh hse albras'
+						};
+						return aliases[t] || t;
 					}
 
 					function obterMetaSemanalMatriz(tipo, setor) {
