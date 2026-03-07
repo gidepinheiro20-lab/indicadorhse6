@@ -1768,6 +1768,13 @@
 				<div id="modal-checklist" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,0.5);z-index:9999;align-items:center;justify-content:center;padding:16px">
 					<div style="background:#fff;width:min(680px,100%);border-radius:12px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,0.2)">
 						<div style="padding:16px 20px;background:#0d9488;color:#fff;font-size:1.1rem;font-weight:700">Anexar Formulário</div>
+						<div style="padding:12px 20px;background:#ecfeff;border-bottom:1px solid #ccfbf1;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+							<div style="font-size:0.85rem;color:#115e59">Importe uma planilha (.xlsx) para preencher os campos e registrar em lote.</div>
+							<div>
+								<button type="button" onclick="importarChecklistXLSX()" style="background:#0d9488;color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.85rem">Importar XLSX</button>
+								<input id="checklist-importar-xlsx" type="file" accept=".xlsx,.xls" style="display:none" onchange="processarImportacaoChecklist(event)">
+							</div>
+						</div>
 						<div style="padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
 							<div>
 								<label style="display:block;font-weight:600;margin-bottom:6px;color:#374151">Data</label>
@@ -8611,6 +8618,236 @@
 						var partes = dataISO.split('-');
 						if (partes.length !== 3) return dataISO;
 						return partes[2] + '/' + partes[1] + '/' + partes[0];
+					}
+
+					function importarChecklistXLSX() {
+						var inputArquivo = document.getElementById('checklist-importar-xlsx');
+						if (!inputArquivo) return;
+						inputArquivo.value = '';
+						inputArquivo.click();
+					}
+
+					function normalizarChaveColunaChecklist(valor) {
+						var texto = String(valor || '').trim().toLowerCase().replace(/\s+/g, ' ');
+						if (typeof texto.normalize === 'function') {
+							texto = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+						}
+						return texto;
+					}
+
+					function converterDataChecklistParaISO(valor) {
+						if (valor === null || valor === undefined) return '';
+
+						if (valor instanceof Date && !isNaN(valor.getTime())) {
+							return valor.toISOString().slice(0, 10);
+						}
+
+						if (typeof valor === 'number' && isFinite(valor)) {
+							var serialBase = new Date(Date.UTC(1899, 11, 30));
+							var dataSerial = new Date(serialBase.getTime() + Math.floor(valor) * 86400000);
+							if (!isNaN(dataSerial.getTime())) {
+								return dataSerial.toISOString().slice(0, 10);
+							}
+						}
+
+						var texto = String(valor).trim();
+						if (!texto) return '';
+
+						var somenteData = texto.split(' ')[0].split('T')[0];
+						if (/^\d{4}-\d{2}-\d{2}$/.test(somenteData)) {
+							return somenteData;
+						}
+
+						var matchBR = somenteData.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+						if (matchBR) {
+							var d = String(parseInt(matchBR[1], 10)).padStart(2, '0');
+							var m = String(parseInt(matchBR[2], 10)).padStart(2, '0');
+							var y = matchBR[3];
+							return y + '-' + m + '-' + d;
+						}
+
+						var matchISO = somenteData.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
+						if (matchISO) {
+							var mm = String(parseInt(matchISO[2], 10)).padStart(2, '0');
+							var dd = String(parseInt(matchISO[3], 10)).padStart(2, '0');
+							return matchISO[1] + '-' + mm + '-' + dd;
+						}
+
+						var dataNativa = new Date(texto);
+						if (!isNaN(dataNativa.getTime())) {
+							return dataNativa.toISOString().slice(0, 10);
+						}
+
+						return '';
+					}
+
+					function obterMapeamentoColunasChecklist(chavesLinha) {
+						var mapaSinonimos = {
+							data: ['data', 'dt', 'dia'],
+							semana: ['semana', 'n semana', 'numero semana', 'week', 'sem'],
+							tipo: ['tipo', 'tipo checklist', 'checklist', 'ferramenta', 'tipo de ferramenta'],
+							autor: ['autor', 'nome', 'nome autor', 'responsavel', 'colaborador'],
+							setor: ['setor', 'cargo', 'funcao', 'perfil'],
+							empresa: ['empresa', 'contratada', 'cliente']
+						};
+
+						var colunas = { data: null, semana: null, tipo: null, autor: null, setor: null, empresa: null };
+
+						Object.keys(colunas).forEach(function(campo) {
+							var sinonimos = mapaSinonimos[campo];
+							for (var i = 0; i < chavesLinha.length; i++) {
+								var chaveOriginal = chavesLinha[i];
+								var chaveNormalizada = normalizarChaveColunaChecklist(chaveOriginal);
+								if (!chaveNormalizada) continue;
+
+								for (var s = 0; s < sinonimos.length; s++) {
+									if (chaveNormalizada === sinonimos[s] || chaveNormalizada.indexOf(sinonimos[s]) !== -1) {
+										colunas[campo] = chaveOriginal;
+										return;
+									}
+								}
+							}
+						});
+
+						return colunas;
+					}
+
+					function extrairRegistrosChecklistDeLinhas(linhas) {
+						if (!Array.isArray(linhas) || !linhas.length) {
+							return { registros: [], invalido: 0, mapeamento: null };
+						}
+
+						var mapeamento = obterMapeamentoColunasChecklist(Object.keys(linhas[0] || {}));
+						var registros = [];
+						var invalido = 0;
+
+						linhas.forEach(function(linha) {
+							var data = converterDataChecklistParaISO(linha[mapeamento.data]);
+							var semana = String(linha[mapeamento.semana] || '').trim();
+							var tipo = String(linha[mapeamento.tipo] || '').trim();
+							var autor = String(linha[mapeamento.autor] || '').trim();
+							var setor = String(linha[mapeamento.setor] || '').trim();
+							var empresa = String(linha[mapeamento.empresa] || '').trim();
+
+							if (!data || !tipo || !autor || !setor) {
+								invalido++;
+								return;
+							}
+
+							registros.push({
+								data: data,
+								semana: semana || 'Semana 1',
+								tipo: tipo,
+								autor: autor,
+								setor: setor,
+								empresa: empresa || '-'
+							});
+						});
+
+						return {
+							registros: registros,
+							invalido: invalido,
+							mapeamento: mapeamento
+						};
+					}
+
+					function definirValorSelectChecklist(selectEl, valor) {
+						if (!selectEl) return;
+						var valorTexto = String(valor || '').trim();
+						if (!valorTexto) {
+							selectEl.value = '';
+							return;
+						}
+
+						var opcaoExistente = Array.from(selectEl.options || []).find(function(opt) {
+							return normalizarTextoComparacao(opt.value) === normalizarTextoComparacao(valorTexto);
+						});
+
+						if (opcaoExistente) {
+							selectEl.value = opcaoExistente.value;
+							return;
+						}
+
+						var novaOpcao = document.createElement('option');
+						novaOpcao.value = valorTexto;
+						novaOpcao.textContent = valorTexto;
+						selectEl.appendChild(novaOpcao);
+						selectEl.value = valorTexto;
+					}
+
+					function preencherFormularioChecklistComRegistro(registro) {
+						if (!registro) return;
+						var campoData = document.getElementById('checklist-novo-data');
+						var campoSemana = document.getElementById('checklist-novo-semana');
+						var campoTipo = document.getElementById('checklist-novo-tipo');
+						var campoAutor = document.getElementById('checklist-novo-autor');
+						var campoSetor = document.getElementById('checklist-novo-setor');
+						var campoEmpresa = document.getElementById('checklist-novo-empresa');
+
+						if (campoData) campoData.value = registro.data || '';
+						if (campoSemana) campoSemana.value = registro.semana || '';
+						definirValorSelectChecklist(campoTipo, registro.tipo);
+
+						if (campoAutor) campoAutor.value = registro.autor || '';
+						definirValorSelectChecklist(campoSetor, registro.setor);
+
+						if (campoEmpresa) campoEmpresa.value = registro.empresa === '-' ? '' : registro.empresa;
+					}
+
+					function processarImportacaoChecklist(event) {
+						var arquivo = event && event.target && event.target.files ? event.target.files[0] : null;
+						if (!arquivo) return;
+
+						if (typeof XLSX === 'undefined') {
+							alert('Biblioteca de planilha não carregada. Atualize a página e tente novamente.');
+							return;
+						}
+
+						var leitor = new FileReader();
+						leitor.onload = function(e) {
+							try {
+								var data = new Uint8Array(e.target.result);
+								var workbook = XLSX.read(data, { type: 'array' });
+								var primeiraAba = workbook.SheetNames && workbook.SheetNames[0];
+								if (!primeiraAba) {
+									alert('A planilha está vazia.');
+									return;
+								}
+
+								var worksheet = workbook.Sheets[primeiraAba];
+								var linhas = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+								var resultado = extrairRegistrosChecklistDeLinhas(linhas);
+
+								if (!resultado.registros.length) {
+									alert('Nenhum registro válido encontrado. Verifique as colunas Data, Tipo, Autor e Setor.');
+									return;
+								}
+
+								preencherFormularioChecklistComRegistro(resultado.registros[0]);
+
+								var lista = obterChecklistFacilStorage();
+								for (var i = resultado.registros.length - 1; i >= 0; i--) {
+									lista.unshift(resultado.registros[i]);
+								}
+
+								salvarChecklistFacilStorage(lista);
+								carregarChecklistFacil();
+
+								var mensagem = 'Importação concluída: ' + resultado.registros.length + ' registro(s) incluído(s).';
+								if (resultado.invalido > 0) {
+									mensagem += '\n' + resultado.invalido + ' linha(s) foram ignoradas por falta de campos obrigatórios.';
+								}
+								alert(mensagem);
+							} catch (erro) {
+								alert('Não foi possível importar a planilha. Verifique o arquivo e tente novamente.');
+							}
+						};
+
+						leitor.onerror = function() {
+							alert('Erro ao ler o arquivo selecionado.');
+						};
+
+						leitor.readAsArrayBuffer(arquivo);
 					}
 
 					var MATRIZ_FERRAMENTAS_STORAGE_KEY = 'hse_matriz_ferramentas_v1';
