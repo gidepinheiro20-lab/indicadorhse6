@@ -9159,8 +9159,12 @@
 						relatorio += '.meta-input{width:45px;padding:4px;border:1px solid #d1d5db;border-radius:4px;text-align:center;font-weight:bold}';
 						relatorio += '.print-btn{background:#0d9488;color:#fff;padding:12px 24px;border:none;border-radius:4px;cursor:pointer;font-weight:bold;margin:20px auto;display:block}';
 						relatorio += '.print-btn:hover{background:#059669}';
+						relatorio += '.action-bar{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:16px auto 6px auto}';
+						relatorio += '.action-btn{background:#0d9488;color:#fff;padding:10px 16px;border:none;border-radius:4px;cursor:pointer;font-weight:bold}';
+						relatorio += '.action-btn:hover{background:#059669}';
+						relatorio += '.zoom-label{background:#e5e7eb;color:#1f2937;padding:8px 12px;border-radius:4px;font-weight:bold;min-width:78px;text-align:center}';
 						relatorio += '.info-text{text-align:center;color:#666;font-size:1rem;margin-top:20px;padding-bottom:20px}';
-						relatorio += '@media print{.print-btn{display:none};.meta-input{border:none;background:transparent;width:auto}}';
+						relatorio += '@media print{.action-bar,.print-btn{display:none};.meta-input{border:none;background:transparent;width:auto}}';
 						relatorio += '</style></head><body>';
 
 						relatorio += '<div class="header"><h1>Acompanhamento Semanal de Checklists</h1><p>Relatório de Conformidade - Metas e Aderência</p></div>';
@@ -9212,6 +9216,11 @@
 						});
 
 						relatorio += '</tbody></table></div>';
+						relatorio += '<div class="action-bar">';
+						relatorio += '<button class="action-btn" onclick="var z=parseFloat(document.body.style.zoom)||1; z=Math.max(0.5, z-0.1); document.body.style.zoom=z.toFixed(2); document.getElementById(\'zoom-level\').textContent=Math.round(z*100)+\'%\';">Zoom -</button>';
+						relatorio += '<div id="zoom-level" class="zoom-label">100%</div>';
+						relatorio += '<button class="action-btn" onclick="var z=parseFloat(document.body.style.zoom)||1; z=Math.min(2, z+0.1); document.body.style.zoom=z.toFixed(2); document.getElementById(\'zoom-level\').textContent=Math.round(z*100)+\'%\';">Zoom +</button>';
+						relatorio += '</div>';
 						relatorio += '<button class="print-btn" onclick="window.print()">Imprimir Relatorio</button>';
 						relatorio += '<div class="info-text"><strong>Legenda:</strong> Meta (amarelo) | Realizado (azul) | Aderência (verde/laranja/vermelho)<br/>Edite as metas diretamente. Aderência e calculada automaticamente: (Realizado / Meta) * 100%</div>';
 						relatorio += '</body></html>';
