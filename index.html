@@ -1711,6 +1711,7 @@
 								</div>
 								<div style="display:flex;gap:12px;flex-wrap:wrap">
 									<button type="button" onclick="abrirAcompanhamentoSemanal()" style="background:#10b981;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Acompanhamento Semanal</button>
+									<button type="button" onclick="abrirAcompanhamentoMensal()" style="background:#0ea5e9;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Acompanhamento Mensal</button>
 									<button type="button" onclick="abrirMatrizFerramentas()" style="background:#8b5cf6;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Matriz de Ferramentas</button>
 									<button type="button" onclick="mostrarModalNovaChecklist()" style="background:#fff;color:#0d9488;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Anexar formulário</button>
 								</div>
@@ -8943,20 +8944,29 @@
 						return t;
 					}
 
-					function obterMetaSemanalMatriz(tipo, setor) {
+					function obterMetaMatrizPorPeriodo(tipo, setor, periodo) {
 						var indiceSetor = obterIndiceSetorMatriz(setor);
 						if (indiceSetor < 0) return 0;
 
 						var tipoNormalizado = normalizarTipoChecklistParaMatriz(tipo);
 						var matriz = obterMatrizFerramentasDados();
+						var coluna = periodo === 'mensal' ? 'mensal' : 'semanal';
 
 						for (var i = 0; i < matriz.length; i++) {
 							if (normalizarTipoChecklistParaMatriz(matriz[i].tipo) === tipoNormalizado) {
-								return normalizarNumeroInteiro(matriz[i].semanal[indiceSetor]);
+								return normalizarNumeroInteiro(matriz[i][coluna][indiceSetor]);
 							}
 						}
 
 						return 0;
+					}
+
+					function obterMetaSemanalMatriz(tipo, setor) {
+						return obterMetaMatrizPorPeriodo(tipo, setor, 'semanal');
+					}
+
+					function obterMetaMensalMatriz(tipo, setor) {
+						return obterMetaMatrizPorPeriodo(tipo, setor, 'mensal');
 					}
 
 					function preencherFiltrosChecklist(lista) {
@@ -9085,7 +9095,9 @@
 						carregarChecklistFacil();
 					}
 
-					function abrirAcompanhamentoSemanal() {
+					function abrirAcompanhamentoChecklist(periodo) {
+						var ehMensal = periodo === 'mensal';
+						var tituloPeriodo = ehMensal ? 'Mensal' : 'Semanal';
 						var lista = obterChecklistFacilStorage();
 						if (!lista || lista.length === 0) {
 							alert('Nenhuma checklist registrada para acompanhamento.');
@@ -9100,7 +9112,7 @@
 							var nome = checklist.autor || 'Não informado';
 							var setor = checklist.setor || 'Não informado';
 							var semana = checklist.semana || 'Sem semana';
-							var metaMatriz = obterMetaSemanalMatriz(tipo, setor);
+							var metaMatriz = ehMensal ? obterMetaMensalMatriz(tipo, setor) : obterMetaSemanalMatriz(tipo, setor);
 
 							var data = new Date((checklist.data || '') + 'T00:00:00');
 							var mes = isNaN(data.getTime()) ? '-' : String(data.getMonth() + 1).padStart(2, '0');
@@ -9144,7 +9156,7 @@
 							return bKey.localeCompare(aKey);
 						});
 
-						var relatorio = '<html><head><meta charset="UTF-8"><title>Acompanhamento Semanal</title>';
+						var relatorio = '<html><head><meta charset="UTF-8"><title>Acompanhamento ' + tituloPeriodo + '</title>';
 						relatorio += '<style>';
 						relatorio += 'body{font-family:Arial,sans-serif;margin:0;background:#f5f5f5;overflow-x:auto}';
 						relatorio += '.header{background:linear-gradient(135deg,#0d9488 0%,#059669 100%);color:#fff;padding:20px;border-radius:8px;margin:10px 10px 20px 10px;text-align:center}';
@@ -9172,7 +9184,7 @@
 						relatorio += '@media print{.action-bar,.print-btn{display:none};.meta-input{border:none;background:transparent;width:auto}}';
 						relatorio += '</style></head><body>';
 
-						relatorio += '<div class="header"><h1>Acompanhamento Semanal de Checklists</h1><p>Relatório de Conformidade - Metas e Aderência</p></div>';
+						relatorio += '<div class="header"><h1>Acompanhamento ' + tituloPeriodo + ' de Checklists</h1><p>Relatório de Conformidade - Metas e Aderência</p></div>';
 						relatorio += '<div class="table-wrapper"><table>';
 						relatorio += '<thead><tr>';
 						relatorio += '<th>Nome</th><th>Setor</th><th>Semana</th><th>Mês</th><th>Ano</th>';
@@ -9201,7 +9213,7 @@
 
 							tiposArray.forEach(function(tipo) {
 								var dados = registro.tipos[tipo];
-								var metaPadrao = obterMetaSemanalMatriz(tipo, registro.setor);
+								var metaPadrao = ehMensal ? obterMetaMensalMatriz(tipo, registro.setor) : obterMetaSemanalMatriz(tipo, registro.setor);
 								if (dados) {
 									var metaInicial = normalizarNumeroInteiro(dados.meta || metaPadrao);
 									var baseAderencia = metaInicial === 0 ? 1 : metaInicial;
@@ -9230,7 +9242,7 @@
 						relatorio += '<div class="info-text"><strong>Legenda:</strong> Meta (amarelo) | Realizado (azul) | Aderência (verde/laranja/vermelho)<br/>Edite as metas diretamente. Aderência e calculada automaticamente: (Realizado / Meta) * 100%</div>';
 						relatorio += '<scr' + 'ipt>';
 						relatorio += '(function(){';
-						relatorio += 'var ZOOM_KEY="acompanhamentoSemanalZoom";';
+						relatorio += 'var ZOOM_KEY="' + (ehMensal ? 'acompanhamentoMensalZoom' : 'acompanhamentoSemanalZoom') + '";';
 						relatorio += 'function normalizarZoom(valor){var n=parseFloat(valor);if(isNaN(n)){return 0.5;}return Math.min(2,Math.max(0.5,n));}';
 						relatorio += 'function aplicarZoom(zoom){var nivel=normalizarZoom(zoom);document.body.style.zoom=nivel.toFixed(2);var label=document.getElementById("zoom-level");if(label){label.textContent=Math.round(nivel*100)+"%";}try{localStorage.setItem(ZOOM_KEY,nivel.toFixed(2));}catch(e){}}';
 						relatorio += 'window.alterarZoomRelatorio=function(delta){var atual=parseFloat(document.body.style.zoom);if(isNaN(atual)){try{atual=parseFloat(localStorage.getItem(ZOOM_KEY));}catch(e){atual=0.5;}}aplicarZoom(atual+delta);};';
@@ -9239,10 +9251,18 @@
 						relatorio += '<\/scr' + 'ipt>';
 						relatorio += '</body></html>';
 
-						var novaJanela = window.open('', 'AcompanhamentoSemanal', 'width=1800,height=900');
+						var novaJanela = window.open('', ehMensal ? 'AcompanhamentoMensal' : 'AcompanhamentoSemanal', 'width=1800,height=900');
 						if (!novaJanela) return;
 						novaJanela.document.write(relatorio);
 						novaJanela.document.close();
+					}
+
+					function abrirAcompanhamentoSemanal() {
+						abrirAcompanhamentoChecklist('semanal');
+					}
+
+					function abrirAcompanhamentoMensal() {
+						abrirAcompanhamentoChecklist('mensal');
 					}
 
 					function abrirMatrizFerramentas() {
