@@ -1817,6 +1817,123 @@
 						</div>
 					</div>
 				</div>
+
+				<!-- Seção Reunião Mensal -->
+				<div id="reuniao" style="display:none;max-width:none;margin:0;">
+					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3;overflow:hidden;">
+						<div style="background:linear-gradient(135deg,#0f766e 0%,#0d9488 100%);color:#fff;padding:24px;">
+							<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+								<div>
+									<h2 style="margin:0;font-size:1.5rem;font-weight:700">Reunião Mensal</h2>
+									<div style="margin-top:4px;opacity:.95">Agendamentos, histórico, calendário, linha do tempo e notificações.</div>
+								</div>
+								<button type="button" onclick="inicializarReuniaoMensal(true)" style="background:#fff;color:#0f766e;border:none;padding:10px 16px;border-radius:8px;font-weight:700;cursor:pointer;">Atualizar Painel</button>
+							</div>
+						</div>
+
+						<div style="padding:24px;display:grid;grid-template-columns:1.2fr 1fr;gap:20px;">
+							<div style="border:1px solid #e5e7eb;border-radius:12px;padding:16px;background:#f8fafc;">
+								<h3 style="margin:0 0 14px 0;color:#0f172a;">Novo Agendamento</h3>
+								<form id="form-reuniao-mensal" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+									<div>
+										<label style="display:block;font-weight:600;margin-bottom:6px;color:#334155;">Tipo de reunião</label>
+										<select id="reuniao-tipo" required style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;">
+											<option value="">Selecione</option>
+											<option value="Reunião Mensal HSE">Reunião Mensal HSE</option>
+											<option value="Reunião de Resultado">Reunião de Resultado</option>
+											<option value="Reunião de Plano de Ação">Reunião de Plano de Ação</option>
+											<option value="Reunião Extraordinária">Reunião Extraordinária</option>
+										</select>
+									</div>
+									<div>
+										<label style="display:block;font-weight:600;margin-bottom:6px;color:#334155;">Local da reunião</label>
+										<input id="reuniao-local" type="text" required placeholder="Sala, obra, online..." style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;">
+									</div>
+									<div>
+										<label style="display:block;font-weight:600;margin-bottom:6px;color:#334155;">Data</label>
+										<input id="reuniao-data" type="date" required style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;">
+									</div>
+									<div>
+										<label style="display:block;font-weight:600;margin-bottom:6px;color:#334155;">Hora</label>
+										<input id="reuniao-hora" type="time" required style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;">
+									</div>
+									<div>
+										<label style="display:block;font-weight:600;margin-bottom:6px;color:#334155;">Status</label>
+										<select id="reuniao-status" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;">
+											<option value="Agendada">Agendada</option>
+											<option value="Em andamento">Em andamento</option>
+											<option value="Concluída">Concluída</option>
+											<option value="Cancelada">Cancelada</option>
+										</select>
+									</div>
+									<div style="display:flex;align-items:end;">
+										<label style="display:flex;align-items:center;gap:8px;font-weight:600;color:#334155;">
+											<input id="reuniao-encerrada" type="checkbox"> Reunião encerrada
+										</label>
+									</div>
+									<div>
+										<label style="display:block;font-weight:600;margin-bottom:6px;color:#334155;">Próxima reunião (data)</label>
+										<input id="reuniao-proxima-data" type="date" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;">
+									</div>
+									<div>
+										<label style="display:block;font-weight:600;margin-bottom:6px;color:#334155;">Próxima reunião (hora)</label>
+										<input id="reuniao-proxima-hora" type="time" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;">
+									</div>
+									<div style="grid-column:1/-1;">
+										<label style="display:block;font-weight:600;margin-bottom:6px;color:#334155;">Quem participou</label>
+										<textarea id="reuniao-participantes" rows="2" placeholder="Ex: Ana, João, Carlos" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;resize:vertical;"></textarea>
+									</div>
+									<div style="grid-column:1/-1;">
+										<label style="display:block;font-weight:600;margin-bottom:6px;color:#334155;">Comentários da reunião</label>
+										<textarea id="reuniao-comentarios" rows="3" placeholder="Resumo do que foi discutido" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;resize:vertical;"></textarea>
+									</div>
+									<div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end;">
+										<div>
+											<label style="display:block;font-weight:600;margin-bottom:6px;color:#334155;">Foto da reunião</label>
+											<input id="reuniao-foto" type="file" accept="image/*" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;">
+										</div>
+										<div id="reuniao-foto-preview" style="min-height:80px;border:1px dashed #cbd5e1;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#64748b;font-size:.85rem;">Sem foto</div>
+									</div>
+									<div style="grid-column:1/-1;display:flex;justify-content:flex-end;gap:10px;">
+										<button type="button" onclick="limparFormularioReuniaoMensal()" style="background:#64748b;color:#fff;border:none;border-radius:8px;padding:10px 14px;cursor:pointer;">Limpar</button>
+										<button type="submit" style="background:#0f766e;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Salvar agendamento</button>
+									</div>
+								</form>
+							</div>
+
+							<div style="display:flex;flex-direction:column;gap:12px;">
+								<div style="border:1px solid #e5e7eb;border-radius:12px;padding:14px;background:#fff;">
+									<h3 style="margin:0 0 10px 0;color:#0f172a;">Notificações (1 dia antes)</h3>
+									<div id="reuniao-notificacoes" style="display:flex;flex-direction:column;gap:8px;"></div>
+								</div>
+								<div style="border:1px solid #e5e7eb;border-radius:12px;padding:14px;background:#fff;">
+									<h3 style="margin:0 0 10px 0;color:#0f172a;">Próximas reuniões agendadas</h3>
+									<div id="reuniao-proximas-lista" style="display:flex;flex-direction:column;gap:8px;"></div>
+								</div>
+							</div>
+						</div>
+
+						<div style="padding:0 24px 24px 24px;display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+							<div style="border:1px solid #e5e7eb;border-radius:12px;padding:14px;background:#fff;">
+								<h3 style="margin:0 0 12px 0;color:#0f172a;">Calendário de reuniões</h3>
+								<div id="reuniao-calendario"></div>
+							</div>
+							<div style="border:1px solid #e5e7eb;border-radius:12px;padding:14px;background:#fff;">
+								<h3 style="margin:0 0 12px 0;color:#0f172a;">Linha do tempo</h3>
+								<div id="reuniao-timeline" style="display:flex;flex-direction:column;gap:10px;max-height:380px;overflow:auto;"></div>
+							</div>
+						</div>
+
+						<div style="padding:0 24px 24px 24px;">
+							<div style="border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#fff;">
+								<div style="display:grid;grid-template-columns:120px 90px 180px 160px 120px 100px 130px;padding:12px 14px;background:#f1f5f9;font-weight:700;color:#1f2937;font-size:.9rem;gap:8px;">
+									<div>Data</div><div>Hora</div><div>Tipo</div><div>Local</div><div>Status</div><div>Encerrada</div><div>Ações</div>
+								</div>
+								<div id="reuniao-registros" style="max-height:350px;overflow:auto;"></div>
+							</div>
+						</div>
+					</div>
+				</div>
 				
 				<!-- Seção Inspeção de HSE -->
 				<div id="inspecao" style="display:none;max-width:none;margin:0;">
@@ -3108,6 +3225,7 @@
 						document.getElementById('funcionarios').style.display = 'none';
 						document.getElementById('frequencia').style.display = 'none';
 						document.getElementById('cpt').style.display = 'none';
+						document.getElementById('reuniao').style.display = 'none';
 						document.getElementById('inspecao').style.display = 'none';
 						document.getElementById('art').style.display = 'none';
 						document.getElementById('checklist').style.display = 'none';
@@ -3156,6 +3274,11 @@
 								hideAllSections();
 								document.getElementById('inspecao').style.display = 'block';
 								inicializarInspecao();
+								break;
+							case 'reuniao':
+								hideAllSections();
+								document.getElementById('reuniao').style.display = 'block';
+								inicializarReuniaoMensal(true);
 								break;
 							case 'art':
 								hideAllSections();
@@ -8847,6 +8970,343 @@
 						leitor.readAsArrayBuffer(arquivo);
 					}
 
+					var REUNIAO_MENSAL_STORAGE_KEY = 'hse_reunioes_mensais_v1';
+					var reuniaoMensalInicializada = false;
+					var reuniaoMensalFotoAtual = '';
+
+					function obterReunioesMensaisStorage() {
+						try {
+							var dados = JSON.parse(localStorage.getItem(REUNIAO_MENSAL_STORAGE_KEY) || '[]');
+							return Array.isArray(dados) ? dados : [];
+						} catch (e) {
+							return [];
+						}
+					}
+
+					function salvarReunioesMensaisStorage(lista) {
+						localStorage.setItem(REUNIAO_MENSAL_STORAGE_KEY, JSON.stringify(lista || []));
+					}
+
+					function normalizarDataHoraReuniao(dataISO, hora) {
+						if (!dataISO) return null;
+						var horaSafe = hora || '00:00';
+						var dt = new Date(dataISO + 'T' + horaSafe + ':00');
+						return isNaN(dt.getTime()) ? null : dt;
+					}
+
+					function ordenarReunioesPorData(lista) {
+						return (lista || []).slice().sort(function(a, b) {
+							var da = normalizarDataHoraReuniao(a.data, a.hora);
+							var db = normalizarDataHoraReuniao(b.data, b.hora);
+							var ta = da ? da.getTime() : 0;
+							var tb = db ? db.getTime() : 0;
+							return ta - tb;
+						});
+					}
+
+					function parseParticipantesReuniao(texto) {
+						return String(texto || '')
+							.split(/[,\n;]+/)
+							.map(function(item) { return item.trim(); })
+							.filter(Boolean);
+					}
+
+					function limparFormularioReuniaoMensal() {
+						var form = document.getElementById('form-reuniao-mensal');
+						if (form) form.reset();
+						reuniaoMensalFotoAtual = '';
+						var preview = document.getElementById('reuniao-foto-preview');
+						if (preview) preview.innerHTML = 'Sem foto';
+						var campoData = document.getElementById('reuniao-data');
+						if (campoData) campoData.value = new Date().toISOString().slice(0, 10);
+					}
+
+					function renderNotificacoesReuniao(lista) {
+						var alvo = document.getElementById('reuniao-notificacoes');
+						if (!alvo) return;
+
+						var hoje = new Date();
+						hoje.setHours(0, 0, 0, 0);
+						var umDiaMs = 24 * 60 * 60 * 1000;
+						var notificacoes = (lista || []).filter(function(item) {
+							if (!item || !item.data || item.encerrada) return false;
+							var dt = new Date(item.data + 'T00:00:00');
+							if (isNaN(dt.getTime())) return false;
+							var diff = dt.getTime() - hoje.getTime();
+							return diff === umDiaMs;
+						});
+
+						if (!notificacoes.length) {
+							alvo.innerHTML = '<div style="padding:10px;border-radius:8px;background:#f8fafc;color:#475569;border:1px solid #e2e8f0;">Nenhuma reunião com aviso para amanhã.</div>';
+							return;
+						}
+
+						alvo.innerHTML = notificacoes.map(function(item) {
+							return '<div style="padding:10px;border-radius:8px;background:#fff7ed;color:#9a3412;border:1px solid #fdba74;">🔔 A reunião <strong>' + (item.tipo || '-') + '</strong> no local <strong>' + (item.local || '-') + '</strong> está a 1 dia de acontecer (' + formatarDataBR(item.data) + ' ' + (item.hora || '') + ').</div>';
+						}).join('');
+					}
+
+					function renderProximasReunioes(lista) {
+						var alvo = document.getElementById('reuniao-proximas-lista');
+						if (!alvo) return;
+
+						var origem = [];
+						(lista || []).forEach(function(item) {
+							var principal = normalizarDataHoraReuniao(item.data, item.hora);
+							if (principal) {
+								origem.push({
+									data: item.data,
+									hora: item.hora,
+									tipo: item.tipo,
+									local: item.local,
+									kind: 'Reunião'
+								});
+							}
+							var proxima = normalizarDataHoraReuniao(item.proximaData, item.proximaHora);
+							if (proxima) {
+								origem.push({
+									data: item.proximaData,
+									hora: item.proximaHora,
+									tipo: item.tipo,
+									local: item.local,
+									kind: 'Próxima'
+								});
+							}
+						});
+
+						var agora = new Date();
+						var futuras = origem.filter(function(item) {
+							var dt = normalizarDataHoraReuniao(item.data, item.hora);
+							return dt && dt.getTime() >= agora.getTime();
+						}).sort(function(a, b) {
+							return normalizarDataHoraReuniao(a.data, a.hora).getTime() - normalizarDataHoraReuniao(b.data, b.hora).getTime();
+						}).slice(0, 8);
+
+						if (!futuras.length) {
+							alvo.innerHTML = '<div style="padding:10px;border-radius:8px;background:#f8fafc;color:#475569;border:1px solid #e2e8f0;">Nenhuma próxima reunião agendada.</div>';
+							return;
+						}
+
+						alvo.innerHTML = futuras.map(function(item) {
+							return '<div style="padding:10px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;"><strong>' + item.kind + ':</strong> ' + (item.tipo || '-') + '<br><span style="color:#475569;">' + formatarDataBR(item.data) + ' ' + (item.hora || '') + ' | ' + (item.local || '-') + '</span></div>';
+						}).join('');
+					}
+
+					function renderCalendarioReunioes(lista) {
+						var alvo = document.getElementById('reuniao-calendario');
+						if (!alvo) return;
+
+						var hoje = new Date();
+						var ano = hoje.getFullYear();
+						var mes = hoje.getMonth();
+						var primeiro = new Date(ano, mes, 1);
+						var ultimoDia = new Date(ano, mes + 1, 0).getDate();
+						var offset = primeiro.getDay();
+
+						var qtdPorDia = {};
+						(lista || []).forEach(function(item) {
+							if (item && item.data && item.data.length === 10 && item.data.slice(0, 7) === (ano + '-' + String(mes + 1).padStart(2, '0'))) {
+								qtdPorDia[item.data] = (qtdPorDia[item.data] || 0) + 1;
+							}
+						});
+
+						var html = '<div style="font-weight:700;margin-bottom:8px;color:#334155;">' + hoje.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) + '</div>';
+						html += '<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;font-size:.83rem;">';
+						['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].forEach(function(dia) {
+							html += '<div style="font-weight:700;color:#475569;text-align:center;padding:4px 0;">' + dia + '</div>';
+						});
+
+						for (var i = 0; i < offset; i++) {
+							html += '<div></div>';
+						}
+
+						for (var dia = 1; dia <= ultimoDia; dia++) {
+							var dataIso = ano + '-' + String(mes + 1).padStart(2, '0') + '-' + String(dia).padStart(2, '0');
+							var qtd = qtdPorDia[dataIso] || 0;
+							var estilo = qtd > 0 ? 'background:#ccfbf1;border:1px solid #14b8a6;color:#0f766e;' : 'background:#f8fafc;border:1px solid #e2e8f0;color:#334155;';
+							html += '<div style="' + estilo + 'border-radius:8px;min-height:46px;padding:4px;display:flex;flex-direction:column;justify-content:space-between;">';
+							html += '<div style="font-weight:700;">' + dia + '</div>';
+							html += qtd > 0 ? '<div style="font-size:.72rem;font-weight:700;">' + qtd + ' reun.</div>' : '<div></div>';
+							html += '</div>';
+						}
+
+						html += '</div>';
+						alvo.innerHTML = html;
+					}
+
+					function renderTimelineReunioes(lista) {
+						var alvo = document.getElementById('reuniao-timeline');
+						if (!alvo) return;
+
+						var ordenadas = ordenarReunioesPorData(lista).reverse();
+						if (!ordenadas.length) {
+							alvo.innerHTML = '<div style="padding:10px;border-radius:8px;background:#f8fafc;color:#475569;border:1px solid #e2e8f0;">Sem eventos na linha do tempo.</div>';
+							return;
+						}
+
+						alvo.innerHTML = ordenadas.map(function(item) {
+							var participantes = (item.participantes || []).join(', ');
+							return '<div style="position:relative;padding:12px 12px 12px 14px;border:1px solid #e2e8f0;border-left:4px solid #0f766e;border-radius:8px;background:#f8fafc;">'
+								+ '<div style="font-weight:700;color:#0f172a;">' + (item.tipo || '-') + '</div>'
+								+ '<div style="font-size:.85rem;color:#475569;margin:4px 0;">' + formatarDataBR(item.data) + ' ' + (item.hora || '') + ' | ' + (item.local || '-') + '</div>'
+								+ '<div style="font-size:.83rem;color:#334155;"><strong>Status:</strong> ' + (item.status || '-') + ' | <strong>Encerrada:</strong> ' + (item.encerrada ? 'Sim' : 'Não') + '</div>'
+								+ '<div style="font-size:.83rem;color:#334155;margin-top:4px;"><strong>Participantes:</strong> ' + (participantes || '-') + '</div>'
+								+ '<div style="font-size:.83rem;color:#334155;margin-top:4px;"><strong>Comentários:</strong> ' + (item.comentarios || '-') + '</div>'
+							+ '</div>';
+						}).join('');
+					}
+
+					function renderRegistrosReunioes(lista) {
+						var alvo = document.getElementById('reuniao-registros');
+						if (!alvo) return;
+
+						if (!lista || !lista.length) {
+							alvo.innerHTML = '<div style="padding:24px;text-align:center;color:#94a3b8;">Nenhum agendamento registrado.</div>';
+							return;
+						}
+
+						alvo.innerHTML = ordenarReunioesPorData(lista).map(function(item) {
+							var btnFoto = item.foto ? '<button type="button" onclick="visualizarFotoReuniaoMensal(' + item.id + ')" style="background:#0284c7;color:#fff;border:none;border-radius:6px;padding:6px 8px;cursor:pointer;">Foto</button>' : '';
+							return '<div style="display:grid;grid-template-columns:120px 90px 180px 160px 120px 100px 130px;gap:8px;padding:12px 14px;border-top:1px solid #f1f5f9;align-items:center;font-size:.88rem;">'
+								+ '<div>' + formatarDataBR(item.data) + '</div>'
+								+ '<div>' + (item.hora || '-') + '</div>'
+								+ '<div>' + (item.tipo || '-') + '</div>'
+								+ '<div>' + (item.local || '-') + '</div>'
+								+ '<div>' + (item.status || '-') + '</div>'
+								+ '<div>' + (item.encerrada ? 'Sim' : 'Não') + '</div>'
+								+ '<div style="display:flex;gap:6px;flex-wrap:wrap;">'
+								+ '<button type="button" onclick="encerrarReuniaoMensal(' + item.id + ')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:6px 8px;cursor:pointer;">Encerrar</button>'
+								+ btnFoto
+								+ '<button type="button" onclick="excluirReuniaoMensal(' + item.id + ')" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:6px 8px;cursor:pointer;">Excluir</button>'
+								+ '</div>'
+							+ '</div>';
+						}).join('');
+					}
+
+					function renderPainelReuniaoMensal() {
+						var lista = obterReunioesMensaisStorage();
+						renderNotificacoesReuniao(lista);
+						renderProximasReunioes(lista);
+						renderCalendarioReunioes(lista);
+						renderTimelineReunioes(lista);
+						renderRegistrosReunioes(lista);
+					}
+
+					function visualizarFotoReuniaoMensal(id) {
+						var lista = obterReunioesMensaisStorage();
+						var item = lista.find(function(reg) { return String(reg.id) === String(id); });
+						if (!item || !item.foto) {
+							alert('Esta reunião não possui foto.');
+							return;
+						}
+						var w = window.open('', '_blank', 'width=900,height=700');
+						if (!w) return;
+						w.document.write('<html><head><title>Foto da Reunião</title></head><body style="margin:0;display:flex;align-items:center;justify-content:center;background:#0f172a;"><img src="' + item.foto + '" style="max-width:95vw;max-height:95vh;object-fit:contain;"></body></html>');
+						w.document.close();
+					}
+
+					function encerrarReuniaoMensal(id) {
+						var lista = obterReunioesMensaisStorage();
+						var alterou = false;
+						lista.forEach(function(item) {
+							if (String(item.id) === String(id)) {
+								item.encerrada = true;
+								item.status = 'Concluída';
+								alterou = true;
+							}
+						});
+						if (!alterou) return;
+						salvarReunioesMensaisStorage(lista);
+						renderPainelReuniaoMensal();
+					}
+
+					function excluirReuniaoMensal(id) {
+						if (!confirm('Deseja excluir este agendamento de reunião?')) return;
+						var lista = obterReunioesMensaisStorage();
+						var nova = lista.filter(function(item) { return String(item.id) !== String(id); });
+						salvarReunioesMensaisStorage(nova);
+						renderPainelReuniaoMensal();
+					}
+
+					function salvarAgendamentoReuniaoMensal(event) {
+						event.preventDefault();
+
+						var tipo = document.getElementById('reuniao-tipo')?.value || '';
+						var local = document.getElementById('reuniao-local')?.value.trim() || '';
+						var data = document.getElementById('reuniao-data')?.value || '';
+						var hora = document.getElementById('reuniao-hora')?.value || '';
+						var status = document.getElementById('reuniao-status')?.value || 'Agendada';
+						var encerrada = !!document.getElementById('reuniao-encerrada')?.checked;
+						var participantes = parseParticipantesReuniao(document.getElementById('reuniao-participantes')?.value || '');
+						var comentarios = document.getElementById('reuniao-comentarios')?.value.trim() || '';
+						var proximaData = document.getElementById('reuniao-proxima-data')?.value || '';
+						var proximaHora = document.getElementById('reuniao-proxima-hora')?.value || '';
+
+						if (!tipo || !local || !data || !hora) {
+							alert('Preencha tipo, local, data e hora da reunião.');
+							return;
+						}
+
+						var lista = obterReunioesMensaisStorage();
+						lista.push({
+							id: Date.now(),
+							tipo: tipo,
+							local: local,
+							data: data,
+							hora: hora,
+							status: encerrada ? 'Concluída' : status,
+							encerrada: encerrada,
+							participantes: participantes,
+							comentarios: comentarios,
+							proximaData: proximaData,
+							proximaHora: proximaHora,
+							foto: reuniaoMensalFotoAtual || '',
+							criadoEm: new Date().toISOString()
+						});
+
+						salvarReunioesMensaisStorage(lista);
+						limparFormularioReuniaoMensal();
+						renderPainelReuniaoMensal();
+						alert('Agendamento de reunião salvo com sucesso.');
+					}
+
+					function inicializarReuniaoMensal(forcarRender) {
+						if (!reuniaoMensalInicializada) {
+							var form = document.getElementById('form-reuniao-mensal');
+							if (form) {
+								form.addEventListener('submit', salvarAgendamentoReuniaoMensal);
+							}
+
+							var inputFoto = document.getElementById('reuniao-foto');
+							if (inputFoto) {
+								inputFoto.addEventListener('change', function(event) {
+									var arquivo = event && event.target && event.target.files ? event.target.files[0] : null;
+									var preview = document.getElementById('reuniao-foto-preview');
+									if (!arquivo) {
+										reuniaoMensalFotoAtual = '';
+										if (preview) preview.innerHTML = 'Sem foto';
+										return;
+									}
+									var reader = new FileReader();
+									reader.onload = function(e) {
+										reuniaoMensalFotoAtual = e.target && e.target.result ? String(e.target.result) : '';
+										if (preview && reuniaoMensalFotoAtual) {
+											preview.innerHTML = '<img src="' + reuniaoMensalFotoAtual + '" alt="Foto da reunião" style="max-width:100%;max-height:120px;border-radius:6px;object-fit:cover;">';
+										}
+									};
+									reader.readAsDataURL(arquivo);
+								});
+							}
+
+							limparFormularioReuniaoMensal();
+							reuniaoMensalInicializada = true;
+						}
+
+						if (forcarRender || reuniaoMensalInicializada) {
+							renderPainelReuniaoMensal();
+						}
+					}
+
 					var MATRIZ_FERRAMENTAS_STORAGE_KEY = 'hse_matriz_ferramentas_v1';
 					var MATRIZ_FERRAMENTAS_PADRAO = [
 						{ tipo: 'PARTICIPAÇÃO NA RAS', mensal: [1, 8, 15, 15], semanal: [1, 2, 4, 2] },
@@ -9457,7 +9917,7 @@
 											</div>
 											
 											<!-- Card Reunião Mensal -->
-											<div class="dashboard-tool-card" onclick="alert('Funcionalidade em desenvolvimento')" style="background: white; border: 2px solid #e5e7eb; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+											<div class="dashboard-tool-card" onclick="document.querySelectorAll('.nav a[href=\\\"#reuniao\\\"]')[0].click()" style="background: white; border: 2px solid #e5e7eb; padding: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
 												<div style="font-size: 2.5rem; margin-bottom: 12px;">📅</div>
 												<h3 style="font-size: 1.3rem; font-weight: 600; margin: 0 0 8px 0; color: #1f2937;">Reunião Mensal</h3>
 												<p style="color: #6b7280; font-size: 0.95rem; margin: 0;">Controle de reuniões mensais HSE</p>
