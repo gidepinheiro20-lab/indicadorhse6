@@ -8934,7 +8934,12 @@
 
 					function normalizarTipoChecklistParaMatriz(tipo) {
 						var t = normalizarTextoComparacao(tipo);
-						if (t === 'woc mdho') return 'woc mho';
+
+						// Unifica variações de escrita vindas de formulários/importações.
+						if (t.indexOf('participacao') !== -1 && t.indexOf('cpt') !== -1) return 'participacao na cpt';
+						if (t.indexOf('participacao') !== -1 && t.indexOf('ras') !== -1) return 'participacao na ras';
+						if (t === 'woc mdho' || t === 'woc mho') return 'woc mho';
+
 						return t;
 					}
 
