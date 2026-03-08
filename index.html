@@ -8867,7 +8867,11 @@
 					}
 
 					function normalizarTextoComparacao(valor) {
-						var texto = String(valor || '').trim().toLowerCase().replace(/\s+/g, ' ');
+						var texto = String(valor || '')
+							.replace(/[\u00A0\u200B\u200C\u200D\uFEFF]/g, ' ')
+							.trim()
+							.toLowerCase()
+							.replace(/[\s\u00A0]+/g, ' ');
 						if (typeof texto.normalize === 'function') {
 							texto = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 						}
