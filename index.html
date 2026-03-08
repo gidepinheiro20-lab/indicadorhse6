@@ -1844,6 +1844,10 @@
 											<option value="Reunião de Plano de Ação">Reunião de Plano de Ação</option>
 											<option value="Reunião Extraordinária">Reunião Extraordinária</option>
 										</select>
+										<div style="display:flex;gap:8px;margin-top:8px;">
+											<input id="reuniao-novo-tipo" type="text" placeholder="Cadastrar novo tipo" style="flex:1;padding:8px;border:1px solid #cbd5e1;border-radius:8px;">
+											<button type="button" onclick="adicionarTipoReuniaoMensal()" style="background:#0f766e;color:#fff;border:none;border-radius:8px;padding:8px 10px;cursor:pointer;">Adicionar</button>
+										</div>
 									</div>
 									<div>
 										<label style="display:block;font-weight:600;margin-bottom:6px;color:#334155;">Local da reunião</label>
@@ -1916,7 +1920,13 @@
 						<div style="padding:0 24px 24px 24px;display:grid;grid-template-columns:1fr 1fr;gap:20px;">
 							<div style="border:1px solid #e5e7eb;border-radius:12px;padding:14px;background:#fff;">
 								<h3 style="margin:0 0 12px 0;color:#0f172a;">Calendário de reuniões</h3>
+								<div style="display:grid;grid-template-columns:1fr 120px 140px;gap:8px;margin-bottom:10px;">
+									<input id="reuniao-calendario-busca" type="text" placeholder="Pesquisar reunião..." style="padding:8px;border:1px solid #cbd5e1;border-radius:8px;">
+									<select id="reuniao-calendario-ano" style="padding:8px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;"></select>
+									<select id="reuniao-calendario-mes" style="padding:8px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;"></select>
+								</div>
 								<div id="reuniao-calendario"></div>
+								<div id="reuniao-dia-detalhes" style="margin-top:10px;padding:10px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;color:#475569;">Selecione um dia no calendário para ver as reuniões.</div>
 							</div>
 							<div style="border:1px solid #e5e7eb;border-radius:12px;padding:14px;background:#fff;">
 								<h3 style="margin:0 0 12px 0;color:#0f172a;">Linha do tempo</h3>
@@ -8971,8 +8981,72 @@
 					}
 
 					var REUNIAO_MENSAL_STORAGE_KEY = 'hse_reunioes_mensais_v1';
+					var REUNIAO_MENSAL_TIPOS_STORAGE_KEY = 'hse_reunioes_mensais_tipos_v1';
+					var REUNIAO_MENSAL_TIPOS_PADRAO = [
+						'Reunião Mensal HSE',
+						'Reunião de Resultado',
+						'Reunião de Plano de Ação',
+						'Reunião Extraordinária'
+					];
 					var reuniaoMensalInicializada = false;
 					var reuniaoMensalFotoAtual = '';
+					var reuniaoCalendarioEstado = {
+						ano: new Date().getFullYear(),
+						mes: new Date().getMonth(),
+						busca: '',
+						dia: null
+					};
+
+					function obterTiposReuniaoMensalStorage() {
+						try {
+							var dados = JSON.parse(localStorage.getItem(REUNIAO_MENSAL_TIPOS_STORAGE_KEY) || 'null');
+							if (!Array.isArray(dados) || !dados.length) return REUNIAO_MENSAL_TIPOS_PADRAO.slice();
+							return dados.map(function(item) { return String(item || '').trim(); }).filter(Boolean);
+						} catch (e) {
+							return REUNIAO_MENSAL_TIPOS_PADRAO.slice();
+						}
+					}
+
+					function salvarTiposReuniaoMensalStorage(lista) {
+						localStorage.setItem(REUNIAO_MENSAL_TIPOS_STORAGE_KEY, JSON.stringify(lista || []));
+					}
+
+					function popularSelectTiposReuniaoMensal() {
+						var select = document.getElementById('reuniao-tipo');
+						if (!select) return;
+						var valorAtual = select.value;
+						var tipos = obterTiposReuniaoMensalStorage();
+						select.innerHTML = '<option value="">Selecione</option>' + tipos.map(function(tipo) {
+							return '<option value="' + tipo + '">' + tipo + '</option>';
+						}).join('');
+						if (valorAtual && tipos.indexOf(valorAtual) !== -1) {
+							select.value = valorAtual;
+						}
+					}
+
+					function adicionarTipoReuniaoMensal() {
+						var input = document.getElementById('reuniao-novo-tipo');
+						if (!input) return;
+						var novoTipo = String(input.value || '').trim();
+						if (!novoTipo) {
+							alert('Informe o nome do tipo de reunião.');
+							return;
+						}
+						var tipos = obterTiposReuniaoMensalStorage();
+						var existe = tipos.some(function(item) {
+							return normalizarTextoComparacao(item) === normalizarTextoComparacao(novoTipo);
+						});
+						if (existe) {
+							alert('Esse tipo de reunião já está cadastrado.');
+							return;
+						}
+						tipos.push(novoTipo);
+						salvarTiposReuniaoMensalStorage(tipos);
+						popularSelectTiposReuniaoMensal();
+						var select = document.getElementById('reuniao-tipo');
+						if (select) select.value = novoTipo;
+						input.value = '';
+					}
 
 					function obterReunioesMensaisStorage() {
 						try {
@@ -9001,6 +9075,20 @@
 							var ta = da ? da.getTime() : 0;
 							var tb = db ? db.getTime() : 0;
 							return ta - tb;
+						});
+					}
+
+					function filtrarReunioesParaCalendario(lista) {
+						var busca = normalizarTextoComparacao(reuniaoCalendarioEstado.busca || '');
+						if (!busca) return (lista || []).slice();
+						return (lista || []).filter(function(item) {
+							var texto = [
+								item.tipo,
+								item.local,
+								item.comentarios,
+								(item.participantes || []).join(' ')
+							].join(' ');
+							return normalizarTextoComparacao(texto).indexOf(busca) !== -1;
 						});
 					}
 
@@ -9095,22 +9183,22 @@
 					function renderCalendarioReunioes(lista) {
 						var alvo = document.getElementById('reuniao-calendario');
 						if (!alvo) return;
-
-						var hoje = new Date();
-						var ano = hoje.getFullYear();
-						var mes = hoje.getMonth();
+						var ano = reuniaoCalendarioEstado.ano;
+						var mes = reuniaoCalendarioEstado.mes;
 						var primeiro = new Date(ano, mes, 1);
 						var ultimoDia = new Date(ano, mes + 1, 0).getDate();
 						var offset = primeiro.getDay();
+						var filtradas = filtrarReunioesParaCalendario(lista);
 
 						var qtdPorDia = {};
-						(lista || []).forEach(function(item) {
+						filtradas.forEach(function(item) {
 							if (item && item.data && item.data.length === 10 && item.data.slice(0, 7) === (ano + '-' + String(mes + 1).padStart(2, '0'))) {
 								qtdPorDia[item.data] = (qtdPorDia[item.data] || 0) + 1;
 							}
 						});
 
-						var html = '<div style="font-weight:700;margin-bottom:8px;color:#334155;">' + hoje.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) + '</div>';
+						var dataCabecalho = new Date(ano, mes, 1);
+						var html = '<div style="font-weight:700;margin-bottom:8px;color:#334155;">' + dataCabecalho.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) + '</div>';
 						html += '<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;font-size:.83rem;">';
 						['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].forEach(function(dia) {
 							html += '<div style="font-weight:700;color:#475569;text-align:center;padding:4px 0;">' + dia + '</div>';
@@ -9123,15 +9211,51 @@
 						for (var dia = 1; dia <= ultimoDia; dia++) {
 							var dataIso = ano + '-' + String(mes + 1).padStart(2, '0') + '-' + String(dia).padStart(2, '0');
 							var qtd = qtdPorDia[dataIso] || 0;
+							var selecionado = reuniaoCalendarioEstado.dia === dataIso;
 							var estilo = qtd > 0 ? 'background:#ccfbf1;border:1px solid #14b8a6;color:#0f766e;' : 'background:#f8fafc;border:1px solid #e2e8f0;color:#334155;';
-							html += '<div style="' + estilo + 'border-radius:8px;min-height:46px;padding:4px;display:flex;flex-direction:column;justify-content:space-between;">';
+							if (selecionado) estilo = 'background:#0f766e;border:1px solid #0f766e;color:#ffffff;';
+							html += '<button type="button" onclick="selecionarDiaCalendarioReuniao(\'' + dataIso + '\')" style="' + estilo + 'border-radius:8px;min-height:46px;padding:4px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;">';
 							html += '<div style="font-weight:700;">' + dia + '</div>';
 							html += qtd > 0 ? '<div style="font-size:.72rem;font-weight:700;">' + qtd + ' reun.</div>' : '<div></div>';
-							html += '</div>';
+							html += '</button>';
 						}
 
 						html += '</div>';
 						alvo.innerHTML = html;
+						renderDetalhesDiaCalendarioReuniao(filtradas);
+					}
+
+					function selecionarDiaCalendarioReuniao(dataIso) {
+						reuniaoCalendarioEstado.dia = dataIso;
+						renderCalendarioReunioes(obterReunioesMensaisStorage());
+					}
+
+					function renderDetalhesDiaCalendarioReuniao(listaFiltrada) {
+						var alvo = document.getElementById('reuniao-dia-detalhes');
+						if (!alvo) return;
+						var diaSelecionado = reuniaoCalendarioEstado.dia;
+						if (!diaSelecionado) {
+							alvo.innerHTML = 'Selecione um dia no calendário para ver as reuniões.';
+							return;
+						}
+
+						var reunioesDoDia = (listaFiltrada || []).filter(function(item) {
+							return item && item.data === diaSelecionado;
+						});
+
+						if (!reunioesDoDia.length) {
+							alvo.innerHTML = '<strong>' + formatarDataBR(diaSelecionado) + '</strong><br>Nenhuma reunião encontrada para este dia com o filtro atual.';
+							return;
+						}
+
+						alvo.innerHTML = '<strong>' + formatarDataBR(diaSelecionado) + '</strong>' + reunioesDoDia.map(function(item) {
+							return '<div style="margin-top:8px;padding:8px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;">'
+								+ '<div><strong>' + (item.tipo || '-') + '</strong> | ' + (item.hora || '-') + '</div>'
+								+ '<div style="font-size:.85rem;color:#475569;">Local: ' + (item.local || '-') + ' | Status: ' + (item.status || '-') + '</div>'
+								+ '<div style="font-size:.85rem;color:#475569;">Participantes: ' + ((item.participantes || []).join(', ') || '-') + '</div>'
+								+ '<div style="font-size:.85rem;color:#475569;">Comentários: ' + (item.comentarios || '-') + '</div>'
+							+ '</div>';
+						}).join('');
 					}
 
 					function renderTimelineReunioes(lista) {
@@ -9183,8 +9307,43 @@
 						}).join('');
 					}
 
+					function atualizarControlesCalendarioReuniao(lista) {
+						var inputBusca = document.getElementById('reuniao-calendario-busca');
+						var selectAno = document.getElementById('reuniao-calendario-ano');
+						var selectMes = document.getElementById('reuniao-calendario-mes');
+						if (!inputBusca || !selectAno || !selectMes) return;
+
+						if (inputBusca.value !== reuniaoCalendarioEstado.busca) {
+							inputBusca.value = reuniaoCalendarioEstado.busca;
+						}
+
+						var anoAtual = new Date().getFullYear();
+						var anosMap = {};
+						(lista || []).forEach(function(item) {
+							if (item && item.data && /^\d{4}-\d{2}-\d{2}$/.test(item.data)) {
+								anosMap[item.data.slice(0, 4)] = true;
+							}
+						});
+						anosMap[String(anoAtual)] = true;
+						anosMap[String(anoAtual - 1)] = true;
+						anosMap[String(anoAtual + 1)] = true;
+						var anos = Object.keys(anosMap).map(function(a) { return parseInt(a, 10); }).filter(function(a) { return !isNaN(a); }).sort(function(a, b) { return a - b; });
+
+						selectAno.innerHTML = anos.map(function(ano) {
+							return '<option value="' + ano + '">' + ano + '</option>';
+						}).join('');
+						selectAno.value = String(reuniaoCalendarioEstado.ano);
+
+						var meses = ['Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+						selectMes.innerHTML = meses.map(function(nome, idx) {
+							return '<option value="' + idx + '">' + nome + '</option>';
+						}).join('');
+						selectMes.value = String(reuniaoCalendarioEstado.mes);
+					}
+
 					function renderPainelReuniaoMensal() {
 						var lista = obterReunioesMensaisStorage();
+						atualizarControlesCalendarioReuniao(lista);
 						renderNotificacoesReuniao(lista);
 						renderProximasReunioes(lista);
 						renderCalendarioReunioes(lista);
@@ -9272,9 +9431,48 @@
 
 					function inicializarReuniaoMensal(forcarRender) {
 						if (!reuniaoMensalInicializada) {
+							popularSelectTiposReuniaoMensal();
+
 							var form = document.getElementById('form-reuniao-mensal');
 							if (form) {
 								form.addEventListener('submit', salvarAgendamentoReuniaoMensal);
+							}
+
+							var inputNovoTipo = document.getElementById('reuniao-novo-tipo');
+							if (inputNovoTipo) {
+								inputNovoTipo.addEventListener('keydown', function(e) {
+									if (e.key === 'Enter') {
+										e.preventDefault();
+										adicionarTipoReuniaoMensal();
+									}
+								});
+							}
+
+							var inputBusca = document.getElementById('reuniao-calendario-busca');
+							if (inputBusca) {
+								inputBusca.addEventListener('input', function() {
+									reuniaoCalendarioEstado.busca = String(inputBusca.value || '').trim();
+									reuniaoCalendarioEstado.dia = null;
+									renderPainelReuniaoMensal();
+								});
+							}
+
+							var selectAno = document.getElementById('reuniao-calendario-ano');
+							if (selectAno) {
+								selectAno.addEventListener('change', function() {
+									reuniaoCalendarioEstado.ano = parseInt(selectAno.value, 10) || new Date().getFullYear();
+									reuniaoCalendarioEstado.dia = null;
+									renderPainelReuniaoMensal();
+								});
+							}
+
+							var selectMes = document.getElementById('reuniao-calendario-mes');
+							if (selectMes) {
+								selectMes.addEventListener('change', function() {
+									reuniaoCalendarioEstado.mes = parseInt(selectMes.value, 10) || 0;
+									reuniaoCalendarioEstado.dia = null;
+									renderPainelReuniaoMensal();
+								});
 							}
 
 							var inputFoto = document.getElementById('reuniao-foto');
