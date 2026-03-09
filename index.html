@@ -2020,8 +2020,8 @@
 						<div style="padding:0 20px 20px 20px;display:grid;grid-template-columns:1.3fr .9fr;gap:14px;align-items:start;">
 							<div style="border:1px solid #d1d5db;border-radius:12px;background:#fff;overflow:hidden;">
 								<div style="overflow-x:auto;overflow-y:hidden;">
-									<div style="min-width:1160px;">
-										<div style="display:grid;grid-template-columns:110px 140px 1.4fr 120px 130px 130px 130px 1.1fr 1fr;gap:8px;padding:10px 12px;background:#1d4ed8;color:#fff;font-weight:700;font-size:.9rem;align-items:center;">
+									<div style="min-width:1280px;">
+										<div style="display:grid;grid-template-columns:110px 140px 1.4fr 120px 130px 130px 130px 1.1fr 1fr 120px;gap:8px;padding:10px 12px;background:#1d4ed8;color:#fff;font-weight:700;font-size:.9rem;align-items:center;">
 											<div>Mês</div>
 											<div>Situação</div>
 											<div>Nome</div>
@@ -2031,6 +2031,7 @@
 											<div>Data Evolução</div>
 											<div>Padrinho</div>
 											<div>Função Padrinho</div>
+											<div>Ações</div>
 										</div>
 										<div id="novatos-tabela-registros" style="overflow:visible;"></div>
 									</div>
@@ -2040,12 +2041,13 @@
 							<div style="border:1px solid #d1d5db;border-radius:12px;background:#fff;overflow:hidden;">
 								<div style="padding:10px 12px;background:#f1f5f9;font-weight:700;color:#0f172a;">Lista de Padrinhos</div>
 								<div style="overflow-x:auto;overflow-y:hidden;">
-									<div style="min-width:560px;">
-										<div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:8px;padding:8px 10px;background:#e2e8f0;font-size:.82rem;font-weight:700;color:#334155;">
+									<div style="min-width:680px;">
+										<div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 110px;gap:8px;padding:8px 10px;background:#e2e8f0;font-size:.82rem;font-weight:700;color:#334155;">
 											<div>Nome</div>
 											<div>Função</div>
 											<div>Até quando</div>
 											<div>Status</div>
+											<div>Ações</div>
 										</div>
 										<div id="novatos-tabela-padrinhos" style="max-height:560px;overflow:auto;"></div>
 									</div>
@@ -9159,7 +9161,7 @@
 					function renderTabelaNovatos(lista) {
 						var alvo = document.getElementById('novatos-tabela-registros');
 						if (!alvo) return;
-						alvo.style.minWidth = '1160px';
+						alvo.style.minWidth = '1280px';
 
 						if (!lista.length) {
 							alvo.innerHTML = '<div style="padding:24px;text-align:center;color:#94a3b8;">Nenhum novato cadastrado.</div>';
@@ -9180,7 +9182,7 @@
 							var corSit = situacao === 'Em Regra' ? '#1d4ed8' : '#ca8a04';
 							var bgSit = situacao === 'Em Regra' ? '#dbeafe' : '#fef3c7';
 
-							return '<div style="display:grid;grid-template-columns:110px 140px 1.4fr 120px 130px 130px 130px 1.1fr 1fr;gap:8px;padding:8px 12px;border-top:1px solid #e2e8f0;align-items:center;font-size:.92rem;">'
+							return '<div style="display:grid;grid-template-columns:110px 140px 1.4fr 120px 130px 130px 130px 1.1fr 1fr 120px;gap:8px;padding:8px 12px;border-top:1px solid #e2e8f0;align-items:center;font-size:.92rem;">'
 								+ '<div style="font-weight:700;color:#334155;">' + (mostrarMes ? mesTexto : '') + '</div>'
 								+ '<div><span style="display:inline-block;padding:4px 8px;border-radius:999px;background:' + bgSit + ';color:' + corSit + ';font-weight:700;">' + situacao + '</span></div>'
 								+ '<div style="font-weight:600;color:#0f172a;">' + (item.nome || '-') + '</div>'
@@ -9190,6 +9192,7 @@
 								+ '<div>' + formatarDataBR(dataEvolucao) + '</div>'
 								+ '<div>' + (item.padrinho || '-') + '</div>'
 								+ '<div>' + (item.funcaoPadrinho || '-') + '</div>'
+								+ '<div><button type="button" onclick="excluirNovatoCadastro(' + Number(item.id || 0) + ')" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.78rem;font-weight:700;">Excluir</button></div>'
 							+ '</div>';
 						}).join('');
 					}
@@ -9197,7 +9200,7 @@
 					function renderTabelaPadrinhos(lista) {
 						var alvo = document.getElementById('novatos-tabela-padrinhos');
 						if (!alvo) return;
-						alvo.style.minWidth = '560px';
+						alvo.style.minWidth = '680px';
 
 						var mapa = {};
 						(lista || []).forEach(function(item) {
@@ -9235,13 +9238,68 @@
 							var status = disponivel ? 'Disponível' : 'Não disponível';
 							var cor = disponivel ? '#16a34a' : '#dc2626';
 							var bg = disponivel ? '#dcfce7' : '#fee2e2';
-							return '<div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:8px;padding:8px 10px;border-top:1px solid #e2e8f0;align-items:center;font-size:.82rem;">'
+							var chaveCodificada = encodeURIComponent(normalizarTextoComparacao((item.nome || '') + '|' + (item.funcao || '')));
+							return '<div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 110px;gap:8px;padding:8px 10px;border-top:1px solid #e2e8f0;align-items:center;font-size:.82rem;">'
 								+ '<div>' + item.nome + '</div>'
 								+ '<div>' + item.funcao + '</div>'
 								+ '<div>' + (item.ateQuando ? formatarDataBR(item.ateQuando) : '-') + '</div>'
 								+ '<div><span style="display:inline-block;padding:3px 8px;border-radius:999px;background:' + bg + ';color:' + cor + ';font-weight:700;">' + status + '</span><div style="font-size:.72rem;color:#64748b;margin-top:2px;">Ativos: ' + item.ativos + '/3</div></div>'
+								+ '<div><button type="button" onclick="excluirPadrinhoCadastro(\'' + chaveCodificada + '\')" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.78rem;font-weight:700;">Excluir</button></div>'
 							+ '</div>';
 						}).join('');
+					}
+
+					function excluirNovatoCadastro(id) {
+						var idNumerico = Number(id || 0);
+						if (!idNumerico) {
+							alert('Não foi possível identificar o novato para exclusão.');
+							return;
+						}
+						var lista = obterNovatosStorage();
+						var alvo = lista.find(function(item) { return Number(item.id || 0) === idNumerico; });
+						if (!alvo) {
+							alert('Novato não encontrado.');
+							return;
+						}
+						var confirmar = window.confirm('Excluir o novato "' + (alvo.nome || '-') + '"?');
+						if (!confirmar) return;
+						var atualizada = lista.filter(function(item) {
+							return Number(item.id || 0) !== idNumerico;
+						});
+						salvarNovatosStorage(atualizada);
+						renderProgramaNovatos();
+					}
+
+					function excluirPadrinhoCadastro(chaveCodificada) {
+						if (!chaveCodificada) {
+							alert('Não foi possível identificar o padrinho para exclusão.');
+							return;
+						}
+						var chave = '';
+						try {
+							chave = decodeURIComponent(chaveCodificada);
+						} catch (e) {
+							chave = String(chaveCodificada || '');
+						}
+						var lista = obterNovatosStorage();
+						var relacionados = lista.filter(function(item) {
+							var chaveItem = normalizarTextoComparacao((item.padrinho || '') + '|' + (item.funcaoPadrinho || ''));
+							return chaveItem === chave;
+						});
+						if (!relacionados.length) {
+							alert('Padrinho não encontrado.');
+							return;
+						}
+						var nomePadrinho = relacionados[0].padrinho || '-';
+						var qtd = relacionados.length;
+						var confirmar = window.confirm('Excluir o padrinho "' + nomePadrinho + '" e remover ' + qtd + ' novato(s) vinculado(s)?');
+						if (!confirmar) return;
+						var atualizada = lista.filter(function(item) {
+							var chaveItem = normalizarTextoComparacao((item.padrinho || '') + '|' + (item.funcaoPadrinho || ''));
+							return chaveItem !== chave;
+						});
+						salvarNovatosStorage(atualizada);
+						renderProgramaNovatos();
 					}
 
 					function renderProgramaNovatos() {
