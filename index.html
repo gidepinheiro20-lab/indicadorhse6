@@ -2019,29 +2019,37 @@
 
 						<div style="padding:0 20px 20px 20px;display:grid;grid-template-columns:1.3fr .9fr;gap:14px;align-items:start;">
 							<div style="border:1px solid #d1d5db;border-radius:12px;background:#fff;overflow:hidden;">
-								<div style="display:grid;grid-template-columns:110px 140px 1.4fr 120px 130px 130px 130px 1.1fr 1fr;gap:8px;padding:10px 12px;background:#1d4ed8;color:#fff;font-weight:700;font-size:.9rem;align-items:center;">
-									<div>Mês</div>
-									<div>Situação</div>
-									<div>Nome</div>
-									<div>Matrícula</div>
-									<div>Função</div>
-									<div>Data Entrada</div>
-									<div>Data Evolução</div>
-									<div>Padrinho</div>
-									<div>Função Padrinho</div>
+								<div style="overflow-x:auto;overflow-y:hidden;">
+									<div style="min-width:1160px;">
+										<div style="display:grid;grid-template-columns:110px 140px 1.4fr 120px 130px 130px 130px 1.1fr 1fr;gap:8px;padding:10px 12px;background:#1d4ed8;color:#fff;font-weight:700;font-size:.9rem;align-items:center;">
+											<div>Mês</div>
+											<div>Situação</div>
+											<div>Nome</div>
+											<div>Matrícula</div>
+											<div>Função</div>
+											<div>Data Entrada</div>
+											<div>Data Evolução</div>
+											<div>Padrinho</div>
+											<div>Função Padrinho</div>
+										</div>
+										<div id="novatos-tabela-registros" style="overflow:visible;"></div>
+									</div>
 								</div>
-								<div id="novatos-tabela-registros" style="overflow:visible;"></div>
 							</div>
 
 							<div style="border:1px solid #d1d5db;border-radius:12px;background:#fff;overflow:hidden;">
 								<div style="padding:10px 12px;background:#f1f5f9;font-weight:700;color:#0f172a;">Lista de Padrinhos</div>
-								<div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:8px;padding:8px 10px;background:#e2e8f0;font-size:.82rem;font-weight:700;color:#334155;">
-									<div>Nome</div>
-									<div>Função</div>
-									<div>Até quando</div>
-									<div>Status</div>
+								<div style="overflow-x:auto;overflow-y:hidden;">
+									<div style="min-width:560px;">
+										<div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:8px;padding:8px 10px;background:#e2e8f0;font-size:.82rem;font-weight:700;color:#334155;">
+											<div>Nome</div>
+											<div>Função</div>
+											<div>Até quando</div>
+											<div>Status</div>
+										</div>
+										<div id="novatos-tabela-padrinhos" style="max-height:560px;overflow:auto;"></div>
+									</div>
 								</div>
-								<div id="novatos-tabela-padrinhos" style="max-height:560px;overflow:auto;"></div>
 							</div>
 						</div>
 					</div>
@@ -9151,6 +9159,7 @@
 					function renderTabelaNovatos(lista) {
 						var alvo = document.getElementById('novatos-tabela-registros');
 						if (!alvo) return;
+						alvo.style.minWidth = '1160px';
 
 						if (!lista.length) {
 							alvo.innerHTML = '<div style="padding:24px;text-align:center;color:#94a3b8;">Nenhum novato cadastrado.</div>';
@@ -9188,6 +9197,7 @@
 					function renderTabelaPadrinhos(lista) {
 						var alvo = document.getElementById('novatos-tabela-padrinhos');
 						if (!alvo) return;
+						alvo.style.minWidth = '560px';
 
 						var mapa = {};
 						(lista || []).forEach(function(item) {
