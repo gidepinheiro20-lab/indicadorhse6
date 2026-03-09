@@ -2019,7 +2019,7 @@
 
 						<div style="padding:0 20px 20px 20px;display:grid;grid-template-columns:1.3fr .9fr;gap:14px;align-items:start;">
 							<div style="border:1px solid #d1d5db;border-radius:12px;background:#fff;overflow:hidden;">
-								<div style="display:grid;grid-template-columns:110px 140px 1.4fr 120px 130px 130px 130px 1.1fr 1fr;gap:8px;padding:10px 12px;background:#1d4ed8;color:#fff;font-weight:700;font-size:.84rem;align-items:center;">
+								<div style="display:grid;grid-template-columns:110px 140px 1.4fr 120px 130px 130px 130px 1.1fr 1fr;gap:8px;padding:10px 12px;background:#1d4ed8;color:#fff;font-weight:700;font-size:.9rem;align-items:center;">
 									<div>Mês</div>
 									<div>Situação</div>
 									<div>Nome</div>
@@ -2030,7 +2030,7 @@
 									<div>Padrinho</div>
 									<div>Função Padrinho</div>
 								</div>
-								<div id="novatos-tabela-registros" style="max-height:560px;overflow:auto;"></div>
+								<div id="novatos-tabela-registros" style="overflow:visible;"></div>
 							</div>
 
 							<div style="border:1px solid #d1d5db;border-radius:12px;background:#fff;overflow:hidden;">
@@ -9138,6 +9138,16 @@
 						if (situacao) situacao.value = 'Falta de conhecimento';
 					}
 
+					function contarNovatosAtivosDoPadrinho(lista, padrinho, funcaoPadrinho) {
+						var chaveBase = normalizarTextoComparacao((padrinho || '') + '|' + (funcaoPadrinho || ''));
+						if (!chaveBase) return 0;
+						return (lista || []).filter(function(item) {
+							var chaveItem = normalizarTextoComparacao((item.padrinho || '') + '|' + (item.funcaoPadrinho || ''));
+							if (chaveItem !== chaveBase) return false;
+							return calcularSituacaoAutomaticaNovato(item) !== 'Em Regra';
+						}).length;
+					}
+
 					function renderTabelaNovatos(lista) {
 						var alvo = document.getElementById('novatos-tabela-registros');
 						if (!alvo) return;
@@ -9161,7 +9171,7 @@
 							var corSit = situacao === 'Em Regra' ? '#1d4ed8' : '#ca8a04';
 							var bgSit = situacao === 'Em Regra' ? '#dbeafe' : '#fef3c7';
 
-							return '<div style="display:grid;grid-template-columns:110px 140px 1.4fr 120px 130px 130px 130px 1.1fr 1fr;gap:8px;padding:8px 12px;border-top:1px solid #e2e8f0;align-items:center;font-size:.83rem;">'
+							return '<div style="display:grid;grid-template-columns:110px 140px 1.4fr 120px 130px 130px 130px 1.1fr 1fr;gap:8px;padding:8px 12px;border-top:1px solid #e2e8f0;align-items:center;font-size:.92rem;">'
 								+ '<div style="font-weight:700;color:#334155;">' + (mostrarMes ? mesTexto : '') + '</div>'
 								+ '<div><span style="display:inline-block;padding:4px 8px;border-radius:999px;background:' + bgSit + ';color:' + corSit + ';font-weight:700;">' + situacao + '</span></div>'
 								+ '<div style="font-weight:600;color:#0f172a;">' + (item.nome || '-') + '</div>'
@@ -9211,7 +9221,7 @@
 						}
 
 						alvo.innerHTML = padrinhos.map(function(item) {
-							var disponivel = item.ativos < 2;
+							var disponivel = item.ativos < 3;
 							var status = disponivel ? 'Disponível' : 'Não disponível';
 							var cor = disponivel ? '#16a34a' : '#dc2626';
 							var bg = disponivel ? '#dcfce7' : '#fee2e2';
@@ -9219,7 +9229,7 @@
 								+ '<div>' + item.nome + '</div>'
 								+ '<div>' + item.funcao + '</div>'
 								+ '<div>' + (item.ateQuando ? formatarDataBR(item.ateQuando) : '-') + '</div>'
-								+ '<div><span style="display:inline-block;padding:3px 8px;border-radius:999px;background:' + bg + ';color:' + cor + ';font-weight:700;">' + status + '</span></div>'
+								+ '<div><span style="display:inline-block;padding:3px 8px;border-radius:999px;background:' + bg + ';color:' + cor + ';font-weight:700;">' + status + '</span><div style="font-size:.72rem;color:#64748b;margin-top:2px;">Ativos: ' + item.ativos + '/3</div></div>'
 							+ '</div>';
 						}).join('');
 					}
@@ -9258,6 +9268,11 @@
 						}
 
 						var lista = obterNovatosStorage();
+						var ativosDoPadrinho = contarNovatosAtivosDoPadrinho(lista, padrinho, funcaoPadrinho);
+						if (ativosDoPadrinho >= 3) {
+							alert('Este padrinho já está responsável por 3 novatos ativos. Escolha um padrinho disponível.');
+							return;
+						}
 						lista.push({
 							id: Date.now(),
 							nome: nome,
