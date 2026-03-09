@@ -1945,6 +1945,107 @@
 						</div>
 					</div>
 				</div>
+
+				<!-- Seção Programa de Novatos -->
+				<div id="novatos" style="display:none;max-width:none;margin:0;">
+					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3;overflow:hidden;">
+						<div style="background:linear-gradient(135deg,#1d4ed8 0%,#2563eb 100%);color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+							<div>
+								<h2 style="margin:0;font-size:1.35rem;font-weight:700;">Controle de Novatos</h2>
+								<div style="opacity:.92;margin-top:4px;font-size:.95rem;">Acompanhamento de entrada, evolução em 30 dias e regularização em 45 dias.</div>
+							</div>
+							<button type="button" onclick="inicializarProgramaNovatos(true)" style="background:#fff;color:#1d4ed8;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Atualizar Controle</button>
+						</div>
+
+						<div style="padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+							<div style="border:1px solid #bfdbfe;border-radius:10px;padding:12px;background:#eff6ff;">
+								<div style="font-size:.8rem;color:#1e3a8a;font-weight:700;">NOVATOS CADASTRADOS</div>
+								<div id="novatos-total" style="font-size:1.4rem;color:#1e3a8a;font-weight:800;margin-top:4px;">0</div>
+							</div>
+							<div style="border:1px solid #fcd34d;border-radius:10px;padding:12px;background:#fef3c7;">
+								<div style="font-size:.8rem;color:#92400e;font-weight:700;">FALTA DE CONHECIMENTO</div>
+								<div id="novatos-falta" style="font-size:1.4rem;color:#92400e;font-weight:800;margin-top:4px;">0</div>
+							</div>
+							<div style="border:1px solid #93c5fd;border-radius:10px;padding:12px;background:#dbeafe;">
+								<div style="font-size:.8rem;color:#1e3a8a;font-weight:700;">EM REGRA</div>
+								<div id="novatos-regra" style="font-size:1.4rem;color:#1e3a8a;font-weight:800;margin-top:4px;">0</div>
+							</div>
+						</div>
+
+						<div style="padding:0 20px 20px 20px;">
+							<div style="background:#f8fafc;border:1px solid #dbeafe;border-radius:12px;padding:14px;">
+								<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+									<h3 style="margin:0;color:#0f172a;">Incluir Novato</h3>
+								</div>
+								<form id="form-novato" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;">
+									<div>
+										<label style="display:block;font-size:.85rem;font-weight:700;color:#334155;margin-bottom:5px;">Nome</label>
+										<input id="novato-nome" type="text" required style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;">
+									</div>
+									<div>
+										<label style="display:block;font-size:.85rem;font-weight:700;color:#334155;margin-bottom:5px;">Função</label>
+										<input id="novato-funcao" type="text" required style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;">
+									</div>
+									<div>
+										<label style="display:block;font-size:.85rem;font-weight:700;color:#334155;margin-bottom:5px;">Matrícula</label>
+										<input id="novato-matricula" type="text" required style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;">
+									</div>
+									<div>
+										<label style="display:block;font-size:.85rem;font-weight:700;color:#334155;margin-bottom:5px;">Data de Entrada</label>
+										<input id="novato-data-entrada" type="date" required style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;">
+									</div>
+									<div>
+										<label style="display:block;font-size:.85rem;font-weight:700;color:#334155;margin-bottom:5px;">Situação</label>
+										<select id="novato-situacao" style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;">
+											<option value="Falta de conhecimento">Falta de conhecimento</option>
+											<option value="Em Regra">Em Regra</option>
+										</select>
+									</div>
+									<div>
+										<label style="display:block;font-size:.85rem;font-weight:700;color:#334155;margin-bottom:5px;">Padrinho</label>
+										<input id="novato-padrinho" type="text" required style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;">
+									</div>
+									<div>
+										<label style="display:block;font-size:.85rem;font-weight:700;color:#334155;margin-bottom:5px;">Função do Padrinho</label>
+										<input id="novato-funcao-padrinho" type="text" required style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;">
+									</div>
+									<div style="display:flex;align-items:end;justify-content:flex-end;gap:8px;">
+										<button type="button" onclick="limparFormularioNovato()" style="background:#64748b;color:#fff;border:none;border-radius:8px;padding:10px 12px;cursor:pointer;">Limpar</button>
+										<button type="submit" style="background:#1d4ed8;color:#fff;border:none;border-radius:8px;padding:10px 12px;font-weight:700;cursor:pointer;">Incluir Novato</button>
+									</div>
+								</form>
+							</div>
+						</div>
+
+						<div style="padding:0 20px 20px 20px;display:grid;grid-template-columns:1.3fr .9fr;gap:14px;align-items:start;">
+							<div style="border:1px solid #d1d5db;border-radius:12px;background:#fff;overflow:hidden;">
+								<div style="display:grid;grid-template-columns:110px 140px 1.4fr 120px 130px 130px 130px 1.1fr 1fr;gap:8px;padding:10px 12px;background:#1d4ed8;color:#fff;font-weight:700;font-size:.84rem;align-items:center;">
+									<div>Mês</div>
+									<div>Situação</div>
+									<div>Nome</div>
+									<div>Matrícula</div>
+									<div>Função</div>
+									<div>Data Entrada</div>
+									<div>Data Evolução</div>
+									<div>Padrinho</div>
+									<div>Função Padrinho</div>
+								</div>
+								<div id="novatos-tabela-registros" style="max-height:560px;overflow:auto;"></div>
+							</div>
+
+							<div style="border:1px solid #d1d5db;border-radius:12px;background:#fff;overflow:hidden;">
+								<div style="padding:10px 12px;background:#f1f5f9;font-weight:700;color:#0f172a;">Lista de Padrinhos</div>
+								<div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:8px;padding:8px 10px;background:#e2e8f0;font-size:.82rem;font-weight:700;color:#334155;">
+									<div>Nome</div>
+									<div>Função</div>
+									<div>Até quando</div>
+									<div>Status</div>
+								</div>
+								<div id="novatos-tabela-padrinhos" style="max-height:560px;overflow:auto;"></div>
+							</div>
+						</div>
+					</div>
+				</div>
 				
 				<!-- Seção Inspeção de HSE -->
 				<div id="inspecao" style="display:none;max-width:none;margin:0;">
@@ -3237,6 +3338,7 @@
 						document.getElementById('frequencia').style.display = 'none';
 						document.getElementById('cpt').style.display = 'none';
 						document.getElementById('reuniao').style.display = 'none';
+						document.getElementById('novatos').style.display = 'none';
 						document.getElementById('inspecao').style.display = 'none';
 						document.getElementById('art').style.display = 'none';
 						document.getElementById('checklist').style.display = 'none';
@@ -3290,6 +3392,11 @@
 								hideAllSections();
 								document.getElementById('reuniao').style.display = 'block';
 								inicializarReuniaoMensal(true);
+								break;
+							case 'novatos':
+								hideAllSections();
+								document.getElementById('novatos').style.display = 'block';
+								inicializarProgramaNovatos(true);
 								break;
 							case 'art':
 								hideAllSections();
@@ -8979,6 +9086,208 @@
 						};
 
 						leitor.readAsArrayBuffer(arquivo);
+					}
+
+					var NOVATOS_STORAGE_KEY = 'hse_programa_novatos_v1';
+					var novatosInicializado = false;
+
+					function obterNovatosStorage() {
+						try {
+							var dados = JSON.parse(localStorage.getItem(NOVATOS_STORAGE_KEY) || '[]');
+							return Array.isArray(dados) ? dados : [];
+						} catch (e) {
+							return [];
+						}
+					}
+
+					function salvarNovatosStorage(lista) {
+						localStorage.setItem(NOVATOS_STORAGE_KEY, JSON.stringify(lista || []));
+					}
+
+					function adicionarDiasISO(dataISO, dias) {
+						if (!dataISO) return '';
+						var data = new Date(dataISO + 'T00:00:00');
+						if (isNaN(data.getTime())) return '';
+						data.setDate(data.getDate() + dias);
+						return data.toISOString().slice(0, 10);
+					}
+
+					function calcularSituacaoAutomaticaNovato(item) {
+						if (!item || !item.dataEntrada) return 'Falta de conhecimento';
+						var entrada = new Date(item.dataEntrada + 'T00:00:00');
+						if (isNaN(entrada.getTime())) return 'Falta de conhecimento';
+						var hoje = new Date();
+						hoje.setHours(0, 0, 0, 0);
+						var diffDias = Math.floor((hoje.getTime() - entrada.getTime()) / (24 * 60 * 60 * 1000));
+						return diffDias >= 45 ? 'Em Regra' : 'Falta de conhecimento';
+					}
+
+					function obterMesAnoTexto(dataISO) {
+						if (!dataISO) return '-';
+						var data = new Date(dataISO + 'T00:00:00');
+						if (isNaN(data.getTime())) return '-';
+						return data.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+					}
+
+					function limparFormularioNovato() {
+						var form = document.getElementById('form-novato');
+						if (form) form.reset();
+						var entrada = document.getElementById('novato-data-entrada');
+						if (entrada) entrada.value = new Date().toISOString().slice(0, 10);
+						var situacao = document.getElementById('novato-situacao');
+						if (situacao) situacao.value = 'Falta de conhecimento';
+					}
+
+					function renderTabelaNovatos(lista) {
+						var alvo = document.getElementById('novatos-tabela-registros');
+						if (!alvo) return;
+
+						if (!lista.length) {
+							alvo.innerHTML = '<div style="padding:24px;text-align:center;color:#94a3b8;">Nenhum novato cadastrado.</div>';
+							return;
+						}
+
+						var ordenada = lista.slice().sort(function(a, b) {
+							return String(a.dataEntrada || '').localeCompare(String(b.dataEntrada || ''));
+						});
+
+						var ultimoMes = '';
+						alvo.innerHTML = ordenada.map(function(item) {
+							var mesTexto = obterMesAnoTexto(item.dataEntrada);
+							var mostrarMes = mesTexto !== ultimoMes;
+							if (mostrarMes) ultimoMes = mesTexto;
+							var situacao = calcularSituacaoAutomaticaNovato(item);
+							var dataEvolucao = adicionarDiasISO(item.dataEntrada, 30);
+							var corSit = situacao === 'Em Regra' ? '#1d4ed8' : '#ca8a04';
+							var bgSit = situacao === 'Em Regra' ? '#dbeafe' : '#fef3c7';
+
+							return '<div style="display:grid;grid-template-columns:110px 140px 1.4fr 120px 130px 130px 130px 1.1fr 1fr;gap:8px;padding:8px 12px;border-top:1px solid #e2e8f0;align-items:center;font-size:.83rem;">'
+								+ '<div style="font-weight:700;color:#334155;">' + (mostrarMes ? mesTexto : '') + '</div>'
+								+ '<div><span style="display:inline-block;padding:4px 8px;border-radius:999px;background:' + bgSit + ';color:' + corSit + ';font-weight:700;">' + situacao + '</span></div>'
+								+ '<div style="font-weight:600;color:#0f172a;">' + (item.nome || '-') + '</div>'
+								+ '<div>' + (item.matricula || '-') + '</div>'
+								+ '<div>' + (item.funcao || '-') + '</div>'
+								+ '<div>' + formatarDataBR(item.dataEntrada) + '</div>'
+								+ '<div>' + formatarDataBR(dataEvolucao) + '</div>'
+								+ '<div>' + (item.padrinho || '-') + '</div>'
+								+ '<div>' + (item.funcaoPadrinho || '-') + '</div>'
+							+ '</div>';
+						}).join('');
+					}
+
+					function renderTabelaPadrinhos(lista) {
+						var alvo = document.getElementById('novatos-tabela-padrinhos');
+						if (!alvo) return;
+
+						var mapa = {};
+						(lista || []).forEach(function(item) {
+							if (!item || !item.padrinho) return;
+							var chave = normalizarTextoComparacao(item.padrinho + '|' + (item.funcaoPadrinho || ''));
+							if (!mapa[chave]) {
+								mapa[chave] = {
+									nome: item.padrinho,
+									funcao: item.funcaoPadrinho || '-',
+									ateQuando: adicionarDiasISO(item.dataEntrada, 45),
+									ativos: 0
+								};
+							}
+							var situacao = calcularSituacaoAutomaticaNovato(item);
+							if (situacao !== 'Em Regra') {
+								mapa[chave].ativos++;
+								var limite = adicionarDiasISO(item.dataEntrada, 45);
+								if (String(limite).localeCompare(String(mapa[chave].ateQuando)) > 0) {
+									mapa[chave].ateQuando = limite;
+								}
+							}
+						});
+
+						var padrinhos = Object.values(mapa).sort(function(a, b) {
+							return String(a.nome).localeCompare(String(b.nome));
+						});
+
+						if (!padrinhos.length) {
+							alvo.innerHTML = '<div style="padding:16px;text-align:center;color:#94a3b8;">Nenhum padrinho registrado.</div>';
+							return;
+						}
+
+						alvo.innerHTML = padrinhos.map(function(item) {
+							var disponivel = item.ativos < 2;
+							var status = disponivel ? 'Disponível' : 'Não disponível';
+							var cor = disponivel ? '#16a34a' : '#dc2626';
+							var bg = disponivel ? '#dcfce7' : '#fee2e2';
+							return '<div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:8px;padding:8px 10px;border-top:1px solid #e2e8f0;align-items:center;font-size:.82rem;">'
+								+ '<div>' + item.nome + '</div>'
+								+ '<div>' + item.funcao + '</div>'
+								+ '<div>' + (item.ateQuando ? formatarDataBR(item.ateQuando) : '-') + '</div>'
+								+ '<div><span style="display:inline-block;padding:3px 8px;border-radius:999px;background:' + bg + ';color:' + cor + ';font-weight:700;">' + status + '</span></div>'
+							+ '</div>';
+						}).join('');
+					}
+
+					function renderProgramaNovatos() {
+						var lista = obterNovatosStorage();
+						var total = lista.length;
+						var emRegra = lista.filter(function(item) { return calcularSituacaoAutomaticaNovato(item) === 'Em Regra'; }).length;
+						var falta = total - emRegra;
+
+						var elTotal = document.getElementById('novatos-total');
+						var elFalta = document.getElementById('novatos-falta');
+						var elRegra = document.getElementById('novatos-regra');
+						if (elTotal) elTotal.textContent = String(total);
+						if (elFalta) elFalta.textContent = String(falta);
+						if (elRegra) elRegra.textContent = String(emRegra);
+
+						renderTabelaNovatos(lista);
+						renderTabelaPadrinhos(lista);
+					}
+
+					function salvarNovoNovato(event) {
+						event.preventDefault();
+
+						var nome = document.getElementById('novato-nome')?.value.trim() || '';
+						var funcao = document.getElementById('novato-funcao')?.value.trim() || '';
+						var matricula = document.getElementById('novato-matricula')?.value.trim() || '';
+						var dataEntrada = document.getElementById('novato-data-entrada')?.value || '';
+						var situacao = document.getElementById('novato-situacao')?.value || 'Falta de conhecimento';
+						var padrinho = document.getElementById('novato-padrinho')?.value.trim() || '';
+						var funcaoPadrinho = document.getElementById('novato-funcao-padrinho')?.value.trim() || '';
+
+						if (!nome || !funcao || !matricula || !dataEntrada || !padrinho || !funcaoPadrinho) {
+							alert('Preencha todos os campos do cadastro do novato.');
+							return;
+						}
+
+						var lista = obterNovatosStorage();
+						lista.push({
+							id: Date.now(),
+							nome: nome,
+							funcao: funcao,
+							matricula: matricula,
+							dataEntrada: dataEntrada,
+							situacao: situacao,
+							padrinho: padrinho,
+							funcaoPadrinho: funcaoPadrinho,
+							criadoEm: new Date().toISOString()
+						});
+
+						salvarNovatosStorage(lista);
+						limparFormularioNovato();
+						renderProgramaNovatos();
+					}
+
+					function inicializarProgramaNovatos(forcarRender) {
+						if (!novatosInicializado) {
+							var form = document.getElementById('form-novato');
+							if (form) {
+								form.addEventListener('submit', salvarNovoNovato);
+							}
+							limparFormularioNovato();
+							novatosInicializado = true;
+						}
+
+						if (forcarRender || novatosInicializado) {
+							renderProgramaNovatos();
+						}
 					}
 
 					var REUNIAO_MENSAL_STORAGE_KEY = 'hse_reunioes_mensais_v1';
