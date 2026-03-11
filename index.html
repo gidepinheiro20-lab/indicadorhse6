@@ -311,9 +311,82 @@
 				font-size: 0.875rem;
 				color: #6b7280;
 			}
+
+			/* Tela de login */
+			#login-screen{
+				display:none;
+				min-height:100vh;
+				background:linear-gradient(180deg,#f8fbff 0%, #eef4ff 100%);
+				align-items:center;
+				justify-content:center;
+				padding:24px;
+			}
+			#login-card{
+				width:100%;
+				max-width:420px;
+				background:#fff;
+				border:1px solid var(--border);
+				border-radius:14px;
+				box-shadow:0 10px 30px rgba(15,23,42,0.08);
+				padding:24px;
+			}
+			#login-card h1{
+				margin:0 0 8px;
+				font-size:1.4rem;
+			}
+			#login-card p{
+				margin:0 0 16px;
+				color:var(--muted);
+				font-size:0.95rem;
+			}
+			#login-form label{display:block;margin:10px 0 6px;font-weight:600}
+			#login-form input,
+			#login-form select{
+				width:100%;
+				padding:10px 12px;
+				border:1px solid var(--border);
+				border-radius:8px;
+				font-size:0.95rem;
+			}
+			#login-form button{
+				width:100%;
+				margin-top:12px;
+				background:var(--accent);
+				color:#fff;
+				border:none;
+				border-radius:8px;
+				padding:12px;
+				font-size:1rem;
+				cursor:pointer;
+			}
+			#login-error{
+				margin-top:10px;
+				color:#dc2626;
+				font-size:0.9rem;
+				display:none;
+			}
 		</style>
 	</head>
 	<body>
+		<div id="login-screen">
+			<div id="login-card">
+				<h1>Entrar no sistema</h1>
+				<p>Use o nome cadastrado, perfil e senha para acessar.</p>
+				<form id="login-form" autocomplete="off">
+					<label for="login-nome">Primeiro nome</label>
+					<input type="text" id="login-nome" name="login-nome" required />
+					<label for="login-perfil">Perfil cadastrado</label>
+					<select id="login-perfil" name="login-perfil" required>
+						<option value="Administrador">Administrador</option>
+						<option value="Técnico">Técnico</option>
+					</select>
+					<label for="login-senha">Senha</label>
+					<input type="password" id="login-senha" name="login-senha" required />
+					<button type="submit">Acessar</button>
+					<div id="login-error"></div>
+				</form>
+			</div>
+		</div>
 		<div class="app" id="app-sistema">
 			<aside class="sidebar" aria-label="Barra lateral">
 				<div class="brand">
@@ -4524,7 +4597,55 @@
 						document.getElementById('btn-voltar-cadastro').style.display = 'none';
 					});
 
-					// Sistema inicializado sem login
+					// Tela de login
+					function mostrarLogin(){
+						var loginScreen = document.getElementById('login-screen');
+						var app = document.getElementById('app-sistema');
+						if(loginScreen) loginScreen.style.display = 'flex';
+						if(app) app.style.display = 'none';
+					}
+					function mostrarApp(){
+						var loginScreen = document.getElementById('login-screen');
+						var app = document.getElementById('app-sistema');
+						if(loginScreen) loginScreen.style.display = 'none';
+						if(app) app.style.display = 'flex';
+					}
+
+					if(sessionStorage.getItem('hseLogged') === '1'){
+						mostrarApp();
+					} else {
+						mostrarLogin();
+					}
+
+					var loginForm = document.getElementById('login-form');
+					if(loginForm){
+						loginForm.addEventListener('submit', function(event){
+							event.preventDefault();
+							var nomeLogin = (document.getElementById('login-nome').value || '').trim();
+							var perfilLogin = document.getElementById('login-perfil').value;
+							var senhaLogin = document.getElementById('login-senha').value;
+							var erro = document.getElementById('login-error');
+							if(erro){ erro.style.display = 'none'; erro.textContent = ''; }
+
+							if(!nomeLogin || !perfilLogin || !senhaLogin){
+								if(erro){ erro.textContent = 'Preencha todos os campos.'; erro.style.display = 'block'; }
+								return;
+							}
+
+							var nomeLoginNormalizado = nomeLogin.toLowerCase();
+							var usuarioValido = usuarios.some(function(u){
+								return (u.login || '').toLowerCase() === nomeLoginNormalizado && u.perfil === perfilLogin && u.senha === senhaLogin;
+							});
+
+							if(!usuarioValido){
+								if(erro){ erro.textContent = 'Usuário, perfil ou senha inválidos.'; erro.style.display = 'block'; }
+								return;
+							}
+
+							sessionStorage.setItem('hseLogged', '1');
+							mostrarApp();
+						});
+					}
 
 					// ===== SISTEMA DE FUNCIONÁRIOS =====
 					var funcionarios = [];
