@@ -993,6 +993,16 @@
 					<div id="usuarios-cadastrados" style="margin-top:24px;display:block"></div>
 					<button id="btn-voltar-cadastro" style="margin-top:12px;display:none">Voltar ao cadastro</button>
 				</div>
+				<div id="controle-acesso" style="display:none;max-width:none;margin:0;">
+					<div style="background:#fff;border-radius:12px;border:1px solid #e6edf3;padding:24px;max-width:800px;">
+						<h2 style="margin:0 0 12px 0;">Controle de acesso</h2>
+						<div id="controle-acesso-info" style="padding:14px;border:1px solid #e5e7eb;border-radius:8px;background:#f8fafc;margin-bottom:12px"></div>
+						<p style="margin:0 0 12px 0;color:#6b7280;font-size:14px;line-height:1.4;">
+							Administrador visualiza todos os registros. Técnico visualiza preferencialmente os registros lançados pelo próprio login.
+						</p>
+						<button id="btn-sair-sistema" type="button" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:10px 16px;cursor:pointer;">Sair do sistema</button>
+					</div>
+				</div>
 				
 				<!-- Seção Empresa -->
 				<div id="empresa" style="display:none;max-width:none;margin:0;">
@@ -3275,13 +3285,43 @@
 					'frequencias', 'categorias', 'riscos', 'categorias-hse'
 				];
 
+				function getCurrentSessionUser() {
+					try {
+						return JSON.parse(sessionStorage.getItem('hseUser') || 'null');
+					} catch (e) {
+						return null;
+					}
+				}
+
+				function buildSyncHeaders() {
+					const headers = { 'Content-Type': 'application/json' };
+					const user = getCurrentSessionUser();
+					if (user && user.login) {
+						headers['X-User-Login'] = user.login;
+						headers['X-User-Perfil'] = user.perfil || '';
+					}
+					return headers;
+				}
+
+				function enrichWithOwnerInfo(payload) {
+					const user = getCurrentSessionUser();
+					if (!user || !user.login || !payload || typeof payload !== 'object') {
+						return payload;
+					}
+
+					if (!payload._ownerLogin) payload._ownerLogin = user.login;
+					if (!payload._ownerPerfil) payload._ownerPerfil = user.perfil || '';
+					return payload;
+				}
+
 				async function sincronizarComServidor(tabela, dados) {
 					if (!API_BASE_URL) return false; // Se não houver API, retorna false
 					try {
+						const bodyPayload = enrichWithOwnerInfo(dados);
 						const response = await fetch(API_BASE_URL + '/api/' + tabela, {
 							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							body: JSON.stringify(dados)
+							headers: buildSyncHeaders(),
+							body: JSON.stringify(bodyPayload)
 						});
 						if (response.ok) {
 							console.log('Sincronizado com servidor:', tabela);
@@ -3297,7 +3337,9 @@
 				async function carregarDoServidor(tabela) {
 					if (!API_BASE_URL) return []; // Se não houver API, retorna vazio
 					try {
-						const response = await fetch(API_BASE_URL + '/api/' + tabela);
+						const response = await fetch(API_BASE_URL + '/api/' + tabela, {
+							headers: buildSyncHeaders()
+						});
 						if (response.ok) {
 							const dados = await response.json();
 							console.log('Carregado do servidor:', tabela, dados.length + ' registros');
@@ -3433,6 +3475,7 @@
 					function hideAllSections() {
 						document.getElementById('conteudo-principal').style.display = 'none';
 						document.getElementById('cadastro-usuario').style.display = 'none';
+						document.getElementById('controle-acesso').style.display = 'none';
 						document.getElementById('nova-ras').style.display = 'none';
 						document.getElementById('funcionarios').style.display = 'none';
 						document.getElementById('frequencia').style.display = 'none';
@@ -3453,8 +3496,18 @@
 						const alvo = (hash || '#').replace('#', '');
 						switch (alvo) {
 							case 'usuario':
+								if (!usuarioAtualEhAdmin()) {
+									alert('Apenas Administrador pode acessar o cadastro de usuários.');
+									navegarParaHash('#controle-acesso');
+									break;
+								}
 								hideAllSections();
 								document.getElementById('cadastro-usuario').style.display = 'block';
+								break;
+							case 'controle-acesso':
+								hideAllSections();
+								document.getElementById('controle-acesso').style.display = 'block';
+								atualizarPainelControleAcesso();
 								break;
 							case 'ras':
 								hideAllSections();
@@ -3555,6 +3608,12 @@
 								navegarParaHash('#usuario');
 							});
 						});
+					document.querySelectorAll('.nav a[href="#controle-acesso"]').forEach(function(link){
+						link.addEventListener('click',function(e){
+							e.preventDefault();
+							navegarParaHash('#controle-acesso');
+						});
+					});
 					// Exibir formulário Nova RAS ao clicar em +RAS
 						document.querySelectorAll('.nav a[href="#ras"]').forEach(function(link){
 							link.addEventListener('click',function(e){
@@ -4624,14 +4683,45 @@
 						if(loginScreen) loginScreen.style.display = 'flex';
 						if(app) app.style.display = 'none';
 					}
+					function obterUsuarioLogado(){
+						try {
+							return JSON.parse(sessionStorage.getItem('hseUser') || 'null');
+						} catch(e) {
+							return null;
+						}
+					}
+					function usuarioAtualEhAdmin(){
+						var user = obterUsuarioLogado();
+						return !!(user && user.perfil === 'Administrador');
+					}
+					function atualizarPainelControleAcesso(){
+						var info = document.getElementById('controle-acesso-info');
+						if(!info) return;
+						var user = obterUsuarioLogado();
+						if(!user){
+							info.innerHTML = '<b>Status:</b> nenhum usuário autenticado.';
+							return;
+						}
+						info.innerHTML = '<b>Usuário:</b> ' + (user.nome || user.login || '-') + '<br><b>Login:</b> ' + (user.login || '-') + '<br><b>Perfil:</b> ' + (user.perfil || '-');
+					}
+					function aplicarPermissoesMenu(){
+						var admin = usuarioAtualEhAdmin();
+						document.querySelectorAll('.nav a[href="#usuario"]').forEach(function(link){
+							var li = link.closest('li');
+							if(li) li.style.display = admin ? '' : 'none';
+						});
+					}
 					function mostrarApp(){
 						var loginScreen = document.getElementById('login-screen');
 						var app = document.getElementById('app-sistema');
 						if(loginScreen) loginScreen.style.display = 'none';
 						if(app) app.style.display = 'flex';
+						aplicarPermissoesMenu();
+						atualizarPainelControleAcesso();
 					}
 
 					if(sessionStorage.getItem('hseLogged') === '1'){
+						aplicarPermissoesMenu();
 						mostrarApp();
 					} else {
 						mostrarLogin();
@@ -4653,7 +4743,7 @@
 							}
 
 							var nomeLoginNormalizado = nomeLogin.toLowerCase();
-							var usuarioValido = usuarios.some(function(u){
+							var usuarioValido = usuarios.find(function(u){
 								return (u.login || '').toLowerCase() === nomeLoginNormalizado && u.perfil === perfilLogin && u.senha === senhaLogin;
 							});
 
@@ -4663,9 +4753,24 @@
 							}
 
 							sessionStorage.setItem('hseLogged', '1');
+							sessionStorage.setItem('hseUser', JSON.stringify({
+								nome: usuarioValido.nome,
+								login: usuarioValido.login,
+								perfil: usuarioValido.perfil
+							}));
 							mostrarApp();
 						});
 					}
+
+						var btnSairSistema = document.getElementById('btn-sair-sistema');
+						if(btnSairSistema){
+							btnSairSistema.addEventListener('click', function(){
+								sessionStorage.removeItem('hseLogged');
+								sessionStorage.removeItem('hseUser');
+								window.location.hash = '#';
+								window.location.reload();
+							});
+						}
 
 					// ===== SISTEMA DE FUNCIONÁRIOS =====
 					var funcionarios = [];

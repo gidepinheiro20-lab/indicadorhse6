@@ -44,6 +44,56 @@ function resolveTableName(name) {
   return tableAliases[name] || null;
 }
 
+const accessControlledTables = new Set([
+  'funcionarios',
+  'empresas',
+  'ras_reunioes',
+  'historico_ras',
+  'cpts',
+  'inspecoes',
+  'categorias_hse',
+  'areas_locais',
+  'tipos_registro',
+  'riscos_perigos',
+  'arts',
+  'frequencias',
+  'categorias',
+  'riscos'
+]);
+
+function getRequestUser(req) {
+  const login = (req.header('x-user-login') || '').trim();
+  const perfil = (req.header('x-user-perfil') || '').trim();
+  if (!login) return null;
+  return { login, perfil };
+}
+
+function isAdmin(user) {
+  return !!(user && String(user.perfil).toLowerCase() === 'administrador');
+}
+
+function applyReadFilter(table, rows, user) {
+  if (!accessControlledTables.has(table)) return rows;
+  if (!user) return rows;
+  if (isAdmin(user)) return rows;
+
+  return rows.filter((row) => {
+    const ownerLogin = row && row._ownerLogin ? String(row._ownerLogin).toLowerCase() : '';
+    return !ownerLogin || ownerLogin === String(user.login).toLowerCase();
+  });
+}
+
+function applyOwnerOnWrite(table, payload, user) {
+  if (!accessControlledTables.has(table)) return payload;
+  if (!user) return payload;
+  if (!payload || typeof payload !== 'object') return payload;
+
+  const normalized = { ...payload };
+  if (!normalized._ownerLogin) normalized._ownerLogin = user.login;
+  if (!normalized._ownerPerfil) normalized._ownerPerfil = user.perfil || '';
+  return normalized;
+}
+
 const memoryStore = new Map();
 const pgPool = process.env.DATABASE_URL
   ? new Pool({
@@ -137,8 +187,9 @@ app.get('/api/:table', async (req, res) => {
   try {
     const table = resolveTableName(req.params.table);
     if (!table) return res.status(404).json({ error: 'Tabela não encontrada' });
+    const user = getRequestUser(req);
     const rows = await getAllRows(table);
-    res.json(rows);
+    res.json(applyReadFilter(table, rows, user));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -148,7 +199,9 @@ app.post('/api/:table', async (req, res) => {
   try {
     const table = resolveTableName(req.params.table);
     if (!table) return res.status(404).json({ error: 'Tabela não encontrada' });
-    const id = await insertRow(table, req.body || {});
+    const user = getRequestUser(req);
+    const payload = applyOwnerOnWrite(table, req.body || {}, user);
+    const id = await insertRow(table, payload);
     res.json({ id });
   } catch (err) {
     res.status(500).json({ error: err.message });
