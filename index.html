@@ -4617,6 +4617,22 @@
 
 					// Cadastro de usuários com persistência em localStorage
 					var usuarios = [];
+					var usuariosCarregadosDoServidor = false;
+
+					async function atualizarUsuariosDoServidor(force) {
+						if (!force && usuariosCarregadosDoServidor) return;
+						try {
+							var usuariosServidor = await carregarDoServidor('usuarios');
+							if (Array.isArray(usuariosServidor) && usuariosServidor.length > 0) {
+								usuarios = usuariosServidor;
+								localStorage.setItem('usuarios', JSON.stringify(usuarios));
+							}
+						} catch (err) {
+							console.warn('Falha ao atualizar usuários do servidor:', err.message);
+						} finally {
+							usuariosCarregadosDoServidor = true;
+						}
+					}
 					// Carregar do localStorage ao iniciar
 					if(localStorage.getItem('usuarios')){
 						try {
@@ -4729,7 +4745,7 @@
 
 					var loginForm = document.getElementById('login-form');
 					if(loginForm){
-						loginForm.addEventListener('submit', function(event){
+						loginForm.addEventListener('submit', async function(event){
 							event.preventDefault();
 							var nomeLogin = (document.getElementById('login-nome').value || '').trim();
 							var perfilLogin = document.getElementById('login-perfil').value;
@@ -4741,6 +4757,8 @@
 								if(erro){ erro.textContent = 'Preencha todos os campos.'; erro.style.display = 'block'; }
 								return;
 							}
+
+							await atualizarUsuariosDoServidor(true);
 
 							var nomeLoginNormalizado = nomeLogin.toLowerCase();
 							var usuarioValido = usuarios.find(function(u){
