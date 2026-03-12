@@ -3248,8 +3248,14 @@
 		</div>
 					<script>
 				// ===== CONFIGURAÇÃO DA API =====
-				// Detectar IP local automaticamente
+				// Detectar API automaticamente com suporte ao config.js
 				const API_BASE_URL = (function() {
+					if (window.API_SYNC_ENABLED === false) {
+						return '';
+					}
+					if (window.API_BASE_URL) {
+						return window.API_BASE_URL;
+					}
 					// Se estiver em localhost ou 127.0.0.1 no navegador
 					if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
 						return 'http://localhost:3000';
@@ -3261,6 +3267,13 @@
 					// Se estiver via GitHub, conecta ao servidor remoto via LocalTunnel
 					return 'https://quick-sloths-send.loca.lt';
 				})();
+
+				const STORAGE_SYNC_KEYS = [
+					'funcionarios', 'empresas', 'ras_reunioes', 'usuarios',
+					'historico_ras', 'cpts', 'inspecoes', 'categorias_hse',
+					'areasLocais', 'tiposRegistro', 'riscosPerigos', 'arts',
+					'frequencias', 'categorias', 'riscos', 'categorias-hse'
+				];
 
 				async function sincronizarComServidor(tabela, dados) {
 					if (!API_BASE_URL) return false; // Se não houver API, retorna false
@@ -3299,7 +3312,7 @@
 			// ===== FUNÇÕES WRAPPER PARA SINCRONIZAÇÃO AUTOMÁTICA =====
 			
 			// Wrapper do localStorage.setItem que sincroniza automaticamente
-			const localStorageOriginal = {
+				const localStorageOriginal = {
 				setItem: localStorage.setItem.bind(localStorage),
 				getItem: localStorage.getItem.bind(localStorage)
 			};
@@ -3310,12 +3323,7 @@
 				localStorageOriginal.setItem(key, value);
 				
 				// Sincronizar com servidor (se for um dado do sistema)
-				const tabelasParaSincronizar = [
-					'funcionarios', 'empresas', 'ras_reunioes', 'usuarios', 
-					'historico_ras', 'cpts', 'inspecoes', 'categorias_hse', 
-					'areasLocais', 'tiposRegistro', 'riscosPerigos', 'arts',
-					'frequencias', 'categorias', 'riscos'
-				];
+				const tabelasParaSincronizar = STORAGE_SYNC_KEYS;
 				
 				if (tabelasParaSincronizar.includes(key)) {
 					try {
@@ -3366,12 +3374,7 @@
 					originalSetItem.call(localStorage, key, value);
 					
 					// Lista de chaves que devem ser sincronizadas
-					const keysParaSincronizar = [
-						'funcionarios', 'empresas', 'ras_reunioes', 'usuarios', 
-						'historico_ras', 'cpts', 'inspecoes', 'categorias_hse', 
-						'areasLocais', 'tiposRegistro', 'riscosPerigos', 'arts',
-						'frequencias', 'categorias', 'riscos', 'categorias-hse'
-					];
+					const keysParaSincronizar = STORAGE_SYNC_KEYS;
 					
 					// Se a chave está na lista, sincronizar
 					if (keysParaSincronizar.includes(key)) {
@@ -3400,6 +3403,22 @@
 
 			console.log('🔄 Sistema de sincronização automática ativado!');
 			console.log('📡 Servidor:', API_BASE_URL);
+
+			// Carregar dados do servidor para localStorage no início
+			(async function sincronizacaoInicial() {
+				if (!API_BASE_URL) return;
+				for (const key of STORAGE_SYNC_KEYS) {
+					try {
+						const dadosServidor = await carregarDoServidor(key);
+						if (Array.isArray(dadosServidor) && dadosServidor.length > 0) {
+							localStorageOriginal.setItem(key, JSON.stringify(dadosServidor));
+						}
+					} catch (err) {
+						console.warn('Falha na sincronização inicial de', key, err.message);
+					}
+				}
+				console.log('✅ Sincronização inicial concluída');
+			})();
 
 			// ===== FIM DA INTERCEPTAÇÃO =====
 			

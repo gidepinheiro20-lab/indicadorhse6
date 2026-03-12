@@ -14,7 +14,35 @@ app.use(bodyParser.json());
 app.use(express.static('.'));
 
 // API endpoints for each table
-const tables = ['funcionarios', 'empresas', 'ras_reunioes', 'usuarios', 'historico_ras', 'cpts', 'inspecoes', 'categorias_hse', 'areas_locais', 'tipos_registro', 'riscos_perigos', 'arts'];
+const tables = [
+  'funcionarios',
+  'empresas',
+  'ras_reunioes',
+  'usuarios',
+  'historico_ras',
+  'cpts',
+  'inspecoes',
+  'categorias_hse',
+  'areas_locais',
+  'tipos_registro',
+  'riscos_perigos',
+  'arts',
+  'frequencias',
+  'categorias',
+  'riscos'
+];
+
+const tableAliases = {
+  'categorias-hse': 'categorias_hse',
+  'areasLocais': 'areas_locais',
+  'tiposRegistro': 'tipos_registro',
+  'riscosPerigos': 'riscos_perigos'
+};
+
+function resolveTableName(name) {
+  if (tables.includes(name)) return name;
+  return tableAliases[name] || null;
+}
 
 const memoryStore = new Map();
 const pgPool = process.env.DATABASE_URL
@@ -55,6 +83,19 @@ async function getAllRows(table) {
 
 async function insertRow(table, payload) {
   if (pgPool) {
+    const payloadId = payload && payload.id != null ? String(payload.id) : null;
+    if (payloadId) {
+      const existing = await pgPool.query(
+        `SELECT id FROM ${table} WHERE data->>'id' = $1 LIMIT 1`,
+        [payloadId]
+      );
+      if (existing.rows.length > 0) {
+        const dbId = existing.rows[0].id;
+        await pgPool.query(`UPDATE ${table} SET data = $1 WHERE id = $2`, [payload, dbId]);
+        return dbId;
+      }
+    }
+
     const result = await pgPool.query(`INSERT INTO ${table} (data) VALUES ($1) RETURNING id`, [payload]);
     return result.rows[0].id;
   }
@@ -91,48 +132,51 @@ async function deleteRow(table, id) {
   memoryStore.set(table, filtered);
 }
 
-tables.forEach(table => {
-  // GET all
-  app.get(`/api/${table}`, async (req, res) => {
-    try {
-      const rows = await getAllRows(table);
-      res.json(rows);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  });
+// Rotas da API com suporte a aliases de tabela
+app.get('/api/:table', async (req, res) => {
+  try {
+    const table = resolveTableName(req.params.table);
+    if (!table) return res.status(404).json({ error: 'Tabela não encontrada' });
+    const rows = await getAllRows(table);
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-  // POST (insert)
-  app.post(`/api/${table}`, async (req, res) => {
-    try {
-      const id = await insertRow(table, req.body || {});
-      res.json({ id });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  });
+app.post('/api/:table', async (req, res) => {
+  try {
+    const table = resolveTableName(req.params.table);
+    if (!table) return res.status(404).json({ error: 'Tabela não encontrada' });
+    const id = await insertRow(table, req.body || {});
+    res.json({ id });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-  // PUT (update)
-  app.put(`/api/${table}/:id`, async (req, res) => {
-    try {
-      const { id } = req.params;
-      await updateRow(table, id, req.body || {});
-      res.json({ message: 'Updated' });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  });
+app.put('/api/:table/:id', async (req, res) => {
+  try {
+    const table = resolveTableName(req.params.table);
+    if (!table) return res.status(404).json({ error: 'Tabela não encontrada' });
+    const { id } = req.params;
+    await updateRow(table, id, req.body || {});
+    res.json({ message: 'Updated' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-  // DELETE
-  app.delete(`/api/${table}/:id`, async (req, res) => {
-    try {
-      const { id } = req.params;
-      await deleteRow(table, id);
-      res.json({ message: 'Deleted' });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  });
+app.delete('/api/:table/:id', async (req, res) => {
+  try {
+    const table = resolveTableName(req.params.table);
+    if (!table) return res.status(404).json({ error: 'Tabela não encontrada' });
+    const { id } = req.params;
+    await deleteRow(table, id);
+    res.json({ message: 'Deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 initializeTables()
