@@ -5,7 +5,7 @@ const API_CONFIG = {
   // Use http://192.168.3.61:3000 para servidor local na mesma rede
   // Use http://localhost:3000 para acesso local
   // Use https://seu-dominio.com:3000 para acesso remoto
-  BASE_URL: '',
+  BASE_URL: 'https://indicadorhse6.onrender.com',
   
   // Se usar GitHub Pages remotamente, defina seu servidor online aqui
   // GITHUB_REMOTE_URL: 'https://seu-servidor-remoto.com:3000',
@@ -20,6 +20,3 @@ const API_CONFIG = {
 // Injetar configuração no index.html
 window.API_BASE_URL = API_CONFIG.BASE_URL;
 window.API_SYNC_ENABLED = API_CONFIG.SYNC_ENABLED;
-
-// Quando vazio, usa mesma origem automaticamente (ideal para Render)
-window.API_BASE_URL = window.API_BASE_URL || window.location.origin;
