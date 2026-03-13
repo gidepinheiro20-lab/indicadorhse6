@@ -983,7 +983,10 @@
 						</select><br>
 						<label for="senha">Senha</label><br>
 						<input type="password" id="senha" name="senha" required style="width:100%;margin-bottom:10px"><br>
-						<button type="submit" style="margin-top:8px">Cadastrar</button>
+						<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+							<button type="submit">Cadastrar</button>
+							<button type="button" id="btn-salvar-usuario-servidor" style="background:#2b6cb0;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer">Salvar no servidor</button>
+						</div>
 					</form>
 					<button id="btn-acessar-usuarios" style="margin-top:12px">Acessar usuários cadastrados</button>
 					<p style="font-size:13px;color:#7a869a;margin-top:10px">
@@ -4682,18 +4685,53 @@
 					exibirUsuarios();
 					atualizarUsuariosDoServidor(false);
 
-					document.getElementById('form-cadastro').addEventListener('submit', function(){
+					function coletarUsuarioFormulario() {
 						var nome = document.getElementById('nome').value.trim();
 						var perfil = document.getElementById('perfil').value;
 						var senha = document.getElementById('senha').value;
-						if(!nome || !perfil || !senha) return;
+						if(!nome || !perfil || !senha) return null;
 						var primeiroNome = nome.split(' ')[0];
-						var novoUsuario = normalizarUsuario({ nome: nome, perfil: perfil, senha: senha, login: primeiroNome }, usuarios.length);
-						usuarios.push(novoUsuario);
+						return normalizarUsuario({ nome: nome, perfil: perfil, senha: senha, login: primeiroNome }, usuarios.length);
+					}
+
+					async function salvarUsuarioFormulario(sincronizarServidor) {
+						var novoUsuario = coletarUsuarioFormulario();
+						if(!novoUsuario) return false;
+
+						var indiceExistente = usuarios.findIndex(function(usuario) {
+							return usuario && usuario.id === novoUsuario.id;
+						});
+
+						if (indiceExistente >= 0) {
+							usuarios[indiceExistente] = novoUsuario;
+						} else {
+							usuarios.push(novoUsuario);
+						}
+
 						// Salvar no localStorage
 						localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+						if (sincronizarServidor) {
+							var salvouNoServidor = await sincronizarComServidor('usuarios', novoUsuario);
+							if (!salvouNoServidor) {
+								alert('Usuário salvo localmente, mas não foi possível salvar no servidor agora.');
+								exibirUsuarios();
+								return false;
+							}
+							alert('Usuário salvo no servidor com sucesso!');
+						}
+
 						document.getElementById('form-cadastro').reset();
 						exibirUsuarios();
+						return true;
+					}
+
+					document.getElementById('form-cadastro').addEventListener('submit', function(){
+						salvarUsuarioFormulario(false);
+					});
+
+					document.getElementById('btn-salvar-usuario-servidor').addEventListener('click', function(){
+						salvarUsuarioFormulario(true);
 					});
 
 					function exibirUsuarios(){
