@@ -311,9 +311,96 @@
 				font-size: 0.875rem;
 				color: #6b7280;
 			}
+
+			/* Tela de login inicial */
+			#login-screen{
+				display:flex;
+				min-height:100vh;
+				background:linear-gradient(180deg,#f8fbff 0%, #eef4ff 100%);
+				align-items:center;
+				justify-content:center;
+				padding:24px;
+			}
+			#login-card{
+				width:100%;
+				max-width:420px;
+				background:#fff;
+				border:1px solid var(--border);
+				border-radius:14px;
+				box-shadow:0 10px 30px rgba(15,23,42,0.08);
+				padding:24px;
+			}
+			#login-card h1{
+				margin:0 0 8px;
+				font-size:1.4rem;
+			}
+			#login-card p{
+				margin:0 0 16px;
+				color:var(--muted);
+				font-size:0.95rem;
+			}
+			#login-form label{display:block;margin:10px 0 6px;font-weight:600}
+			#login-form input,
+			#login-form select{
+				width:100%;
+				padding:10px 12px;
+				border:1px solid var(--border);
+				border-radius:8px;
+				font-size:0.95rem;
+			}
+			#login-form button{
+				width:100%;
+				margin-top:12px;
+				background:var(--accent);
+				color:#fff;
+				border:none;
+				border-radius:8px;
+				padding:12px;
+				font-size:1rem;
+				cursor:pointer;
+			}
+			#login-error{
+				margin-top:10px;
+				color:#dc2626;
+				font-size:0.9rem;
+				display:none;
+			}
+			#btn-sair-sistema{
+				margin-top:14px;
+				width:100%;
+				background:#dc2626;
+				color:#fff;
+				border:none;
+				border-radius:8px;
+				padding:10px 12px;
+				font-size:0.95rem;
+				cursor:pointer;
+			}
+			#app-sistema{
+				display:none;
+			}
 		</style>
 	</head>
 	<body>
+		<div id="login-screen">
+			<div id="login-card">
+				<h1>Entrar no sistema</h1>
+				<p>Use os dados cadastrados em Usuário para acessar.</p>
+				<form id="login-form" autocomplete="off">
+					<label for="login-primeiro-nome">Primeiro nome</label>
+					<input type="text" id="login-primeiro-nome" name="login-primeiro-nome" required />
+					<label for="login-perfil">Perfil</label>
+					<select id="login-perfil" name="login-perfil" required>
+						<option value="Administrador">Administrador</option>
+						<option value="Técnico">Técnico</option>
+					</select>
+					<label for="login-senha">Senha</label>
+					<input type="password" id="login-senha" name="login-senha" required />
+					<button type="submit">Entrar</button>
+					<div id="login-error"></div>
+				</form>
+			</div>
+		</div>
 		<div class="app" id="app-sistema">
 			<aside class="sidebar" aria-label="Barra lateral">
 				<div class="brand">
@@ -344,6 +431,7 @@
 						<li><a href="#checklist"><span class="icon" aria-hidden="true">✅</span><span class="label">Check List Fácil</span></a></li>
 					</ul>
 				</div>
+				<button id="btn-sair-sistema" type="button">Sair</button>
 			</aside>
 			<main class="main">
 				<button class="back-to-menu" id="back-to-menu" title="Voltar ao menu">←</button>
@@ -4495,8 +4583,115 @@
 							usuarios = [];
 						}
 						exibirUsuarios();
+						return usuarios;
 					};
-					carregarUsuarios();
+
+					function obterPrimeiroNome(texto) {
+						return String(texto || '').trim().split(/\s+/)[0] || '';
+					}
+
+					function mostrarErroLogin(mensagem) {
+						var erro = document.getElementById('login-error');
+						if (!erro) return;
+						erro.textContent = mensagem;
+						erro.style.display = 'block';
+					}
+
+					function limparErroLogin() {
+						var erro = document.getElementById('login-error');
+						if (!erro) return;
+						erro.textContent = '';
+						erro.style.display = 'none';
+					}
+
+					function mostrarLogin() {
+						document.getElementById('login-screen').style.display = 'flex';
+						document.getElementById('app-sistema').style.display = 'none';
+					}
+
+					function mostrarSistema() {
+						document.getElementById('login-screen').style.display = 'none';
+						document.getElementById('app-sistema').style.display = 'flex';
+					}
+
+					function autenticarUsuario(primeiroNome, perfil, senha) {
+						var nomeBusca = String(primeiroNome || '').trim().toLowerCase();
+						if (!nomeBusca || !perfil || !senha) return null;
+
+						return usuarios.find(function(u) {
+							if (!u) return false;
+							var loginUsuario = String((u.login || obterPrimeiroNome(u.nome)) || '').trim().toLowerCase();
+							var perfilUsuario = String(u.perfil || '').trim();
+							var senhaUsuario = String(u.senha || '');
+							return loginUsuario === nomeBusca && perfilUsuario === perfil && senhaUsuario === senha;
+						}) || null;
+					}
+
+					async function inicializarAutenticacao() {
+						await carregarUsuarios();
+						if (!usuarios.length) {
+							mostrarLogin();
+							mostrarErroLogin('Nenhum usuário cadastrado. Cadastre em Usuário para liberar o acesso.');
+							return;
+						}
+
+						var sessaoAtiva = sessionStorage.getItem('hseLogged') === '1';
+						var sessaoUsuario = null;
+						try {
+							sessaoUsuario = JSON.parse(sessionStorage.getItem('hseUser') || 'null');
+						} catch (e) {
+							sessaoUsuario = null;
+						}
+
+						if (sessaoAtiva && sessaoUsuario && autenticarUsuario(sessaoUsuario.login, sessaoUsuario.perfil, sessaoUsuario.senha)) {
+							mostrarSistema();
+							return;
+						}
+
+						sessionStorage.removeItem('hseLogged');
+						sessionStorage.removeItem('hseUser');
+						mostrarLogin();
+					}
+
+					document.getElementById('login-form').addEventListener('submit', async function(e) {
+						e.preventDefault();
+						limparErroLogin();
+						await carregarUsuarios();
+						if (!usuarios.length) {
+							mostrarErroLogin('Nenhum usuário cadastrado. Cadastre em Usuário para liberar o acesso.');
+							return;
+						}
+
+						var primeiroNome = document.getElementById('login-primeiro-nome').value;
+						var perfil = document.getElementById('login-perfil').value;
+						var senha = document.getElementById('login-senha').value;
+
+						var usuarioValido = autenticarUsuario(primeiroNome, perfil, senha);
+						if (!usuarioValido) {
+							mostrarErroLogin('Primeiro nome, perfil ou senha inválidos.');
+							return;
+						}
+
+						sessionStorage.setItem('hseLogged', '1');
+						sessionStorage.setItem('hseUser', JSON.stringify({
+							nome: usuarioValido.nome,
+							login: usuarioValido.login || obterPrimeiroNome(usuarioValido.nome),
+							perfil: usuarioValido.perfil,
+							senha: usuarioValido.senha
+						}));
+
+						mostrarSistema();
+						document.getElementById('login-form').reset();
+					});
+
+					document.getElementById('btn-sair-sistema').addEventListener('click', function() {
+						sessionStorage.removeItem('hseLogged');
+						sessionStorage.removeItem('hseUser');
+						mostrarLogin();
+						window.location.hash = '#';
+					});
+
+					inicializarAutenticacao();
 
 					document.getElementById('form-cadastro').addEventListener('submit', async function(e){
 						e.preventDefault();
@@ -4549,7 +4744,7 @@
 						document.getElementById('btn-voltar-cadastro').style.display = 'none';
 					});
 
-					// Sistema inicializado sem login
+					// Sistema inicializado com login
 
 					// ===== SISTEMA DE FUNCIONÁRIOS =====
 					var funcionarios = [];
