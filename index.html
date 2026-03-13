@@ -4619,13 +4619,50 @@
 					var usuarios = [];
 					var usuariosCarregadosDoServidor = false;
 
+					function gerarIdUsuario(usuario, indice) {
+						var baseLogin = String((usuario && usuario.login) || '').trim().toLowerCase().replace(/\s+/g, '-');
+						var basePerfil = String((usuario && usuario.perfil) || '').trim().toLowerCase().replace(/\s+/g, '-');
+						if (baseLogin && basePerfil) return 'usr_' + baseLogin + '_' + basePerfil;
+						return 'usr_' + Date.now() + '_' + (indice || 0);
+					}
+
+					function normalizarUsuario(usuario, indice) {
+						if (!usuario || typeof usuario !== 'object') return null;
+						var nome = String(usuario.nome || '').trim();
+						var perfil = String(usuario.perfil || '').trim();
+						var senha = String(usuario.senha || '');
+						var login = String(usuario.login || '').trim();
+						if (!login && nome) {
+							login = nome.split(' ')[0];
+						}
+						if (!nome || !perfil || !senha || !login) return null;
+						return {
+							id: usuario.id || gerarIdUsuario({ login: login, perfil: perfil }, indice),
+							nome: nome,
+							perfil: perfil,
+							senha: senha,
+							login: login
+						};
+					}
+
+					function normalizarListaUsuarios(lista) {
+						if (!Array.isArray(lista)) return [];
+						return lista
+							.map(function(item, indice){ return normalizarUsuario(item, indice); })
+							.filter(function(item){ return !!item; });
+					}
+
 					async function atualizarUsuariosDoServidor(force) {
 						if (!force && usuariosCarregadosDoServidor) return;
 						try {
 							var usuariosServidor = await carregarDoServidor('usuarios');
 							if (Array.isArray(usuariosServidor) && usuariosServidor.length > 0) {
-								usuarios = usuariosServidor;
+								usuarios = normalizarListaUsuarios(usuariosServidor);
 								localStorage.setItem('usuarios', JSON.stringify(usuarios));
+							} else if (usuarios.length > 0) {
+								for (var i = 0; i < usuarios.length; i++) {
+									await sincronizarComServidor('usuarios', usuarios[i]);
+								}
 							}
 						} catch (err) {
 							console.warn('Falha ao atualizar usuários do servidor:', err.message);
@@ -4636,10 +4673,14 @@
 					// Carregar do localStorage ao iniciar
 					if(localStorage.getItem('usuarios')){
 						try {
-							usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+							usuarios = normalizarListaUsuarios(JSON.parse(localStorage.getItem('usuarios')) || []);
 						} catch(e){ usuarios = []; }
 					}
+					if (usuarios.length > 0) {
+						localStorage.setItem('usuarios', JSON.stringify(usuarios));
+					}
 					exibirUsuarios();
+					atualizarUsuariosDoServidor(false);
 
 					document.getElementById('form-cadastro').addEventListener('submit', function(){
 						var nome = document.getElementById('nome').value.trim();
@@ -4647,7 +4688,8 @@
 						var senha = document.getElementById('senha').value;
 						if(!nome || !perfil || !senha) return;
 						var primeiroNome = nome.split(' ')[0];
-						usuarios.push({nome, perfil, senha, login: primeiroNome});
+						var novoUsuario = normalizarUsuario({ nome: nome, perfil: perfil, senha: senha, login: primeiroNome }, usuarios.length);
+						usuarios.push(novoUsuario);
 						// Salvar no localStorage
 						localStorage.setItem('usuarios', JSON.stringify(usuarios));
 						document.getElementById('form-cadastro').reset();
