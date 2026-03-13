@@ -419,6 +419,7 @@
 						<li><a href="#funcionarios"><span class="icon" aria-hidden="true">👥</span><span class="label">Novo Colaborador</span></a></li>
 						<li><a href="#frequencia"><span class="icon" aria-hidden="true">🔎</span><span class="label">Frequência</span></a></li>
 						<li><a href="#usuario"><span class="icon" aria-hidden="true">👤</span><span class="label">Usuário</span></a></li>
+						<li><a href="#controle-acesso"><span class="icon" aria-hidden="true">🔐</span><span class="label">Controle de Acesso</span></a></li>
 					</ul>
 				</div>
 				<div class="section">
@@ -1006,6 +1007,12 @@
 					</p>
 					<div id="usuarios-cadastrados" style="margin-top:24px;display:block"></div>
 					<button id="btn-voltar-cadastro" style="margin-top:12px;display:none">Voltar ao cadastro</button>
+				</div>
+				<div id="controle-acesso" style="display:none;max-width:none;margin:0;">
+					<div style="background:#fff;border-radius:12px;border:1px solid #e6edf3;padding:24px;max-width:800px;">
+						<h2 style="margin:0 0 12px 0;">Controle de Acesso</h2>
+						<p style="margin:0;color:#6b7280;font-size:14px;line-height:1.5;">A autenticação usa os cadastros criados em Usuário. Para liberar um novo acesso, crie o cadastro com Nome, Perfil e Senha nessa seção.</p>
+					</div>
 				</div>
 				
 				<!-- Seção Empresa -->
@@ -3450,6 +3457,7 @@
 					function hideAllSections() {
 						document.getElementById('conteudo-principal').style.display = 'none';
 						document.getElementById('cadastro-usuario').style.display = 'none';
+						document.getElementById('controle-acesso').style.display = 'none';
 						document.getElementById('nova-ras').style.display = 'none';
 						document.getElementById('funcionarios').style.display = 'none';
 						document.getElementById('frequencia').style.display = 'none';
@@ -3472,6 +3480,10 @@
 							case 'usuario':
 								hideAllSections();
 								document.getElementById('cadastro-usuario').style.display = 'block';
+								break;
+							case 'controle-acesso':
+								hideAllSections();
+								document.getElementById('controle-acesso').style.display = 'block';
 								break;
 							case 'ras':
 								hideAllSections();
@@ -3572,6 +3584,12 @@
 								navegarParaHash('#usuario');
 							});
 						});
+					document.querySelectorAll('.nav a[href="#controle-acesso"]').forEach(function(link){
+						link.addEventListener('click',function(e){
+							e.preventDefault();
+							navegarParaHash('#controle-acesso');
+						});
+					});
 					// Exibir formulário Nova RAS ao clicar em +RAS
 						document.querySelectorAll('.nav a[href="#ras"]').forEach(function(link){
 							link.addEventListener('click',function(e){
@@ -3650,7 +3668,7 @@
 							});
 						});
 					// Ocultar outras seções ao clicar em outros itens
-						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"]):not([href="#inspecao"]):not([href="#art"]):not([href="#checklist"]):not([href="#empresa"])').forEach(function(link){
+						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#controle-acesso"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"]):not([href="#inspecao"]):not([href="#art"]):not([href="#checklist"]):not([href="#empresa"])').forEach(function(link){
 							link.addEventListener('click',function(){
 								navegarParaHash('#');
 							});
