@@ -984,8 +984,7 @@
 						<label for="senha">Senha</label><br>
 						<input type="password" id="senha" name="senha" required style="width:100%;margin-bottom:10px"><br>
 						<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
-							<button type="submit">Cadastrar</button>
-							<button type="button" id="btn-salvar-usuario-servidor" style="background:#2b6cb0;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer">Salvar no servidor</button>
+							<button type="submit" style="background:#2b6cb0;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer">Salvar</button>
 						</div>
 					</form>
 					<button id="btn-acessar-usuarios" style="margin-top:12px">Acessar usuários cadastrados</button>
@@ -4727,10 +4726,6 @@
 					}
 
 					document.getElementById('form-cadastro').addEventListener('submit', function(){
-						salvarUsuarioFormulario(false);
-					});
-
-					document.getElementById('btn-salvar-usuario-servidor').addEventListener('click', function(){
 						salvarUsuarioFormulario(true);
 					});
 
