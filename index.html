@@ -311,82 +311,9 @@
 				font-size: 0.875rem;
 				color: #6b7280;
 			}
-
-			/* Tela de login */
-			#login-screen{
-				display:none;
-				min-height:100vh;
-				background:linear-gradient(180deg,#f8fbff 0%, #eef4ff 100%);
-				align-items:center;
-				justify-content:center;
-				padding:24px;
-			}
-			#login-card{
-				width:100%;
-				max-width:420px;
-				background:#fff;
-				border:1px solid var(--border);
-				border-radius:14px;
-				box-shadow:0 10px 30px rgba(15,23,42,0.08);
-				padding:24px;
-			}
-			#login-card h1{
-				margin:0 0 8px;
-				font-size:1.4rem;
-			}
-			#login-card p{
-				margin:0 0 16px;
-				color:var(--muted);
-				font-size:0.95rem;
-			}
-			#login-form label{display:block;margin:10px 0 6px;font-weight:600}
-			#login-form input,
-			#login-form select{
-				width:100%;
-				padding:10px 12px;
-				border:1px solid var(--border);
-				border-radius:8px;
-				font-size:0.95rem;
-			}
-			#login-form button{
-				width:100%;
-				margin-top:12px;
-				background:var(--accent);
-				color:#fff;
-				border:none;
-				border-radius:8px;
-				padding:12px;
-				font-size:1rem;
-				cursor:pointer;
-			}
-			#login-error{
-				margin-top:10px;
-				color:#dc2626;
-				font-size:0.9rem;
-				display:none;
-			}
 		</style>
 	</head>
 	<body>
-		<div id="login-screen">
-			<div id="login-card">
-				<h1>Entrar no sistema</h1>
-				<p>Use o nome cadastrado, perfil e senha para acessar.</p>
-				<form id="login-form" autocomplete="off">
-					<label for="login-nome">Primeiro nome</label>
-					<input type="text" id="login-nome" name="login-nome" required />
-					<label for="login-perfil">Perfil cadastrado</label>
-					<select id="login-perfil" name="login-perfil" required>
-						<option value="Administrador">Administrador</option>
-						<option value="Técnico">Técnico</option>
-					</select>
-					<label for="login-senha">Senha</label>
-					<input type="password" id="login-senha" name="login-senha" required />
-					<button type="submit">Acessar</button>
-					<div id="login-error"></div>
-				</form>
-			</div>
-		</div>
 		<div class="app" id="app-sistema">
 			<aside class="sidebar" aria-label="Barra lateral">
 				<div class="brand">
@@ -396,13 +323,15 @@
 						<div class="subtitle">Gestão de Ferramentas</div>
 					</div>
 				</div>
+				<div style="margin-top:8px;">
+					<a href="https://gidepinheiro20-lab.github.io/indicadorhse6/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700;text-decoration:underline;">Acessar o sistema</a>
+				</div>
 				<div class="section">
 					<div class="section-title">PRINCIPAL</div>
 					<ul class="nav">
 						<li><a href="#dashboard"><span class="icon" aria-hidden="true">📊</span><span class="label">Dashboard</span></a></li>
 						<li><a href="#relatorios"><span class="icon" aria-hidden="true">📄</span><span class="label">Relatórios</span></a></li>
 						<li><a href="#empresa"><span class="icon" aria-hidden="true">🏢</span><span class="label">Empresa</span></a></li>
-						<li><a href="#controle-acesso"><span class="icon" aria-hidden="true">🔐</span><span class="label">Controle de acesso</span></a></li>
 						<li><a href="#funcionarios"><span class="icon" aria-hidden="true">👥</span><span class="label">Novo Colaborador</span></a></li>
 						<li><a href="#frequencia"><span class="icon" aria-hidden="true">🔎</span><span class="label">Frequência</span></a></li>
 						<li><a href="#usuario"><span class="icon" aria-hidden="true">👤</span><span class="label">Usuário</span></a></li>
@@ -983,9 +912,7 @@
 						</select><br>
 						<label for="senha">Senha</label><br>
 						<input type="password" id="senha" name="senha" required style="width:100%;margin-bottom:10px"><br>
-						<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
-							<button type="submit" style="background:#2b6cb0;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer">Salvar</button>
-						</div>
+						<button type="submit" style="margin-top:8px">Cadastrar</button>
 					</form>
 					<button id="btn-acessar-usuarios" style="margin-top:12px">Acessar usuários cadastrados</button>
 					<p style="font-size:13px;color:#7a869a;margin-top:10px">
@@ -994,16 +921,6 @@
 					</p>
 					<div id="usuarios-cadastrados" style="margin-top:24px;display:block"></div>
 					<button id="btn-voltar-cadastro" style="margin-top:12px;display:none">Voltar ao cadastro</button>
-				</div>
-				<div id="controle-acesso" style="display:none;max-width:none;margin:0;">
-					<div style="background:#fff;border-radius:12px;border:1px solid #e6edf3;padding:24px;max-width:800px;">
-						<h2 style="margin:0 0 12px 0;">Controle de acesso</h2>
-						<div id="controle-acesso-info" style="padding:14px;border:1px solid #e5e7eb;border-radius:8px;background:#f8fafc;margin-bottom:12px"></div>
-						<p style="margin:0 0 12px 0;color:#6b7280;font-size:14px;line-height:1.4;">
-							Administrador visualiza todos os registros. Técnico visualiza preferencialmente os registros lançados pelo próprio login.
-						</p>
-						<button id="btn-sair-sistema" type="button" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:10px 16px;cursor:pointer;">Sair do sistema</button>
-					</div>
 				</div>
 				
 				<!-- Seção Empresa -->
@@ -3260,137 +3177,136 @@
 		</div>
 					<script>
 				// ===== CONFIGURAÇÃO DA API =====
-				// Detectar API automaticamente com suporte ao config.js
 				const API_BASE_URL = (function() {
-					if (window.API_SYNC_ENABLED === false) {
-						return '';
-					}
-					if (window.API_BASE_URL) {
-						return window.API_BASE_URL;
-					}
-					// Se estiver em localhost ou 127.0.0.1 no navegador
-					if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-						return 'http://localhost:3000';
-					}
-					// Se estiver acessando via IP (ex: 192.168.x.x)
-					if (window.location.hostname !== 'gidepinheiro20-lab.github.io') {
-						return 'http://' + window.location.hostname + ':3000';
-					}
-					// Se estiver via GitHub, conecta ao servidor remoto via LocalTunnel
-					return 'https://quick-sloths-send.loca.lt';
+					if (window.location.protocol === 'file:') return '';
+					if (window.API_BASE_URL) return String(window.API_BASE_URL).replace(/\/$/, '');
+					return window.location.origin.replace(/\/$/, '');
 				})();
 
-				const STORAGE_SYNC_KEYS = [
-					'funcionarios', 'empresas', 'ras_reunioes', 'usuarios',
-					'historico_ras', 'cpts', 'inspecoes', 'categorias_hse',
-					'areasLocais', 'tiposRegistro', 'riscosPerigos', 'arts',
-					'frequencias', 'categorias', 'riscos', 'categorias-hse'
+				const STORAGE_KEYS_SYNC = [
+					'usuarios', 'funcionarios', 'empresas', 'ras-reunioes', 'historicoRAS',
+					'cpts', 'inspecoes', 'categoriasHSE', 'areasLocais', 'tiposRegistro',
+					'riscosPerigos', 'arts', 'categorias-hse', 'checklistFacilRegistros',
+					'novatos', 'reuniaoMensal', 'reuniaoMensalTipos', 'matrizFerramentas'
 				];
 
-				function getCurrentSessionUser() {
+				const pendingStorageSync = {};
+
+				function normalizarValorStorage(value) {
+					if (typeof value !== 'string') {
+						return value;
+					}
 					try {
-						return JSON.parse(sessionStorage.getItem('hseUser') || 'null');
+						return JSON.parse(value);
 					} catch (e) {
+						return value;
+					}
+				}
+
+				async function sincronizarStorageComServidor(key, value) {
+					if (!API_BASE_URL || !STORAGE_KEYS_SYNC.includes(key)) return false;
+					try {
+						const response = await fetch(API_BASE_URL + '/api/storage/' + encodeURIComponent(key), {
+							method: 'PUT',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({ data: normalizarValorStorage(value) })
+						});
+						return response.ok;
+					} catch (err) {
+						console.warn('Erro ao sincronizar chave:', key, err.message);
+						return false;
+					}
+				}
+
+				// Função para carregar dados do servidor
+				async function carregarDoServidor(key) {
+					if (!API_BASE_URL) return null;
+					try {
+						const response = await fetch(API_BASE_URL + '/api/storage/' + encodeURIComponent(key));
+						if (!response.ok) return null;
+						const payload = await response.json();
+						return payload && Object.prototype.hasOwnProperty.call(payload, 'data') ? payload.data : null;
+					} catch (err) {
+						console.warn('Erro ao carregar chave do servidor:', key, err.message);
 						return null;
 					}
 				}
 
-				function buildSyncHeaders() {
-					const headers = { 'Content-Type': 'application/json' };
-					const user = getCurrentSessionUser();
-					if (user && user.login) {
-						headers['X-User-Login'] = user.login;
-						headers['X-User-Perfil'] = user.perfil || '';
-					}
-					return headers;
-				}
-
-				function enrichWithOwnerInfo(payload) {
-					const user = getCurrentSessionUser();
-					if (!user || !user.login || !payload || typeof payload !== 'object') {
-						return payload;
-					}
-
-					if (!payload._ownerLogin) payload._ownerLogin = user.login;
-					if (!payload._ownerPerfil) payload._ownerPerfil = user.perfil || '';
-					return payload;
-				}
-
-				async function sincronizarComServidor(tabela, dados) {
-					if (!API_BASE_URL) return false; // Se não houver API, retorna false
+				function carregarDoServidorSync(key) {
+					if (!API_BASE_URL) return null;
 					try {
-						const bodyPayload = enrichWithOwnerInfo(dados);
-						const response = await fetch(API_BASE_URL + '/api/' + tabela, {
-							method: 'POST',
-							headers: buildSyncHeaders(),
-							body: JSON.stringify(bodyPayload)
-						});
-						if (response.ok) {
-							console.log('Sincronizado com servidor:', tabela);
-							return true;
-						}
+						const request = new XMLHttpRequest();
+						request.open('GET', API_BASE_URL + '/api/storage/' + encodeURIComponent(key), false);
+						request.send();
+						if (request.status < 200 || request.status >= 300) return null;
+						const payload = JSON.parse(request.responseText || '{}');
+						return payload && Object.prototype.hasOwnProperty.call(payload, 'data') ? payload.data : null;
 					} catch (err) {
-						console.warn('Erro ao sincronizar:', err.message);
+						return null;
 					}
-					return false;
-				}
-
-				// Função para carregar dados do servidor
-				async function carregarDoServidor(tabela) {
-					if (!API_BASE_URL) return []; // Se não houver API, retorna vazio
-					try {
-						const response = await fetch(API_BASE_URL + '/api/' + tabela, {
-							headers: buildSyncHeaders()
-						});
-						if (response.ok) {
-							const dados = await response.json();
-							console.log('Carregado do servidor:', tabela, dados.length + ' registros');
-							return dados;
-						}
-					} catch (err) {
-						console.warn('Erro ao carregar do servidor:', err.message);
-					}
-					return [];
 				}
 
 			// ===== FUNÇÕES WRAPPER PARA SINCRONIZAÇÃO AUTOMÁTICA =====
 			
-			// Wrapper do localStorage.setItem que sincroniza automaticamente
-				const localStorageOriginal = {
+			// Wrapper do localStorage para cache local + sincronização remota
+			const localStorageOriginal = {
 				setItem: localStorage.setItem.bind(localStorage),
 				getItem: localStorage.getItem.bind(localStorage)
 			};
 
 			// Override do localStorage.setItem para sincronizar automaticamente
 			Storage.prototype.setItemSync = async function(key, value) {
-				// Salvar localmente
 				localStorageOriginal.setItem(key, value);
-				
-				// Sincronizar com servidor (se for um dado do sistema)
-				const tabelasParaSincronizar = STORAGE_SYNC_KEYS;
-				
-				if (tabelasParaSincronizar.includes(key)) {
-					try {
-						const dados = JSON.parse(value);
-						// Se for array, sincronizar cada item
-						if (Array.isArray(dados)) {
-							for (let item of dados) {
-								await sincronizarComServidor(key, item);
-							}
-						} else {
-							await sincronizarComServidor(key, dados);
-						}
-					} catch (e) {
-						console.warn('Erro ao sincronizar:', key, e);
-					}
-				}
+				return sincronizarStorageComServidor(key, value);
 			};
+
+			function sincronizarChaveDebounced(key, value) {
+				if (!STORAGE_KEYS_SYNC.includes(key)) return;
+				if (pendingStorageSync[key]) {
+					clearTimeout(pendingStorageSync[key]);
+				}
+				pendingStorageSync[key] = setTimeout(function() {
+					sincronizarStorageComServidor(key, value);
+					delete pendingStorageSync[key];
+				}, 250);
+			}
+
+			function hidratarStorageEssencialSync() {
+				if (!API_BASE_URL) return;
+				var keysEssenciais = ['usuarios', 'funcionarios', 'empresas', 'ras-reunioes', 'historicoRAS'];
+				keysEssenciais.forEach(function(key) {
+					var dadoServidor = carregarDoServidorSync(key);
+					if (dadoServidor !== null && typeof dadoServidor !== 'undefined') {
+						localStorageOriginal.setItem(key, JSON.stringify(dadoServidor));
+					}
+				});
+			}
+
+			async function hidratarStorageCompletoAsync() {
+				if (!API_BASE_URL) return;
+				try {
+					const response = await fetch(API_BASE_URL + '/api/storage');
+					if (!response.ok) return;
+					const dados = await response.json();
+					Object.keys(dados || {}).forEach(function(key) {
+						if (typeof dados[key] !== 'undefined') {
+							localStorageOriginal.setItem(key, JSON.stringify(dados[key]));
+						}
+					});
+					console.log('✅ Hidratação completa do PostgreSQL concluída');
+				} catch (e) {
+					console.warn('Falha ao hidratar storage completo:', e.message);
+				}
+			}
+
+			hidratarStorageEssencialSync();
+			hidratarStorageCompletoAsync();
 
 			// Função helper para carregar dados (servidor primeiro, depois localStorage)
 			async function loadData(key) {
 				// Tentar carregar do servidor primeiro
 				const dadosServidor = await carregarDoServidor(key);
-				if (dadosServidor && dadosServidor.length > 0) {
+				if (dadosServidor !== null && typeof dadosServidor !== 'undefined') {
 					// Atualizar localStorage com dados do servidor
 					localStorageOriginal.setItem(key, JSON.stringify(dadosServidor));
 					return dadosServidor;
@@ -3398,7 +3314,12 @@
 				
 				// Fallback para localStorage
 				const dadosLocal = localStorageOriginal.getItem(key);
-				return dadosLocal ? JSON.parse(dadosLocal) : [];
+				if (!dadosLocal) return [];
+				try {
+					return JSON.parse(dadosLocal);
+				} catch (e) {
+					return [];
+				}
 			}
 
 			// Função helper para salvar dados (localStorage + servidor)
@@ -3412,57 +3333,24 @@
 			// INTERCEPTAR TODAS AS CHAMADAS DE localStorage.setItem
 			(function() {
 				const originalSetItem = localStorage.setItem;
+				const originalRemoveItem = localStorage.removeItem;
 				
 				localStorage.setItem = function(key, value) {
 					// Chamar o original
 					originalSetItem.call(localStorage, key, value);
-					
-					// Lista de chaves que devem ser sincronizadas
-					const keysParaSincronizar = STORAGE_SYNC_KEYS;
-					
-					// Se a chave está na lista, sincronizar
-					if (keysParaSincronizar.includes(key)) {
-						(async function() {
-							try {
-								const dados = JSON.parse(value);
-								// Se for array, sincronizar cada item
-								if (Array.isArray(dados)) {
-									for (let item of dados) {
-										if (!item.id) item.id = Date.now() + Math.random();
-										await sincronizarComServidor(key, item);
-									}
-									console.log(`✅ ${dados.length} itens de "${key}" sincronizados`);
-								} else {
-									if (!dados.id) dados.id = Date.now() + Math.random();
-									await sincronizarComServidor(key, dados);
-									console.log(`✅ Item de "${key}" sincronizado`);
-								}
-							} catch (e) {
-								console.warn(`⚠️ Erro ao sincronizar "${key}":`, e.message);
-							}
-						})();
+					sincronizarChaveDebounced(key, value);
+				};
+
+				localStorage.removeItem = function(key) {
+					originalRemoveItem.call(localStorage, key);
+					if (STORAGE_KEYS_SYNC.includes(key)) {
+						sincronizarChaveDebounced(key, JSON.stringify([]));
 					}
 				};
 			})();
 
 			console.log('🔄 Sistema de sincronização automática ativado!');
 			console.log('📡 Servidor:', API_BASE_URL);
-
-			// Carregar dados do servidor para localStorage no início
-			(async function sincronizacaoInicial() {
-				if (!API_BASE_URL) return;
-				for (const key of STORAGE_SYNC_KEYS) {
-					try {
-						const dadosServidor = await carregarDoServidor(key);
-						if (Array.isArray(dadosServidor) && dadosServidor.length > 0) {
-							localStorageOriginal.setItem(key, JSON.stringify(dadosServidor));
-						}
-					} catch (err) {
-						console.warn('Falha na sincronização inicial de', key, err.message);
-					}
-				}
-				console.log('✅ Sincronização inicial concluída');
-			})();
 
 			// ===== FIM DA INTERCEPTAÇÃO =====
 			
@@ -3477,7 +3365,6 @@
 					function hideAllSections() {
 						document.getElementById('conteudo-principal').style.display = 'none';
 						document.getElementById('cadastro-usuario').style.display = 'none';
-						document.getElementById('controle-acesso').style.display = 'none';
 						document.getElementById('nova-ras').style.display = 'none';
 						document.getElementById('funcionarios').style.display = 'none';
 						document.getElementById('frequencia').style.display = 'none';
@@ -3498,18 +3385,8 @@
 						const alvo = (hash || '#').replace('#', '');
 						switch (alvo) {
 							case 'usuario':
-								if (!usuarioAtualEhAdmin()) {
-									alert('Apenas Administrador pode acessar o cadastro de usuários.');
-									navegarParaHash('#controle-acesso');
-									break;
-								}
 								hideAllSections();
 								document.getElementById('cadastro-usuario').style.display = 'block';
-								break;
-							case 'controle-acesso':
-								hideAllSections();
-								document.getElementById('controle-acesso').style.display = 'block';
-								atualizarPainelControleAcesso();
 								break;
 							case 'ras':
 								hideAllSections();
@@ -3610,12 +3487,6 @@
 								navegarParaHash('#usuario');
 							});
 						});
-					document.querySelectorAll('.nav a[href="#controle-acesso"]').forEach(function(link){
-						link.addEventListener('click',function(e){
-							e.preventDefault();
-							navegarParaHash('#controle-acesso');
-						});
-					});
 					// Exibir formulário Nova RAS ao clicar em +RAS
 						document.querySelectorAll('.nav a[href="#ras"]').forEach(function(link){
 							link.addEventListener('click',function(e){
@@ -4617,116 +4488,30 @@
 						}
 					});
 
-					// Cadastro de usuários com persistência em localStorage
+					// Cadastro de usuários com persistência principal no PostgreSQL
 					var usuarios = [];
-					var usuariosCarregadosDoServidor = false;
-
-					function gerarIdUsuario(usuario, indice) {
-						var baseLogin = String((usuario && usuario.login) || '').trim().toLowerCase().replace(/\s+/g, '-');
-						var basePerfil = String((usuario && usuario.perfil) || '').trim().toLowerCase().replace(/\s+/g, '-');
-						if (baseLogin && basePerfil) return 'usr_' + baseLogin + '_' + basePerfil;
-						return 'usr_' + Date.now() + '_' + (indice || 0);
-					}
-
-					function normalizarUsuario(usuario, indice) {
-						if (!usuario || typeof usuario !== 'object') return null;
-						var nome = String(usuario.nome || '').trim();
-						var perfil = String(usuario.perfil || '').trim();
-						var senha = String(usuario.senha || '');
-						var login = String(usuario.login || '').trim();
-						if (!login && nome) {
-							login = nome.split(' ')[0];
-						}
-						if (!nome || !perfil || !senha || !login) return null;
-						return {
-							id: usuario.id || gerarIdUsuario({ login: login, perfil: perfil }, indice),
-							nome: nome,
-							perfil: perfil,
-							senha: senha,
-							login: login
-						};
-					}
-
-					function normalizarListaUsuarios(lista) {
-						if (!Array.isArray(lista)) return [];
-						return lista
-							.map(function(item, indice){ return normalizarUsuario(item, indice); })
-							.filter(function(item){ return !!item; });
-					}
-
-					async function atualizarUsuariosDoServidor(force) {
-						if (!force && usuariosCarregadosDoServidor) return;
+					window.carregarUsuarios = async function() {
 						try {
-							var usuariosServidor = await carregarDoServidor('usuarios');
-							if (Array.isArray(usuariosServidor) && usuariosServidor.length > 0) {
-								usuarios = normalizarListaUsuarios(usuariosServidor);
-								localStorage.setItem('usuarios', JSON.stringify(usuarios));
-							} else if (usuarios.length > 0) {
-								for (var i = 0; i < usuarios.length; i++) {
-									await sincronizarComServidor('usuarios', usuarios[i]);
-								}
-							}
-						} catch (err) {
-							console.warn('Falha ao atualizar usuários do servidor:', err.message);
-						} finally {
-							usuariosCarregadosDoServidor = true;
+							var dados = await loadData('usuarios');
+							usuarios = Array.isArray(dados) ? dados : [];
+						} catch(e) {
+							usuarios = [];
 						}
-					}
-					// Carregar do localStorage ao iniciar
-					if(localStorage.getItem('usuarios')){
-						try {
-							usuarios = normalizarListaUsuarios(JSON.parse(localStorage.getItem('usuarios')) || []);
-						} catch(e){ usuarios = []; }
-					}
-					if (usuarios.length > 0) {
-						localStorage.setItem('usuarios', JSON.stringify(usuarios));
-					}
-					exibirUsuarios();
-					atualizarUsuariosDoServidor(false);
+						exibirUsuarios();
+					};
+					carregarUsuarios();
 
-					function coletarUsuarioFormulario() {
+					document.getElementById('form-cadastro').addEventListener('submit', async function(e){
+						e.preventDefault();
 						var nome = document.getElementById('nome').value.trim();
 						var perfil = document.getElementById('perfil').value;
 						var senha = document.getElementById('senha').value;
-						if(!nome || !perfil || !senha) return null;
+						if(!nome || !perfil || !senha) return;
 						var primeiroNome = nome.split(' ')[0];
-						return normalizarUsuario({ nome: nome, perfil: perfil, senha: senha, login: primeiroNome }, usuarios.length);
-					}
-
-					async function salvarUsuarioFormulario(sincronizarServidor) {
-						var novoUsuario = coletarUsuarioFormulario();
-						if(!novoUsuario) return false;
-
-						var indiceExistente = usuarios.findIndex(function(usuario) {
-							return usuario && usuario.id === novoUsuario.id;
-						});
-
-						if (indiceExistente >= 0) {
-							usuarios[indiceExistente] = novoUsuario;
-						} else {
-							usuarios.push(novoUsuario);
-						}
-
-						// Salvar no localStorage
-						localStorage.setItem('usuarios', JSON.stringify(usuarios));
-
-						if (sincronizarServidor) {
-							var salvouNoServidor = await sincronizarComServidor('usuarios', novoUsuario);
-							if (!salvouNoServidor) {
-								alert('Usuário salvo localmente, mas não foi possível salvar no servidor agora.');
-								exibirUsuarios();
-								return false;
-							}
-							alert('Usuário salvo no servidor com sucesso!');
-						}
-
+						usuarios.push({nome, perfil, senha, login: primeiroNome});
+						await saveData('usuarios', usuarios);
 						document.getElementById('form-cadastro').reset();
 						exibirUsuarios();
-						return true;
-					}
-
-					document.getElementById('form-cadastro').addEventListener('submit', function(){
-						salvarUsuarioFormulario(true);
 					});
 
 					function exibirUsuarios(){
@@ -4746,10 +4531,10 @@
 					}
 
 					// Função para excluir usuário (global)
-					window.excluirUsuario = function(idx){
+					window.excluirUsuario = async function(idx){
 						if(confirm('Deseja realmente excluir este usuário?')){
 							usuarios.splice(idx,1);
-							localStorage.setItem('usuarios', JSON.stringify(usuarios));
+							await saveData('usuarios', usuarios);
 							exibirUsuarios();
 						}
 					}
@@ -4767,103 +4552,7 @@
 						document.getElementById('btn-voltar-cadastro').style.display = 'none';
 					});
 
-					// Tela de login
-					function mostrarLogin(){
-						var loginScreen = document.getElementById('login-screen');
-						var app = document.getElementById('app-sistema');
-						if(loginScreen) loginScreen.style.display = 'flex';
-						if(app) app.style.display = 'none';
-					}
-					function obterUsuarioLogado(){
-						try {
-							return JSON.parse(sessionStorage.getItem('hseUser') || 'null');
-						} catch(e) {
-							return null;
-						}
-					}
-					function usuarioAtualEhAdmin(){
-						var user = obterUsuarioLogado();
-						return !!(user && user.perfil === 'Administrador');
-					}
-					function atualizarPainelControleAcesso(){
-						var info = document.getElementById('controle-acesso-info');
-						if(!info) return;
-						var user = obterUsuarioLogado();
-						if(!user){
-							info.innerHTML = '<b>Status:</b> nenhum usuário autenticado.';
-							return;
-						}
-						info.innerHTML = '<b>Usuário:</b> ' + (user.nome || user.login || '-') + '<br><b>Login:</b> ' + (user.login || '-') + '<br><b>Perfil:</b> ' + (user.perfil || '-');
-					}
-					function aplicarPermissoesMenu(){
-						var admin = usuarioAtualEhAdmin();
-						document.querySelectorAll('.nav a[href="#usuario"]').forEach(function(link){
-							var li = link.closest('li');
-							if(li) li.style.display = admin ? '' : 'none';
-						});
-					}
-					function mostrarApp(){
-						var loginScreen = document.getElementById('login-screen');
-						var app = document.getElementById('app-sistema');
-						if(loginScreen) loginScreen.style.display = 'none';
-						if(app) app.style.display = 'flex';
-						aplicarPermissoesMenu();
-						atualizarPainelControleAcesso();
-					}
-
-					if(sessionStorage.getItem('hseLogged') === '1'){
-						aplicarPermissoesMenu();
-						mostrarApp();
-					} else {
-						mostrarLogin();
-					}
-
-					var loginForm = document.getElementById('login-form');
-					if(loginForm){
-						loginForm.addEventListener('submit', async function(event){
-							event.preventDefault();
-							var nomeLogin = (document.getElementById('login-nome').value || '').trim();
-							var perfilLogin = document.getElementById('login-perfil').value;
-							var senhaLogin = document.getElementById('login-senha').value;
-							var erro = document.getElementById('login-error');
-							if(erro){ erro.style.display = 'none'; erro.textContent = ''; }
-
-							if(!nomeLogin || !perfilLogin || !senhaLogin){
-								if(erro){ erro.textContent = 'Preencha todos os campos.'; erro.style.display = 'block'; }
-								return;
-							}
-
-							await atualizarUsuariosDoServidor(true);
-
-							var nomeLoginNormalizado = nomeLogin.toLowerCase();
-							var usuarioValido = usuarios.find(function(u){
-								return (u.login || '').toLowerCase() === nomeLoginNormalizado && u.perfil === perfilLogin && u.senha === senhaLogin;
-							});
-
-							if(!usuarioValido){
-								if(erro){ erro.textContent = 'Usuário, perfil ou senha inválidos.'; erro.style.display = 'block'; }
-								return;
-							}
-
-							sessionStorage.setItem('hseLogged', '1');
-							sessionStorage.setItem('hseUser', JSON.stringify({
-								nome: usuarioValido.nome,
-								login: usuarioValido.login,
-								perfil: usuarioValido.perfil
-							}));
-							mostrarApp();
-						});
-					}
-
-						var btnSairSistema = document.getElementById('btn-sair-sistema');
-						if(btnSairSistema){
-							btnSairSistema.addEventListener('click', function(){
-								sessionStorage.removeItem('hseLogged');
-								sessionStorage.removeItem('hseUser');
-								window.location.hash = '#';
-								window.location.reload();
-							});
-						}
+					// Sistema inicializado sem login
 
 					// ===== SISTEMA DE FUNCIONÁRIOS =====
 					var funcionarios = [];
