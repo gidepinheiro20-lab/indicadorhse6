@@ -7978,10 +7978,11 @@
 						html += '<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:20px;margin-bottom:20px">';
 						html += '<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem;font-weight:600;display:flex;align-items:center;gap:8px">🔍 Detalhes da Inspeção</h3>';
 						html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:16px">';
-						html += '<div><strong style="color:#6b7280">Categoria:</strong><br><span style="color:#374151">' + (inspecao.categoria || 'Não informado') + '</span></div>';
+						// Mostrar Classificação antes da Categoria conforme solicitado
 						if (inspecao.classificacao) {
 							html += '<div><strong style="color:#6b7280">Classificação:</strong><br><span style="color:#374151">' + inspecao.classificacao + '</span></div>';
 						}
+						html += '<div><strong style="color:#6b7280">Categoria:</strong><br><span style="color:#374151">' + (inspecao.categoria || 'Não informado') + '</span></div>';
 						var corSeveridade = getCorSeveridade(inspecao.severidade);
 						html += '<div><strong style="color:#6b7280">Severidade:</strong><br><span style="background:' + corSeveridade + ';color:#fff;padding:4px 12px;border-radius:16px;font-size:0.85rem;font-weight:500">' + (inspecao.severidade || 'Não informado') + '</span></div>';
 						if (inspecao.risco) {
