@@ -2479,8 +2479,14 @@
 
 							<!-- Botões do Rodapé -->
 							<div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid #e5e7eb">
-								<button onclick="imprimirRelatorio()" style="background:#059669;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem;display:flex;align-items:center;gap:6px">
-									🖨️ Imprimir
+								<button onclick="baixarRelatorioInspecaoPDF()" style="background:#2563eb;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem;display:flex;align-items:center;gap:6px">
+									📄 Baixar PDF
+								</button>
+								<button onclick="compartilharRelatorioInspecaoWhatsApp()" style="background:#059669;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem;display:flex;align-items:center;gap:6px">
+									📱 Compartilhar WhatsApp
+								</button>
+								<button onclick="finalizarESairRelatorioInspecao()" style="background:#7c3aed;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem;display:flex;align-items:center;gap:6px">
+									✅ Finalizar e Sair
 								</button>
 								<button onclick="fecharModalRelatorio()" style="background:#6b7280;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.9rem">
 									Fechar
@@ -7576,10 +7582,9 @@
 							try {
 								inspecoes.push(novaInspecao);
 								localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
-
-								alert('Inspeção registrada com sucesso!');
-								fecharModalInspecao();
 								carregarInspecoes();
+								fecharModalInspecao();
+								mostrarRelatorioInspecao(novaInspecao.id);
 							} catch (erroSalvarInspecao) {
 								inspecoes.pop();
 								console.error('Erro ao salvar inspeção:', erroSalvarInspecao);
@@ -7930,6 +7935,8 @@
 						}
 					}
 
+					var relatorioInspecaoAtualId = null;
+
 					// Funções do Modal de Relatório
 					function mostrarRelatorioInspecao(id) {
 						var inspecao = inspecoes.find(function(insp) { return insp.id == id; });
@@ -7937,6 +7944,7 @@
 							alert('Inspeção não encontrada!');
 							return;
 						}
+						relatorioInspecaoAtualId = inspecao.id;
 
 						var html = '';
 						
@@ -8031,11 +8039,16 @@
 
 					function fecharModalRelatorio() {
 						document.getElementById('modal-relatorio-inspecao').style.display = 'none';
+						relatorioInspecaoAtualId = null;
 					}
 
-					function imprimirRelatorio() {
+					function baixarRelatorioInspecaoPDF() {
 						var conteudo = document.getElementById('conteudo-relatorio').innerHTML;
 						var janelaImprimir = window.open('', '_blank');
+						if (!janelaImprimir) {
+							alert('Não foi possível abrir a janela de impressão. Verifique o bloqueador de pop-up.');
+							return;
+						}
 						janelaImprimir.document.write(`
 							<html>
 								<head>
@@ -8060,6 +8073,56 @@
 						`);
 						janelaImprimir.document.close();
 						janelaImprimir.print();
+					}
+
+					function imprimirRelatorio() {
+						baixarRelatorioInspecaoPDF();
+					}
+
+					function compartilharRelatorioInspecaoWhatsApp() {
+						if (!relatorioInspecaoAtualId) {
+							alert('Nenhuma inspeção selecionada para compartilhar.');
+							return;
+						}
+
+						var inspecao = inspecoes.find(function(insp) { return insp.id == relatorioInspecaoAtualId; });
+						if (!inspecao) {
+							alert('Inspeção não encontrada para compartilhamento.');
+							return;
+						}
+
+						var dataTexto = inspecao.data ? formatarData(inspecao.data) : '-';
+						var prazoTexto = inspecao.prazo ? formatarData(inspecao.prazo) : '-';
+						var conclusaoTexto = inspecao.conclusao ? formatarData(inspecao.conclusao) : '-';
+
+						var mensagem = '';
+						mensagem += '📋 RELATÓRIO DE INSPEÇÃO HSE\n\n';
+						mensagem += 'Data: ' + dataTexto + '\n';
+						mensagem += 'Área: ' + (inspecao.area || '-') + '\n';
+						mensagem += 'Local: ' + (inspecao.local || '-') + '\n';
+						mensagem += 'Tipo: ' + (inspecao.tipo || '-') + '\n';
+						mensagem += 'Semana: ' + (inspecao.semana || '-') + '\n';
+						mensagem += 'Categoria: ' + (inspecao.categoria || '-') + '\n';
+						mensagem += 'Classificação: ' + (inspecao.classificacao || '-') + '\n';
+						mensagem += 'Severidade: ' + (inspecao.severidade || '-') + '\n';
+						mensagem += 'Risco: ' + (inspecao.risco || '-') + '\n';
+						mensagem += 'Controlável: ' + (inspecao.controlavel || '-') + '\n';
+						mensagem += 'Interdição: ' + (inspecao.interdicao || '-') + '\n';
+						mensagem += 'Status: ' + (inspecao.status || '-') + '\n';
+						mensagem += 'Emissor: ' + (inspecao.emissor || '-') + '\n';
+						mensagem += 'Responsável: ' + (inspecao.responsavel || '-') + '\n';
+						mensagem += 'Prazo: ' + prazoTexto + '\n';
+						mensagem += 'Conclusão: ' + conclusaoTexto + '\n\n';
+						mensagem += 'Descrição:\n' + (inspecao.descricao || '-') + '\n\n';
+						mensagem += 'Ações Tomadas:\n' + (inspecao.acoes || '-') + '\n';
+
+						var url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(mensagem);
+						window.open(url, '_blank');
+					}
+
+					function finalizarESairRelatorioInspecao() {
+						fecharModalRelatorio();
+						alert('Relatório finalizado com sucesso!');
 					}
 
 					function abrirImagemModal(src, titulo) {
