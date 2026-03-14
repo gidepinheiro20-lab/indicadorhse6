@@ -8127,8 +8127,31 @@
 					}
 
 					function finalizarESairRelatorioInspecao() {
-						fecharModalRelatorio();
-						alert('Relatório finalizado com sucesso!');
+						// Marcar inspeção como concluída, salvar e então fechar o modal
+						if (!relatorioInspecaoAtualId) {
+							alert('Erro: ID da inspeção não identificado para finalizar.');
+							return;
+						}
+						var idx = inspecoes.findIndex(function(insp) { return insp.id == relatorioInspecaoAtualId; });
+						if (idx === -1) {
+							alert('Inspeção não encontrada para finalizar.');
+							return;
+						}
+						try {
+							var hoje = new Date();
+							var yyyy = hoje.getFullYear();
+							var mm = String(hoje.getMonth() + 1).padStart(2, '0');
+							var dd = String(hoje.getDate()).padStart(2, '0');
+							inspecoes[idx].status = 'CONCLUÍDO';
+							inspecoes[idx].conclusao = yyyy + '-' + mm + '-' + dd;
+							localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
+							carregarInspecoes();
+							fecharModalRelatorio();
+							alert('Relatório finalizado com sucesso!');
+						} catch (e) {
+							console.error('Erro ao finalizar inspeção:', e);
+							alert('Não foi possível finalizar a inspeção. Tente novamente.');
+						}
 					}
 
 					function abrirImagemModal(src, titulo) {
