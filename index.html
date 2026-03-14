@@ -7123,9 +7123,25 @@
 					var inspecoes = JSON.parse(localStorage.getItem('inspecoes')) || [];
 					var ultimaAlteracaoLocalInspecoes = 0;
 					var intervaloSyncInspecoes = null;
+					var eventosSyncInspecoesRegistrados = false;
 
 					function marcarAlteracaoLocalInspecoes() {
 						ultimaAlteracaoLocalInspecoes = Date.now();
+					}
+
+					function normalizarListaInspecoes(dados) {
+						if (Array.isArray(dados)) return dados;
+						if (typeof dados === 'string') {
+							try {
+								var parsed = JSON.parse(dados);
+								return Array.isArray(parsed) ? parsed : [];
+							} catch (e) {
+								return [];
+							}
+						}
+						if (dados && Array.isArray(dados.inspecoes)) return dados.inspecoes;
+						if (dados && Array.isArray(dados.items)) return dados.items;
+						return [];
 					}
 
 					async function sincronizarInspecoesDoServidor() {
@@ -7135,15 +7151,31 @@
 						if (Date.now() - ultimaAlteracaoLocalInspecoes < 3000) return;
 
 						var dadosServidor = await carregarDoServidor('inspecoes');
-						if (!Array.isArray(dadosServidor)) return;
+						var listaServidor = normalizarListaInspecoes(dadosServidor);
+						if (!Array.isArray(listaServidor)) return;
 
 						var localAtual = JSON.stringify(inspecoes || []);
-						var remotoAtual = JSON.stringify(dadosServidor || []);
+						var remotoAtual = JSON.stringify(listaServidor || []);
 						if (localAtual !== remotoAtual) {
-							inspecoes = dadosServidor;
+							inspecoes = listaServidor;
 							localStorageOriginal.setItem('inspecoes', remotoAtual);
 							carregarInspecoes();
 						}
+					}
+
+					function registrarEventosSyncInspecoes() {
+						if (eventosSyncInspecoesRegistrados) return;
+						eventosSyncInspecoesRegistrados = true;
+
+						window.addEventListener('focus', function() {
+							sincronizarInspecoesDoServidor();
+						});
+
+						document.addEventListener('visibilitychange', function() {
+							if (document.visibilityState === 'visible') {
+								sincronizarInspecoesDoServidor();
+							}
+						});
 					}
 
 					function iniciarSincronizacaoInspecoes() {
@@ -7155,6 +7187,11 @@
 					
 					// Inicializar sistema de inspeção
 					function inicializarInspecao() {
+						var inspecoesStorage = normalizarListaInspecoes(localStorage.getItem('inspecoes'));
+						if (Array.isArray(inspecoesStorage)) {
+							inspecoes = inspecoesStorage;
+						}
+
 						// Adicionar dados de exemplo apenas uma vez (evita reaparecer após exclusão)
 						var exemploJaInicializado = localStorage.getItem('inspecoesExemploInicializado') === 'true';
 						if (inspecoes.length === 0 && !exemploJaInicializado) {
@@ -7194,6 +7231,7 @@
 						}
 
 						iniciarSincronizacaoInspecoes();
+						registrarEventosSyncInspecoes();
 						sincronizarInspecoesDoServidor();
 						
 						carregarInspecoes();
