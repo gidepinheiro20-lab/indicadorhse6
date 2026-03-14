@@ -2680,12 +2680,16 @@
 								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
 									<div>
 										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Emissor</label>
-										<input type="text" id="edit-insp-emissor" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+										<select id="edit-insp-emissor" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione o emissor...</option>
+										</select>
 									</div>
 									
 									<div>
 										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Responsável pela ação</label>
-										<input type="text" id="edit-insp-responsavel" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+										<select id="edit-insp-responsavel" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione o responsável...</option>
+										</select>
 									</div>
 								</div>
 								
@@ -7521,15 +7525,16 @@
 						});
 					}
 
-					function carregarColaboradoresInspecaoDropdown() {
-						var selectEmissor = document.getElementById('insp-emissor');
-						var selectResponsavel = document.getElementById('insp-responsavel');
+					function carregarColaboradoresInspecaoDropdown(config) {
+						config = config || {};
+						var selectEmissor = document.getElementById(config.emissorId || 'insp-emissor');
+						var selectResponsavel = document.getElementById(config.responsavelId || 'insp-responsavel');
 						if (!selectEmissor || !selectResponsavel) return;
 
 						var colaboradoresCadastrados = JSON.parse(localStorage.getItem('funcionarios')) || [];
 						var selects = [
-							{ element: selectEmissor, placeholder: 'Selecione o emissor...' },
-							{ element: selectResponsavel, placeholder: 'Selecione o responsável...' }
+							{ element: selectEmissor, placeholder: config.emissorPlaceholder || 'Selecione o emissor...', valorAtual: config.emissorValor || '' },
+							{ element: selectResponsavel, placeholder: config.responsavelPlaceholder || 'Selecione o responsável...', valorAtual: config.responsavelValor || '' }
 						];
 
 						selects.forEach(function(item) {
@@ -7560,6 +7565,12 @@
 								option.textContent = nomeColaborador;
 								item.element.appendChild(option);
 							});
+						});
+
+						selects.forEach(function(item) {
+							if (item.valorAtual) {
+								item.element.value = item.valorAtual;
+							}
 						});
 					}
 					
@@ -8009,6 +8020,15 @@
 
 						inspecaoEditandoId = id;
 
+						// Carregar opções dos selects
+						carregarOpcoesEditarInspecao();
+						carregarColaboradoresInspecaoDropdown({
+							emissorId: 'edit-insp-emissor',
+							responsavelId: 'edit-insp-responsavel',
+							emissorValor: inspecao.emissor || '',
+							responsavelValor: inspecao.responsavel || ''
+						});
+
 						// Preencher o formulário com os dados existentes
 						document.getElementById('edit-insp-data').value = inspecao.data || '';
 						document.getElementById('edit-insp-area').value = inspecao.area || '';
@@ -8023,14 +8043,9 @@
 						document.getElementById('edit-insp-risco').value = inspecao.risco || '';
 						document.getElementById('edit-insp-controlavel').value = inspecao.controlavel || '';
 						document.getElementById('edit-insp-interdicao').value = inspecao.interdicao || '';
-						document.getElementById('edit-insp-emissor').value = inspecao.emissor || '';
-						document.getElementById('edit-insp-responsavel').value = inspecao.responsavel || '';
 						document.getElementById('edit-insp-prazo').value = inspecao.prazo || '';
 						document.getElementById('edit-insp-conclusao').value = inspecao.conclusao || '';
 						document.getElementById('edit-insp-status').value = inspecao.status || '';
-
-						// Carregar opções dos selects
-						carregarOpcoesEditarInspecao();
 
 						// Mostrar fotos existentes se houver
 						if (inspecao.fotoAntes) {
