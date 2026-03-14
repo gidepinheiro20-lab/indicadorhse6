@@ -7124,6 +7124,7 @@
 					var ultimaAlteracaoLocalInspecoes = 0;
 					var intervaloSyncInspecoes = null;
 					var eventosSyncInspecoesRegistrados = false;
+					var salvamentoInspecaoEmAndamento = false;
 
 					function marcarAlteracaoLocalInspecoes() {
 						ultimaAlteracaoLocalInspecoes = Date.now();
@@ -7592,6 +7593,26 @@
 								return;
 							}
 						}
+
+						if (salvamentoInspecaoEmAndamento) {
+							return;
+						}
+						salvamentoInspecaoEmAndamento = true;
+
+						var botaoAvancar = document.querySelector('#form-nova-inspecao button[type="submit"]');
+						var textoBotaoOriginal = botaoAvancar ? botaoAvancar.textContent : 'Avançar';
+						if (botaoAvancar) {
+							botaoAvancar.disabled = true;
+							botaoAvancar.textContent = 'Processando...';
+						}
+
+						function liberarEstadoSalvamento() {
+							salvamentoInspecaoEmAndamento = false;
+							if (botaoAvancar) {
+								botaoAvancar.disabled = false;
+								botaoAvancar.textContent = textoBotaoOriginal;
+							}
+						}
 						
 						// Processar fotos
 						var fotoAntesFile = document.getElementById('insp-foto-antes').files[0];
@@ -7626,6 +7647,18 @@
 						function processarFotos() {
 							var fotosProcessadas = 0;
 							var totalFotos = (fotoAntesFile ? 1 : 0) + (fotoDepoisFile ? 1 : 0);
+
+							function concluirLeituraFoto(tipoFoto, resultado) {
+								if (tipoFoto === 'antes') {
+									novaInspecao.fotoAntes = resultado || null;
+								} else {
+									novaInspecao.fotoDepois = resultado || null;
+								}
+								fotosProcessadas++;
+								if (fotosProcessadas >= totalFotos) {
+									finalizarSalvamento();
+								}
+							}
 							
 							if (totalFotos === 0) {
 								// Não há fotos, salvar direto
@@ -7636,25 +7669,43 @@
 							if (fotoAntesFile) {
 								var readerAntes = new FileReader();
 								readerAntes.onload = function(e) {
-									novaInspecao.fotoAntes = e.target.result;
-									fotosProcessadas++;
-									if (fotosProcessadas === totalFotos) {
-										finalizarSalvamento();
-									}
+									concluirLeituraFoto('antes', e.target ? e.target.result : null);
 								};
-								readerAntes.readAsDataURL(fotoAntesFile);
+								readerAntes.onerror = function() {
+									console.warn('Falha ao ler foto antes. Salvando sem a imagem.');
+									concluirLeituraFoto('antes', null);
+								};
+								readerAntes.onabort = function() {
+									console.warn('Leitura da foto antes foi abortada. Salvando sem a imagem.');
+									concluirLeituraFoto('antes', null);
+								};
+								try {
+									readerAntes.readAsDataURL(fotoAntesFile);
+								} catch (erroFotoAntes) {
+									console.warn('Erro ao processar foto antes. Salvando sem a imagem.', erroFotoAntes);
+									concluirLeituraFoto('antes', null);
+								}
 							}
 							
 							if (fotoDepoisFile) {
 								var readerDepois = new FileReader();
 								readerDepois.onload = function(e) {
-									novaInspecao.fotoDepois = e.target.result;
-									fotosProcessadas++;
-									if (fotosProcessadas === totalFotos) {
-										finalizarSalvamento();
-									}
+									concluirLeituraFoto('depois', e.target ? e.target.result : null);
 								};
-								readerDepois.readAsDataURL(fotoDepoisFile);
+								readerDepois.onerror = function() {
+									console.warn('Falha ao ler foto depois. Salvando sem a imagem.');
+									concluirLeituraFoto('depois', null);
+								};
+								readerDepois.onabort = function() {
+									console.warn('Leitura da foto depois foi abortada. Salvando sem a imagem.');
+									concluirLeituraFoto('depois', null);
+								};
+								try {
+									readerDepois.readAsDataURL(fotoDepoisFile);
+								} catch (erroFotoDepois) {
+									console.warn('Erro ao processar foto depois. Salvando sem a imagem.', erroFotoDepois);
+									concluirLeituraFoto('depois', null);
+								}
 							}
 						}
 						
@@ -7666,10 +7717,12 @@
 								carregarInspecoes();
 								fecharModalInspecao();
 								mostrarRelatorioInspecao(novaInspecao.id);
+								liberarEstadoSalvamento();
 							} catch (erroSalvarInspecao) {
 								inspecoes.pop();
 								console.error('Erro ao salvar inspeção:', erroSalvarInspecao);
 								alert('Não foi possível salvar a inspeção. Verifique os campos e tente novamente.');
+								liberarEstadoSalvamento();
 							}
 						}
 						
