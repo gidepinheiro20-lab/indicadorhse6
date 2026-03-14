@@ -7149,6 +7149,9 @@
 						if (!API_BASE_URL) return;
 						var secaoInspecao = document.getElementById('inspecao');
 						if (!secaoInspecao || secaoInspecao.style.display === 'none') return;
+						if (salvamentoInspecaoEmAndamento) return;
+						var modalNovaInspecao = document.getElementById('modal-nova-inspecao');
+						if (modalNovaInspecao && modalNovaInspecao.style.display !== 'none') return;
 						if (Date.now() - ultimaAlteracaoLocalInspecoes < 3000) return;
 
 						var dadosServidor = await carregarDoServidor('inspecoes');
@@ -7605,6 +7608,8 @@
 							botaoAvancar.disabled = true;
 							botaoAvancar.textContent = 'Processando...';
 						}
+						var finalizacaoSalvamentoConcluida = false;
+						var timeoutSegurancaSalvamentoId = null;
 
 						function liberarEstadoSalvamento() {
 							salvamentoInspecaoEmAndamento = false;
@@ -7612,6 +7617,16 @@
 								botaoAvancar.disabled = false;
 								botaoAvancar.textContent = textoBotaoOriginal;
 							}
+						}
+
+						function finalizarSalvamentoUmaVez() {
+							if (finalizacaoSalvamentoConcluida) return;
+							finalizacaoSalvamentoConcluida = true;
+							if (timeoutSegurancaSalvamentoId) {
+								clearTimeout(timeoutSegurancaSalvamentoId);
+								timeoutSegurancaSalvamentoId = null;
+							}
+							finalizarSalvamento();
 						}
 						
 						// Processar fotos
@@ -7647,6 +7662,10 @@
 						function processarFotos() {
 							var fotosProcessadas = 0;
 							var totalFotos = (fotoAntesFile ? 1 : 0) + (fotoDepoisFile ? 1 : 0);
+							timeoutSegurancaSalvamentoId = setTimeout(function() {
+								console.warn('Timeout de segurança ao processar fotos. Prosseguindo com salvamento.');
+								finalizarSalvamentoUmaVez();
+							}, 12000);
 
 							function concluirLeituraFoto(tipoFoto, resultado) {
 								if (tipoFoto === 'antes') {
@@ -7656,13 +7675,13 @@
 								}
 								fotosProcessadas++;
 								if (fotosProcessadas >= totalFotos) {
-									finalizarSalvamento();
+									finalizarSalvamentoUmaVez();
 								}
 							}
 							
 							if (totalFotos === 0) {
 								// Não há fotos, salvar direto
-								finalizarSalvamento();
+								finalizarSalvamentoUmaVez();
 								return;
 							}
 							
