@@ -7718,7 +7718,13 @@
 					// Carregar e exibir inspeções
 					function carregarInspecoes() {
 						var lista = document.getElementById('lista-inspecoes');
-						
+
+						// Se a lista não existir no DOM (ex.: outro contexto/rota/modal aberto),
+						// evitar lançar exceção ao tentar acessar innerHTML.
+						if (!lista) {
+							return;
+						}
+
 						if (inspecoes.length === 0) {
 							lista.innerHTML = '<div style="padding:40px;text-align:center;color:#9ca3af;font-style:italic">Nenhuma inspeção cadastrada</div>';
 							return;
