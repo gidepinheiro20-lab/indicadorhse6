@@ -2350,19 +2350,19 @@
 									<textarea id="insp-acoes" placeholder="Descreva as ações tomadas para resolver a situação..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
 								</div>
 								
-								<!-- Sexta linha: Categoria, Classificação, Severidade -->
+								<!-- Sexta linha: Classificação, Categoria, Severidade -->
 								<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
 									<div>
-										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Categoria</label>
-										<select id="insp-categoria" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Classificação</label>
+										<select id="insp-classificacao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
 											<option value=""></option>
 											<!-- Opções carregadas dinamicamente -->
 										</select>
 									</div>
 									
 									<div>
-										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Classificação</label>
-										<select id="insp-classificacao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Categoria</label>
+										<select id="insp-categoria" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
 											<option value=""></option>
 											<!-- Opções carregadas dinamicamente -->
 										</select>
@@ -7174,24 +7174,10 @@
 						var selectCategoria = document.getElementById('insp-categoria');
 						if (!selectCategoria) return;
 						
-						// Limpar opções existentes (manter primeira opção vazia)
+						// Limpar opções existentes
 						selectCategoria.innerHTML = '<option value=""></option>';
 						
-						// Buscar categorias cadastradas
-						var categoriasHSE = JSON.parse(localStorage.getItem('categoriasHSE')) || [];
-						
-						// Adicionar cada categoria ao dropdown
-						categoriasHSE.forEach(function(categoria) {
-							var option = document.createElement('option');
-							option.value = categoria.nome;
-							option.textContent = categoria.nome;
-							selectCategoria.appendChild(option);
-						});
-						
-						// Event listener para atualizar classificações quando categoria muda
-						selectCategoria.addEventListener('change', function() {
-							carregarClassificacoesPorCategoria(this.value);
-						});
+						selectCategoria.disabled = true;
 					}
 					
 					// Carregar classificações no dropdown
@@ -7235,42 +7221,45 @@
 							option.textContent = classificacao;
 							selectClassificacao.appendChild(option);
 						});
+
+						if (!selectClassificacao.dataset.categoriaListener) {
+							selectClassificacao.addEventListener('change', function() {
+								carregarCategoriasPorClassificacao(this.value);
+							});
+							selectClassificacao.dataset.categoriaListener = 'true';
+						}
 					}
 					
-					// Carregar classificações filtradas por categoria
-					function carregarClassificacoesPorCategoria(nomeCategoria) {
-						var selectClassificacao = document.getElementById('insp-classificacao');
-						if (!selectClassificacao) return;
+					// Carregar categorias filtradas por classificação
+					function carregarCategoriasPorClassificacao(nomeClassificacao) {
+						var selectCategoria = document.getElementById('insp-categoria');
+						if (!selectCategoria) return;
 						
-						// Limpar opções existentes (manter primeira opção vazia)
-						selectClassificacao.innerHTML = '<option value=""></option>';
+						selectCategoria.innerHTML = '<option value=""></option>';
 						
-						if (!nomeCategoria) {
-							// Se nenhuma categoria selecionada, carregar todas as classificações
-							carregarClassificacoesDropdown();
+						if (!nomeClassificacao) {
+							selectCategoria.disabled = true;
 							return;
 						}
 						
-						// Buscar a categoria específica
 						var categoriasHSE = JSON.parse(localStorage.getItem('categoriasHSE')) || [];
-						var categoriaEncontrada = categoriasHSE.find(function(cat) {
-							return cat.nome === nomeCategoria;
+						var categoriasFiltradas = categoriasHSE.filter(function(cat) {
+							var classificacoes = cat.classificacoes || cat.subcategorias || [];
+							return classificacoes.indexOf(nomeClassificacao) !== -1;
+						});
+
+						categoriasFiltradas.sort(function(a, b) {
+							return (a.nome || '').localeCompare(b.nome || '', 'pt-BR');
 						});
 						
-						if (!categoriaEncontrada) return;
-						
-						var classificacoes = categoriaEncontrada.classificacoes || categoriaEncontrada.subcategorias || [];
-						
-						// Ordenar alfabeticamente
-						classificacoes.sort();
-						
-						// Adicionar cada classificação ao dropdown
-						classificacoes.forEach(function(classificacao) {
+						categoriasFiltradas.forEach(function(categoria) {
 							var option = document.createElement('option');
-							option.value = classificacao;
-							option.textContent = classificacao;
-							selectClassificacao.appendChild(option);
+							option.value = categoria.nome;
+							option.textContent = categoria.nome;
+							selectCategoria.appendChild(option);
 						});
+
+						selectCategoria.disabled = false;
 					}
 					
 					// Carregar áreas no dropdown
@@ -7454,8 +7443,9 @@
 						configurarSemanaAtual();
 						
 						// Carregar dropdowns com dados atualizados
-						carregarCategoriasDropdown();
 						carregarClassificacoesDropdown();
+						carregarCategoriasDropdown();
+						carregarCategoriasPorClassificacao(document.getElementById('insp-classificacao').value);
 						carregarAreasDropdown();
 						carregarTiposRegistroDropdown();
 						carregarRiscosPerigosDropdown();
@@ -7501,6 +7491,21 @@
 					// Salvar nova inspeção
 					document.getElementById('form-nova-inspecao').addEventListener('submit', function(e) {
 						e.preventDefault();
+
+						var selectClassificacao = document.getElementById('insp-classificacao');
+						var selectCategoria = document.getElementById('insp-categoria');
+						if (selectClassificacao && selectCategoria) {
+							if (!selectClassificacao.value) {
+								alert('Selecione a classificação para carregar as categorias.');
+								selectClassificacao.focus();
+								return;
+							}
+							if (!selectCategoria.value) {
+								alert('Selecione uma categoria relacionada à classificação escolhida.');
+								selectCategoria.focus();
+								return;
+							}
+						}
 						
 						// Processar fotos
 						var fotoAntesFile = document.getElementById('insp-foto-antes').files[0];
@@ -7568,12 +7573,18 @@
 						}
 						
 						function finalizarSalvamento() {
-							inspecoes.push(novaInspecao);
-							localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
-							
-							alert('Inspeção registrada com sucesso!');
-							fecharModalInspecao();
-							carregarInspecoes();
+							try {
+								inspecoes.push(novaInspecao);
+								localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
+
+								alert('Inspeção registrada com sucesso!');
+								fecharModalInspecao();
+								carregarInspecoes();
+							} catch (erroSalvarInspecao) {
+								inspecoes.pop();
+								console.error('Erro ao salvar inspeção:', erroSalvarInspecao);
+								alert('Não foi possível salvar a inspeção. Verifique os campos e tente novamente.');
+							}
 						}
 						
 						processarFotos();
