@@ -9665,6 +9665,46 @@
 						localStorage.setItem('checklistFacilRegistros', JSON.stringify(lista));
 					}
 
+					function ehTipoInspecaoSeguranca(tipo) {
+						return normalizarTextoComparacao(tipo) === 'inspecao de seguranca';
+					}
+
+					function obterChecklistFacilListaCompleta() {
+						var listaManual = obterChecklistFacilStorage().map(function(item, idx) {
+							return Object.assign({}, item, {
+								__origem: 'checklist',
+								__idxLocal: idx
+							});
+						});
+
+						var inspecoesFonte = normalizarListaInspecoes(localStorage.getItem('inspecoes'));
+						var listaIntegrada = [];
+
+						if (Array.isArray(inspecoesFonte)) {
+							inspecoesFonte.forEach(function(insp) {
+								if (!insp || !ehTipoInspecaoSeguranca(insp.tipo || '')) return;
+
+								listaIntegrada.push({
+									data: insp.data || '',
+									semana: insp.semana || 'Semana 1',
+									tipo: insp.tipo || 'Inspeção de Segurança',
+									autor: (insp.emissor || '').trim() || 'Não informado',
+									setor: (insp.area || '').trim() || (insp.responsavel || '').trim() || '-',
+									empresa: (insp.local || '').trim() || '-',
+									__origem: 'inspecao-hse',
+									__idInspecao: insp.id || ''
+								});
+							});
+						}
+
+						var finalLista = listaManual.concat(listaIntegrada);
+						finalLista.sort(function(a, b) {
+							return String(b.data || '').localeCompare(String(a.data || ''));
+						});
+
+						return finalLista;
+					}
+
 					function formatarDataBR(dataISO) {
 						if (!dataISO) return '-';
 						var partes = dataISO.split('-');
@@ -10854,6 +10894,13 @@
 						}
 
 						corpo.innerHTML = lista.map(function(item, idx){
+							var acaoHtml = '';
+							if (item.__origem === 'inspecao-hse') {
+								acaoHtml = '<span style="display:inline-block;background:#e0f2fe;color:#075985;border:1px solid #bae6fd;border-radius:8px;padding:6px 8px;font-size:0.78rem;font-weight:600">🔗 HSE</span>';
+							} else {
+								var indiceLocal = typeof item.__idxLocal === 'number' ? item.__idxLocal : idx;
+								acaoHtml = '<button type="button" onclick="excluirChecklistFacil(' + indiceLocal + ')" style="background:#ef4444;color:#fff;border:none;border-radius:8px;padding:8px 10px;cursor:pointer">🗑</button>';
+							}
 							return '<div style="display:grid;grid-template-columns:120px 100px 220px 1.6fr 140px 100px 110px;gap:12px;padding:14px 16px;border-bottom:1px solid #f1f5f9;align-items:center">'
 								+ '<div>' + formatarDataBR(item.data) + '</div>'
 								+ '<div><span style="background:#dbeafe;color:#0369a1;padding:4px 10px;border-radius:8px;font-weight:600">' + (item.semana || '-') + '</span></div>'
@@ -10861,13 +10908,13 @@
 								+ '<div>' + (item.autor || '-') + '</div>'
 								+ '<div>' + (item.setor || '-') + '</div>'
 								+ '<div style="color:#9ca3af">-</div>'
-								+ '<div><button type="button" onclick="excluirChecklistFacil(' + idx + ')" style="background:#ef4444;color:#fff;border:none;border-radius:8px;padding:8px 10px;cursor:pointer">🗑</button></div>'
+								+ '<div>' + acaoHtml + '</div>'
 								+ '</div>';
 						}).join('');
 					}
 
 					function aplicarFiltrosChecklist() {
-						var lista = obterChecklistFacilStorage();
+						var lista = obterChecklistFacilListaCompleta();
 						var empresa = document.getElementById('checklist-filtro-empresa')?.value || '';
 						var tipo = document.getElementById('checklist-filtro-tipo')?.value || '';
 						var autor = document.getElementById('checklist-filtro-autor')?.value || '';
@@ -10887,7 +10934,7 @@
 					}
 
 					function carregarChecklistFacil() {
-						var lista = obterChecklistFacilStorage();
+						var lista = obterChecklistFacilListaCompleta();
 						preencherFiltrosChecklist(lista);
 						aplicarFiltrosChecklist();
 					}
@@ -10949,7 +10996,7 @@
 					function abrirAcompanhamentoChecklist(periodo) {
 						var ehMensal = periodo === 'mensal';
 						var tituloPeriodo = ehMensal ? 'Mensal' : 'Semanal';
-						var lista = obterChecklistFacilStorage();
+						var lista = obterChecklistFacilListaCompleta();
 						if (!lista || lista.length === 0) {
 							alert('Nenhuma checklist registrada para acompanhamento.');
 							return;
