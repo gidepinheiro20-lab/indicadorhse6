@@ -9669,9 +9669,26 @@
 						return normalizarTextoComparacao(tipo) === 'inspecao de seguranca';
 					}
 
+					function obterSetorDoColaboradorPorNome(nomeAutor) {
+						var nomeNormalizado = normalizarTextoComparacao(nomeAutor || '');
+						if (!nomeNormalizado) return '';
+
+						var colaboradores = JSON.parse(localStorage.getItem('funcionarios') || '[]');
+						if (!Array.isArray(colaboradores)) return '';
+
+						var colaborador = colaboradores.find(function(item) {
+							return normalizarTextoComparacao(item && item.nome ? item.nome : '') === nomeNormalizado;
+						});
+
+						if (!colaborador) return '';
+						return String(colaborador.setor || colaborador.funcao || '').trim();
+					}
+
 					function obterChecklistFacilListaCompleta() {
 						var listaManual = obterChecklistFacilStorage().map(function(item, idx) {
+							var setorCadastrado = obterSetorDoColaboradorPorNome(item && item.autor ? item.autor : '');
 							return Object.assign({}, item, {
+								setor: setorCadastrado || item.setor || '-',
 								__origem: 'checklist',
 								__idxLocal: idx
 							});
@@ -9683,13 +9700,15 @@
 						if (Array.isArray(inspecoesFonte)) {
 							inspecoesFonte.forEach(function(insp) {
 								if (!insp || !ehTipoInspecaoSeguranca(insp.tipo || '')) return;
+								var autorIntegrado = (insp.emissor || '').trim();
+								var setorCadastradoIntegrado = obterSetorDoColaboradorPorNome(autorIntegrado);
 
 								listaIntegrada.push({
 									data: insp.data || '',
 									semana: insp.semana || 'Semana 1',
 									tipo: insp.tipo || 'Inspeção de Segurança',
-									autor: (insp.emissor || '').trim() || 'Não informado',
-									setor: (insp.area || '').trim() || (insp.responsavel || '').trim() || '-',
+									autor: autorIntegrado || 'Não informado',
+									setor: setorCadastradoIntegrado || (insp.area || '').trim() || (insp.responsavel || '').trim() || '-',
 									empresa: (insp.local || '').trim() || '-',
 									__origem: 'inspecao-hse',
 									__idInspecao: insp.id || ''
