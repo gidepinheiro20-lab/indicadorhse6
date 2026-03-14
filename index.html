@@ -7124,8 +7124,9 @@
 					
 					// Inicializar sistema de inspeção
 					function inicializarInspecao() {
-						// Adicionar dados de exemplo se não houver inspeções
-						if (inspecoes.length === 0) {
+						// Adicionar dados de exemplo apenas uma vez (evita reaparecer após exclusão)
+						var exemploJaInicializado = localStorage.getItem('inspecoesExemploInicializado') === 'true';
+						if (inspecoes.length === 0 && !exemploJaInicializado) {
 							var inspecaoExemplo = {
 								id: Date.now(),
 								data: '2025-11-09',
@@ -7152,6 +7153,12 @@
 							};
 							inspecoes.push(inspecaoExemplo);
 							localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
+							localStorage.setItem('inspecoesExemploInicializado', 'true');
+						}
+
+						// Se já existem inspeções, marca como inicializado para não recriar exemplo futuramente
+						if (inspecoes.length > 0 && !exemploJaInicializado) {
+							localStorage.setItem('inspecoesExemploInicializado', 'true');
 						}
 						
 						carregarInspecoes();
