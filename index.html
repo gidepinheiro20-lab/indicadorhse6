@@ -2412,12 +2412,16 @@
 								<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
 									<div>
 										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Emissor</label>
-										<input type="text" id="insp-emissor" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+										<select id="insp-emissor" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione o emissor...</option>
+										</select>
 									</div>
 									
 									<div>
 										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Responsável pela ação</label>
-										<input type="text" id="insp-responsavel" required placeholder="" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem">
+										<select id="insp-responsavel" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+											<option value="">Selecione o responsável...</option>
+										</select>
 									</div>
 								</div>
 								
@@ -7516,6 +7520,48 @@
 							selectRisco.appendChild(option);
 						});
 					}
+
+					function carregarColaboradoresInspecaoDropdown() {
+						var selectEmissor = document.getElementById('insp-emissor');
+						var selectResponsavel = document.getElementById('insp-responsavel');
+						if (!selectEmissor || !selectResponsavel) return;
+
+						var colaboradoresCadastrados = JSON.parse(localStorage.getItem('funcionarios')) || [];
+						var selects = [
+							{ element: selectEmissor, placeholder: 'Selecione o emissor...' },
+							{ element: selectResponsavel, placeholder: 'Selecione o responsável...' }
+						];
+
+						selects.forEach(function(item) {
+							item.element.innerHTML = '<option value="">' + item.placeholder + '</option>';
+						});
+
+						if (colaboradoresCadastrados.length === 0) {
+							selects.forEach(function(item) {
+								var optionInfo = document.createElement('option');
+								optionInfo.value = '';
+								optionInfo.textContent = 'Nenhum colaborador cadastrado';
+								optionInfo.disabled = true;
+								item.element.appendChild(optionInfo);
+							});
+							return;
+						}
+
+						var colaboradoresOrdenados = colaboradoresCadastrados.slice().sort(function(a, b) {
+							return (a.nome || '').localeCompare(b.nome || '');
+						});
+
+						colaboradoresOrdenados.forEach(function(colaborador) {
+							var nomeColaborador = (colaborador.nome || '').trim();
+							if (!nomeColaborador) return;
+							selects.forEach(function(item) {
+								var option = document.createElement('option');
+								option.value = nomeColaborador;
+								option.textContent = nomeColaborador;
+								item.element.appendChild(option);
+							});
+						});
+					}
 					
 					// Abrir modal nova inspeção
 					document.getElementById('btn-nova-inspecao').addEventListener('click', abrirModalNovaInspecao);
@@ -7539,6 +7585,7 @@
 						carregarAreasDropdown();
 						carregarTiposRegistroDropdown();
 						carregarRiscosPerigosDropdown();
+						carregarColaboradoresInspecaoDropdown();
 						carregarLocaisDropdown();
 					}
 					
