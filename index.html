@@ -8039,8 +8039,17 @@
 						}
 
 						// Atualizar conteúdo do modal
-						document.getElementById('conteudo-relatorio').innerHTML = html;
-						document.getElementById('modal-relatorio-inspecao').style.display = 'flex';
+						var conteudoRelatorioEl = document.getElementById('conteudo-relatorio');
+						if (conteudoRelatorioEl) {
+							conteudoRelatorioEl.innerHTML = html;
+							// Permitir rolagem horizontal quando o conteúdo exceder a largura
+							conteudoRelatorioEl.style.overflowX = 'auto';
+							conteudoRelatorioEl.style.overflowY = 'auto';
+							conteudoRelatorioEl.style.maxWidth = '100%';
+							conteudoRelatorioEl.style.boxSizing = 'border-box';
+						}
+						var modalRelatorio = document.getElementById('modal-relatorio-inspecao');
+						if (modalRelatorio) modalRelatorio.style.display = 'flex';
 					}
 
 					function fecharModalRelatorio() {
