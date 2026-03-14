@@ -7121,6 +7121,37 @@
 					
 					// Array para armazenar inspeções
 					var inspecoes = JSON.parse(localStorage.getItem('inspecoes')) || [];
+					var ultimaAlteracaoLocalInspecoes = 0;
+					var intervaloSyncInspecoes = null;
+
+					function marcarAlteracaoLocalInspecoes() {
+						ultimaAlteracaoLocalInspecoes = Date.now();
+					}
+
+					async function sincronizarInspecoesDoServidor() {
+						if (!API_BASE_URL) return;
+						var secaoInspecao = document.getElementById('inspecao');
+						if (!secaoInspecao || secaoInspecao.style.display === 'none') return;
+						if (Date.now() - ultimaAlteracaoLocalInspecoes < 3000) return;
+
+						var dadosServidor = await carregarDoServidor('inspecoes');
+						if (!Array.isArray(dadosServidor)) return;
+
+						var localAtual = JSON.stringify(inspecoes || []);
+						var remotoAtual = JSON.stringify(dadosServidor || []);
+						if (localAtual !== remotoAtual) {
+							inspecoes = dadosServidor;
+							localStorageOriginal.setItem('inspecoes', remotoAtual);
+							carregarInspecoes();
+						}
+					}
+
+					function iniciarSincronizacaoInspecoes() {
+						if (intervaloSyncInspecoes) return;
+						intervaloSyncInspecoes = setInterval(function() {
+							sincronizarInspecoesDoServidor();
+						}, 3000);
+					}
 					
 					// Inicializar sistema de inspeção
 					function inicializarInspecao() {
@@ -7152,6 +7183,7 @@
 								dataCriacao: new Date().toISOString()
 							};
 							inspecoes.push(inspecaoExemplo);
+							marcarAlteracaoLocalInspecoes();
 							localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
 							localStorage.setItem('inspecoesExemploInicializado', 'true');
 						}
@@ -7160,6 +7192,9 @@
 						if (inspecoes.length > 0 && !exemploJaInicializado) {
 							localStorage.setItem('inspecoesExemploInicializado', 'true');
 						}
+
+						iniciarSincronizacaoInspecoes();
+						sincronizarInspecoesDoServidor();
 						
 						carregarInspecoes();
 						configurarSemanaAtual();
@@ -7588,6 +7623,7 @@
 						function finalizarSalvamento() {
 							try {
 								inspecoes.push(novaInspecao);
+								marcarAlteracaoLocalInspecoes();
 								localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
 								carregarInspecoes();
 								fecharModalInspecao();
@@ -7689,6 +7725,7 @@
 						
 						function finalizarEdicao() {
 							inspecoes[inspecaoIndex] = inspecaoAtualizada;
+							marcarAlteracaoLocalInspecoes();
 							localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
 							
 							alert('Inspeção atualizada com sucesso!');
@@ -7942,6 +7979,7 @@
 					function excluirInspecao(id) {
 						if (confirm('Deseja realmente excluir esta inspeção?')) {
 							inspecoes = inspecoes.filter(function(insp) { return insp.id != id; });
+							marcarAlteracaoLocalInspecoes();
 							localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
 							carregarInspecoes();
 							alert('Inspeção excluída com sucesso!');
@@ -8161,6 +8199,7 @@
 							var dd = String(hoje.getDate()).padStart(2, '0');
 							inspecoes[idx].status = 'CONCLUÍDO';
 							inspecoes[idx].conclusao = yyyy + '-' + mm + '-' + dd;
+							marcarAlteracaoLocalInspecoes();
 							localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
 							carregarInspecoes();
 							fecharModalRelatorio();
