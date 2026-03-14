@@ -1009,9 +1009,14 @@
 					<button id="btn-voltar-cadastro" style="margin-top:12px;display:none">Voltar ao cadastro</button>
 				</div>
 				<div id="controle-acesso" style="display:none;max-width:none;margin:0;">
-					<div style="background:#fff;border-radius:12px;border:1px solid #e6edf3;padding:24px;max-width:800px;">
+					<div style="background:#fff;border-radius:12px;border:1px solid #e6edf3;padding:24px;max-width:980px;">
 						<h2 style="margin:0 0 12px 0;">Controle de Acesso</h2>
-						<p style="margin:0;color:#6b7280;font-size:14px;line-height:1.5;">A autenticação usa os cadastros criados em Usuário. Para liberar um novo acesso, crie o cadastro com Nome, Perfil e Senha nessa seção.</p>
+						<p style="margin:0 0 16px 0;color:#6b7280;font-size:14px;line-height:1.5;">Defina abaixo as permissões do perfil Técnico. Se a sessão não estiver marcada em Visualizar, ela não aparece na lateral para Técnico. Ações sem permissão mostram Somente Administrador.</p>
+						<div id="controle-acesso-status" style="margin-bottom:12px;font-size:13px;color:#6b7280;"></div>
+						<div id="controle-acesso-lista"></div>
+						<div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end;">
+							<button id="btn-salvar-controle-acesso" type="button" style="background:#2b6cb0;color:#fff;border:none;border-radius:8px;padding:10px 16px;cursor:pointer;font-weight:600;">Salvar permissões do Técnico</button>
+						</div>
 					</div>
 				</div>
 				
@@ -3279,7 +3284,8 @@
 					'usuarios', 'funcionarios', 'empresas', 'ras-reunioes', 'historicoRAS',
 					'cpts', 'inspecoes', 'categoriasHSE', 'areasLocais', 'tiposRegistro',
 					'riscosPerigos', 'arts', 'categorias-hse', 'checklistFacilRegistros',
-					'novatos', 'reuniaoMensal', 'reuniaoMensalTipos', 'matrizFerramentas'
+					'novatos', 'reuniaoMensal', 'reuniaoMensalTipos', 'matrizFerramentas',
+					'controleAcessoTecnico'
 				];
 
 				const pendingStorageSync = {};
@@ -3476,6 +3482,11 @@
 
 					function abrirSecaoDoHash(hash) {
 						const alvo = (hash || '#').replace('#', '');
+						const secaoAtual = alvo || 'dashboard';
+						if (!podeVisualizarSecao(secaoAtual)) {
+							abrirPrimeiraSecaoPermitidaTecnico();
+							return;
+						}
 						switch (alvo) {
 							case 'usuario':
 								hideAllSections();
@@ -3484,6 +3495,7 @@
 							case 'controle-acesso':
 								hideAllSections();
 								document.getElementById('controle-acesso').style.display = 'block';
+								renderizarControleAcessoTecnico();
 								break;
 							case 'ras':
 								hideAllSections();
@@ -4592,6 +4604,221 @@
 					});
 
 					// Cadastro de usuários com persistência principal no PostgreSQL
+					const ACCESS_CONTROL_STORAGE_KEY = 'controleAcessoTecnico';
+					const ACCESS_CONTROL_SECOES = [
+						{ key: 'dashboard', label: 'Dashboard', grupo: 'PRINCIPAL' },
+						{ key: 'relatorios', label: 'Relatórios', grupo: 'PRINCIPAL' },
+						{ key: 'empresa', label: 'Empresa', grupo: 'PRINCIPAL' },
+						{ key: 'funcionarios', label: 'Novo Colaborador', grupo: 'PRINCIPAL' },
+						{ key: 'frequencia', label: 'Frequência', grupo: 'PRINCIPAL' },
+						{ key: 'usuario', label: 'Usuário', grupo: 'PRINCIPAL' },
+						{ key: 'controle-acesso', label: 'Controle de Acesso', grupo: 'PRINCIPAL' },
+						{ key: 'ras', label: 'RAS', grupo: 'FERRAMENTAS' },
+						{ key: 'inspecao', label: 'Inspeção de HSE', grupo: 'FERRAMENTAS' },
+						{ key: 'reuniao', label: 'Reunião Mensal', grupo: 'FERRAMENTAS' },
+						{ key: 'novatos', label: 'Programa de Novatos', grupo: 'FERRAMENTAS' },
+						{ key: 'checklist', label: 'Check List Fácil', grupo: 'FERRAMENTAS' }
+					];
+					var controleAcessoTecnico = {};
+
+					function obterUsuarioSessao() {
+						try {
+							return JSON.parse(sessionStorage.getItem('hseUser') || 'null');
+						} catch (e) {
+							return null;
+						}
+					}
+
+					function ehAdministrador() {
+						var usuario = obterUsuarioSessao();
+						return !!(usuario && String(usuario.perfil || '').toLowerCase() === 'administrador');
+					}
+
+					function ehTecnico() {
+						var usuario = obterUsuarioSessao();
+						return !!(usuario && String(usuario.perfil || '').toLowerCase() === 'técnico');
+					}
+
+					function criarPermissoesPadraoTecnico() {
+						var permissoes = {};
+						ACCESS_CONTROL_SECOES.forEach(function(secao) {
+							permissoes[secao.key] = {
+								visualizar: secao.key === 'dashboard',
+								editar: false,
+								excluir: false
+							};
+						});
+						return permissoes;
+					}
+
+					function normalizarControleAcesso(valor) {
+						var base = criarPermissoesPadraoTecnico();
+						if (!valor || typeof valor !== 'object') {
+							return base;
+						}
+						var origem = valor.secoes && typeof valor.secoes === 'object' ? valor.secoes : valor;
+						ACCESS_CONTROL_SECOES.forEach(function(secao) {
+							if (!origem[secao.key] || typeof origem[secao.key] !== 'object') return;
+							base[secao.key] = {
+								visualizar: !!origem[secao.key].visualizar,
+								editar: !!origem[secao.key].editar,
+								excluir: !!origem[secao.key].excluir
+							};
+						});
+						return base;
+					}
+
+					async function carregarControleAcessoTecnico() {
+						try {
+							var dados = await loadData(ACCESS_CONTROL_STORAGE_KEY);
+							controleAcessoTecnico = normalizarControleAcesso(dados);
+						} catch (e) {
+							controleAcessoTecnico = criarPermissoesPadraoTecnico();
+						}
+					}
+
+					function obterPermissaoSecao(secaoKey) {
+						if (!controleAcessoTecnico || typeof controleAcessoTecnico !== 'object') {
+							controleAcessoTecnico = criarPermissoesPadraoTecnico();
+						}
+						return controleAcessoTecnico[secaoKey] || { visualizar: false, editar: false, excluir: false };
+					}
+
+					function podeVisualizarSecao(secaoKey) {
+						if (!ehTecnico()) return true;
+						return !!obterPermissaoSecao(secaoKey).visualizar;
+					}
+
+					function podeExecutarAcao(secaoKey, tipoAcao) {
+						if (!ehTecnico()) return true;
+						var permissao = obterPermissaoSecao(secaoKey);
+						if (tipoAcao === 'editar') return !!permissao.editar;
+						if (tipoAcao === 'excluir') return !!permissao.excluir;
+						return false;
+					}
+
+					function aplicarVisibilidadeMenuTecnico() {
+						var links = document.querySelectorAll('.sidebar .nav a[href^="#"]');
+						links.forEach(function(link) {
+							var hash = String(link.getAttribute('href') || '').replace('#', '');
+							if (!hash) return;
+							var li = link.closest('li');
+							if (!li) return;
+							if (!ehTecnico()) {
+								li.style.display = '';
+								return;
+							}
+							li.style.display = podeVisualizarSecao(hash) ? '' : 'none';
+						});
+					}
+
+					function abrirPrimeiraSecaoPermitidaTecnico() {
+						if (!ehTecnico()) return;
+						var primeira = ACCESS_CONTROL_SECOES.find(function(secao) {
+							return podeVisualizarSecao(secao.key);
+						});
+						var destino = primeira ? ('#' + primeira.key) : '#';
+						if (window.location.hash === destino) {
+							hideAllSections();
+							document.getElementById('conteudo-principal').style.display = 'block';
+							return;
+						}
+						window.location.hash = destino;
+					}
+
+					function renderizarControleAcessoTecnico() {
+						var container = document.getElementById('controle-acesso-lista');
+						var status = document.getElementById('controle-acesso-status');
+						var botaoSalvar = document.getElementById('btn-salvar-controle-acesso');
+						if (!container || !status || !botaoSalvar) return;
+
+						var admin = ehAdministrador();
+						status.textContent = admin
+							? 'Você está como Administrador e pode configurar o perfil Técnico.'
+							: 'Somente Administrador pode alterar estas permissões.';
+
+						botaoSalvar.style.display = admin ? 'inline-block' : 'none';
+
+						var html = '';
+						var grupoAtual = '';
+						ACCESS_CONTROL_SECOES.forEach(function(secao) {
+							if (grupoAtual !== secao.grupo) {
+								grupoAtual = secao.grupo;
+								html += '<div style="margin-top:18px;margin-bottom:8px;font-size:12px;color:#6b7280;font-weight:700;">' + grupoAtual + '</div>';
+							}
+							var perm = obterPermissaoSecao(secao.key);
+							html += '<div style="border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:10px;background:#f9fafb;">';
+							html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">';
+							html += '<div style="font-weight:600;color:#1f2937;">' + secao.label + '</div>';
+							html += '<label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#374151;">';
+							html += '<input type="checkbox" class="acesso-visualizar" data-secao="' + secao.key + '" ' + (perm.visualizar ? 'checked' : '') + (admin ? '' : ' disabled') + ' />';
+							html += 'Visualizar</label></div>';
+							html += '<div style="display:flex;gap:16px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed #d1d5db;">';
+							html += '<label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#374151;">';
+							html += '<input type="checkbox" class="acesso-editar" data-secao="' + secao.key + '" ' + (perm.editar ? 'checked' : '') + (admin ? '' : ' disabled') + ' />';
+							html += 'Pode editar</label>';
+							html += '<label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#374151;">';
+							html += '<input type="checkbox" class="acesso-excluir" data-secao="' + secao.key + '" ' + (perm.excluir ? 'checked' : '') + (admin ? '' : ' disabled') + ' />';
+							html += 'Pode excluir</label>';
+							html += '</div></div>';
+						});
+						container.innerHTML = html;
+					}
+
+					document.getElementById('btn-salvar-controle-acesso').addEventListener('click', async function() {
+						if (!ehAdministrador()) {
+							alert('Somente Administrador');
+							return;
+						}
+
+						var novo = criarPermissoesPadraoTecnico();
+						document.querySelectorAll('#controle-acesso-lista .acesso-visualizar').forEach(function(checkbox) {
+							var secao = checkbox.getAttribute('data-secao');
+							novo[secao].visualizar = !!checkbox.checked;
+						});
+						document.querySelectorAll('#controle-acesso-lista .acesso-editar').forEach(function(checkbox) {
+							var secao = checkbox.getAttribute('data-secao');
+							novo[secao].editar = !!checkbox.checked;
+						});
+						document.querySelectorAll('#controle-acesso-lista .acesso-excluir').forEach(function(checkbox) {
+							var secao = checkbox.getAttribute('data-secao');
+							novo[secao].excluir = !!checkbox.checked;
+						});
+
+						controleAcessoTecnico = novo;
+						await saveData(ACCESS_CONTROL_STORAGE_KEY, { secoes: novo });
+						aplicarVisibilidadeMenuTecnico();
+						alert('Permissões do perfil Técnico salvas com sucesso.');
+					});
+
+					document.addEventListener('click', function(e) {
+						if (!ehTecnico()) return;
+						var alvo = e.target.closest('button, a');
+						if (!alvo) return;
+
+						var onclickAttr = String(alvo.getAttribute('onclick') || '').toLowerCase();
+						var classes = String(alvo.className || '').toLowerCase();
+						var texto = String(alvo.textContent || '').toLowerCase();
+
+						var isEditar = onclickAttr.indexOf('editar') !== -1 || classes.indexOf('editar') !== -1 || texto.indexOf('editar') !== -1 || texto.indexOf('✏') !== -1;
+						var isExcluir = onclickAttr.indexOf('excluir') !== -1 || classes.indexOf('excluir') !== -1 || texto.indexOf('excluir') !== -1 || texto.indexOf('🗑') !== -1;
+
+						if (!isEditar && !isExcluir) return;
+
+						var secaoAtual = (window.location.hash || '#').replace('#', '') || 'dashboard';
+						if (isEditar && !podeExecutarAcao(secaoAtual, 'editar')) {
+							e.preventDefault();
+							e.stopImmediatePropagation();
+							alert('Somente Administrador');
+							return;
+						}
+						if (isExcluir && !podeExecutarAcao(secaoAtual, 'excluir')) {
+							e.preventDefault();
+							e.stopImmediatePropagation();
+							alert('Somente Administrador');
+						}
+					}, true);
+
 					var usuarios = [];
 					window.carregarUsuarios = async function() {
 						try {
@@ -4647,6 +4874,7 @@
 
 					async function inicializarAutenticacao() {
 						await carregarUsuarios();
+						await carregarControleAcessoTecnico();
 						if (!usuarios.length) {
 							mostrarLogin();
 							mostrarErroLogin('Nenhum usuário cadastrado. Cadastre em Usuário para liberar o acesso.');
@@ -4663,6 +4891,10 @@
 
 						if (sessaoAtiva && sessaoUsuario && autenticarUsuario(sessaoUsuario.login, sessaoUsuario.perfil, sessaoUsuario.senha)) {
 							mostrarSistema();
+							aplicarVisibilidadeMenuTecnico();
+							if (!podeVisualizarSecao((window.location.hash || '#').replace('#', '') || 'dashboard')) {
+								abrirPrimeiraSecaoPermitidaTecnico();
+							}
 							return;
 						}
 
@@ -4699,12 +4931,18 @@
 						}));
 
 						mostrarSistema();
+						await carregarControleAcessoTecnico();
+						aplicarVisibilidadeMenuTecnico();
+						if (!podeVisualizarSecao((window.location.hash || '#').replace('#', '') || 'dashboard')) {
+							abrirPrimeiraSecaoPermitidaTecnico();
+						}
 						document.getElementById('login-form').reset();
 					});
 
 					document.getElementById('btn-sair-sistema').addEventListener('click', function() {
 						sessionStorage.removeItem('hseLogged');
 						sessionStorage.removeItem('hseUser');
+						aplicarVisibilidadeMenuTecnico();
 						mostrarLogin();
 						window.location.hash = '#';
 					});
