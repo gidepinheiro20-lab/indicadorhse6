@@ -5709,6 +5709,42 @@
 					// Participantes RAS armazenados localmente durante criação
 					var participantesRAS = [];
 
+					function preencherSetorParticipanteRASPorNome() {
+						var selectNome = document.getElementById('ras-participante-nome');
+						var selectSetor = document.getElementById('ras-participante-setor');
+						if (!selectNome || !selectSetor) return;
+
+						var nomeSelecionado = String(selectNome.value || '').trim();
+						if (!nomeSelecionado) {
+							selectSetor.value = '';
+							return;
+						}
+
+						var colaboradoresCadastrados = JSON.parse(localStorage.getItem('funcionarios') || '[]');
+						if (!Array.isArray(colaboradoresCadastrados)) return;
+
+						var colaborador = colaboradoresCadastrados.find(function(item) {
+							return normalizarTextoComparacao(item && item.nome ? item.nome : '') === normalizarTextoComparacao(nomeSelecionado);
+						});
+
+						if (!colaborador) return;
+						var setorColaborador = String(colaborador.setor || colaborador.funcao || '').trim();
+						if (!setorColaborador) return;
+
+						var opcaoExistente = Array.from(selectSetor.options || []).find(function(opt) {
+							return normalizarTextoComparacao(opt.value) === normalizarTextoComparacao(setorColaborador);
+						});
+
+						if (!opcaoExistente) {
+							var novaOpcaoSetor = document.createElement('option');
+							novaOpcaoSetor.value = setorColaborador;
+							novaOpcaoSetor.textContent = setorColaborador;
+							selectSetor.appendChild(novaOpcaoSetor);
+						}
+
+						selectSetor.value = setorColaborador;
+					}
+
 					// Carregar colaboradores apenas no dropdown compacto da Etapa 2 (nome)
 					function carregarColaboradoresRAS() {
 						var selectNome = document.getElementById('ras-participante-nome');
@@ -5744,6 +5780,9 @@
 							option.textContent = nomeExibicao;
 							selectNome.appendChild(option);
 						});
+
+						selectNome.onchange = preencherSetorParticipanteRASPorNome;
+						preencherSetorParticipanteRASPorNome();
 
 						console.log('Colaboradores carregados na RAS Etapa 2 (nome):', colaboradoresCadastrados.length);
 					}
