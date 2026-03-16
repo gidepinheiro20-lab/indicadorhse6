@@ -5,7 +5,7 @@ const API_CONFIG = {
   // Use http://192.168.3.61:3000 para servidor local na mesma rede
   // Use http://localhost:3000 para acesso local
   // Use https://seu-dominio.com:3000 para acesso remoto
-  BASE_URL: 'https://indicadorhse6.onrender.com',
+  BASE_URL: 'http://192.168.3.61:3000',
   
   // Se usar GitHub Pages remotamente, defina seu servidor online aqui
   // GITHUB_REMOTE_URL: 'https://seu-servidor-remoto.com:3000',
