@@ -8063,8 +8063,19 @@
 					
 					// Funções auxiliares
 					function formatarData(data) {
-						var partes = data.split('-');
-						return partes[2] + '/' + partes[1] + '/' + partes[0];
+						if (!data) return '-';
+						var s = String(data).trim();
+						// Formato YYYY-MM-DD (padrão HTML5 input[type=date])
+						if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+							var partes = s.split('-');
+							return partes[2] + '/' + partes[1] + '/' + partes[0];
+						}
+						// Já está em DD/MM/YYYY
+						if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) {
+							return s;
+						}
+						// Fallback: retornar como veio
+						return s;
 					}
 					
 					function getCorSeveridade(severidade) {
