@@ -4088,6 +4088,47 @@
 						return data.toLocaleDateString('pt-BR');
 					}
 
+					function formatarNomeCurto(nomeCompleto) {
+						var nome = String(nomeCompleto || '').trim();
+						if (!nome) return '';
+						var partes = nome.split(/\s+/).filter(function(parte) { return parte; });
+						if (partes.length <= 1) return partes[0] || '';
+						return partes[0] + ' ' + partes[partes.length - 1];
+					}
+
+					function obterNomesParticipantesEtapa2PorSetor(setor, fallbackNome) {
+						var normalizar = function(texto) {
+							return String(texto || '')
+								.toLowerCase()
+								.normalize('NFD')
+								.replace(/[\u0300-\u036f]/g, '')
+								.trim();
+						};
+
+						var nomes = [];
+						var vistos = {};
+
+						if (typeof participantesRAS !== 'undefined' && Array.isArray(participantesRAS) && participantesRAS.length > 0) {
+							participantesRAS.forEach(function(participante) {
+								if (!participante) return;
+								if (normalizar(participante.setor) !== normalizar(setor)) return;
+
+								var nomeCurto = formatarNomeCurto(participante.nome);
+								if (!nomeCurto) return;
+
+								var chave = normalizar(nomeCurto);
+								if (vistos[chave]) return;
+								vistos[chave] = true;
+								nomes.push(nomeCurto);
+							});
+						}
+
+						if (nomes.length > 0) return nomes.join(', ');
+
+						var nomeFallbackCurto = formatarNomeCurto(fallbackNome);
+						return nomeFallbackCurto || '-';
+					}
+
 					// Função para atualizar revisão dos dados
 					function atualizarRevisao() {
 						var dados = coletarDadosRAS();
@@ -4102,11 +4143,11 @@
 						document.getElementById('review-compartilhar').textContent = dados.compartilhar || '-';
 						
 						// Participantes
-						document.getElementById('review-gerente').textContent = dados.gerente || '-';
-						document.getElementById('review-engenheiro').textContent = dados.engenheiro || '-';
-						document.getElementById('review-supervisor').textContent = dados.supervisor || '-';
-						document.getElementById('review-encarregado').textContent = dados.encarregado || '-';
-						document.getElementById('review-tecnico-seguranca').textContent = dados.tecnicoSeguranca || '-';
+						document.getElementById('review-gerente').textContent = obterNomesParticipantesEtapa2PorSetor('Gerente', dados.gerente);
+						document.getElementById('review-engenheiro').textContent = obterNomesParticipantesEtapa2PorSetor('Engenheiro', dados.engenheiro);
+						document.getElementById('review-supervisor').textContent = obterNomesParticipantesEtapa2PorSetor('Supervisor', dados.supervisor);
+						document.getElementById('review-encarregado').textContent = obterNomesParticipantesEtapa2PorSetor('Encarregado', dados.encarregado);
+						document.getElementById('review-tecnico-seguranca').textContent = obterNomesParticipantesEtapa2PorSetor('Técnico de Segurança', dados.tecnicoSeguranca);
 						document.getElementById('review-anjo-semana').textContent = dados.anjoSemana || '-';
 						document.getElementById('review-lider-ras').textContent = dados.liderRas || '-';
 						document.getElementById('review-lider-cpt').textContent = dados.liderCpt || '-';
