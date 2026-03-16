@@ -799,6 +799,7 @@
 									<div><strong>🔧 Supervisor/Mestre:</strong> <span id="review-supervisor">-</span></div>
 									<div><strong>👨‍🔧 Encarregado:</strong> <span id="review-encarregado">-</span></div>
 									<div><strong>🛡️ Técnico de Segurança:</strong> <span id="review-tecnico-seguranca">-</span></div>
+									<div><strong>🦺 HSE:</strong> <span id="review-hse">-</span></div>
 									<div><strong>💖 Anjo da Semana:</strong> <span id="review-anjo-semana">-</span></div>
 									<div><strong>🎯 Líder da RAS:</strong> <span id="review-lider-ras">-</span></div>
 									<div><strong>👥 Líder CPT:</strong> <span id="review-lider-cpt">-</span></div>
@@ -4148,6 +4149,8 @@
 						document.getElementById('review-supervisor').textContent = obterNomesParticipantesEtapa2PorSetor('Supervisor', dados.supervisor);
 						document.getElementById('review-encarregado').textContent = obterNomesParticipantesEtapa2PorSetor('Encarregado', dados.encarregado);
 						document.getElementById('review-tecnico-seguranca').textContent = obterNomesParticipantesEtapa2PorSetor('Técnico de Segurança', dados.tecnicoSeguranca);
+						var elReviewHse = document.getElementById('review-hse');
+						if (elReviewHse) elReviewHse.textContent = obterNomesParticipantesEtapa2PorSetor('HSE', '');
 						document.getElementById('review-anjo-semana').textContent = dados.anjoSemana || '-';
 						document.getElementById('review-lider-ras').textContent = dados.liderRas || '-';
 						document.getElementById('review-lider-cpt').textContent = dados.liderCpt || '-';
