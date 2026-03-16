@@ -4067,6 +4067,12 @@
 							supervisor: document.getElementById('ras-supervisor').value,
 							encarregado: document.getElementById('ras-encarregado').value,
 							tecnicoSeguranca: document.getElementById('ras-tecnico-seguranca').value,
+							participantesLideranca: (Array.isArray(participantesRAS) ? participantesRAS : []).map(function(p) {
+								return {
+									nome: String((p && p.nome) || '').trim(),
+									setor: String((p && p.setor) || '').trim()
+								};
+							}).filter(function(p) { return p.nome && p.setor; }),
 							
 							// Etapa 3 - Outros Participantes
 							anjoSemana: document.getElementById('ras-anjo-semana').value,
@@ -6144,6 +6150,12 @@
 								supervisor: document.getElementById('ras-supervisor')?.value || '',
 								encarregado: document.getElementById('ras-encarregado')?.value || '',
 								tecnicoSeguranca: document.getElementById('ras-tecnico-seguranca')?.value || '',
+								participantesLideranca: (Array.isArray(participantesRAS) ? participantesRAS : []).map(function(p) {
+									return {
+										nome: String((p && p.nome) || '').trim(),
+										setor: String((p && p.setor) || '').trim()
+									};
+								}).filter(function(p) { return p.nome && p.setor; }),
 								// Etapa 3 - Designações
 								anjoSemana: document.getElementById('ras-anjo-semana')?.value || '',
 								liderRAS: document.getElementById('ras-lider-ras')?.value || '',
@@ -6661,13 +6673,23 @@
 							if (document.getElementById('ras-encarregado')) document.getElementById('ras-encarregado').value = ras.encarregado || '';
 							if (document.getElementById('ras-tecnico-seguranca')) document.getElementById('ras-tecnico-seguranca').value = ras.tecnicoSeguranca || '';
 
-							// Reconstruir a lista de participantes da etapa 2 para exibição (mantém compatibilidade)
+							// Reconstruir a lista de participantes da etapa 2 para exibição
+							// Prioriza estrutura nova (lista completa) e mantém fallback para dados legados.
 							participantesRAS = [];
-							if (ras.gerente) participantesRAS.push({ nome: ras.gerente, setor: 'Gerente' });
-							if (ras.engenheiro) participantesRAS.push({ nome: ras.engenheiro, setor: 'Engenheiro' });
-							if (ras.supervisor) participantesRAS.push({ nome: ras.supervisor, setor: 'Supervisor' });
-							if (ras.encarregado) participantesRAS.push({ nome: ras.encarregado, setor: 'Encarregado' });
-							if (ras.tecnicoSeguranca) participantesRAS.push({ nome: ras.tecnicoSeguranca, setor: 'Técnico de Segurança' });
+							if (Array.isArray(ras.participantesLideranca) && ras.participantesLideranca.length > 0) {
+								ras.participantesLideranca.forEach(function(p) {
+									var nome = String((p && p.nome) || '').trim();
+									var setor = String((p && p.setor) || '').trim();
+									if (!nome || !setor) return;
+									participantesRAS.push({ nome: nome, setor: setor });
+								});
+							} else {
+								if (ras.gerente) participantesRAS.push({ nome: ras.gerente, setor: 'Gerente' });
+								if (ras.engenheiro) participantesRAS.push({ nome: ras.engenheiro, setor: 'Engenheiro' });
+								if (ras.supervisor) participantesRAS.push({ nome: ras.supervisor, setor: 'Supervisor' });
+								if (ras.encarregado) participantesRAS.push({ nome: ras.encarregado, setor: 'Encarregado' });
+								if (ras.tecnicoSeguranca) participantesRAS.push({ nome: ras.tecnicoSeguranca, setor: 'Técnico de Segurança' });
+							}
 							renderListaParticipantesRAS();
 							// Atualizar campos hidden e validar (inclui validação da etapa 5)
 							atualizarHiddenPorSetor();
