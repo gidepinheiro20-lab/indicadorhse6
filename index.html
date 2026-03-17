@@ -2074,6 +2074,10 @@
 							<div style="background:#f8fafc;border:1px solid #dbeafe;border-radius:12px;padding:14px;">
 								<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
 									<h3 style="margin:0;color:#0f172a;">Incluir Novato</h3>
+									<div style="display:flex;align-items:center;gap:8px;">
+										<button type="button" onclick="importarPlanilhaNovatos()" style="background:#0ea5e9;color:#fff;border:none;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer;">📊 Importar Planilha</button>
+										<input id="novatos-importar-xlsx" type="file" accept=".xlsx,.xls" style="display:none" onchange="processarImportacaoNovatos(event)">
+									</div>
 								</div>
 								<form id="form-novato" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;">
 									<div>
@@ -10135,6 +10139,210 @@
 							if (chaveItem !== chaveBase) return false;
 							return calcularSituacaoAutomaticaNovato(item) !== 'Em Regra';
 						}).length;
+					}
+
+					function importarPlanilhaNovatos() {
+						var inputArquivo = document.getElementById('novatos-importar-xlsx');
+						if (!inputArquivo) return;
+						inputArquivo.value = '';
+						inputArquivo.click();
+					}
+
+					function normalizarChaveColunaNovatos(valor) {
+						var texto = String(valor || '').trim().toLowerCase().replace(/\s+/g, ' ');
+						if (typeof texto.normalize === 'function') {
+							texto = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+						}
+						return texto;
+					}
+
+					function converterDataNovatosParaISO(valor) {
+						if (valor === null || valor === undefined) return '';
+
+						if (typeof valor === 'number' && isFinite(valor)) {
+							var serialBase = Date.UTC(1899, 11, 30);
+							var dataSerial = new Date(serialBase + Math.floor(valor) * 86400000);
+							if (!isNaN(dataSerial.getTime())) {
+								var anoSerial = String(dataSerial.getUTCFullYear());
+								var mesSerial = String(dataSerial.getUTCMonth() + 1).padStart(2, '0');
+								var diaSerial = String(dataSerial.getUTCDate()).padStart(2, '0');
+								return anoSerial + '-' + mesSerial + '-' + diaSerial;
+							}
+						}
+
+						if (valor instanceof Date && !isNaN(valor.getTime())) {
+							var anoDate = String(valor.getFullYear());
+							var mesDate = String(valor.getMonth() + 1).padStart(2, '0');
+							var diaDate = String(valor.getDate()).padStart(2, '0');
+							return anoDate + '-' + mesDate + '-' + diaDate;
+						}
+
+						var texto = String(valor || '').trim();
+						if (!texto) return '';
+
+						var somenteData = texto.split(' ')[0].split('T')[0];
+						if (/^\d{4}-\d{2}-\d{2}$/.test(somenteData)) return somenteData;
+
+						var matchBR = somenteData.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+						if (matchBR) {
+							var d = String(parseInt(matchBR[1], 10)).padStart(2, '0');
+							var m = String(parseInt(matchBR[2], 10)).padStart(2, '0');
+							return matchBR[3] + '-' + m + '-' + d;
+						}
+
+						var matchISOBarra = somenteData.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
+						if (matchISOBarra) {
+							var mm = String(parseInt(matchISOBarra[2], 10)).padStart(2, '0');
+							var dd = String(parseInt(matchISOBarra[3], 10)).padStart(2, '0');
+							return matchISOBarra[1] + '-' + mm + '-' + dd;
+						}
+
+						return '';
+					}
+
+					function obterMapeamentoColunasNovatos(chavesLinha) {
+						var mapaSinonimos = {
+							nome: ['nome', 'novato', 'colaborador'],
+							funcao: ['funcao', 'função', 'cargo'],
+							matricula: ['matricula', 'matrícula', 'registro'],
+							dataEntrada: ['data entrada', 'data de entrada', 'admissao', 'admissão', 'entrada'],
+							situacao: ['situacao', 'situação', 'status'],
+							padrinho: ['padrinho', 'mentor'],
+							funcaoPadrinho: ['funcao padrinho', 'função padrinho', 'cargo padrinho', 'funcao do padrinho', 'função do padrinho']
+						};
+
+						var colunas = {
+							nome: null,
+							funcao: null,
+							matricula: null,
+							dataEntrada: null,
+							situacao: null,
+							padrinho: null,
+							funcaoPadrinho: null
+						};
+
+						Object.keys(colunas).forEach(function(campo) {
+							var sinonimos = mapaSinonimos[campo];
+							for (var i = 0; i < chavesLinha.length; i++) {
+								var chaveOriginal = chavesLinha[i];
+								var chaveNormalizada = normalizarChaveColunaNovatos(chaveOriginal);
+								if (!chaveNormalizada) continue;
+
+								for (var s = 0; s < sinonimos.length; s++) {
+									if (chaveNormalizada === sinonimos[s] || chaveNormalizada.indexOf(sinonimos[s]) !== -1) {
+										colunas[campo] = chaveOriginal;
+										return;
+									}
+								}
+							}
+						});
+
+						return colunas;
+					}
+
+					function processarImportacaoNovatos(event) {
+						var arquivo = event && event.target && event.target.files ? event.target.files[0] : null;
+						if (!arquivo) return;
+
+						if (typeof XLSX === 'undefined') {
+							alert('Biblioteca de planilha não carregada. Atualize a página e tente novamente.');
+							return;
+						}
+
+						var leitor = new FileReader();
+						leitor.onload = function(e) {
+							try {
+								var data = new Uint8Array(e.target.result);
+								var workbook = XLSX.read(data, { type: 'array' });
+								var primeiraAba = workbook.SheetNames && workbook.SheetNames[0];
+								if (!primeiraAba) {
+									alert('A planilha está vazia.');
+									return;
+								}
+
+								var worksheet = workbook.Sheets[primeiraAba];
+								var linhas = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+								if (!Array.isArray(linhas) || !linhas.length) {
+									alert('Nenhuma linha encontrada na planilha.');
+									return;
+								}
+
+								var mapeamento = obterMapeamentoColunasNovatos(Object.keys(linhas[0] || {}));
+								if (!mapeamento.nome || !mapeamento.funcao || !mapeamento.matricula || !mapeamento.dataEntrada || !mapeamento.padrinho || !mapeamento.funcaoPadrinho) {
+									alert('Colunas obrigatórias não encontradas. Use: Nome, Função, Matrícula, Data de Entrada, Padrinho, Função do Padrinho.');
+									return;
+								}
+
+								var listaAtual = obterNovatosStorage();
+								var importados = 0;
+								var ignorados = 0;
+
+								linhas.forEach(function(linha) {
+									var nome = String(linha[mapeamento.nome] || '').trim();
+									var funcao = String(linha[mapeamento.funcao] || '').trim();
+									var matricula = String(linha[mapeamento.matricula] || '').trim();
+									var dataEntrada = converterDataNovatosParaISO(linha[mapeamento.dataEntrada]);
+									var situacao = String(mapeamento.situacao ? (linha[mapeamento.situacao] || '') : '').trim();
+									var padrinho = String(linha[mapeamento.padrinho] || '').trim();
+									var funcaoPadrinho = String(linha[mapeamento.funcaoPadrinho] || '').trim();
+
+									if (!nome || !funcao || !matricula || !dataEntrada || !padrinho || !funcaoPadrinho) {
+										ignorados++;
+										return;
+									}
+
+									var existe = listaAtual.some(function(item) {
+										return normalizarTextoComparacao(item.matricula || '') === normalizarTextoComparacao(matricula);
+									});
+									if (existe) {
+										ignorados++;
+										return;
+									}
+
+									var ativosDoPadrinho = contarNovatosAtivosDoPadrinho(listaAtual, padrinho, funcaoPadrinho);
+									if (ativosDoPadrinho >= 3) {
+										ignorados++;
+										return;
+									}
+
+									listaAtual.push({
+										id: Date.now() + importados,
+										nome: nome,
+										funcao: funcao,
+										matricula: matricula,
+										dataEntrada: dataEntrada,
+										situacao: situacao || 'Falta de conhecimento',
+										padrinho: padrinho,
+										funcaoPadrinho: funcaoPadrinho,
+										criadoEm: new Date().toISOString()
+									});
+
+									importados++;
+								});
+
+								if (!importados) {
+									alert('Nenhum novato válido para importar. Verifique colunas, duplicidade de matrícula e limite de 3 novatos ativos por padrinho.');
+									return;
+								}
+
+								salvarNovatosStorage(listaAtual);
+								renderProgramaNovatos();
+
+								var mensagem = 'Importação concluída: ' + importados + ' novato(s) incluído(s).';
+								if (ignorados > 0) {
+									mensagem += '\n' + ignorados + ' linha(s) foram ignoradas.';
+								}
+								alert(mensagem);
+							} catch (erro) {
+								alert('Não foi possível importar a planilha. Verifique o arquivo e tente novamente.');
+							}
+						};
+
+						leitor.onerror = function() {
+							alert('Erro ao ler o arquivo selecionado.');
+						};
+
+						leitor.readAsArrayBuffer(arquivo);
 					}
 
 					function renderTabelaNovatos(lista) {
