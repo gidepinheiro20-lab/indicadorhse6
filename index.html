@@ -3304,7 +3304,7 @@
 					'usuarios', 'funcionarios', 'empresas', 'ras-reunioes', 'historicoRAS',
 					'cpts', 'inspecoes', 'categoriasHSE', 'areasLocais', 'tiposRegistro',
 					'riscosPerigos', 'arts', 'categorias-hse', 'checklistFacilRegistros',
-					'novatos', 'reuniaoMensal', 'reuniaoMensalTipos', 'matrizFerramentas',
+					'novatos', 'hse_programa_novatos_v1', 'reuniaoMensal', 'reuniaoMensalTipos', 'matrizFerramentas',
 					'controleAcessoTecnico'
 				];
 
@@ -10084,6 +10084,26 @@
 
 					var NOVATOS_STORAGE_KEY = 'hse_programa_novatos_v1';
 					var novatosInicializado = false;
+					var intervaloSyncNovatos = null;
+					var eventosSyncNovatosRegistrados = false;
+					var ultimaAlteracaoLocalNovatos = 0;
+
+					function marcarAlteracaoLocalNovatos() {
+						ultimaAlteracaoLocalNovatos = Date.now();
+					}
+
+					function normalizarListaNovatos(dados) {
+						if (Array.isArray(dados)) return dados;
+						if (typeof dados === 'string') {
+							try {
+								var parsed = JSON.parse(dados);
+								return Array.isArray(parsed) ? parsed : [];
+							} catch (e) {
+								return [];
+							}
+						}
+						return [];
+					}
 
 					function obterNovatosStorage() {
 						try {
@@ -10095,7 +10115,48 @@
 					}
 
 					function salvarNovatosStorage(lista) {
+						marcarAlteracaoLocalNovatos();
 						localStorage.setItem(NOVATOS_STORAGE_KEY, JSON.stringify(lista || []));
+					}
+
+					async function sincronizarNovatosDoServidor() {
+						if (!API_BASE_URL) return;
+						var secaoNovatos = document.getElementById('novatos');
+						if (!secaoNovatos || secaoNovatos.style.display === 'none') return;
+						if (Date.now() - ultimaAlteracaoLocalNovatos < 3000) return;
+
+						var dadosServidor = await carregarDoServidor(NOVATOS_STORAGE_KEY);
+						var listaServidor = normalizarListaNovatos(dadosServidor);
+						var listaLocal = normalizarListaNovatos(localStorageOriginal.getItem(NOVATOS_STORAGE_KEY));
+						var remotoAtual = JSON.stringify(listaServidor || []);
+						var localAtual = JSON.stringify(listaLocal || []);
+
+						if (remotoAtual !== localAtual) {
+							localStorageOriginal.setItem(NOVATOS_STORAGE_KEY, remotoAtual);
+							renderProgramaNovatos();
+						}
+					}
+
+					function registrarEventosSyncNovatos() {
+						if (eventosSyncNovatosRegistrados) return;
+						eventosSyncNovatosRegistrados = true;
+
+						window.addEventListener('focus', function() {
+							sincronizarNovatosDoServidor();
+						});
+
+						document.addEventListener('visibilitychange', function() {
+							if (document.visibilityState === 'visible') {
+								sincronizarNovatosDoServidor();
+							}
+						});
+					}
+
+					function iniciarSincronizacaoNovatos() {
+						if (intervaloSyncNovatos) return;
+						intervaloSyncNovatos = setInterval(function() {
+							sincronizarNovatosDoServidor();
+						}, 3000);
 					}
 
 					function adicionarDiasISO(dataISO, dias) {
@@ -10596,10 +10657,13 @@
 								form.addEventListener('submit', salvarNovoNovato);
 							}
 							limparFormularioNovato();
+							iniciarSincronizacaoNovatos();
+							registrarEventosSyncNovatos();
 							novatosInicializado = true;
 						}
 
 						if (forcarRender || novatosInicializado) {
+							sincronizarNovatosDoServidor();
 							renderProgramaNovatos();
 						}
 					}
