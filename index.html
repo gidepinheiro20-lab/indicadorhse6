@@ -2075,6 +2075,7 @@
 								<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
 									<h3 style="margin:0;color:#0f172a;">Incluir Novato</h3>
 									<div style="display:flex;align-items:center;gap:8px;">
+										<button type="button" onclick="exportarListaNovatosXLSX()" style="background:#16a34a;color:#fff;border:none;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer;">📥 Exportar Lista</button>
 										<button type="button" onclick="importarPlanilhaNovatos()" style="background:#0ea5e9;color:#fff;border:none;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer;">📊 Importar Planilha</button>
 										<input id="novatos-importar-xlsx" type="file" accept=".xlsx,.xls" style="display:none" onchange="processarImportacaoNovatos(event)">
 									</div>
@@ -10343,6 +10344,49 @@
 						};
 
 						leitor.readAsArrayBuffer(arquivo);
+					}
+
+					function exportarListaNovatosXLSX() {
+						if (typeof XLSX === 'undefined') {
+							alert('Biblioteca de planilha não carregada. Atualize a página e tente novamente.');
+							return;
+						}
+
+						var lista = obterNovatosStorage();
+						if (!Array.isArray(lista) || lista.length === 0) {
+							alert('Não há novatos cadastrados para exportar.');
+							return;
+						}
+
+						var ordenada = lista.slice().sort(function(a, b) {
+							return String(a.dataEntrada || '').localeCompare(String(b.dataEntrada || ''));
+						});
+
+						var linhas = ordenada.map(function(item) {
+							var dataEntrada = item && item.dataEntrada ? item.dataEntrada : '';
+							var dataEvolucao = adicionarDiasISO(dataEntrada, 30);
+							var situacaoAtual = calcularSituacaoAutomaticaNovato(item);
+							return {
+								'Mês': obterMesAnoTexto(dataEntrada),
+								'Situação': situacaoAtual,
+								'Nome': String((item && item.nome) || ''),
+								'Matrícula': String((item && item.matricula) || ''),
+								'Função': String((item && item.funcao) || ''),
+								'Data Entrada': formatarDataBR(dataEntrada),
+								'Data Evolução': formatarDataBR(dataEvolucao),
+								'Padrinho': String((item && item.padrinho) || ''),
+								'Função Padrinho': String((item && item.funcaoPadrinho) || '')
+							};
+						});
+
+						var worksheet = XLSX.utils.json_to_sheet(linhas);
+						var workbook = XLSX.utils.book_new();
+						XLSX.utils.book_append_sheet(workbook, worksheet, 'Novatos');
+
+						var hoje = new Date();
+						var sufixoData = String(hoje.getFullYear()) + '-' + String(hoje.getMonth() + 1).padStart(2, '0') + '-' + String(hoje.getDate()).padStart(2, '0');
+						var nomeArquivo = 'programa-novatos-' + sufixoData + '.xlsx';
+						XLSX.writeFile(workbook, nomeArquivo);
 					}
 
 					function renderTabelaNovatos(lista) {
