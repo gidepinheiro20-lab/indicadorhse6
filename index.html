@@ -11195,13 +11195,13 @@
 
 					var MATRIZ_FERRAMENTAS_STORAGE_KEY = 'hse_matriz_ferramentas_v1';
 					var MATRIZ_FERRAMENTAS_PADRAO = [
-						{ tipo: 'PARTICIPAÇÃO NA RAS', mensal: [1, 8, 15, 15], semanal: [1, 2, 4, 2] },
-						{ tipo: 'PARTICIPAÇÃO NA CPT', mensal: [1, 8, 15, 15], semanal: [1, 2, 4, 2] },
-						{ tipo: 'WOC MHO', mensal: [0, 8, 10, 12], semanal: [0, 2, 3, 4] },
-						{ tipo: 'INSPEÇÃO DE SEGURANÇA', mensal: [0, 0, 0, 0], semanal: [0, 0, 0, 0] },
-						{ tipo: 'REUNIÃO MENSAL DH HSE ALBRAS', mensal: [0, 0, 0, 0], semanal: [0, 0, 0, 0] },
-						{ tipo: 'REUNIÃO SEMANAL DE CONTRATADAS COM CAPEX', mensal: [0, 0, 0, 0], semanal: [0, 0, 0, 0] },
-						{ tipo: 'REUNIÃO DA CIPA INTEGRADA / CONSTITUÍDA', mensal: [0, 0, 0, 1], semanal: [0, 0, 0, 1] }
+						{ tipo: 'PARTICIPAÇÃO NA RAS', mensal: [1, 8, 15, 15, 0], semanal: [1, 2, 4, 2, 0] },
+						{ tipo: 'PARTICIPAÇÃO NA CPT', mensal: [1, 8, 15, 15, 0], semanal: [1, 2, 4, 2, 0] },
+						{ tipo: 'WOC MHO', mensal: [0, 8, 10, 12, 0], semanal: [0, 2, 3, 4, 0] },
+						{ tipo: 'INSPEÇÃO DE SEGURANÇA', mensal: [0, 0, 0, 0, 0], semanal: [0, 0, 0, 0, 0] },
+						{ tipo: 'REUNIÃO MENSAL DH HSE ALBRAS', mensal: [0, 0, 0, 0, 0], semanal: [0, 0, 0, 0, 0] },
+						{ tipo: 'REUNIÃO SEMANAL DE CONTRATADAS COM CAPEX', mensal: [0, 0, 0, 0, 0], semanal: [0, 0, 0, 0, 0] },
+						{ tipo: 'REUNIÃO DA CIPA INTEGRADA / CONSTITUÍDA', mensal: [0, 0, 0, 1, 0], semanal: [0, 0, 0, 1, 0] }
 					];
 
 					function normalizarNumeroInteiro(valor) {
@@ -11250,13 +11250,15 @@
 									normalizarNumeroInteiro(mensal[0]),
 									normalizarNumeroInteiro(mensal[1]),
 									normalizarNumeroInteiro(mensal[2]),
-									normalizarNumeroInteiro(mensal[3])
+									normalizarNumeroInteiro(mensal[3]),
+									normalizarNumeroInteiro(mensal[4])
 								],
 								semanal: [
 									normalizarNumeroInteiro(semanal[0]),
 									normalizarNumeroInteiro(semanal[1]),
 									normalizarNumeroInteiro(semanal[2]),
-									normalizarNumeroInteiro(semanal[3])
+									normalizarNumeroInteiro(semanal[3]),
+									normalizarNumeroInteiro(semanal[4])
 								]
 							};
 						});
@@ -11268,10 +11270,12 @@
 						if (setorNormalizado === 'engenheiro') return 1;
 						if (setorNormalizado === 'hse') return 2;
 						if (setorNormalizado === 'encarregado') return 3;
+						if (setorNormalizado === 'cipa') return 4;
 						if (setorNormalizado.indexOf('gerent') !== -1) return 0;
 						if (setorNormalizado.indexOf('engenheir') !== -1) return 1;
 						if (setorNormalizado.indexOf('hse') !== -1 || setorNormalizado.indexOf('seguranca') !== -1 || setorNormalizado.indexOf('ssma') !== -1 || setorNormalizado.indexOf('sms') !== -1 || setorNormalizado.indexOf('sesmt') !== -1) return 2;
 						if (setorNormalizado.indexOf('encarreg') !== -1) return 3;
+						if (setorNormalizado.indexOf('cipa') !== -1) return 4;
 						return -1;
 					}
 
@@ -11626,13 +11630,14 @@
 									'<td><input class="meta-input" type="number" min="0" step="1" data-coluna="' + coluna + '" data-linha="' + linhaIndex + '" data-indice="1" value="' + valores[1] + '"></td>' +
 									'<td><input class="meta-input" type="number" min="0" step="1" data-coluna="' + coluna + '" data-linha="' + linhaIndex + '" data-indice="2" value="' + valores[2] + '"></td>' +
 									'<td><input class="meta-input" type="number" min="0" step="1" data-coluna="' + coluna + '" data-linha="' + linhaIndex + '" data-indice="3" value="' + valores[3] + '"></td>' +
+									'<td><input class="meta-input" type="number" min="0" step="1" data-coluna="' + coluna + '" data-linha="' + linhaIndex + '" data-indice="4" value="' + valores[4] + '"></td>' +
 								'</tr>';
 							}).join('');
 
 							return '<table class="matriz-table">' +
 								'<thead>' +
-									'<tr class="cabecalho-principal"><th>TIPO</th><th>GERENTE</th><th>ENGENHEIRO</th><th>HSE</th><th>ENCARREGADO</th></tr>' +
-									'<tr class="cabecalho-meta"><th></th><th>META</th><th>META</th><th>META</th><th>META</th></tr>' +
+									'<tr class="cabecalho-principal"><th>TIPO</th><th>GERENTE</th><th>ENGENHEIRO</th><th>HSE</th><th>ENCARREGADO</th><th>CIPA</th></tr>' +
+									'<tr class="cabecalho-meta"><th></th><th>META</th><th>META</th><th>META</th><th>META</th><th>META</th></tr>' +
 								'</thead>' +
 								'<tbody>' + linhas + '</tbody>' +
 							'</table>';
