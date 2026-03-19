@@ -1805,7 +1805,7 @@
 									<p style="margin:6px 0 0 0;font-size:0.95rem;opacity:0.95">Controle e acompanhamento de listas de verificação</p>
 								</div>
 								<div style="display:flex;gap:12px;flex-wrap:wrap">
-									<button type="button" onclick="navegarParaHash('#dashboard')" style="background:#3b82f6;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Dashboard</button>
+									<button type="button" onclick="abrirDashboardChecklist()" style="background:#3b82f6;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Dashboard</button>
 									<button type="button" onclick="abrirAcompanhamentoSemanal()" style="background:#10b981;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Acompanhamento Semanal</button>
 									<button type="button" onclick="abrirAcompanhamentoMensal()" style="background:#0ea5e9;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Acompanhamento Mensal</button>
 									<button type="button" onclick="abrirMatrizFerramentas()" style="background:#8b5cf6;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Matriz de Ferramentas</button>
@@ -11617,6 +11617,275 @@
 
 					function abrirAcompanhamentoMensal() {
 						abrirAcompanhamentoChecklist('mensal');
+					}
+
+					function abrirDashboardChecklist() {
+						var lista = obterChecklistFacilListaCompleta();
+						if (!lista || lista.length === 0) {
+							alert('Nenhuma checklist registrada para o dashboard.');
+							return;
+						}
+
+						// Coletar dados para filtros
+						var semanas = new Set();
+						var meses = new Set();
+						var anos = new Set();
+
+						lista.forEach(function(checklist) {
+							var data = new Date((checklist.data || '') + 'T00:00:00');
+							if (!isNaN(data.getTime())) {
+								semanas.add(checklist.semana || 'Sem semana');
+								meses.add(String(data.getMonth() + 1).padStart(2, '0'));
+								anos.add(data.getFullYear());
+							}
+						});
+
+						var semanasArray = Array.from(semanas).sort();
+						var mesesArray = Array.from(meses).sort();
+						var anosArray = Array.from(anos).sort().reverse();
+
+						// HTML do modal
+						var html = '<div id="modal-dashboard-checklist" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px">';
+						html += '<div style="background:#fff;border-radius:12px;max-width:1200px;width:100%;max-height:90vh;overflow-y:auto">';
+						html += '<div style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;padding:24px;border-radius:12px 12px 0 0">';
+						html += '<h2 style="margin:0;font-size:1.8rem;font-weight:700">📊 Dashboard Check List Fácil</h2>';
+						html += '<p style="margin:8px 0 0 0;opacity:0.9">Painel de acompanhamento mensal com filtros</p>';
+						html += '</div>';
+						html += '<div style="padding:24px">';
+
+						// Filtros
+						html += '<div style="display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap">';
+						html += '<div>';
+						html += '<label style="display:block;font-weight:600;margin-bottom:4px">Semana:</label>';
+						html += '<select id="filtro-semana-dashboard" style="padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;min-width:120px">';
+						html += '<option value="">Todas</option>';
+						semanasArray.forEach(function(s) {
+							html += '<option value="' + s + '">' + s + '</option>';
+						});
+						html += '</select>';
+						html += '</div>';
+						html += '<div>';
+						html += '<label style="display:block;font-weight:600;margin-bottom:4px">Mês:</label>';
+						html += '<select id="filtro-mes-dashboard" style="padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;min-width:120px">';
+						html += '<option value="">Todos</option>';
+						mesesArray.forEach(function(m) {
+							var nomeMes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][parseInt(m)-1];
+							html += '<option value="' + m + '">' + nomeMes + '</option>';
+						});
+						html += '</select>';
+						html += '</div>';
+						html += '<div>';
+						html += '<label style="display:block;font-weight:600;margin-bottom:4px">Ano:</label>';
+						html += '<select id="filtro-ano-dashboard" style="padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;min-width:120px">';
+						html += '<option value="">Todos</option>';
+						anosArray.forEach(function(a) {
+							html += '<option value="' + a + '">' + a + '</option>';
+						});
+						html += '</select>';
+						html += '</div>';
+						html += '<div style="display:flex;align-items:end">';
+						html += '<button onclick="filtrarDashboardChecklist()" style="background:#3b82f6;color:#fff;padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-weight:600">Filtrar</button>';
+						html += '</div>';
+						html += '</div>';
+
+						// Área de conteúdo
+						html += '<div id="conteudo-dashboard-checklist">';
+						html += gerarConteudoDashboardChecklist('', '', '');
+						html += '</div>';
+
+						html += '</div>';
+						html += '<div style="padding:16px;border-top:1px solid #e5e7eb;text-align:right">';
+						html += '<button onclick="fecharModalDashboardChecklist()" style="background:#6b7280;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:600">Fechar</button>';
+						html += '</div>';
+						html += '</div>';
+						html += '</div>';
+
+						// Adicionar ao body
+						var modal = document.createElement('div');
+						modal.innerHTML = html;
+						document.body.appendChild(modal);
+
+						// Funções do modal
+						window.filtrarDashboardChecklist = function() {
+							var semana = document.getElementById('filtro-semana-dashboard').value;
+							var mes = document.getElementById('filtro-mes-dashboard').value;
+							var ano = document.getElementById('filtro-ano-dashboard').value;
+							document.getElementById('conteudo-dashboard-checklist').innerHTML = gerarConteudoDashboardChecklist(semana, mes, ano);
+						};
+
+						window.fecharModalDashboardChecklist = function() {
+							var modal = document.getElementById('modal-dashboard-checklist');
+							if (modal) modal.remove();
+						};
+
+						window.gerarConteudoDashboardChecklist = function(filtroSemana, filtroMes, filtroAno) {
+							var registrosMap = {};
+							var allTipos = new Set();
+
+							lista.forEach(function(checklist) {
+								var data = new Date((checklist.data || '') + 'T00:00:00');
+								if (isNaN(data.getTime())) return;
+
+								var semana = checklist.semana || 'Sem semana';
+								var mes = String(data.getMonth() + 1).padStart(2, '0');
+								var ano = data.getFullYear();
+
+								// Aplicar filtros
+								if (filtroSemana && semana !== filtroSemana) return;
+								if (filtroMes && mes !== filtroMes) return;
+								if (filtroAno && ano !== filtroAno) return;
+
+								var tipo = checklist.tipo || 'Não informado';
+								var nome = checklist.autor || 'Não informado';
+								var setor = checklist.setor || 'Não informado';
+								var metaMatriz = obterMetaMensalMatriz(tipo, setor);
+
+								var chave = nome + '|' + setor + '|' + semana + '|' + mes + '|' + ano;
+
+								if (!registrosMap[chave]) {
+									registrosMap[chave] = {
+										nome: nome,
+										setor: setor,
+										semana: semana,
+										mes: mes,
+										ano: ano,
+										tipos: {}
+									};
+								}
+
+								if (!registrosMap[chave].tipos[tipo]) {
+									registrosMap[chave].tipos[tipo] = {
+										meta: metaMatriz,
+										realizado: 0,
+										aderencia: 0
+									};
+								}
+
+								registrosMap[chave].tipos[tipo].realizado++;
+								allTipos.add(tipo);
+
+								var meta = normalizarNumeroInteiro(registrosMap[chave].tipos[tipo].meta);
+								var base = meta === 0 ? 1 : meta;
+								registrosMap[chave].tipos[tipo].aderencia = Math.round((registrosMap[chave].tipos[tipo].realizado / base) * 100);
+							});
+
+							var tiposArray = Array.from(allTipos).sort();
+							var registros = Object.values(registrosMap);
+
+							registros.sort(function(a, b) {
+								var aKey = String(a.ano) + String(a.mes) + String(a.semana).padStart(2, '0');
+								var bKey = String(b.ano) + String(b.mes) + String(b.semana).padStart(2, '0');
+								return bKey.localeCompare(aKey);
+							});
+
+							var html = '';
+
+							if (registros.length === 0) {
+								html += '<div style="text-align:center;padding:40px;color:#6b7280">';
+								html += '<div style="font-size:3rem;margin-bottom:16px">📊</div>';
+								html += '<div style="font-size:1.2rem;font-weight:600;margin-bottom:8px">Nenhum dado encontrado</div>';
+								html += '<div>Ajuste os filtros para visualizar os dados.</div>';
+								html += '</div>';
+								return html;
+							}
+
+							// Cards de resumo
+							var totalRegistros = registros.length;
+							var totalTipos = tiposArray.length;
+							var mediaAderencia = 0;
+							var countAderencia = 0;
+
+							registros.forEach(function(reg) {
+								tiposArray.forEach(function(tipo) {
+									if (reg.tipos[tipo]) {
+										mediaAderencia += reg.tipos[tipo].aderencia;
+										countAderencia++;
+									}
+								});
+							});
+
+							if (countAderencia > 0) {
+								mediaAderencia = Math.round(mediaAderencia / countAderencia);
+							}
+
+							html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px">';
+							html += '<div style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:20px;border-radius:8px;text-align:center">';
+							html += '<div style="font-size:2rem;margin-bottom:8px">📋</div>';
+							html += '<div style="font-size:1.5rem;font-weight:700">' + totalRegistros + '</div>';
+							html += '<div style="opacity:0.9">Registros</div>';
+							html += '</div>';
+							html += '<div style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:20px;border-radius:8px;text-align:center">';
+							html += '<div style="font-size:2rem;margin-bottom:8px">🏷️</div>';
+							html += '<div style="font-size:1.5rem;font-weight:700">' + totalTipos + '</div>';
+							html += '<div style="opacity:0.9">Tipos</div>';
+							html += '</div>';
+							html += '<div style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;padding:20px;border-radius:8px;text-align:center">';
+							html += '<div style="font-size:2rem;margin-bottom:8px">📈</div>';
+							html += '<div style="font-size:1.5rem;font-weight:700">' + mediaAderencia + '%</div>';
+							html += '<div style="opacity:0.9">Aderência Média</div>';
+							html += '</div>';
+							html += '</div>';
+
+							// Tabela
+							html += '<div style="overflow-x:auto">';
+							html += '<table style="width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,0.1)">';
+							html += '<thead style="background:#f3f4f6">';
+							html += '<tr>';
+							html += '<th style="padding:12px 16px;text-align:left;border-bottom:1px solid #e5e7eb;font-weight:600">Nome</th>';
+							html += '<th style="padding:12px 16px;text-align:left;border-bottom:1px solid #e5e7eb;font-weight:600">Setor</th>';
+							html += '<th style="padding:12px 16px;text-align:center;border-bottom:1px solid #e5e7eb;font-weight:600">Semana</th>';
+							html += '<th style="padding:12px 16px;text-align:center;border-bottom:1px solid #e5e7eb;font-weight:600">Mês</th>';
+							html += '<th style="padding:12px 16px;text-align:center;border-bottom:1px solid #e5e7eb;font-weight:600">Ano</th>';
+
+							tiposArray.forEach(function(tipo) {
+								html += '<th style="padding:12px 16px;text-align:center;border-bottom:1px solid #e5e7eb;font-weight:600" colspan="3">' + tipo + '</th>';
+							});
+
+							html += '</tr>';
+							html += '<tr>';
+							html += '<th colspan="5" style="border-bottom:1px solid #e5e7eb"></th>';
+
+							tiposArray.forEach(function() {
+								html += '<th style="padding:8px;text-align:center;border-bottom:1px solid #e5e7eb;font-size:0.9rem;background:#fef3c7">Meta</th>';
+								html += '<th style="padding:8px;text-align:center;border-bottom:1px solid #e5e7eb;font-size:0.9rem;background:#dbeafe">Realizado</th>';
+								html += '<th style="padding:8px;text-align:center;border-bottom:1px solid #e5e7eb;font-size:0.9rem;background:#d1e7dd">Aderência</th>';
+							});
+
+							html += '</tr>';
+							html += '</thead>';
+							html += '<tbody>';
+
+							registros.forEach(function(reg, index) {
+								var bgColor = index % 2 === 0 ? '#fff' : '#f9fafb';
+								html += '<tr style="background:' + bgColor + '">';
+								html += '<td style="padding:12px 16px;border-bottom:1px solid #e5e7eb;font-weight:600">' + reg.nome + '</td>';
+								html += '<td style="padding:12px 16px;border-bottom:1px solid #e5e7eb">' + reg.setor + '</td>';
+								html += '<td style="padding:12px 16px;border-bottom:1px solid #e5e7eb;text-align:center">' + reg.semana + '</td>';
+								html += '<td style="padding:12px 16px;border-bottom:1px solid #e5e7eb;text-align:center">' + reg.mes + '</td>';
+								html += '<td style="padding:12px 16px;border-bottom:1px solid #e5e7eb;text-align:center">' + reg.ano + '</td>';
+
+								tiposArray.forEach(function(tipo) {
+									if (reg.tipos[tipo]) {
+										var aderenciaClass = reg.tipos[tipo].aderencia >= 100 ? 'color:#059669;font-weight:700' : reg.tipos[tipo].aderencia >= 80 ? 'color:#d97706;font-weight:700' : 'color:#dc2626;font-weight:700';
+										html += '<td style="padding:12px 16px;border-bottom:1px solid #e5e7eb;text-align:center;background:#fef3c7">' + reg.tipos[tipo].meta + '</td>';
+										html += '<td style="padding:12px 16px;border-bottom:1px solid #e5e7eb;text-align:center;background:#dbeafe">' + reg.tipos[tipo].realizado + '</td>';
+										html += '<td style="padding:12px 16px;border-bottom:1px solid #e5e7eb;text-align:center;background:#d1e7dd;' + aderenciaClass + '">' + reg.tipos[tipo].aderencia + '%</td>';
+									} else {
+										html += '<td style="padding:12px 16px;border-bottom:1px solid #e5e7eb;text-align:center;background:#f3f4f6">-</td>';
+										html += '<td style="padding:12px 16px;border-bottom:1px solid #e5e7eb;text-align:center;background:#f3f4f6">-</td>';
+										html += '<td style="padding:12px 16px;border-bottom:1px solid #e5e7eb;text-align:center;background:#f3f4f6">-</td>';
+									}
+								});
+
+								html += '</tr>';
+							});
+
+							html += '</tbody>';
+							html += '</table>';
+							html += '</div>';
+
+							return html;
+						};
 					}
 
 					function abrirMatrizFerramentas() {
