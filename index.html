@@ -2048,6 +2048,7 @@
 								</div>
 								<div style="display:flex;gap:12px;flex-wrap:wrap">
 									<button type="button" onclick="abrirAcompanhamentoSemanal()" style="background:#10b981;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Acompanhamento Semanal</button>
+									<button type="button" onclick="abrirDashboardChecklist()" style="background:#2563eb;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Dashboard</button>
 									<button type="button" onclick="abrirAcompanhamentoMensal()" style="background:#0ea5e9;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Acompanhamento Mensal</button>
 									<button type="button" onclick="abrirMatrizFerramentas()" style="background:#8b5cf6;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Matriz de Ferramentas</button>
 									<button type="button" onclick="mostrarModalNovaChecklist()" style="background:#fff;color:#0d9488;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem">Anexar formulário</button>
@@ -2056,6 +2057,7 @@
 						</div>
 
 						<div style="padding:28px;max-width:100%;margin:0 auto">
+							<div id="checklist-dashboard-view" style="display:none;margin-bottom:24px;">
 							<div class="checklist-dashboard-shell">
 								<div class="checklist-dashboard-panel">
 									<div class="checklist-dashboard-panel-header">
@@ -2089,6 +2091,7 @@
 									</div>
 								</div>
 								<div class="checklist-dashboard-side-grid" id="checklist-dashboard-side"></div>
+							</div>
 							</div>
 
 							<div style="background:#f3f4f6;padding:20px;border-radius:12px;margin-bottom:24px">
@@ -11207,6 +11210,16 @@
 						}).join('');
 					}
 
+					function abrirDashboardChecklist() {
+						var dashboard = document.getElementById('checklist-dashboard-view');
+						if (!dashboard) return;
+						dashboard.style.display = 'block';
+						renderizarDashboardChecklist();
+						if (typeof dashboard.scrollIntoView === 'function') {
+							dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+						}
+					}
+
 					function renderizarTabelaChecklist(lista) {
 						var corpo = document.getElementById('checklist-tabela-corpo');
 						if (!corpo) return;
@@ -11251,6 +11264,10 @@
 
 					function carregarChecklistFacil() {
 						var lista = obterChecklistFacilStorage();
+						var dashboard = document.getElementById('checklist-dashboard-view');
+						if (dashboard) {
+							dashboard.style.display = 'none';
+						}
 						preencherFiltrosChecklist(lista);
 						aplicarFiltrosChecklist();
 						renderizarDashboardChecklist();
