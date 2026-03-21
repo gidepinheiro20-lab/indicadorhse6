@@ -2332,7 +2332,10 @@
 								<h2 style="margin:0;font-size:1.35rem;font-weight:700;">Controle de Novatos</h2>
 								<div style="opacity:.92;margin-top:4px;font-size:.95rem;">Acompanhamento de entrada, evolução em 30 dias e regularização em 45 dias.</div>
 							</div>
-							<button type="button" onclick="inicializarProgramaNovatos(true)" style="background:#fff;color:#1d4ed8;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Atualizar Controle</button>
+							<div style="display:flex;gap:8px;flex-wrap:wrap;">
+								<button type="button" onclick="inicializarProgramaNovatos(true)" style="background:#fff;color:#1d4ed8;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Atualizar Controle</button>
+								<button type="button" onclick="apagarTodosNovatosCadastro()" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Apagar Lista</button>
+							</div>
 						</div>
 
 						<div style="padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
@@ -9984,6 +9987,19 @@
 						});
 						salvarNovatosStorage(atualizada);
 						renderProgramaNovatos();
+					}
+
+					function apagarTodosNovatosCadastro() {
+						var lista = obterNovatosStorage();
+						if (!lista.length) {
+							alert('Não há novatos cadastrados para apagar.');
+							return;
+						}
+						var confirmar = window.confirm('Apagar toda a lista de novatos? Esta ação removerá todos os registros cadastrados neste módulo.');
+						if (!confirmar) return;
+						salvarNovatosStorage([]);
+						renderProgramaNovatos();
+						limparFormularioNovato();
 					}
 
 					function renderProgramaNovatos() {
