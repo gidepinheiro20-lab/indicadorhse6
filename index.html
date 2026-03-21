@@ -5091,21 +5091,29 @@
 							.replace(/"/g, '&quot;')
 							.replace(/'/g, '&#39;');
 					}
+					function renderizarBadgePermissao(valor){
+						var texto = String(valor || 'Bloqueado');
+						var estilo = 'background:#fee2e2;color:#991b1b;border:1px solid #fecaca;';
+						if(texto === 'Liberado') estilo = 'background:#dcfce7;color:#166534;border:1px solid #86efac;';
+						if(texto === 'Próprio login') estilo = 'background:#dbeafe;color:#1d4ed8;border:1px solid #93c5fd;';
+						if(texto === 'Perfil logado') estilo = 'background:#ede9fe;color:#6d28d9;border:1px solid #c4b5fd;';
+						return '<span style="display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700;' + estilo + '">' + escaparHtml(texto) + '</span>';
+					}
 					function obterPermissoesDoPerfil(perfil){
 						var admin = perfil === 'Administrador';
 						return [
-							{ modulo: 'Dashboard', acesso: 'Visualização dos indicadores gerais do sistema.' },
-							{ modulo: 'Relatórios', acesso: admin ? 'Consulta completa de relatórios e indicadores.' : 'Consulta dos relatórios permitidos ao perfil logado.' },
-							{ modulo: 'Empresa', acesso: admin ? 'Cadastro e consulta completos.' : 'Cadastro e consulta dos registros vinculados ao próprio login.' },
-							{ modulo: 'Controle de acesso', acesso: 'Consulta do usuário autenticado e das regras do perfil.' },
-							{ modulo: 'Novo Colaborador', acesso: admin ? 'Cadastro, edição e consulta completos.' : 'Cadastro, edição e consulta dos próprios registros.' },
-							{ modulo: 'Frequência', acesso: admin ? 'Lançamento e consulta completos.' : 'Lançamento e consulta dos próprios registros.' },
-							{ modulo: 'Usuário', acesso: admin ? 'Cadastro e gerenciamento de usuários.' : 'Sem acesso.' },
-							{ modulo: 'RAS', acesso: admin ? 'Criação, edição e histórico completos.' : 'Criação, edição e histórico dos próprios registros.' },
-							{ modulo: 'Inspeção de HSE', acesso: admin ? 'Criação, edição e consulta completos.' : 'Criação, edição e consulta dos próprios registros.' },
-							{ modulo: 'Reunião Mensal', acesso: admin ? 'Criação, edição e consulta completos.' : 'Criação, edição e consulta dos próprios registros.' },
-							{ modulo: 'Programa de Novatos', acesso: admin ? 'Criação, edição e consulta completos.' : 'Criação, edição e consulta dos próprios registros.' },
-							{ modulo: 'Check List Fácil', acesso: admin ? 'Criação, edição e consulta completos.' : 'Criação, edição e consulta dos próprios registros.' }
+							{ modulo: 'Dashboard', resumo: 'Visualização dos indicadores gerais do sistema.', visualizar: 'Liberado', criar: 'Bloqueado', editar: 'Bloqueado', excluir: 'Bloqueado' },
+							{ modulo: 'Relatórios', resumo: admin ? 'Consulta completa de relatórios e indicadores.' : 'Consulta dos relatórios permitidos ao perfil logado.', visualizar: 'Liberado', criar: 'Bloqueado', editar: 'Bloqueado', excluir: 'Bloqueado' },
+							{ modulo: 'Empresa', resumo: admin ? 'Cadastro e consulta completos.' : 'Cadastro, edição e exclusão dos registros vinculados ao próprio login.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' },
+							{ modulo: 'Controle de acesso', resumo: 'Consulta do usuário autenticado e das regras do perfil.', visualizar: 'Perfil logado', criar: 'Bloqueado', editar: 'Bloqueado', excluir: 'Bloqueado' },
+							{ modulo: 'Novo Colaborador', resumo: admin ? 'Cadastro, edição e consulta completos.' : 'Cadastro, edição e exclusão dos próprios registros.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' },
+							{ modulo: 'Frequência', resumo: admin ? 'Lançamento e consulta completos.' : 'Lançamento, edição e exclusão dos próprios registros.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' },
+							{ modulo: 'Usuário', resumo: admin ? 'Cadastro e gerenciamento de usuários.' : 'Sem acesso ao gerenciamento de usuários.', visualizar: admin ? 'Liberado' : 'Bloqueado', criar: admin ? 'Liberado' : 'Bloqueado', editar: admin ? 'Liberado' : 'Bloqueado', excluir: admin ? 'Liberado' : 'Bloqueado' },
+							{ modulo: 'RAS', resumo: admin ? 'Criação, edição, exclusão e histórico completos.' : 'Criação, edição, exclusão e histórico dos próprios registros.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' },
+							{ modulo: 'Inspeção de HSE', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Criação, edição, exclusão e consulta dos próprios registros.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' },
+							{ modulo: 'Reunião Mensal', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Criação, edição, exclusão e consulta dos próprios registros.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' },
+							{ modulo: 'Programa de Novatos', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Criação, edição, exclusão e consulta dos próprios registros.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' },
+							{ modulo: 'Check List Fácil', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Criação, edição, exclusão e consulta dos próprios registros.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' }
 						];
 					}
 					function atualizarPainelControleAcesso(){
@@ -5118,13 +5126,13 @@
 						}
 						var permissoes = obterPermissoesDoPerfil(user.perfil || '');
 						var htmlPermissoes = permissoes.map(function(item){
-							var destaque = item.acesso === 'Sem acesso.'
-								? 'color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;'
-								: 'color:#065f46;background:#ecfdf5;border:1px solid #a7f3d0;';
 							return '<tr>' +
 								'<td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-weight:600;color:#1f2937">' + escaparHtml(item.modulo) + '</td>' +
-								'<td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;color:#374151">' + escaparHtml(item.acesso) + '</td>' +
-								'<td style="padding:8px 10px;border-bottom:1px solid #e5e7eb"><span style="display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:600;' + destaque + '">' + (item.acesso === 'Sem acesso.' ? 'Bloqueado' : 'Permitido') + '</span></td>' +
+								'<td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;color:#374151">' + escaparHtml(item.resumo) + '</td>' +
+								'<td style="padding:8px 10px;border-bottom:1px solid #e5e7eb">' + renderizarBadgePermissao(item.visualizar) + '</td>' +
+								'<td style="padding:8px 10px;border-bottom:1px solid #e5e7eb">' + renderizarBadgePermissao(item.criar) + '</td>' +
+								'<td style="padding:8px 10px;border-bottom:1px solid #e5e7eb">' + renderizarBadgePermissao(item.editar) + '</td>' +
+								'<td style="padding:8px 10px;border-bottom:1px solid #e5e7eb">' + renderizarBadgePermissao(item.excluir) + '</td>' +
 							'</tr>';
 						}).join('');
 						info.innerHTML = '' +
@@ -5135,12 +5143,16 @@
 								'<div><b>Escopo:</b> ' + (user.perfil === 'Administrador' ? 'acesso administrativo completo.' : 'acesso operacional com foco nos registros do próprio login.') + '</div>' +
 							'</div>' +
 							'<div style="font-weight:700;color:#1f2937;margin-bottom:8px">Permissões do perfil</div>' +
+							'<div style="margin-bottom:10px;padding:10px 12px;border-radius:8px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;font-size:13px;line-height:1.4">No perfil <b>Técnico</b>, os status <b>Próprio login</b> indicam acesso somente aos lançamentos feitos pelo próprio usuário logado.</div>' +
 							'<div style="overflow:auto;border:1px solid #e5e7eb;border-radius:8px;background:#fff">' +
 								'<table style="width:100%;border-collapse:collapse;font-size:14px">' +
 									'<thead><tr style="background:#f8fafc">' +
 										'<th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb;color:#374151">Módulo</th>' +
-										'<th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb;color:#374151">Permissão</th>' +
-										'<th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb;color:#374151">Status</th>' +
+										'<th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb;color:#374151">Resumo</th>' +
+										'<th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb;color:#374151">Visualizar</th>' +
+										'<th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb;color:#374151">Criar</th>' +
+										'<th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb;color:#374151">Editar</th>' +
+										'<th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb;color:#374151">Excluir</th>' +
 									'</tr></thead>' +
 									'<tbody>' + htmlPermissoes + '</tbody>' +
 								'</table>' +
