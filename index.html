@@ -5080,6 +5080,31 @@
 						var user = obterUsuarioLogado();
 						return !!(user && user.perfil === 'Administrador');
 					}
+					function escaparHtml(texto){
+						return String(texto == null ? '' : texto)
+							.replace(/&/g, '&amp;')
+							.replace(/</g, '&lt;')
+							.replace(/>/g, '&gt;')
+							.replace(/"/g, '&quot;')
+							.replace(/'/g, '&#39;');
+					}
+					function obterPermissoesDoPerfil(perfil){
+						var admin = perfil === 'Administrador';
+						return [
+							{ modulo: 'Dashboard', acesso: 'Visualização dos indicadores gerais do sistema.' },
+							{ modulo: 'Relatórios', acesso: admin ? 'Consulta completa de relatórios e indicadores.' : 'Consulta dos relatórios permitidos ao perfil logado.' },
+							{ modulo: 'Empresa', acesso: admin ? 'Cadastro e consulta completos.' : 'Cadastro e consulta dos registros vinculados ao próprio login.' },
+							{ modulo: 'Controle de acesso', acesso: 'Consulta do usuário autenticado e das regras do perfil.' },
+							{ modulo: 'Novo Colaborador', acesso: admin ? 'Cadastro, edição e consulta completos.' : 'Cadastro, edição e consulta dos próprios registros.' },
+							{ modulo: 'Frequência', acesso: admin ? 'Lançamento e consulta completos.' : 'Lançamento e consulta dos próprios registros.' },
+							{ modulo: 'Usuário', acesso: admin ? 'Cadastro e gerenciamento de usuários.' : 'Sem acesso.' },
+							{ modulo: 'RAS', acesso: admin ? 'Criação, edição e histórico completos.' : 'Criação, edição e histórico dos próprios registros.' },
+							{ modulo: 'Inspeção de HSE', acesso: admin ? 'Criação, edição e consulta completos.' : 'Criação, edição e consulta dos próprios registros.' },
+							{ modulo: 'Reunião Mensal', acesso: admin ? 'Criação, edição e consulta completos.' : 'Criação, edição e consulta dos próprios registros.' },
+							{ modulo: 'Programa de Novatos', acesso: admin ? 'Criação, edição e consulta completos.' : 'Criação, edição e consulta dos próprios registros.' },
+							{ modulo: 'Check List Fácil', acesso: admin ? 'Criação, edição e consulta completos.' : 'Criação, edição e consulta dos próprios registros.' }
+						];
+					}
 					function atualizarPainelControleAcesso(){
 						var info = document.getElementById('controle-acesso-info');
 						if(!info) return;
@@ -5088,7 +5113,35 @@
 							info.innerHTML = '<b>Status:</b> nenhum usuário autenticado.';
 							return;
 						}
-						info.innerHTML = '<b>Usuário:</b> ' + (user.nome || user.login || '-') + '<br><b>Login:</b> ' + (user.login || '-') + '<br><b>Perfil:</b> ' + (user.perfil || '-');
+						var permissoes = obterPermissoesDoPerfil(user.perfil || '');
+						var htmlPermissoes = permissoes.map(function(item){
+							var destaque = item.acesso === 'Sem acesso.'
+								? 'color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;'
+								: 'color:#065f46;background:#ecfdf5;border:1px solid #a7f3d0;';
+							return '<tr>' +
+								'<td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-weight:600;color:#1f2937">' + escaparHtml(item.modulo) + '</td>' +
+								'<td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;color:#374151">' + escaparHtml(item.acesso) + '</td>' +
+								'<td style="padding:8px 10px;border-bottom:1px solid #e5e7eb"><span style="display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:600;' + destaque + '">' + (item.acesso === 'Sem acesso.' ? 'Bloqueado' : 'Permitido') + '</span></td>' +
+							'</tr>';
+						}).join('');
+						info.innerHTML = '' +
+							'<div style="display:grid;gap:6px;margin-bottom:14px">' +
+								'<div><b>Usuário:</b> ' + escaparHtml(user.nome || user.login || '-') + '</div>' +
+								'<div><b>Login:</b> ' + escaparHtml(user.login || '-') + '</div>' +
+								'<div><b>Perfil:</b> ' + escaparHtml(user.perfil || '-') + '</div>' +
+								'<div><b>Escopo:</b> ' + (user.perfil === 'Administrador' ? 'acesso administrativo completo.' : 'acesso operacional com foco nos registros do próprio login.') + '</div>' +
+							'</div>' +
+							'<div style="font-weight:700;color:#1f2937;margin-bottom:8px">Permissões do perfil</div>' +
+							'<div style="overflow:auto;border:1px solid #e5e7eb;border-radius:8px;background:#fff">' +
+								'<table style="width:100%;border-collapse:collapse;font-size:14px">' +
+									'<thead><tr style="background:#f8fafc">' +
+										'<th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb;color:#374151">Módulo</th>' +
+										'<th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb;color:#374151">Permissão</th>' +
+										'<th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb;color:#374151">Status</th>' +
+									'</tr></thead>' +
+									'<tbody>' + htmlPermissoes + '</tbody>' +
+								'</table>' +
+							'</div>';
 					}
 					function aplicarPermissoesMenu(){
 						var admin = usuarioAtualEhAdmin();
