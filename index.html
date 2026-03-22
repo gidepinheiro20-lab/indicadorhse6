@@ -1253,9 +1253,10 @@
 					<button id="btn-voltar-cadastro" style="margin-top:12px;display:none">Voltar ao cadastro</button>
 				</div>
 				<div id="controle-acesso" style="display:none;max-width:none;margin:0;">
-					<div style="background:#fff;border-radius:12px;border:1px solid #e6edf3;padding:24px;max-width:800px;">
+					<div style="background:#fff;border-radius:12px;border:1px solid #e6edf3;padding:24px;max-width:1180px;">
 						<h2 style="margin:0 0 12px 0;">Controle de acesso</h2>
 						<div id="controle-acesso-info" style="padding:14px;border:1px solid #e5e7eb;border-radius:8px;background:#f8fafc;margin-bottom:12px"></div>
+						<div id="controle-acesso-config" style="margin-bottom:12px"></div>
 						<p style="margin:0 0 12px 0;color:#6b7280;font-size:14px;line-height:1.4;">
 							Administrador visualiza todos os registros. Técnico visualiza preferencialmente os registros lançados pelo próprio login.
 						</p>
@@ -2334,7 +2335,7 @@
 							</div>
 							<div style="display:flex;gap:8px;flex-wrap:wrap;">
 								<button type="button" onclick="inicializarProgramaNovatos(true)" style="background:#fff;color:#1d4ed8;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Atualizar Controle</button>
-								<button type="button" onclick="apagarTodosNovatosCadastro()" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Apagar Lista</button>
+								<button id="btn-novatos-apagar-lista" type="button" onclick="apagarTodosNovatosCadastro()" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Apagar Lista</button>
 							</div>
 						</div>
 
@@ -3793,7 +3794,15 @@
 					}
 
 					function abrirSecaoDoHash(hash) {
-						const alvo = (hash || '#').replace('#', '');
+						var alvoOriginal = (hash || '#').replace('#', '') || 'dashboard';
+						var alvo = alvoOriginal;
+						if (!usuarioAtualPodeAcessarHash('#' + alvo)) {
+							alert('Seu perfil não possui permissão para acessar esta seção.');
+							alvo = usuarioAtualPodeAcessarHash('#dashboard') ? 'dashboard' : 'controle-acesso';
+							if (window.location.hash !== '#' + alvo) {
+								window.location.hash = '#' + alvo;
+							}
+						}
 						switch (alvo) {
 							case 'usuario':
 								if (!usuarioAtualEhAdmin()) {
@@ -5083,6 +5092,218 @@
 						var user = obterUsuarioLogado();
 						return !!(user && user.perfil === 'Administrador');
 					}
+					function usuarioAtualEhTecnico(){
+						var user = obterUsuarioLogado();
+						return !!(user && user.perfil === 'Técnico');
+					}
+					var TECNICO_PERMISSOES_KEY = 'hse_tecnico_permissoes_v1';
+					function obterDefinicoesPermissoesTecnico(){
+						return [
+							{
+								grupo: 'principal',
+								titulo: 'Principal',
+								itens: [
+									{ chave: 'dashboard', rotulo: 'Dashboard', modulo: 'Dashboard' },
+									{ chave: 'relatorios', rotulo: 'Relatórios', modulo: 'Relatórios' },
+									{ chave: 'empresa', rotulo: 'Empresa', modulo: 'Empresa' },
+									{ chave: 'funcionarios', rotulo: 'Novo Colaborador', modulo: 'Novo Colaborador' },
+									{ chave: 'frequencia', rotulo: 'Frequência', modulo: 'Frequência' }
+								]
+							},
+							{
+								grupo: 'ferramentas',
+								titulo: 'Ferramentas',
+								itens: [
+									{ chave: 'ras', rotulo: 'RAS', modulo: 'RAS' },
+									{ chave: 'inspecao', rotulo: 'Inspeção de HSE', modulo: 'Inspeção de HSE' },
+									{ chave: 'reuniao', rotulo: 'Reunião Mensal', modulo: 'Reunião Mensal' },
+									{ chave: 'novatos', rotulo: 'Programa de Novatos', modulo: 'Programa de Novatos' },
+									{ chave: 'checklist', rotulo: 'Check List Fácil', modulo: 'Check List Fácil' }
+								]
+							}
+						];
+					}
+					function obterPermissoesTecnicoPadrao(){
+						return {
+							principal: {
+								dashboard: true,
+								relatorios: true,
+								empresa: true,
+								funcionarios: true,
+								frequencia: true
+							},
+							ferramentas: {
+								ras: true,
+								inspecao: true,
+								reuniao: true,
+								novatos: true,
+								checklist: true
+							},
+							acoes: {
+								editar: true,
+								excluir: true
+							}
+						};
+					}
+					function normalizarConfiguracaoPermissoesTecnico(configuracao){
+						var base = obterPermissoesTecnicoPadrao();
+						var origem = configuracao && typeof configuracao === 'object' ? configuracao : {};
+						var definicoes = obterDefinicoesPermissoesTecnico();
+						definicoes.forEach(function(grupo){
+							grupo.itens.forEach(function(item){
+								if (origem[grupo.grupo] && Object.prototype.hasOwnProperty.call(origem[grupo.grupo], item.chave)) {
+									base[grupo.grupo][item.chave] = !!origem[grupo.grupo][item.chave];
+								}
+							});
+						});
+						if (origem.acoes && Object.prototype.hasOwnProperty.call(origem.acoes, 'editar')) base.acoes.editar = !!origem.acoes.editar;
+						if (origem.acoes && Object.prototype.hasOwnProperty.call(origem.acoes, 'excluir')) base.acoes.excluir = !!origem.acoes.excluir;
+						return base;
+					}
+					function obterConfiguracaoPermissoesTecnico(){
+						try {
+							return normalizarConfiguracaoPermissoesTecnico(JSON.parse(localStorage.getItem(TECNICO_PERMISSOES_KEY) || 'null'));
+						} catch(e) {
+							return obterPermissoesTecnicoPadrao();
+						}
+					}
+					function salvarConfiguracaoPermissoesTecnico(configuracao){
+						localStorage.setItem(TECNICO_PERMISSOES_KEY, JSON.stringify(normalizarConfiguracaoPermissoesTecnico(configuracao)));
+					}
+					function obterMapaPermissoesTecnico(){
+						var mapa = {
+							'controle-acesso': { grupo: 'fixo', modulo: 'Controle de acesso' },
+							'usuario': { grupo: 'fixo', modulo: 'Usuário' }
+						};
+						obterDefinicoesPermissoesTecnico().forEach(function(grupo){
+							grupo.itens.forEach(function(item){
+								mapa[item.chave] = { grupo: grupo.grupo, modulo: item.modulo, rotulo: item.rotulo };
+							});
+						});
+						return mapa;
+					}
+					function obterChavePermissaoPorModulo(modulo){
+						var mapa = obterMapaPermissoesTecnico();
+						var chaves = Object.keys(mapa);
+						for (var i = 0; i < chaves.length; i++) {
+							if (mapa[chaves[i]].modulo === modulo) return chaves[i];
+						}
+						return null;
+					}
+					function obterChavePermissaoPorHash(hash){
+						var alvo = String(hash || '').replace(/^#/, '');
+						if (!alvo) return 'dashboard';
+						return alvo;
+					}
+					function tecnicoPodeAcessarChave(chave){
+						if (!chave) return true;
+						if (chave === 'controle-acesso') return true;
+						if (chave === 'usuario') return false;
+						var mapa = obterMapaPermissoesTecnico();
+						var definicao = mapa[chave];
+						if (!definicao || definicao.grupo === 'fixo') return true;
+						var configuracao = obterConfiguracaoPermissoesTecnico();
+						return !!(configuracao[definicao.grupo] && configuracao[definicao.grupo][chave]);
+					}
+					function usuarioAtualPodeAcessarChavePermissao(chave){
+						if (usuarioAtualEhAdmin()) return true;
+						if (!usuarioAtualEhTecnico()) return true;
+						return tecnicoPodeAcessarChave(chave);
+					}
+					function usuarioAtualPodeAcessarHash(hash){
+						return usuarioAtualPodeAcessarChavePermissao(obterChavePermissaoPorHash(hash));
+					}
+					function usuarioAtualPodeExecutarAcaoModulo(modulo, acao){
+						if (usuarioAtualEhAdmin()) return true;
+						if (!usuarioAtualEhTecnico()) return true;
+						var chave = obterChavePermissaoPorModulo(modulo);
+						if (!usuarioAtualPodeAcessarChavePermissao(chave)) return false;
+						if (acao !== 'editar' && acao !== 'excluir') return true;
+						var configuracao = obterConfiguracaoPermissoesTecnico();
+						return !!configuracao.acoes[acao];
+					}
+					function obterStatusPermissaoTecnico(chave, tipo){
+						if (chave === 'controle-acesso') {
+							if (tipo === 'visualizar') return 'Perfil logado';
+							return 'Bloqueado';
+						}
+						if (chave === 'usuario') return 'Bloqueado';
+						var acesso = tecnicoPodeAcessarChave(chave);
+						if (!acesso) return 'Bloqueado';
+						if (chave === 'dashboard' || chave === 'relatorios') {
+							return tipo === 'visualizar' ? 'Liberado' : 'Bloqueado';
+						}
+						if (tipo === 'visualizar' || tipo === 'criar') return 'Próprio login';
+						var configuracao = obterConfiguracaoPermissoesTecnico();
+						return configuracao.acoes[tipo] ? 'Próprio login' : 'Bloqueado';
+					}
+					function renderizarConfiguracaoPermissoesTecnico(){
+						var alvo = document.getElementById('controle-acesso-config');
+						if (!alvo) return;
+						if (!usuarioAtualEhAdmin()) {
+							alvo.innerHTML = '<div style="padding:12px 14px;border:1px solid #dbeafe;border-radius:10px;background:#eff6ff;color:#1d4ed8;font-size:13px;line-height:1.5"><b>Configuração do perfil Técnico:</b> somente o Administrador pode alterar os acessos das seções <b>Principal</b> e <b>Ferramentas</b>, além das permissões de <b>Editar</b> e <b>Excluir</b>.</div>';
+							return;
+						}
+						var configuracao = obterConfiguracaoPermissoesTecnico();
+						var html = '<div style="border:1px solid #e5e7eb;border-radius:12px;background:#fff;padding:16px 18px">' +
+							'<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">' +
+								'<div><div style="font-size:1rem;font-weight:800;color:#111827">Permissões do perfil Técnico</div><div style="font-size:13px;color:#6b7280;margin-top:3px">Administrador mantém acesso total. Aqui você define apenas o que o perfil Técnico pode acessar nas seções <b>Principal</b> e <b>Ferramentas</b>, e se ele pode <b>editar</b> ou <b>excluir</b>.</div></div>' +
+							'</div>';
+						obterDefinicoesPermissoesTecnico().forEach(function(grupo){
+							html += '<div style="margin-bottom:14px">' +
+								'<div style="font-size:13px;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">' + grupo.titulo + '</div>' +
+								'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px">';
+							grupo.itens.forEach(function(item){
+								var checked = configuracao[grupo.grupo][item.chave] ? ' checked' : '';
+								html += '<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;background:#f8fafc;color:#1f2937;font-size:14px">' +
+									'<input type="checkbox" id="perm-tecnico-' + item.chave + '"' + checked + '>' +
+									'<span>' + escaparHtml(item.rotulo) + '</span>' +
+								'</label>';
+							});
+							html += '</div></div>';
+						});
+						html += '<div style="margin-bottom:14px">' +
+							'<div style="font-size:13px;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Ações do Técnico</div>' +
+							'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px">' +
+								'<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;background:#f8fafc;color:#1f2937;font-size:14px"><input type="checkbox" id="perm-tecnico-editar"' + (configuracao.acoes.editar ? ' checked' : '') + '><span>Permitir editar</span></label>' +
+								'<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;background:#f8fafc;color:#1f2937;font-size:14px"><input type="checkbox" id="perm-tecnico-excluir"' + (configuracao.acoes.excluir ? ' checked' : '') + '><span>Permitir excluir</span></label>' +
+							'</div>' +
+						'</div>' +
+						'<div style="display:flex;gap:10px;flex-wrap:wrap">' +
+							'<button type="button" onclick="salvarPermissoesTecnicoControleAcesso()" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Salvar permissões do Técnico</button>' +
+							'<button type="button" onclick="restaurarPermissoesTecnicoControleAcesso()" style="background:#6b7280;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Restaurar padrão</button>' +
+						'</div>' +
+						'</div>';
+						alvo.innerHTML = html;
+					}
+					function salvarPermissoesTecnicoControleAcesso(){
+						if (!usuarioAtualEhAdmin()) {
+							alert('Somente o Administrador pode alterar as permissões do perfil Técnico.');
+							return;
+						}
+						var configuracao = obterPermissoesTecnicoPadrao();
+						obterDefinicoesPermissoesTecnico().forEach(function(grupo){
+							grupo.itens.forEach(function(item){
+								configuracao[grupo.grupo][item.chave] = !!document.getElementById('perm-tecnico-' + item.chave)?.checked;
+							});
+						});
+						configuracao.acoes.editar = !!document.getElementById('perm-tecnico-editar')?.checked;
+						configuracao.acoes.excluir = !!document.getElementById('perm-tecnico-excluir')?.checked;
+						salvarConfiguracaoPermissoesTecnico(configuracao);
+						aplicarPermissoesMenu();
+						atualizarPainelControleAcesso();
+						alert('Permissões do perfil Técnico atualizadas com sucesso!');
+					}
+					function restaurarPermissoesTecnicoControleAcesso(){
+						if (!usuarioAtualEhAdmin()) {
+							alert('Somente o Administrador pode restaurar as permissões do perfil Técnico.');
+							return;
+						}
+						salvarConfiguracaoPermissoesTecnico(obterPermissoesTecnicoPadrao());
+						aplicarPermissoesMenu();
+						atualizarPainelControleAcesso();
+						alert('Permissões padrão do perfil Técnico restauradas.');
+					}
 					function escaparHtml(texto){
 						return String(texto == null ? '' : texto)
 							.replace(/&/g, '&amp;')
@@ -5102,18 +5323,18 @@
 					function obterPermissoesDoPerfil(perfil){
 						var admin = perfil === 'Administrador';
 						return [
-							{ modulo: 'Dashboard', resumo: 'Visualização dos indicadores gerais do sistema.', visualizar: 'Liberado', criar: 'Bloqueado', editar: 'Bloqueado', excluir: 'Bloqueado' },
-							{ modulo: 'Relatórios', resumo: admin ? 'Consulta completa de relatórios e indicadores.' : 'Consulta dos relatórios permitidos ao perfil logado.', visualizar: 'Liberado', criar: 'Bloqueado', editar: 'Bloqueado', excluir: 'Bloqueado' },
-							{ modulo: 'Empresa', resumo: admin ? 'Cadastro e consulta completos.' : 'Cadastro, edição e exclusão dos registros vinculados ao próprio login.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' },
+							{ modulo: 'Dashboard', resumo: admin ? 'Visualização dos indicadores gerais do sistema.' : 'Leitura dos indicadores gerais somente se esta seção estiver habilitada para o Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('dashboard', 'visualizar'), criar: 'Bloqueado', editar: 'Bloqueado', excluir: 'Bloqueado' },
+							{ modulo: 'Relatórios', resumo: admin ? 'Consulta completa de relatórios e indicadores.' : 'Leitura dos relatórios somente se esta seção estiver habilitada para o Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('relatorios', 'visualizar'), criar: 'Bloqueado', editar: 'Bloqueado', excluir: 'Bloqueado' },
+							{ modulo: 'Empresa', resumo: admin ? 'Cadastro e consulta completos.' : 'Acesso aos registros do próprio login conforme a configuração atual do perfil Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('empresa', 'visualizar'), criar: admin ? 'Liberado' : obterStatusPermissaoTecnico('empresa', 'criar'), editar: admin ? 'Liberado' : obterStatusPermissaoTecnico('empresa', 'editar'), excluir: admin ? 'Liberado' : obterStatusPermissaoTecnico('empresa', 'excluir') },
 							{ modulo: 'Controle de acesso', resumo: 'Consulta do usuário autenticado e das regras do perfil.', visualizar: 'Perfil logado', criar: 'Bloqueado', editar: 'Bloqueado', excluir: 'Bloqueado' },
-							{ modulo: 'Novo Colaborador', resumo: admin ? 'Cadastro, edição e consulta completos.' : 'Cadastro, edição e exclusão dos próprios registros.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' },
-							{ modulo: 'Frequência', resumo: admin ? 'Lançamento e consulta completos.' : 'Lançamento, edição e exclusão dos próprios registros.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' },
+							{ modulo: 'Novo Colaborador', resumo: admin ? 'Cadastro, edição e consulta completos.' : 'Acesso aos próprios registros conforme a configuração atual do perfil Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('funcionarios', 'visualizar'), criar: admin ? 'Liberado' : obterStatusPermissaoTecnico('funcionarios', 'criar'), editar: admin ? 'Liberado' : obterStatusPermissaoTecnico('funcionarios', 'editar'), excluir: admin ? 'Liberado' : obterStatusPermissaoTecnico('funcionarios', 'excluir') },
+							{ modulo: 'Frequência', resumo: admin ? 'Lançamento e consulta completos.' : 'Acesso aos próprios registros conforme a configuração atual do perfil Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('frequencia', 'visualizar'), criar: admin ? 'Liberado' : obterStatusPermissaoTecnico('frequencia', 'criar'), editar: admin ? 'Liberado' : obterStatusPermissaoTecnico('frequencia', 'editar'), excluir: admin ? 'Liberado' : obterStatusPermissaoTecnico('frequencia', 'excluir') },
 							{ modulo: 'Usuário', resumo: admin ? 'Cadastro e gerenciamento de usuários.' : 'Sem acesso ao gerenciamento de usuários.', visualizar: admin ? 'Liberado' : 'Bloqueado', criar: admin ? 'Liberado' : 'Bloqueado', editar: admin ? 'Liberado' : 'Bloqueado', excluir: admin ? 'Liberado' : 'Bloqueado' },
-							{ modulo: 'RAS', resumo: admin ? 'Criação, edição, exclusão e histórico completos.' : 'Criação, edição, exclusão e histórico dos próprios registros.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' },
-							{ modulo: 'Inspeção de HSE', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Criação, edição, exclusão e consulta dos próprios registros.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' },
-							{ modulo: 'Reunião Mensal', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Criação, edição, exclusão e consulta dos próprios registros.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' },
-							{ modulo: 'Programa de Novatos', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Criação, edição, exclusão e consulta dos próprios registros.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' },
-							{ modulo: 'Check List Fácil', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Criação, edição, exclusão e consulta dos próprios registros.', visualizar: admin ? 'Liberado' : 'Próprio login', criar: admin ? 'Liberado' : 'Próprio login', editar: admin ? 'Liberado' : 'Próprio login', excluir: admin ? 'Liberado' : 'Próprio login' }
+							{ modulo: 'RAS', resumo: admin ? 'Criação, edição, exclusão e histórico completos.' : 'Acesso aos próprios registros conforme a configuração atual do perfil Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('ras', 'visualizar'), criar: admin ? 'Liberado' : obterStatusPermissaoTecnico('ras', 'criar'), editar: admin ? 'Liberado' : obterStatusPermissaoTecnico('ras', 'editar'), excluir: admin ? 'Liberado' : obterStatusPermissaoTecnico('ras', 'excluir') },
+							{ modulo: 'Inspeção de HSE', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Acesso aos próprios registros conforme a configuração atual do perfil Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('inspecao', 'visualizar'), criar: admin ? 'Liberado' : obterStatusPermissaoTecnico('inspecao', 'criar'), editar: admin ? 'Liberado' : obterStatusPermissaoTecnico('inspecao', 'editar'), excluir: admin ? 'Liberado' : obterStatusPermissaoTecnico('inspecao', 'excluir') },
+							{ modulo: 'Reunião Mensal', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Acesso aos próprios registros conforme a configuração atual do perfil Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('reuniao', 'visualizar'), criar: admin ? 'Liberado' : obterStatusPermissaoTecnico('reuniao', 'criar'), editar: admin ? 'Liberado' : obterStatusPermissaoTecnico('reuniao', 'editar'), excluir: admin ? 'Liberado' : obterStatusPermissaoTecnico('reuniao', 'excluir') },
+							{ modulo: 'Programa de Novatos', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Acesso aos próprios registros conforme a configuração atual do perfil Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('novatos', 'visualizar'), criar: admin ? 'Liberado' : obterStatusPermissaoTecnico('novatos', 'criar'), editar: admin ? 'Liberado' : obterStatusPermissaoTecnico('novatos', 'editar'), excluir: admin ? 'Liberado' : obterStatusPermissaoTecnico('novatos', 'excluir') },
+							{ modulo: 'Check List Fácil', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Acesso aos próprios registros conforme a configuração atual do perfil Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('checklist', 'visualizar'), criar: admin ? 'Liberado' : obterStatusPermissaoTecnico('checklist', 'criar'), editar: admin ? 'Liberado' : obterStatusPermissaoTecnico('checklist', 'editar'), excluir: admin ? 'Liberado' : obterStatusPermissaoTecnico('checklist', 'excluir') }
 						];
 					}
 					function atualizarPainelControleAcesso(){
@@ -5157,12 +5378,14 @@
 									'<tbody>' + htmlPermissoes + '</tbody>' +
 								'</table>' +
 							'</div>';
+						renderizarConfiguracaoPermissoesTecnico();
 					}
 					function aplicarPermissoesMenu(){
-						var admin = usuarioAtualEhAdmin();
-						document.querySelectorAll('.nav a[href="#usuario"]').forEach(function(link){
+						document.querySelectorAll('.nav a[href^="#"]').forEach(function(link){
 							var li = link.closest('li');
-							if(li) li.style.display = admin ? '' : 'none';
+							if(!li) return;
+							var hash = link.getAttribute('href') || '#';
+							li.style.display = usuarioAtualPodeAcessarHash(hash) ? '' : 'none';
 						});
 					}
 					function mostrarApp(){
@@ -5368,8 +5591,8 @@
 							html += '<div style="color:#6b7280">' + formatarDataBR(func.admissao) + '</div>';
 							html += '<div style="color:#6b7280">' + func.empresa + '</div>';
 							html += '<div>';
-							html += '<button onclick="editarFuncionario(\'' + func.matricula + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;margin-right:4px">✏️</button>';
-							html += '<button onclick="excluirFuncionario(\'' + func.matricula + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer">🗑️</button>';
+							if (usuarioAtualPodeExecutarAcaoModulo('Novo Colaborador', 'editar')) html += '<button onclick="editarFuncionario(\'' + func.matricula + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;margin-right:4px">✏️</button>';
+							if (usuarioAtualPodeExecutarAcaoModulo('Novo Colaborador', 'excluir')) html += '<button onclick="excluirFuncionario(\'' + func.matricula + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer">🗑️</button>';
 							html += '</div>';
 							html += '</div>';
 						});
@@ -5420,8 +5643,8 @@
 								html += '<div style="color:#6b7280">' + formatarDataBR(func.admissao) + '</div>';
 								html += '<div style="color:#6b7280">' + (func.empresa || '') + '</div>';
 								html += '<div>';
-								html += '<button onclick="editarFuncionario(\'' + func.matricula + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;margin-right:4px">✏️</button>';
-								html += '<button onclick="excluirFuncionario(\'' + func.matricula + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer">🗑️</button>';
+								if (usuarioAtualPodeExecutarAcaoModulo('Novo Colaborador', 'editar')) html += '<button onclick="editarFuncionario(\'' + func.matricula + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;margin-right:4px">✏️</button>';
+								if (usuarioAtualPodeExecutarAcaoModulo('Novo Colaborador', 'excluir')) html += '<button onclick="excluirFuncionario(\'' + func.matricula + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer">🗑️</button>';
 								html += '</div>';
 								html += '</div>';
 							} catch(e) {
@@ -5440,6 +5663,10 @@
 					
 					// Excluir colaborador - Escopo Global
 					window.excluirFuncionario = function(matricula) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('Novo Colaborador', 'excluir')) {
+							alert('Seu perfil não possui permissão para excluir nesta seção.');
+							return;
+						}
 						console.log('Excluindo colaborador:', matricula);
 						if (confirm('Tem certeza que deseja excluir este colaborador?')) {
 							funcionarios = funcionarios.filter(function(f) { return f.matricula !== matricula; });
@@ -5455,6 +5682,10 @@
 					
 					// Editar colaborador - Escopo Global
 					window.editarFuncionario = function(matricula) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('Novo Colaborador', 'editar')) {
+							alert('Seu perfil não possui permissão para editar nesta seção.');
+							return;
+						}
 						console.log('Editando colaborador:', matricula);
 						var funcionario = funcionarios.find(function(f) { return f.matricula === matricula; });
 						console.log('Colaborador encontrado:', funcionario);
@@ -6220,8 +6451,8 @@
 								'<td style="padding:12px 16px;"><span style="padding:4px 8px;border-radius:4px;font-size:0.85rem;font-weight:600;' + statusClass + '">' + (ras.status || 'Em Andamento') + '</span></td>' +
 								'<td style="padding:12px 16px;">' +
 									'<button onclick="visualizarRAS(' + index + ')" style="background:#3498db;color:#fff;border:none;border-radius:4px;padding:6px 12px;margin-right:4px;cursor:pointer;font-size:0.85rem;">👁️ Ver</button>' +
-									'<button onclick="editarRAS(' + index + ')" style="background:#f39c12;color:#fff;border:none;border-radius:4px;padding:6px 12px;margin-right:4px;cursor:pointer;font-size:0.85rem;">✏️ Editar</button>' +
-									'<button onclick="excluirRAS(' + index + ')" style="background:#e74c3c;color:#fff;border:none;border-radius:4px;padding:6px 12px;cursor:pointer;font-size:0.85rem;">🗑️</button>' +
+									( usuarioAtualPodeExecutarAcaoModulo('RAS', 'editar') ? '<button onclick="editarRAS(' + index + ')" style="background:#f39c12;color:#fff;border:none;border-radius:4px;padding:6px 12px;margin-right:4px;cursor:pointer;font-size:0.85rem;">✏️ Editar</button>' : '' ) +
+									( usuarioAtualPodeExecutarAcaoModulo('RAS', 'excluir') ? '<button onclick="excluirRAS(' + index + ')" style="background:#e74c3c;color:#fff;border:none;border-radius:4px;padding:6px 12px;cursor:pointer;font-size:0.85rem;">🗑️</button>' : '' ) +
 								'</td>';
 								
 							tbody.appendChild(row);
@@ -6610,6 +6841,10 @@
 					
 					// Editar RAS - Escopo Global
 					window.editarRAS = function(index) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('RAS', 'editar')) {
+							alert('Seu perfil não possui permissão para editar nesta seção.');
+							return;
+						}
 						var rasRegistradas = JSON.parse(localStorage.getItem('ras-reunioes')) || [];
 						var ras = rasRegistradas[index];
 						
@@ -6636,6 +6871,10 @@
 					
 					// Excluir RAS - Escopo Global
 					window.excluirRAS = function(index) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('RAS', 'excluir')) {
+							alert('Seu perfil não possui permissão para excluir nesta seção.');
+							return;
+						}
 						var rasRegistradas = JSON.parse(localStorage.getItem('ras-reunioes')) || [];
 						var ras = rasRegistradas[index];
 						
@@ -6862,8 +7101,8 @@
 							html += '<div style="color:#6b7280">' + (emp.grauRisco ? 'Grau ' + emp.grauRisco : '') + '</div>';
 							html += '<div style="color:#6b7280">' + (emp.contato || '') + '</div>';
 							html += '<div>';
-							html += '<button onclick="editarEmpresa(\'' + emp.cnpj + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;margin-right:4px">✏️</button>';
-							html += '<button onclick="excluirEmpresa(\'' + emp.cnpj + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer">🗑️</button>';
+							if (usuarioAtualPodeExecutarAcaoModulo('Empresa', 'editar')) html += '<button onclick="editarEmpresa(\'' + emp.cnpj + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer;margin-right:4px">✏️</button>';
+							if (usuarioAtualPodeExecutarAcaoModulo('Empresa', 'excluir')) html += '<button onclick="excluirEmpresa(\'' + emp.cnpj + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.8rem;cursor:pointer">🗑️</button>';
 							html += '</div>';
 							html += '</div>';
 						} catch(e) {
@@ -6950,6 +7189,10 @@
 					
 					// Excluir empresa - Escopo Global
 					window.excluirEmpresa = function(cnpj) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('Empresa', 'excluir')) {
+							alert('Seu perfil não possui permissão para excluir nesta seção.');
+							return;
+						}
 						console.log('Excluindo empresa:', cnpj);
 						if (confirm('Tem certeza que deseja excluir esta empresa?')) {
 							empresas = empresas.filter(function(e) { return e.cnpj !== cnpj; });
@@ -6961,6 +7204,10 @@
 					
 					// Editar empresa - Escopo Global
 					window.editarEmpresa = function(cnpj) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('Empresa', 'editar')) {
+							alert('Seu perfil não possui permissão para editar nesta seção.');
+							return;
+						}
 						console.log('Editando empresa:', cnpj);
 						var empresa = empresas.find(function(e) { return e.cnpj === cnpj; });
 						console.log('Empresa encontrada:', empresa);
@@ -7964,8 +8211,8 @@
 							html += '</div>';
 							html += '<div style="display:flex;gap:4px">';
 							html += '<button onclick="mostrarRelatorioInspecao(\'' + inspecao.id + '\')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer" title="Ver Relatório">📋</button>';
-							html += '<button onclick="editarInspecao(\'' + inspecao.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>';
-							html += '<button onclick="excluirInspecao(\'' + inspecao.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">🗑️</button>';
+							if (usuarioAtualPodeExecutarAcaoModulo('Inspeção de HSE', 'editar')) html += '<button onclick="editarInspecao(\'' + inspecao.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>';
+							if (usuarioAtualPodeExecutarAcaoModulo('Inspeção de HSE', 'excluir')) html += '<button onclick="excluirInspecao(\'' + inspecao.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">🗑️</button>';
 							html += '</div>';
 							html += '</div>';
 						});
@@ -8003,6 +8250,10 @@
 
 					// Função para editar inspeção
 					function editarInspecao(id) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('Inspeção de HSE', 'editar')) {
+							alert('Seu perfil não possui permissão para editar nesta seção.');
+							return;
+						}
 						var inspecao = inspecoes.find(function(insp) { return insp.id == id; });
 						
 						if (!inspecao) {
@@ -8137,6 +8388,10 @@
 					}
 					
 					function excluirInspecao(id) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('Inspeção de HSE', 'excluir')) {
+							alert('Seu perfil não possui permissão para excluir nesta seção.');
+							return;
+						}
 						if (confirm('Deseja realmente excluir esta inspeção?')) {
 							inspecoes = inspecoes.filter(function(insp) { return insp.id != id; });
 							localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
@@ -9891,7 +10146,7 @@
 								+ '<div>' + formatarDataBR(dataEvolucao) + '</div>'
 								+ '<div>' + (item.padrinho || '-') + '</div>'
 								+ '<div>' + (item.funcaoPadrinho || '-') + '</div>'
-								+ '<div><button type="button" onclick="excluirNovatoCadastro(' + Number(item.id || 0) + ')" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.78rem;font-weight:700;">Excluir</button></div>'
+								+ '<div>' + (usuarioAtualPodeExecutarAcaoModulo('Programa de Novatos', 'excluir') ? '<button type="button" onclick="excluirNovatoCadastro(' + Number(item.id || 0) + ')" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.78rem;font-weight:700;">Excluir</button>' : '') + '</div>'
 							+ '</div>';
 						}).join('');
 					}
@@ -9943,12 +10198,16 @@
 								+ '<div>' + item.funcao + '</div>'
 								+ '<div>' + (item.ateQuando ? formatarDataBR(item.ateQuando) : '-') + '</div>'
 								+ '<div><span style="display:inline-block;padding:3px 8px;border-radius:999px;background:' + bg + ';color:' + cor + ';font-weight:700;">' + status + '</span><div style="font-size:.72rem;color:#64748b;margin-top:2px;">Ativos: ' + item.ativos + '/3</div></div>'
-								+ '<div><button type="button" onclick="excluirPadrinhoCadastro(\'' + chaveCodificada + '\')" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.78rem;font-weight:700;">Excluir</button></div>'
+								+ '<div>' + (usuarioAtualPodeExecutarAcaoModulo('Programa de Novatos', 'excluir') ? '<button type="button" onclick="excluirPadrinhoCadastro(\'' + chaveCodificada + '\')" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.78rem;font-weight:700;">Excluir</button>' : '') + '</div>'
 							+ '</div>';
 						}).join('');
 					}
 
 					function excluirNovatoCadastro(id) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('Programa de Novatos', 'excluir')) {
+							alert('Seu perfil não possui permissão para excluir nesta seção.');
+							return;
+						}
 						var idNumerico = Number(id || 0);
 						if (!idNumerico) {
 							alert('Não foi possível identificar o novato para exclusão.');
@@ -9970,6 +10229,10 @@
 					}
 
 					function excluirPadrinhoCadastro(chaveCodificada) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('Programa de Novatos', 'excluir')) {
+							alert('Seu perfil não possui permissão para excluir nesta seção.');
+							return;
+						}
 						if (!chaveCodificada) {
 							alert('Não foi possível identificar o padrinho para exclusão.');
 							return;
@@ -10002,6 +10265,10 @@
 					}
 
 					function apagarTodosNovatosCadastro() {
+						if (!usuarioAtualPodeExecutarAcaoModulo('Programa de Novatos', 'excluir')) {
+							alert('Seu perfil não possui permissão para excluir nesta seção.');
+							return;
+						}
 						var lista = obterNovatosStorage();
 						if (!lista.length) {
 							alert('Não há novatos cadastrados para apagar.');
@@ -10023,9 +10290,11 @@
 						var elTotal = document.getElementById('novatos-total');
 						var elFalta = document.getElementById('novatos-falta');
 						var elRegra = document.getElementById('novatos-regra');
+						var btnApagarLista = document.getElementById('btn-novatos-apagar-lista');
 						if (elTotal) elTotal.textContent = String(total);
 						if (elFalta) elFalta.textContent = String(falta);
 						if (elRegra) elRegra.textContent = String(emRegra);
+						if (btnApagarLista) btnApagarLista.style.display = usuarioAtualPodeExecutarAcaoModulo('Programa de Novatos', 'excluir') ? 'inline-block' : 'none';
 
 						renderTabelaNovatos(lista);
 						renderTabelaPadrinhos(lista);
@@ -10404,9 +10673,9 @@
 								+ '<div>' + (item.status || '-') + '</div>'
 								+ '<div>' + (item.encerrada ? 'Sim' : 'Não') + '</div>'
 								+ '<div style="display:flex;gap:6px;flex-wrap:wrap;">'
-								+ '<button type="button" onclick="encerrarReuniaoMensal(' + item.id + ')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:6px 8px;cursor:pointer;">Encerrar</button>'
+								+ (usuarioAtualPodeExecutarAcaoModulo('Reunião Mensal', 'editar') ? '<button type="button" onclick="encerrarReuniaoMensal(' + item.id + ')" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:6px 8px;cursor:pointer;">Encerrar</button>' : '')
 								+ btnFoto
-								+ '<button type="button" onclick="excluirReuniaoMensal(' + item.id + ')" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:6px 8px;cursor:pointer;">Excluir</button>'
+								+ (usuarioAtualPodeExecutarAcaoModulo('Reunião Mensal', 'excluir') ? '<button type="button" onclick="excluirReuniaoMensal(' + item.id + ')" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:6px 8px;cursor:pointer;">Excluir</button>' : '')
 								+ '</div>'
 							+ '</div>';
 						}).join('');
@@ -10470,6 +10739,10 @@
 					}
 
 					function encerrarReuniaoMensal(id) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('Reunião Mensal', 'editar')) {
+							alert('Seu perfil não possui permissão para editar nesta seção.');
+							return;
+						}
 						var lista = obterReunioesMensaisStorage();
 						var alterou = false;
 						lista.forEach(function(item) {
@@ -10485,6 +10758,10 @@
 					}
 
 					function excluirReuniaoMensal(id) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('Reunião Mensal', 'excluir')) {
+							alert('Seu perfil não possui permissão para excluir nesta seção.');
+							return;
+						}
 						if (!confirm('Deseja excluir este agendamento de reunião?')) return;
 						var lista = obterReunioesMensaisStorage();
 						var nova = lista.filter(function(item) { return String(item.id) !== String(id); });
@@ -11428,7 +11705,7 @@
 								+ '<div>' + (item.autor || '-') + '</div>'
 								+ '<div>' + (item.setor || '-') + '</div>'
 								+ '<div style="color:#9ca3af">-</div>'
-								+ '<div><button type="button" onclick="excluirChecklistFacil(' + idx + ')" style="background:#ef4444;color:#fff;border:none;border-radius:8px;padding:8px 10px;cursor:pointer">🗑</button></div>'
+								+ '<div>' + (usuarioAtualPodeExecutarAcaoModulo('Check List Fácil', 'excluir') ? '<button type="button" onclick="excluirChecklistFacil(' + idx + ')" style="background:#ef4444;color:#fff;border:none;border-radius:8px;padding:8px 10px;cursor:pointer">🗑</button>' : '') + '</div>'
 								+ '</div>';
 						}).join('');
 					}
@@ -11510,6 +11787,10 @@
 					}
 
 					function excluirChecklistFacil(indice) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('Check List Fácil', 'excluir')) {
+							alert('Seu perfil não possui permissão para excluir nesta seção.');
+							return;
+						}
 						if (!confirm('Deseja excluir este checklist?')) return;
 						var lista = obterChecklistFacilStorage();
 						if (indice < 0 || indice >= lista.length) return;
