@@ -2335,9 +2335,11 @@
 							</div>
 							<div style="display:flex;gap:8px;flex-wrap:wrap;">
 								<button type="button" onclick="inicializarProgramaNovatos(true)" style="background:#fff;color:#1d4ed8;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Atualizar Controle</button>
+								<button id="btn-novatos-importar-planilha" type="button" onclick="abrirImportacaoNovatosXLSX()" style="background:#0f766e;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Importar Planilha</button>
 								<button id="btn-novatos-apagar-lista" type="button" onclick="apagarTodosNovatosCadastro()" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Apagar Lista</button>
 							</div>
 						</div>
+						<input id="novatos-importar-xlsx" type="file" accept=".xlsx,.xls" style="display:none;">
 
 						<div style="padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
 							<div style="border:1px solid #bfdbfe;border-radius:10px;padding:12px;background:#eff6ff;">
@@ -10055,6 +10057,167 @@
 					var NOVATOS_STORAGE_KEY = 'hse_programa_novatos_v1';
 					var novatosInicializado = false;
 
+					function abrirImportacaoNovatosXLSX() {
+						var input = document.getElementById('novatos-importar-xlsx');
+						if (!input) return;
+						input.value = '';
+						input.click();
+					}
+
+					function normalizarChaveColunaNovatos(valor) {
+						return String(valor || '')
+							.normalize('NFD')
+							.replace(/[\u0300-\u036f]/g, '')
+							.toLowerCase()
+							.replace(/[^a-z0-9]+/g, ' ')
+							.trim();
+					}
+
+					function obterMapeamentoColunasNovatos(chavesLinha) {
+						var mapa = {};
+						(chavesLinha || []).forEach(function(chave) {
+							mapa[normalizarChaveColunaNovatos(chave)] = chave;
+						});
+
+						function localizar(aliases) {
+							for (var i = 0; i < aliases.length; i++) {
+								if (mapa[aliases[i]]) return mapa[aliases[i]];
+							}
+							return null;
+						}
+
+						return {
+							nome: localizar(['nome', 'nome completo', 'colaborador', 'novato']),
+							funcao: localizar(['funcao', 'cargo', 'funcao colaborador', 'funcao do novato']),
+							matricula: localizar(['matricula', 'cracha', 'registro', 'id']),
+							dataEntrada: localizar(['data entrada', 'data de entrada', 'admissao', 'data admissao', 'entrada']),
+							situacao: localizar(['situacao', 'status']),
+							padrinho: localizar(['padrinho', 'mentor']),
+							funcaoPadrinho: localizar(['funcao padrinho', 'funcao do padrinho', 'cargo padrinho'])
+						};
+					}
+
+					function converterDataNovatosParaISO(valor) {
+						if (valor == null || valor === '') return '';
+						if (typeof valor === 'number' && typeof XLSX !== 'undefined' && XLSX.SSF) {
+							var convertido = XLSX.SSF.format('yyyy-mm-dd', valor);
+							return /^\d{4}-\d{2}-\d{2}$/.test(convertido) ? convertido : '';
+						}
+						var texto = String(valor).trim();
+						if (!texto) return '';
+						if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) return texto;
+						var matchBR = texto.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})$/);
+						if (matchBR) {
+							var dia = matchBR[1].padStart(2, '0');
+							var mes = matchBR[2].padStart(2, '0');
+							var ano = matchBR[3].length === 2 ? ('20' + matchBR[3]) : matchBR[3];
+							return ano + '-' + mes + '-' + dia;
+						}
+						var data = new Date(texto);
+						if (!isNaN(data.getTime())) return data.toISOString().slice(0, 10);
+						return '';
+					}
+
+					function extrairNovatosDeLinhas(linhas) {
+						if (!Array.isArray(linhas) || !linhas.length) {
+							return { registros: [], invalido: 0, mapeamento: null };
+						}
+
+						var mapeamento = obterMapeamentoColunasNovatos(Object.keys(linhas[0] || {}));
+						if (!mapeamento.nome || !mapeamento.funcao || !mapeamento.matricula || !mapeamento.dataEntrada || !mapeamento.padrinho || !mapeamento.funcaoPadrinho) {
+							return { registros: [], invalido: linhas.length, mapeamento: mapeamento };
+						}
+
+						var registros = [];
+						var invalido = 0;
+						linhas.forEach(function(linha, indice) {
+							var nome = String(linha[mapeamento.nome] || '').trim();
+							var funcao = String(linha[mapeamento.funcao] || '').trim();
+							var matricula = String(linha[mapeamento.matricula] || '').trim();
+							var dataEntrada = converterDataNovatosParaISO(linha[mapeamento.dataEntrada]);
+							var padrinho = String(linha[mapeamento.padrinho] || '').trim();
+							var funcaoPadrinho = String(linha[mapeamento.funcaoPadrinho] || '').trim();
+							var situacao = String(mapeamento.situacao ? (linha[mapeamento.situacao] || '') : '').trim() || 'Falta de conhecimento';
+
+							if (!nome || !funcao || !matricula || !dataEntrada || !padrinho || !funcaoPadrinho) {
+								invalido++;
+								return;
+							}
+
+							registros.push({
+								id: Date.now() + indice,
+								nome: nome,
+								funcao: funcao,
+								matricula: matricula,
+								dataEntrada: dataEntrada,
+								situacao: situacao,
+								padrinho: padrinho,
+								funcaoPadrinho: funcaoPadrinho,
+								criadoEm: new Date().toISOString()
+							});
+						});
+
+						return {
+							registros: registros,
+							invalido: invalido,
+							mapeamento: mapeamento
+						};
+					}
+
+					function processarImportacaoNovatos(event) {
+						var arquivo = event && event.target && event.target.files ? event.target.files[0] : null;
+						if (!arquivo) return;
+						if (typeof XLSX === 'undefined') {
+							alert('Biblioteca de planilha não carregada. Atualize a página e tente novamente.');
+							return;
+						}
+
+						var leitor = new FileReader();
+						leitor.onload = function(e) {
+							try {
+								var data = new Uint8Array(e.target.result);
+								var workbook = XLSX.read(data, { type: 'array' });
+								var primeiraAba = workbook.SheetNames && workbook.SheetNames[0];
+								if (!primeiraAba) {
+									alert('A planilha está vazia.');
+									return;
+								}
+
+								var worksheet = workbook.Sheets[primeiraAba];
+								var linhas = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+								var resultado = extrairNovatosDeLinhas(linhas);
+
+								if (!resultado.registros.length) {
+									alert('Nenhum registro válido encontrado. Verifique se a planilha possui as colunas Nome, Função, Matrícula, Data de Entrada, Padrinho e Função do Padrinho.');
+									return;
+								}
+
+								var listaAtual = obterNovatosStorage();
+								for (var i = 0; i < resultado.registros.length; i++) {
+									listaAtual.push(resultado.registros[i]);
+								}
+
+								salvarNovatosStorage(listaAtual);
+								renderProgramaNovatos();
+								limparFormularioNovato();
+
+								var mensagem = 'Importação concluída: ' + resultado.registros.length + ' novato(s) incluído(s).';
+								if (resultado.invalido > 0) {
+									mensagem += '\n' + resultado.invalido + ' linha(s) foram ignoradas por falta de dados obrigatórios.';
+								}
+								alert(mensagem);
+							} catch (erro) {
+								alert('Não foi possível importar a planilha de novatos. Verifique o arquivo e tente novamente.');
+							}
+						};
+
+						leitor.onerror = function() {
+							alert('Erro ao ler o arquivo selecionado.');
+						};
+
+						leitor.readAsArrayBuffer(arquivo);
+					}
+
 					function obterNovatosStorage() {
 						try {
 							var dados = JSON.parse(localStorage.getItem(NOVATOS_STORAGE_KEY) || '[]');
@@ -10291,10 +10454,12 @@
 						var elFalta = document.getElementById('novatos-falta');
 						var elRegra = document.getElementById('novatos-regra');
 						var btnApagarLista = document.getElementById('btn-novatos-apagar-lista');
+						var btnImportarPlanilha = document.getElementById('btn-novatos-importar-planilha');
 						if (elTotal) elTotal.textContent = String(total);
 						if (elFalta) elFalta.textContent = String(falta);
 						if (elRegra) elRegra.textContent = String(emRegra);
 						if (btnApagarLista) btnApagarLista.style.display = usuarioAtualPodeExecutarAcaoModulo('Programa de Novatos', 'excluir') ? 'inline-block' : 'none';
+						if (btnImportarPlanilha) btnImportarPlanilha.style.display = usuarioAtualPodeExecutarAcaoModulo('Programa de Novatos', 'criar') ? 'inline-block' : 'none';
 
 						renderTabelaNovatos(lista);
 						renderTabelaPadrinhos(lista);
@@ -10342,8 +10507,12 @@
 					function inicializarProgramaNovatos(forcarRender) {
 						if (!novatosInicializado) {
 							var form = document.getElementById('form-novato');
+							var inputImportacao = document.getElementById('novatos-importar-xlsx');
 							if (form) {
 								form.addEventListener('submit', salvarNovoNovato);
+							}
+							if (inputImportacao) {
+								inputImportacao.addEventListener('change', processarImportacaoNovatos);
 							}
 							limparFormularioNovato();
 							novatosInicializado = true;
