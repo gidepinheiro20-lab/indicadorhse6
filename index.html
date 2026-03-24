@@ -2335,6 +2335,7 @@
 							</div>
 							<div style="display:flex;gap:8px;flex-wrap:wrap;">
 								<button type="button" onclick="inicializarProgramaNovatos(true)" style="background:#fff;color:#1d4ed8;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Atualizar Controle</button>
+								<button id="btn-novatos-exportar-planilha" type="button" onclick="exportarPlanilhaNovatosXLSX()" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Exportar Planilha</button>
 								<button id="btn-novatos-importar-planilha" type="button" onclick="abrirImportacaoNovatosXLSX()" style="background:#0f766e;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Importar Planilha</button>
 								<button id="btn-novatos-apagar-lista" type="button" onclick="apagarTodosNovatosCadastro()" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;">Apagar Lista</button>
 							</div>
@@ -10218,6 +10219,80 @@
 						leitor.readAsArrayBuffer(arquivo);
 					}
 
+					function exportarPlanilhaNovatosXLSX() {
+						if (typeof XLSX === 'undefined') {
+							alert('Biblioteca de planilha não carregada. Atualize a página e tente novamente.');
+							return;
+						}
+
+						var lista = obterNovatosStorage();
+						if (!lista.length) {
+							alert('Não há novatos cadastrados para exportar.');
+							return;
+						}
+
+						var ordenada = lista.slice().sort(function(a, b) {
+							return String(a.dataEntrada || '').localeCompare(String(b.dataEntrada || ''));
+						});
+
+						var linhasNovatos = ordenada.map(function(item) {
+							return {
+								'Mês/Ano': obterMesAnoTexto(item.dataEntrada),
+								'Situação': calcularSituacaoAutomaticaNovato(item),
+								'Nome do Novato': item.nome || '',
+								'Matrícula': item.matricula || '',
+								'Função do Novato': item.funcao || '',
+								'Data de Entrada': formatarDataBR(item.dataEntrada),
+								'Data Evolução 30 Dias': formatarDataBR(adicionarDiasISO(item.dataEntrada, 30)),
+								'Data Regularização 45 Dias': formatarDataBR(adicionarDiasISO(item.dataEntrada, 45)),
+								'Padrinho': item.padrinho || '',
+								'Função do Padrinho': item.funcaoPadrinho || ''
+							};
+						});
+
+						var mapaPadrinhos = {};
+						ordenada.forEach(function(item) {
+							var chave = normalizarTextoComparacao((item.padrinho || '') + '|' + (item.funcaoPadrinho || ''));
+							if (!chave) return;
+							if (!mapaPadrinhos[chave]) {
+								mapaPadrinhos[chave] = {
+									Padrinho: item.padrinho || '',
+									'Função do Padrinho': item.funcaoPadrinho || '',
+									'Novatos Ativos': 0,
+									'Disponibilidade': 'Disponível',
+									'Até Quando': ''
+								};
+							}
+
+							if (calcularSituacaoAutomaticaNovato(item) !== 'Em Regra') {
+								mapaPadrinhos[chave]['Novatos Ativos']++;
+								var limite = adicionarDiasISO(item.dataEntrada, 45);
+								if (!mapaPadrinhos[chave]['Até Quando'] || String(limite).localeCompare(String(mapaPadrinhos[chave]['Até Quando'])) > 0) {
+									mapaPadrinhos[chave]['Até Quando'] = limite;
+								}
+							}
+						});
+
+						var linhasPadrinhos = Object.keys(mapaPadrinhos).map(function(chave) {
+							var item = mapaPadrinhos[chave];
+							item['Disponibilidade'] = item['Novatos Ativos'] < 3 ? 'Disponível' : 'Não disponível';
+							item['Até Quando'] = item['Até Quando'] ? formatarDataBR(item['Até Quando']) : '-';
+							return item;
+						}).sort(function(a, b) {
+							return String(a.Padrinho || '').localeCompare(String(b.Padrinho || ''));
+						});
+
+						var workbook = XLSX.utils.book_new();
+						var sheetNovatos = XLSX.utils.json_to_sheet(linhasNovatos);
+						var sheetPadrinhos = XLSX.utils.json_to_sheet(linhasPadrinhos.length ? linhasPadrinhos : [{ 'Padrinho': '', 'Função do Padrinho': '', 'Novatos Ativos': 0, 'Disponibilidade': '', 'Até Quando': '' }]);
+
+						XLSX.utils.book_append_sheet(workbook, sheetNovatos, 'Novatos');
+						XLSX.utils.book_append_sheet(workbook, sheetPadrinhos, 'Padrinhos');
+
+						var dataArquivo = new Date().toISOString().slice(0, 10);
+						XLSX.writeFile(workbook, 'programa-novatos-' + dataArquivo + '.xlsx');
+					}
+
 					function obterNovatosStorage() {
 						try {
 							var dados = JSON.parse(localStorage.getItem(NOVATOS_STORAGE_KEY) || '[]');
@@ -10454,11 +10529,13 @@
 						var elFalta = document.getElementById('novatos-falta');
 						var elRegra = document.getElementById('novatos-regra');
 						var btnApagarLista = document.getElementById('btn-novatos-apagar-lista');
+						var btnExportarPlanilha = document.getElementById('btn-novatos-exportar-planilha');
 						var btnImportarPlanilha = document.getElementById('btn-novatos-importar-planilha');
 						if (elTotal) elTotal.textContent = String(total);
 						if (elFalta) elFalta.textContent = String(falta);
 						if (elRegra) elRegra.textContent = String(emRegra);
 						if (btnApagarLista) btnApagarLista.style.display = usuarioAtualPodeExecutarAcaoModulo('Programa de Novatos', 'excluir') ? 'inline-block' : 'none';
+						if (btnExportarPlanilha) btnExportarPlanilha.style.display = usuarioAtualPodeAcessarHash('#novatos') ? 'inline-block' : 'none';
 						if (btnImportarPlanilha) btnImportarPlanilha.style.display = usuarioAtualPodeExecutarAcaoModulo('Programa de Novatos', 'criar') ? 'inline-block' : 'none';
 
 						renderTabelaNovatos(lista);
