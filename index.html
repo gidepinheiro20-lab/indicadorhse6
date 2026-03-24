@@ -673,6 +673,7 @@
 						<li><a href="#reuniao"><span class="icon" aria-hidden="true">📅</span><span class="label">Reunião Mensal</span></a></li>
 						<li><a href="#novatos"><span class="icon" aria-hidden="true">🧑‍🏫</span><span class="label">Programa de Novatos</span></a></li>
 						<li><a href="#checklist"><span class="icon" aria-hidden="true">✅</span><span class="label">Check List Fácil</span></a></li>
+						<li><a href="#gp"><span class="icon" aria-hidden="true">📁</span><span class="label">GP</span></a></li>
 					</ul>
 				</div>
 			</aside>
@@ -2441,6 +2442,27 @@
 						</div>
 					</div>
 				</div>
+
+				<!-- Seção GP -->
+				<div id="gp" style="display:none;max-width:none;margin:0;">
+					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3;overflow:hidden;">
+						<div style="padding:28px 24px;background:linear-gradient(135deg,#1d4ed8 0%,#2563eb 100%);color:#fff;">
+							<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+								<div style="font-size:2rem;">📁</div>
+								<div>
+									<h2 style="margin:0;font-size:1.45rem;font-weight:700;">GP</h2>
+									<div style="opacity:.92;margin-top:4px;font-size:.95rem;">Espaço reservado para o módulo GP.</div>
+								</div>
+							</div>
+						</div>
+						<div style="padding:24px;">
+							<div style="border:1px dashed #93c5fd;border-radius:14px;padding:28px;background:#eff6ff;color:#1e3a8a;">
+								<div style="font-size:1.05rem;font-weight:800;margin-bottom:8px;">Módulo GP adicionado ao menu</div>
+								<div style="font-size:.96rem;line-height:1.6;">A opção <b>GP</b> já está disponível em <b>Ferramentas</b> e pronta para receber o conteúdo ou funcionalidades que você quiser incluir depois.</div>
+							</div>
+						</div>
+					</div>
+				</div>
 				
 				<!-- Seção Inspeção de HSE -->
 				<div id="inspecao" style="display:none;max-width:none;margin:0;">
@@ -3794,6 +3816,7 @@
 						document.getElementById('gerenciamento-tipos-registro').style.display = 'none';
 						document.getElementById('gerenciamento-riscos-perigos').style.display = 'none';
 						document.getElementById('empresa').style.display = 'none';
+						document.getElementById('gp').style.display = 'none';
 					}
 
 					function abrirSecaoDoHash(hash) {
@@ -3872,6 +3895,10 @@
 								hideAllSections();
 								document.getElementById('checklist').style.display = 'block';
 								carregarChecklistFacil();
+								break;
+							case 'gp':
+								hideAllSections();
+								document.getElementById('gp').style.display = 'block';
 								break;
 							case 'empresa':
 								hideAllSections();
@@ -3996,6 +4023,13 @@
 								navegarParaHash('#checklist');
 							});
 						});
+					// Exibir GP ao clicar no menu
+						document.querySelectorAll('.nav a[href="#gp"]').forEach(function(link){
+							link.addEventListener('click', function(e){
+								e.preventDefault();
+								navegarParaHash('#gp');
+							});
+						});
 					// Exibir Empresa ao clicar em Empresa
 						document.querySelectorAll('.nav a[href="#empresa"]').forEach(function(link){
 							link.addEventListener('click',function(e){
@@ -4004,7 +4038,7 @@
 							});
 						});
 					// Ocultar outras seções ao clicar em outros itens
-						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"]):not([href="#inspecao"]):not([href="#art"]):not([href="#checklist"]):not([href="#empresa"]):not([href="#controle-acesso"])').forEach(function(link){
+						document.querySelectorAll('.nav a:not([href="#ras"]):not([href="#usuario"]):not([href="#funcionarios"]):not([href="#frequencia"]):not([href="#cpt"]):not([href="#inspecao"]):not([href="#art"]):not([href="#checklist"]):not([href="#empresa"]):not([href="#controle-acesso"]):not([href="#gp"])').forEach(function(link){
 							link.addEventListener('click',function(){
 								navegarParaHash('#');
 							});
@@ -5121,7 +5155,8 @@
 									{ chave: 'inspecao', rotulo: 'Inspeção de HSE', modulo: 'Inspeção de HSE' },
 									{ chave: 'reuniao', rotulo: 'Reunião Mensal', modulo: 'Reunião Mensal' },
 									{ chave: 'novatos', rotulo: 'Programa de Novatos', modulo: 'Programa de Novatos' },
-									{ chave: 'checklist', rotulo: 'Check List Fácil', modulo: 'Check List Fácil' }
+									{ chave: 'checklist', rotulo: 'Check List Fácil', modulo: 'Check List Fácil' },
+									{ chave: 'gp', rotulo: 'GP', modulo: 'GP' }
 								]
 							}
 						];
@@ -5140,7 +5175,8 @@
 								inspecao: true,
 								reuniao: true,
 								novatos: true,
-								checklist: true
+								checklist: true,
+								gp: true
 							},
 							acoes: {
 								editar: true,
@@ -5337,7 +5373,8 @@
 							{ modulo: 'Inspeção de HSE', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Acesso aos próprios registros conforme a configuração atual do perfil Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('inspecao', 'visualizar'), criar: admin ? 'Liberado' : obterStatusPermissaoTecnico('inspecao', 'criar'), editar: admin ? 'Liberado' : obterStatusPermissaoTecnico('inspecao', 'editar'), excluir: admin ? 'Liberado' : obterStatusPermissaoTecnico('inspecao', 'excluir') },
 							{ modulo: 'Reunião Mensal', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Acesso aos próprios registros conforme a configuração atual do perfil Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('reuniao', 'visualizar'), criar: admin ? 'Liberado' : obterStatusPermissaoTecnico('reuniao', 'criar'), editar: admin ? 'Liberado' : obterStatusPermissaoTecnico('reuniao', 'editar'), excluir: admin ? 'Liberado' : obterStatusPermissaoTecnico('reuniao', 'excluir') },
 							{ modulo: 'Programa de Novatos', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Acesso aos próprios registros conforme a configuração atual do perfil Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('novatos', 'visualizar'), criar: admin ? 'Liberado' : obterStatusPermissaoTecnico('novatos', 'criar'), editar: admin ? 'Liberado' : obterStatusPermissaoTecnico('novatos', 'editar'), excluir: admin ? 'Liberado' : obterStatusPermissaoTecnico('novatos', 'excluir') },
-							{ modulo: 'Check List Fácil', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Acesso aos próprios registros conforme a configuração atual do perfil Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('checklist', 'visualizar'), criar: admin ? 'Liberado' : obterStatusPermissaoTecnico('checklist', 'criar'), editar: admin ? 'Liberado' : obterStatusPermissaoTecnico('checklist', 'editar'), excluir: admin ? 'Liberado' : obterStatusPermissaoTecnico('checklist', 'excluir') }
+							{ modulo: 'Check List Fácil', resumo: admin ? 'Criação, edição, exclusão e consulta completos.' : 'Acesso aos próprios registros conforme a configuração atual do perfil Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('checklist', 'visualizar'), criar: admin ? 'Liberado' : obterStatusPermissaoTecnico('checklist', 'criar'), editar: admin ? 'Liberado' : obterStatusPermissaoTecnico('checklist', 'editar'), excluir: admin ? 'Liberado' : obterStatusPermissaoTecnico('checklist', 'excluir') },
+							{ modulo: 'GP', resumo: admin ? 'Acesso completo ao módulo GP.' : 'Acesso ao módulo GP conforme a configuração atual do perfil Técnico.', visualizar: admin ? 'Liberado' : obterStatusPermissaoTecnico('gp', 'visualizar'), criar: admin ? 'Liberado' : obterStatusPermissaoTecnico('gp', 'criar'), editar: admin ? 'Liberado' : obterStatusPermissaoTecnico('gp', 'editar'), excluir: admin ? 'Liberado' : obterStatusPermissaoTecnico('gp', 'excluir') }
 						];
 					}
 					function atualizarPainelControleAcesso(){
