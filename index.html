@@ -2445,23 +2445,8 @@
 
 				<!-- Seção GP -->
 				<div id="gp" style="display:none;max-width:none;margin:0;">
-					<div style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3;overflow:hidden;">
-						<div style="padding:28px 24px;background:linear-gradient(135deg,#1d4ed8 0%,#2563eb 100%);color:#fff;">
-							<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-								<div style="font-size:2rem;">📁</div>
-								<div>
-									<h2 style="margin:0;font-size:1.45rem;font-weight:700;">GP</h2>
-									<div style="opacity:.92;margin-top:4px;font-size:.95rem;">Espaço reservado para o módulo GP.</div>
-								</div>
-							</div>
-						</div>
-						<div style="padding:24px;">
-							<div style="border:1px dashed #93c5fd;border-radius:14px;padding:28px;background:#eff6ff;color:#1e3a8a;">
-								<div style="font-size:1.05rem;font-weight:800;margin-bottom:8px;">Módulo GP adicionado ao menu</div>
-								<div style="font-size:.96rem;line-height:1.6;">A opção <b>GP</b> já está disponível em <b>Ferramentas</b> e pronta para receber o conteúdo ou funcionalidades que você quiser incluir depois.</div>
-							</div>
-						</div>
-					</div>
+					<div id="gp-app" style="background:#fff;border-radius:16px;box-shadow:0 4px 16px #0001;border:1px solid #e6edf3;overflow:hidden;"></div>
+					<input id="gp-input-documento" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.xlsm,.csv" style="display:none;">
 				</div>
 				
 				<!-- Seção Inspeção de HSE -->
@@ -3899,6 +3884,7 @@
 							case 'gp':
 								hideAllSections();
 								document.getElementById('gp').style.display = 'block';
+								inicializarModuloGP(true);
 								break;
 							case 'empresa':
 								hideAllSections();
@@ -10090,6 +10076,428 @@
 						};
 
 						leitor.readAsArrayBuffer(arquivo);
+					}
+
+					var GP_STORAGE_KEY = 'hse_gp_modulo_v1';
+					var GP_META_PERCENTUAL = 80;
+					var gpInicializado = false;
+					var GP_ITENS_AVALIACAO = [
+						{ id: 'gp-01', categoria: 'A', grupo: 'Documentação Crítica', titulo: 'Política e programa de HSE da contratada', regra: 'Anexar política, programa anual, escopo de responsabilidades ou documento equivalente que comprove a estrutura de gestão HSE.', pontos: 20 },
+						{ id: 'gp-02', categoria: 'A', grupo: 'Documentação Crítica', titulo: 'Gestão de incidentes e plano de ação', regra: 'Anexar procedimento de investigação, relatórios de incidentes e evidências das ações corretivas e preventivas.', pontos: 20 },
+						{ id: 'gp-03', categoria: 'A', grupo: 'Documentação Crítica', titulo: 'Integração e documentação admissional', regra: 'Anexar ficha de integração, ASO, documentos admissionais e comprovação de liberação para trabalho.', pontos: 20 },
+						{ id: 'gp-04', categoria: 'A', grupo: 'Documentação Crítica', titulo: 'Treinamentos obrigatórios', regra: 'Anexar certificados ou listas de presença de treinamentos legais e internos aplicáveis à atividade.', pontos: 20 },
+						{ id: 'gp-05', categoria: 'A', grupo: 'Documentação Crítica', titulo: 'Documentação legal e licenças', regra: 'Anexar licenças, permissões, contratos, certidões ou documentos legais exigidos para a operação.', pontos: 20 },
+
+						{ id: 'gp-06', categoria: 'B', grupo: 'Gestão Operacional', titulo: 'APR, PT e controles de tarefa', regra: 'Anexar APR, PT, checklists operacionais e registros de liberação de atividade.', pontos: 10 },
+						{ id: 'gp-07', categoria: 'B', grupo: 'Gestão Operacional', titulo: 'Inspeções de campo e tratativas', regra: 'Anexar inspeções realizadas, relatórios, planos de ação e evidências de correção.', pontos: 10 },
+						{ id: 'gp-08', categoria: 'B', grupo: 'Gestão Operacional', titulo: 'Controle de EPI e EPC', regra: 'Anexar fichas de entrega, registros de inspeção e comprovação de adequação dos equipamentos.', pontos: 10 },
+						{ id: 'gp-09', categoria: 'B', grupo: 'Gestão Operacional', titulo: 'Plano de emergência e resposta', regra: 'Anexar plano de emergência, contatos, simulados, brigada ou documentação equivalente.', pontos: 10 },
+						{ id: 'gp-10', categoria: 'B', grupo: 'Gestão Operacional', titulo: 'Gestão de subcontratadas e terceiros', regra: 'Anexar relação de terceiros, controles de acesso, avaliações e documentos de conformidade.', pontos: 10 },
+
+						{ id: 'gp-11', categoria: 'C', grupo: 'Governança e Performance', titulo: 'Reuniões mensais de HSE', regra: 'Anexar atas, listas de presença, pautas e evidências de comunicação dos resultados.', pontos: 10 },
+						{ id: 'gp-12', categoria: 'C', grupo: 'Governança e Performance', titulo: 'Plano de ação com evidências', regra: 'Anexar cronograma, responsáveis, status e evidências de conclusão dos itens de ação.', pontos: 10 },
+						{ id: 'gp-13', categoria: 'C', grupo: 'Governança e Performance', titulo: 'Indicadores, metas e acompanhamento', regra: 'Anexar planilhas, relatórios, dashboards ou registros que comprovem o monitoramento dos indicadores.', pontos: 10 },
+						{ id: 'gp-14', categoria: 'C', grupo: 'Governança e Performance', titulo: 'Auditorias internas e verificações', regra: 'Anexar relatórios de auditoria, verificações comportamentais e respectivas tratativas.', pontos: 10 },
+
+						{ id: 'gp-15', categoria: 'D', grupo: 'Evidências Complementares', titulo: 'DDS, campanhas e comunicação', regra: 'Anexar DDS, campanhas, comunicados ou ações de sensibilização aplicáveis ao período.', pontos: 5 },
+						{ id: 'gp-16', categoria: 'D', grupo: 'Evidências Complementares', titulo: 'Lições aprendidas e melhorias', regra: 'Anexar registros de lições aprendidas, melhorias implementadas ou boas práticas compartilhadas.', pontos: 5 }
+					];
+
+					function obterMesReferenciaPadraoGP() {
+						return new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+					}
+
+					function obterTurnoPadraoGP() {
+						return 'Diurno';
+					}
+
+					function obterEstadoInicialGP() {
+						return {
+							localAuditoria: '',
+							auditado: '',
+							dataAuditoria: new Date().toISOString().slice(0, 10),
+							auditor: '',
+							empresa: '',
+							mes: obterMesReferenciaPadraoGP(),
+							diasTrabalhados: '',
+							turno: obterTurnoPadraoGP(),
+							itens: {}
+						};
+					}
+
+					function normalizarDadosGP(dados) {
+						var base = obterEstadoInicialGP();
+						var origem = dados && typeof dados === 'object' ? dados : {};
+						base.localAuditoria = String(origem.localAuditoria || '');
+						base.auditado = String(origem.auditado || '');
+						base.dataAuditoria = String(origem.dataAuditoria || base.dataAuditoria);
+						base.auditor = String(origem.auditor || '');
+						base.empresa = String(origem.empresa || '');
+						base.mes = String(origem.mes || base.mes);
+						base.diasTrabalhados = String(origem.diasTrabalhados || '');
+						base.turno = String(origem.turno || base.turno);
+						base.itens = {};
+
+						GP_ITENS_AVALIACAO.forEach(function(item) {
+							var origemItem = origem.itens && origem.itens[item.id] && typeof origem.itens[item.id] === 'object' ? origem.itens[item.id] : {};
+							base.itens[item.id] = {
+								comentario: String(origemItem.comentario || ''),
+								documentos: Array.isArray(origemItem.documentos) ? origemItem.documentos.filter(function(doc) {
+									return doc && doc.id && doc.nome && doc.src;
+								}).map(function(doc) {
+									return {
+										id: String(doc.id),
+										nome: String(doc.nome || ''),
+										tipo: String(doc.tipo || ''),
+										tamanho: Number(doc.tamanho || 0),
+										src: String(doc.src || ''),
+										criadoEm: String(doc.criadoEm || new Date().toISOString())
+									};
+								}) : []
+							};
+						});
+						return base;
+					}
+
+					function obterDadosGPStorage() {
+						try {
+							return normalizarDadosGP(JSON.parse(localStorage.getItem(GP_STORAGE_KEY) || 'null'));
+						} catch (e) {
+							return obterEstadoInicialGP();
+						}
+					}
+
+					function salvarDadosGPStorage(dados) {
+						localStorage.setItem(GP_STORAGE_KEY, JSON.stringify(normalizarDadosGP(dados)));
+					}
+
+					function obterRegistroItemGP(dados, itemId) {
+						var estado = dados || obterDadosGPStorage();
+						if (!estado.itens[itemId]) {
+							estado.itens[itemId] = { comentario: '', documentos: [] };
+						}
+						return estado.itens[itemId];
+					}
+
+					function obterDocumentoItemGP(itemId, docId) {
+						var dados = obterDadosGPStorage();
+						var registro = obterRegistroItemGP(dados, itemId);
+						return (registro.documentos || []).find(function(doc) {
+							return String(doc.id) === String(docId);
+						}) || null;
+					}
+
+					function obterStatusItemGP(item, registro) {
+						var quantidade = registro && Array.isArray(registro.documentos) ? registro.documentos.length : 0;
+						if (quantidade > 0) {
+							return { texto: '100%', rotulo: 'Atendido', cor: '#166534', fundo: '#dcfce7', pontos: item.pontos };
+						}
+						return { texto: '0%', rotulo: 'Pendente', cor: '#92400e', fundo: '#fef3c7', pontos: 0 };
+					}
+
+					function obterResumoModuloGP(dados) {
+						var totalItens = GP_ITENS_AVALIACAO.length;
+						var totalPontos = 0;
+						var pontosObtidos = 0;
+						var pendentes = 0;
+						var documentos = 0;
+						var mapaCategorias = {};
+
+						GP_ITENS_AVALIACAO.forEach(function(item) {
+							var registro = obterRegistroItemGP(dados, item.id);
+							var status = obterStatusItemGP(item, registro);
+							totalPontos += item.pontos;
+							pontosObtidos += status.pontos;
+							documentos += (registro.documentos || []).length;
+							if (!status.pontos) pendentes++;
+
+							if (!mapaCategorias[item.categoria]) {
+								mapaCategorias[item.categoria] = {
+									categoria: item.categoria,
+									grupo: item.grupo,
+									total: 0,
+									obtido: 0,
+									pendentes: 0
+								};
+							}
+
+							mapaCategorias[item.categoria].total += item.pontos;
+							mapaCategorias[item.categoria].obtido += status.pontos;
+							if (!status.pontos) mapaCategorias[item.categoria].pendentes++;
+						});
+
+						var percentual = totalPontos ? (pontosObtidos / totalPontos) * 100 : 0;
+						return {
+							totalItens: totalItens,
+							pontosTotais: totalPontos,
+							pontosObtidos: pontosObtidos,
+							pendentes: pendentes,
+							documentos: documentos,
+							percentual: percentual,
+							metaAtingida: percentual >= GP_META_PERCENTUAL,
+							categorias: Object.keys(mapaCategorias).sort().map(function(chave) { return mapaCategorias[chave]; })
+						};
+					}
+
+					function formatarDataHoraGP(dataIso) {
+						if (!dataIso) return '-';
+						var data = new Date(dataIso);
+						if (isNaN(data.getTime())) return '-';
+						return data.toLocaleDateString('pt-BR') + ' ' + data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+					}
+
+					function atualizarCampoCabecalhoGP(campo, valor) {
+						var dados = obterDadosGPStorage();
+						dados[campo] = valor;
+						salvarDadosGPStorage(dados);
+					}
+
+					function salvarComentarioItemGP(itemId, valor) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('GP', 'criar')) return;
+						var dados = obterDadosGPStorage();
+						var registro = obterRegistroItemGP(dados, itemId);
+						registro.comentario = String(valor || '');
+						salvarDadosGPStorage(dados);
+					}
+
+					function abrirUploadDocumentoGP(itemId) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('GP', 'criar')) {
+							alert('Seu perfil não possui permissão para anexar documentos nesta seção.');
+							return;
+						}
+						var input = document.getElementById('gp-input-documento');
+						if (!input) return;
+						input.value = '';
+						input.setAttribute('data-item-id', itemId);
+						input.click();
+					}
+
+					function tipoArquivoPermitidoGP(nomeArquivo) {
+						var extensao = String(nomeArquivo || '').split('.').pop().toLowerCase();
+						return ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'xlsm', 'csv'].indexOf(extensao) !== -1;
+					}
+
+					function processarUploadDocumentoGP(event) {
+						var input = event && event.target ? event.target : null;
+						var arquivo = input && input.files ? input.files[0] : null;
+						var itemId = input ? input.getAttribute('data-item-id') : '';
+						if (!arquivo || !itemId) return;
+
+						if (!tipoArquivoPermitidoGP(arquivo.name)) {
+							alert('Tipo de arquivo não permitido. Utilize PDF, Word ou Excel.');
+							input.value = '';
+							return;
+						}
+
+						if (arquivo.size > 4 * 1024 * 1024) {
+							alert('O arquivo excede o limite de 4 MB. Anexe um documento menor.');
+							input.value = '';
+							return;
+						}
+
+						var leitor = new FileReader();
+						leitor.onload = function(e) {
+							var dados = obterDadosGPStorage();
+							var registro = obterRegistroItemGP(dados, itemId);
+							registro.documentos.push({
+								id: 'gpdoc_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+								nome: arquivo.name,
+								tipo: arquivo.type || '',
+								tamanho: arquivo.size || 0,
+								src: e.target.result,
+								criadoEm: new Date().toISOString()
+							});
+							salvarDadosGPStorage(dados);
+							renderModuloGP();
+							input.value = '';
+						};
+
+						leitor.onerror = function() {
+							alert('Não foi possível ler o documento selecionado.');
+							input.value = '';
+						};
+
+						leitor.readAsDataURL(arquivo);
+					}
+
+					function visualizarDocumentoGP(itemId, docId) {
+						var documento = obterDocumentoItemGP(itemId, docId);
+						if (!documento) {
+							alert('Documento não encontrado.');
+							return;
+						}
+						abrirDocumento(documento.src, documento.nome);
+					}
+
+					function baixarDocumentoGP(itemId, docId) {
+						var documento = obterDocumentoItemGP(itemId, docId);
+						if (!documento) {
+							alert('Documento não encontrado.');
+							return;
+						}
+						var link = document.createElement('a');
+						link.href = documento.src;
+						link.download = documento.nome;
+						link.style.display = 'none';
+						document.body.appendChild(link);
+						link.click();
+						document.body.removeChild(link);
+					}
+
+					function excluirDocumentoGP(itemId, docId) {
+						if (!usuarioAtualPodeExecutarAcaoModulo('GP', 'excluir')) {
+							alert('Seu perfil não possui permissão para excluir documentos nesta seção.');
+							return;
+						}
+						var dados = obterDadosGPStorage();
+						var registro = obterRegistroItemGP(dados, itemId);
+						var documento = (registro.documentos || []).find(function(doc) { return String(doc.id) === String(docId); });
+						if (!documento) {
+							alert('Documento não encontrado.');
+							return;
+						}
+						if (!window.confirm('Excluir o documento "' + documento.nome + '"?')) return;
+						registro.documentos = registro.documentos.filter(function(doc) {
+							return String(doc.id) !== String(docId);
+						});
+						salvarDadosGPStorage(dados);
+						renderModuloGP();
+					}
+
+					function obterCorCategoriaGP(categoria) {
+						var cores = {
+							A: { fundo: '#dbeafe', texto: '#1d4ed8' },
+							B: { fundo: '#dcfce7', texto: '#166534' },
+							C: { fundo: '#fef3c7', texto: '#92400e' },
+							D: { fundo: '#fee2e2', texto: '#991b1b' }
+						};
+						return cores[categoria] || { fundo: '#e2e8f0', texto: '#334155' };
+					}
+
+					function renderResumoCategoriasGP(resumo) {
+						return (resumo.categorias || []).map(function(item) {
+							var percentual = item.total ? ((item.obtido / item.total) * 100) : 0;
+							var cor = obterCorCategoriaGP(item.categoria);
+							return '<div style="border:1px solid #dbeafe;border-radius:12px;padding:14px;background:#fff">'
+								+ '<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">'
+								+ '<div><div style="display:inline-block;padding:4px 8px;border-radius:999px;background:' + cor.fundo + ';color:' + cor.texto + ';font-weight:800;font-size:.78rem">' + item.categoria + ' · ' + escaparHtml(item.grupo) + '</div>'
+								+ '<div style="margin-top:10px;font-size:1.2rem;font-weight:800;color:#0f172a">' + item.obtido + '/' + item.total + ' pts</div></div>'
+								+ '<div style="text-align:right;color:#64748b;font-size:.86rem">Pendentes: ' + item.pendentes + '<br>' + percentual.toFixed(1).replace('.', ',') + '%</div>'
+								+ '</div></div>';
+						}).join('');
+					}
+
+					function renderLinhasTabelaGP(dados) {
+						var categoriaAtual = '';
+						return GP_ITENS_AVALIACAO.map(function(item, indice) {
+							var registro = obterRegistroItemGP(dados, item.id);
+							var status = obterStatusItemGP(item, registro);
+							var corCategoria = obterCorCategoriaGP(item.categoria);
+							var documentosHtml = '';
+							if (registro.documentos && registro.documentos.length) {
+								documentosHtml = registro.documentos.map(function(doc) {
+									var extensao = String(doc.nome || '').split('.').pop().toLowerCase();
+									var icone = obterIconeDocumento(extensao);
+									var corArquivo = obterCorDocumento(extensao);
+									return '<div style="border:1px solid #dbeafe;border-radius:10px;padding:10px;background:#f8fbff;margin-top:8px">'
+										+ '<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">'
+										+ '<div style="display:flex;gap:10px;min-width:0">'
+										+ '<div style="width:34px;height:34px;border-radius:8px;background:' + corArquivo + ';display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;flex-shrink:0">' + icone + '</div>'
+										+ '<div style="min-width:0"><div style="font-weight:700;color:#0f172a;word-break:break-word">' + escaparHtml(doc.nome) + '</div>'
+										+ '<div style="font-size:.78rem;color:#64748b">' + formatarTamanho(doc.tamanho || 0) + ' · ' + formatarDataHoraGP(doc.criadoEm) + '</div></div>'
+										+ '</div>'
+										+ '<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">'
+										+ '<button type="button" onclick="visualizarDocumentoGP(\'' + item.id + '\', \'' + doc.id + '\')" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:8px;padding:6px 8px;cursor:pointer;font-size:.76rem;font-weight:700">Visualizar</button>'
+										+ '<button type="button" onclick="baixarDocumentoGP(\'' + item.id + '\', \'' + doc.id + '\')" style="background:#ecfeff;color:#0f766e;border:1px solid #99f6e4;border-radius:8px;padding:6px 8px;cursor:pointer;font-size:.76rem;font-weight:700">Baixar</button>'
+										+ (usuarioAtualPodeExecutarAcaoModulo('GP', 'excluir') ? '<button type="button" onclick="excluirDocumentoGP(\'' + item.id + '\', \'' + doc.id + '\')" style="background:#fef2f2;color:#dc2626;border:1px solid #fecaca;border-radius:8px;padding:6px 8px;cursor:pointer;font-size:.76rem;font-weight:700">Excluir</button>' : '')
+										+ '</div></div></div>';
+								}).join('');
+							} else {
+								documentosHtml = '<div style="margin-top:8px;padding:10px 12px;border-radius:10px;background:#fff7ed;border:1px dashed #fdba74;color:#9a3412;font-size:.82rem;font-weight:700">Documento pendente neste item.</div>';
+							}
+
+							var cabecalhoCategoria = '';
+							if (categoriaAtual !== item.categoria) {
+								categoriaAtual = item.categoria;
+								cabecalhoCategoria = '<div style="grid-column:1 / -1;background:#0f172a;color:#fff;padding:10px 14px;font-weight:800;font-size:.9rem">Categoria ' + item.categoria + ' · ' + escaparHtml(item.grupo) + '</div>';
+							}
+
+							return cabecalhoCategoria + '<div style="display:grid;grid-template-columns:60px 1.15fr 1.45fr 110px 90px 1.7fr 110px;gap:10px;padding:12px 14px;border-top:1px solid #e2e8f0;align-items:start;background:' + (status.pontos ? '#ffffff' : '#fffef5') + ';">'
+								+ '<div><div style="font-size:.72rem;color:#64748b;font-weight:700">ITEM</div><div style="margin-top:6px;font-size:1rem;font-weight:800;color:#0f172a">' + (indice + 1) + '</div><div style="margin-top:8px;display:inline-block;padding:4px 8px;border-radius:999px;background:' + corCategoria.fundo + ';color:' + corCategoria.texto + ';font-weight:800;font-size:.72rem">' + item.categoria + '</div></div>'
+								+ '<div><div style="font-size:.72rem;color:#64748b;font-weight:700">INDICADOR</div><div style="margin-top:6px;font-weight:800;color:#0f172a;line-height:1.45">' + escaparHtml(item.titulo) + '</div></div>'
+								+ '<div><div style="font-size:.72rem;color:#64748b;font-weight:700">REGRAS</div><div style="margin-top:6px;color:#334155;line-height:1.5;font-size:.86rem">' + escaparHtml(item.regra) + '</div></div>'
+								+ '<div><div style="font-size:.72rem;color:#64748b;font-weight:700">GP</div><div style="margin-top:6px;display:inline-block;padding:6px 10px;border-radius:999px;background:' + status.fundo + ';color:' + status.cor + ';font-weight:800;font-size:.82rem">' + status.rotulo + '</div><div style="margin-top:6px;font-size:.78rem;color:#64748b">Cobertura: ' + status.texto + '</div></div>'
+								+ '<div><div style="font-size:.72rem;color:#64748b;font-weight:700">PTS</div><div style="margin-top:6px;font-size:1.1rem;font-weight:800;color:#0f172a">' + item.pontos + '</div><div style="font-size:.78rem;color:#64748b">máximo</div></div>'
+								+ '<div><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><div style="font-size:.72rem;color:#64748b;font-weight:700">OBSERVAÇÕES / DOCUMENTOS</div>'
+								+ (usuarioAtualPodeExecutarAcaoModulo('GP', 'criar') ? '<button type="button" onclick="abrirUploadDocumentoGP(\'' + item.id + '\')" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:7px 10px;cursor:pointer;font-size:.76rem;font-weight:700">Anexar</button>' : '')
+								+ '</div>'
+								+ documentosHtml
+								+ '<textarea onchange="salvarComentarioItemGP(\'' + item.id + '\', this.value)" ' + (usuarioAtualPodeExecutarAcaoModulo('GP', 'criar') ? '' : 'disabled ') + 'style="width:100%;min-height:84px;margin-top:8px;padding:10px;border:1px solid #cbd5e1;border-radius:10px;resize:vertical;font-family:inherit;font-size:.84rem" placeholder="Registre observações, pendências ou comentários deste item...">' + escaparHtml(registro.comentario || '') + '</textarea></div>'
+								+ '<div><div style="font-size:.72rem;color:#64748b;font-weight:700">RESULTADO</div><div style="margin-top:6px;font-size:1.2rem;font-weight:800;color:' + (status.pontos ? '#166534' : '#dc2626') + '">' + status.pontos + '</div><div style="font-size:.78rem;color:#64748b">de ' + item.pontos + ' pts</div></div>'
+								+ '</div>';
+						}).join('');
+					}
+
+					function renderModuloGP() {
+						var alvo = document.getElementById('gp-app');
+						if (!alvo) return;
+						var dados = obterDadosGPStorage();
+						var resumo = obterResumoModuloGP(dados);
+						var percentualTexto = resumo.percentual.toFixed(1).replace('.', ',') + '%';
+						var podeEditar = usuarioAtualPodeExecutarAcaoModulo('GP', 'criar');
+
+						alvo.innerHTML = ''
+							+ '<div style="padding:22px 24px;background:linear-gradient(135deg,#0f3d91 0%,#2563eb 100%);color:#fff">'
+							+ '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">'
+							+ '<div><div style="display:flex;align-items:center;gap:12px"><div style="font-size:2rem">📁</div><div><h2 style="margin:0;font-size:1.5rem;font-weight:800">ITENS DE AVALIAÇÃO · GP DE HSE CONTRATADAS</h2><div style="margin-top:4px;opacity:.92;font-size:.96rem">Plataforma de evidências por item, com controle de pendências, anexos e nota geral.</div></div></div></div>'
+							+ '<div style="display:flex;gap:8px;flex-wrap:wrap">'
+							+ '<button type="button" onclick="inicializarModuloGP(true)" style="background:#fff;color:#1d4ed8;border:none;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer">Atualizar Painel</button>'
+							+ '</div></div></div>'
+							+ '<div style="padding:20px;background:#f8fbff;border-bottom:1px solid #dbe7f3">'
+							+ '<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">'
+							+ '<div><label style="display:block;font-size:.8rem;font-weight:800;color:#475569;margin-bottom:6px">Local da Auditoria</label><input ' + (podeEditar ? '' : 'disabled ') + 'value="' + escaparHtml(dados.localAuditoria) + '" onchange="atualizarCampoCabecalhoGP(\'localAuditoria\', this.value)" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:10px"></div>'
+							+ '<div><label style="display:block;font-size:.8rem;font-weight:800;color:#475569;margin-bottom:6px">Auditado</label><input ' + (podeEditar ? '' : 'disabled ') + 'value="' + escaparHtml(dados.auditado) + '" onchange="atualizarCampoCabecalhoGP(\'auditado\', this.value)" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:10px"></div>'
+							+ '<div><label style="display:block;font-size:.8rem;font-weight:800;color:#475569;margin-bottom:6px">Data da Auditoria</label><input type="date" ' + (podeEditar ? '' : 'disabled ') + 'value="' + escaparHtml(dados.dataAuditoria) + '" onchange="atualizarCampoCabecalhoGP(\'dataAuditoria\', this.value)" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:10px"></div>'
+							+ '<div><label style="display:block;font-size:.8rem;font-weight:800;color:#475569;margin-bottom:6px">Auditor</label><input ' + (podeEditar ? '' : 'disabled ') + 'value="' + escaparHtml(dados.auditor) + '" onchange="atualizarCampoCabecalhoGP(\'auditor\', this.value)" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:10px"></div>'
+							+ '<div><label style="display:block;font-size:.8rem;font-weight:800;color:#475569;margin-bottom:6px">Empresa</label><input ' + (podeEditar ? '' : 'disabled ') + 'value="' + escaparHtml(dados.empresa) + '" onchange="atualizarCampoCabecalhoGP(\'empresa\', this.value)" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:10px"></div>'
+							+ '<div><label style="display:block;font-size:.8rem;font-weight:800;color:#475569;margin-bottom:6px">Mês</label><input ' + (podeEditar ? '' : 'disabled ') + 'value="' + escaparHtml(dados.mes) + '" onchange="atualizarCampoCabecalhoGP(\'mes\', this.value)" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:10px"></div>'
+							+ '<div><label style="display:block;font-size:.8rem;font-weight:800;color:#475569;margin-bottom:6px">Dias Trabalhados</label><input ' + (podeEditar ? '' : 'disabled ') + 'value="' + escaparHtml(dados.diasTrabalhados) + '" onchange="atualizarCampoCabecalhoGP(\'diasTrabalhados\', this.value)" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:10px"></div>'
+							+ '<div><label style="display:block;font-size:.8rem;font-weight:800;color:#475569;margin-bottom:6px">Turno</label><input ' + (podeEditar ? '' : 'disabled ') + 'value="' + escaparHtml(dados.turno) + '" onchange="atualizarCampoCabecalhoGP(\'turno\', this.value)" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:10px"></div>'
+							+ '</div></div>'
+							+ '<div style="padding:20px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;background:#fff">'
+							+ '<div style="border:1px solid #bfdbfe;border-radius:12px;padding:14px;background:#eff6ff"><div style="font-size:.76rem;font-weight:800;color:#1d4ed8">ITENS AVALIADOS</div><div style="margin-top:6px;font-size:1.45rem;font-weight:800;color:#1e3a8a">' + resumo.totalItens + '</div></div>'
+							+ '<div style="border:1px solid #fde68a;border-radius:12px;padding:14px;background:#fffbeb"><div style="font-size:.76rem;font-weight:800;color:#b45309">PENDENTES</div><div style="margin-top:6px;font-size:1.45rem;font-weight:800;color:#92400e">' + resumo.pendentes + '</div></div>'
+							+ '<div style="border:1px solid #bbf7d0;border-radius:12px;padding:14px;background:#f0fdf4"><div style="font-size:.76rem;font-weight:800;color:#15803d">DOCUMENTOS</div><div style="margin-top:6px;font-size:1.45rem;font-weight:800;color:#166534">' + resumo.documentos + '</div></div>'
+							+ '<div style="border:1px solid #dbeafe;border-radius:12px;padding:14px;background:#f8fbff"><div style="font-size:.76rem;font-weight:800;color:#2563eb">PONTUAÇÃO</div><div style="margin-top:6px;font-size:1.45rem;font-weight:800;color:#1e3a8a">' + resumo.pontosObtidos + '/' + resumo.pontosTotais + '</div></div>'
+							+ '<div style="border:1px solid ' + (resumo.metaAtingida ? '#86efac' : '#fca5a5') + ';border-radius:12px;padding:14px;background:' + (resumo.metaAtingida ? '#f0fdf4' : '#fef2f2') + '"><div style="font-size:.76rem;font-weight:800;color:' + (resumo.metaAtingida ? '#15803d' : '#b91c1c') + '">NOTA GERAL</div><div style="margin-top:6px;font-size:1.45rem;font-weight:800;color:' + (resumo.metaAtingida ? '#166534' : '#991b1b') + '">' + percentualTexto + '</div><div style="margin-top:4px;font-size:.82rem;color:#64748b">Meta ' + GP_META_PERCENTUAL + '% · ' + (resumo.metaAtingida ? 'Atingida' : 'Não atingida') + '</div></div>'
+							+ '</div>'
+							+ '<div style="padding:0 20px 20px 20px">'
+							+ '<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">' + renderResumoCategoriasGP(resumo) + '</div>'
+							+ '</div>'
+							+ '<div style="padding:0 20px 20px 20px">'
+							+ '<div style="overflow:auto;border:1px solid #dbe7f3;border-radius:14px;background:#fff">'
+							+ '<div style="min-width:1480px">'
+							+ '<div style="display:grid;grid-template-columns:60px 1.15fr 1.45fr 110px 90px 1.7fr 110px;gap:10px;padding:12px 14px;background:#1e3a8a;color:#fff;font-size:.82rem;font-weight:800;align-items:center">'
+							+ '<div>#</div><div>INDICADORES</div><div>REGRAS</div><div>GP</div><div>PTS</div><div>OBSERVAÇÕES / DOCUMENTOS</div><div>RESULTADO</div>'
+							+ '</div>'
+							+ renderLinhasTabelaGP(dados)
+							+ '</div></div>'
+							+ '<div style="margin-top:14px;padding:12px 14px;border:1px solid #dbeafe;border-radius:12px;background:#eff6ff;color:#1d4ed8;font-size:.85rem;line-height:1.55"><b>Nota geral:</b> cada item pontua automaticamente quando possui ao menos um documento anexado. Itens sem documento são destacados como pendentes. Arquivos aceitos: <b>PDF</b>, <b>Word</b> e <b>Excel</b>.</div>'
+							+ '</div>';
+					}
+
+					function inicializarModuloGP(forcarRender) {
+						if (!gpInicializado) {
+							var inputDocumento = document.getElementById('gp-input-documento');
+							if (inputDocumento) {
+								inputDocumento.addEventListener('change', processarUploadDocumentoGP);
+							}
+							gpInicializado = true;
+						}
+
+						if (forcarRender || gpInicializado) {
+							renderModuloGP();
+						}
 					}
 
 					var NOVATOS_STORAGE_KEY = 'hse_programa_novatos_v1';
