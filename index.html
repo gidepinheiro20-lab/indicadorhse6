@@ -10078,29 +10078,36 @@
 						leitor.readAsArrayBuffer(arquivo);
 					}
 
-					var GP_STORAGE_KEY = 'hse_gp_modulo_v1';
+					var GP_STORAGE_KEY = 'hse_gp_modulo_v2';
 					var GP_META_PERCENTUAL = 80;
 					var gpInicializado = false;
 					var GP_ITENS_AVALIACAO = [
-						{ id: 'gp-01', categoria: 'A', grupo: 'Documentação Crítica', titulo: 'Política e programa de HSE da contratada', regra: 'Anexar política, programa anual, escopo de responsabilidades ou documento equivalente que comprove a estrutura de gestão HSE.', pontos: 20 },
-						{ id: 'gp-02', categoria: 'A', grupo: 'Documentação Crítica', titulo: 'Gestão de incidentes e plano de ação', regra: 'Anexar procedimento de investigação, relatórios de incidentes e evidências das ações corretivas e preventivas.', pontos: 20 },
-						{ id: 'gp-03', categoria: 'A', grupo: 'Documentação Crítica', titulo: 'Integração e documentação admissional', regra: 'Anexar ficha de integração, ASO, documentos admissionais e comprovação de liberação para trabalho.', pontos: 20 },
-						{ id: 'gp-04', categoria: 'A', grupo: 'Documentação Crítica', titulo: 'Treinamentos obrigatórios', regra: 'Anexar certificados ou listas de presença de treinamentos legais e internos aplicáveis à atividade.', pontos: 20 },
-						{ id: 'gp-05', categoria: 'A', grupo: 'Documentação Crítica', titulo: 'Documentação legal e licenças', regra: 'Anexar licenças, permissões, contratos, certidões ou documentos legais exigidos para a operação.', pontos: 20 },
+						{ id: 'gp-01', categoria: 'A', grupo: 'Incidentes', tipo: 'positivo', titulo: 'Plano de Ação de INCIDENTES de HSE', regra: 'Anexar o plano de ação dos incidentes de HSE do período, incluindo incidente com lesão, HRI, quase incidente e dano material.', pontos: 20 },
+						{ id: 'gp-02', categoria: 'A', grupo: 'Incidentes', tipo: 'positivo', titulo: 'Comunicação e Análise de INCIDENTES de HSE', regra: 'Anexar comunicação formal, análise, investigação e evidências de tratativa dos incidentes de HSE do período.', pontos: 20 },
 
-						{ id: 'gp-06', categoria: 'B', grupo: 'Gestão Operacional', titulo: 'APR, PT e controles de tarefa', regra: 'Anexar APR, PT, checklists operacionais e registros de liberação de atividade.', pontos: 10 },
-						{ id: 'gp-07', categoria: 'B', grupo: 'Gestão Operacional', titulo: 'Inspeções de campo e tratativas', regra: 'Anexar inspeções realizadas, relatórios, planos de ação e evidências de correção.', pontos: 10 },
-						{ id: 'gp-08', categoria: 'B', grupo: 'Gestão Operacional', titulo: 'Controle de EPI e EPC', regra: 'Anexar fichas de entrega, registros de inspeção e comprovação de adequação dos equipamentos.', pontos: 10 },
-						{ id: 'gp-09', categoria: 'B', grupo: 'Gestão Operacional', titulo: 'Plano de emergência e resposta', regra: 'Anexar plano de emergência, contatos, simulados, brigada ou documentação equivalente.', pontos: 10 },
-						{ id: 'gp-10', categoria: 'B', grupo: 'Gestão Operacional', titulo: 'Gestão de subcontratadas e terceiros', regra: 'Anexar relação de terceiros, controles de acesso, avaliações e documentos de conformidade.', pontos: 10 },
+						{ id: 'gp-03', categoria: 'B', grupo: 'Proativos', tipo: 'positivo', titulo: 'Brigada constituída de forma a atender à quantidade mínima necessária', regra: 'Anexar registros, escala, lista nominal e evidências que comprovem o atendimento da brigada e dos requisitos correlatos do mês.', pontos: 30 },
+						{ id: 'gp-04', categoria: 'B', grupo: 'Proativos', tipo: 'positivo', titulo: 'HSE Rule Enforcement in Terminal', regra: 'Anexar evidências de aplicação das regras de HSE no terminal, campanhas, verificações e controles praticados no período.', pontos: 20 },
+						{ id: 'gp-05', categoria: 'B', grupo: 'Proativos', tipo: 'positivo', titulo: 'Treinamentos obrigatórios para o desempenho da função do empregado', regra: 'Anexar certificados, listas de presença e comprovações dos treinamentos obrigatórios exigidos para a função exercida.', pontos: 20 },
+						{ id: 'gp-06', categoria: 'B', grupo: 'Proativos', tipo: 'positivo', titulo: 'PT Stop de Segurança', regra: 'Anexar evidências do processo de PT Stop de Segurança, bloqueios, liberações e registros de campo do período.', pontos: 20 },
+						{ id: 'gp-07', categoria: 'B', grupo: 'Proativos', tipo: 'positivo', titulo: 'Auditoria de Protocolos e Riscos Críticos pelo Sistema Alerta', regra: 'Anexar auditorias, registros de protocolos, riscos críticos avaliados e evidências de tratativas vinculadas ao sistema de alerta.', pontos: 40 },
+						{ id: 'gp-08', categoria: 'B', grupo: 'Proativos', tipo: 'positivo', titulo: 'Quantidade de CPT e qualidade do conteúdo', regra: 'Anexar CPTs do mês, avaliação da qualidade do conteúdo e análise crítica correspondente.', pontos: 20 },
+						{ id: 'gp-09', categoria: 'B', grupo: 'Proativos', tipo: 'positivo', titulo: 'Programa RACs Zero / fluxo de proteção', regra: 'Anexar evidências do programa RACs Zero, fluxos de proteção e controles aplicáveis ao período de avaliação.', pontos: 10 },
 
-						{ id: 'gp-11', categoria: 'C', grupo: 'Governança e Performance', titulo: 'Reuniões mensais de HSE', regra: 'Anexar atas, listas de presença, pautas e evidências de comunicação dos resultados.', pontos: 10 },
-						{ id: 'gp-12', categoria: 'C', grupo: 'Governança e Performance', titulo: 'Plano de ação com evidências', regra: 'Anexar cronograma, responsáveis, status e evidências de conclusão dos itens de ação.', pontos: 10 },
-						{ id: 'gp-13', categoria: 'C', grupo: 'Governança e Performance', titulo: 'Indicadores, metas e acompanhamento', regra: 'Anexar planilhas, relatórios, dashboards ou registros que comprovem o monitoramento dos indicadores.', pontos: 10 },
-						{ id: 'gp-14', categoria: 'C', grupo: 'Governança e Performance', titulo: 'Auditorias internas e verificações', regra: 'Anexar relatórios de auditoria, verificações comportamentais e respectivas tratativas.', pontos: 10 },
+						{ id: 'gp-10', categoria: 'C', grupo: 'Ônus', tipo: 'positivo', titulo: 'Pontuação da emissão da RAS', regra: 'Anexar registros de RAS emitidas no mês e o consolidado utilizado para apuração do indicador.', pontos: 10 },
+						{ id: 'gp-11', categoria: 'C', grupo: 'Ônus', tipo: 'positivo', titulo: 'Pontuação da avaliação da CPT', regra: 'Anexar avaliação das CPTs emitidas no mês, critérios utilizados e evidências da apuração.', pontos: 10 },
+						{ id: 'gp-12', categoria: 'C', grupo: 'Ônus', tipo: 'positivo', titulo: 'Mãos e Membros Seguros / avaliação dos riscos críticos', regra: 'Anexar registros da campanha, avaliações dos riscos críticos aplicáveis e evidências das ações do período.', pontos: 20 },
+						{ id: 'gp-13', categoria: 'C', grupo: 'Ônus', tipo: 'positivo', titulo: 'Melhoria de HSE', regra: 'Anexar melhorias implementadas, ações de melhoria contínua e evidências de sustentação dos resultados.', pontos: 20 },
+						{ id: 'gp-14', categoria: 'C', grupo: 'Ônus', tipo: 'positivo', titulo: 'Realização de OJT / Out of The Job Training com aplicação teórica e prática em campo', regra: 'Anexar programação, conteúdo, aplicação em campo e comprovação da realização do treinamento OJT do período.', pontos: 20 },
+						{ id: 'gp-15', categoria: 'C', grupo: 'Ônus', tipo: 'positivo', titulo: 'Participação da liderança no indicador de HSE do mês de referência', regra: 'Anexar evidências da participação da liderança, diretor, gerente, preposto ou fiscal do contrato no fechamento do indicador mensal.', pontos: 20 },
 
-						{ id: 'gp-15', categoria: 'D', grupo: 'Evidências Complementares', titulo: 'DDS, campanhas e comunicação', regra: 'Anexar DDS, campanhas, comunicados ou ações de sensibilização aplicáveis ao período.', pontos: 5 },
-						{ id: 'gp-16', categoria: 'D', grupo: 'Evidências Complementares', titulo: 'Lições aprendidas e melhorias', regra: 'Anexar registros de lições aprendidas, melhorias implementadas ou boas práticas compartilhadas.', pontos: 5 }
+						{ id: 'gp-16', categoria: 'D', grupo: 'Penalties', tipo: 'penalidade', titulo: '1 incidente sem dano material e sem lesão com severidade potencial verde', regra: 'Anexar a ocorrência quando aplicável. Se houver evidência registrada no período, a penalidade é aplicada automaticamente.', pontos: -3 },
+						{ id: 'gp-17', categoria: 'D', grupo: 'Penalties', tipo: 'penalidade', titulo: '2 incidentes sem dano material e sem lesão com severidade potencial verde', regra: 'Anexar a ocorrência quando aplicável. O documento anexado ativa a penalidade correspondente deste item.', pontos: -15 },
+						{ id: 'gp-18', categoria: 'D', grupo: 'Penalties', tipo: 'penalidade', titulo: '2 acidentes com dano material ou com lesão com severidade potencial verde', regra: 'Anexar a ocorrência quando aplicável. O documento anexado ativa a penalidade correspondente deste item.', pontos: -30 },
+						{ id: 'gp-19', categoria: 'D', grupo: 'Penalties', tipo: 'penalidade', titulo: '4 acidentes com dano material ou com lesão com severidade potencial amarelo', regra: 'Anexar a ocorrência quando aplicável. O documento anexado ativa a penalidade correspondente deste item.', pontos: -60 },
+						{ id: 'gp-20', categoria: 'D', grupo: 'Penalties', tipo: 'penalidade', titulo: '1 incidente com severidade potencial vermelha', regra: 'Anexar a ocorrência quando aplicável. O documento anexado ativa a penalidade correspondente deste item.', pontos: -101 },
+						{ id: 'gp-21', categoria: 'D', grupo: 'Penalties', tipo: 'penalidade', titulo: 'Registros de ISR, notificações, embargos, interdições ou tratativas críticas', regra: 'Anexar ISR, notificações, embargos, interdições, autos, registros de fiscalização ou documentos equivalentes do período.', pontos: -10 },
+						{ id: 'gp-22', categoria: 'D', grupo: 'Penalties', tipo: 'penalidade', titulo: 'Entrega atrasada ou não entrega de documentação solicitada', regra: 'Anexar a evidência do atraso, da cobrança ou do não atendimento para registrar a penalidade do período.', pontos: -5 },
+						{ id: 'gp-23', categoria: 'D', grupo: 'Penalties', tipo: 'penalidade', titulo: 'Plano de entrega do GP de HSE do mês de referência em atraso', regra: 'Anexar a evidência do atraso ou do descumprimento do plano de entrega mensal do GP.', pontos: -5 }
 					];
 
 					function obterMesReferenciaPadraoGP() {
@@ -10189,10 +10196,17 @@
 
 					function obterStatusItemGP(item, registro) {
 						var quantidade = registro && Array.isArray(registro.documentos) ? registro.documentos.length : 0;
-						if (quantidade > 0) {
-							return { texto: '100%', rotulo: 'Atendido', cor: '#166534', fundo: '#dcfce7', pontos: item.pontos };
+						var ehPenalidade = item && item.tipo === 'penalidade';
+						if (ehPenalidade) {
+							if (quantidade > 0) {
+								return { texto: 'Aplicada', rotulo: 'Penalidade aplicada', cor: '#991b1b', fundo: '#fee2e2', pontos: item.pontos, estado: 'penalidade' };
+							}
+							return { texto: 'Sem ocorrência', rotulo: 'Sem ocorrência', cor: '#475569', fundo: '#e2e8f0', pontos: 0, estado: 'neutro' };
 						}
-						return { texto: '0%', rotulo: 'Pendente', cor: '#92400e', fundo: '#fef3c7', pontos: 0 };
+						if (quantidade > 0) {
+							return { texto: '100%', rotulo: 'Atendido', cor: '#166534', fundo: '#dcfce7', pontos: item.pontos, estado: 'atendido' };
+						}
+						return { texto: '0%', rotulo: 'Pendente', cor: '#92400e', fundo: '#fef3c7', pontos: 0, estado: 'pendente' };
 					}
 
 					function obterResumoModuloGP(dados) {
@@ -10206,12 +10220,13 @@
 						GP_ITENS_AVALIACAO.forEach(function(item) {
 							var registro = obterRegistroItemGP(dados, item.id);
 							var status = obterStatusItemGP(item, registro);
-							totalPontos += item.pontos;
+							var ehPenalidade = item && item.tipo === 'penalidade';
+							if (!ehPenalidade && item.pontos > 0) totalPontos += item.pontos;
 							pontosObtidos += status.pontos;
 							documentos += (registro.documentos || []).length;
-							if (!status.pontos) pendentes++;
+							if (!ehPenalidade && status.estado === 'pendente') pendentes++;
 
-							if (!mapaCategorias[item.categoria]) {
+							if (!ehPenalidade && !mapaCategorias[item.categoria]) {
 								mapaCategorias[item.categoria] = {
 									categoria: item.categoria,
 									grupo: item.grupo,
@@ -10221,12 +10236,15 @@
 								};
 							}
 
-							mapaCategorias[item.categoria].total += item.pontos;
-							mapaCategorias[item.categoria].obtido += status.pontos;
-							if (!status.pontos) mapaCategorias[item.categoria].pendentes++;
+							if (!ehPenalidade) {
+								mapaCategorias[item.categoria].total += item.pontos;
+								mapaCategorias[item.categoria].obtido += Math.max(0, status.pontos);
+								if (status.estado === 'pendente') mapaCategorias[item.categoria].pendentes++;
+							}
 						});
 
 						var percentual = totalPontos ? (pontosObtidos / totalPontos) * 100 : 0;
+						percentual = Math.max(0, Math.min(100, percentual));
 						return {
 							totalItens: totalItens,
 							pontosTotais: totalPontos,
@@ -10422,7 +10440,15 @@
 								cabecalhoCategoria = '<div style="grid-column:1 / -1;background:#0f172a;color:#fff;padding:10px 14px;font-weight:800;font-size:.9rem">Categoria ' + item.categoria + ' · ' + escaparHtml(item.grupo) + '</div>';
 							}
 
-							return cabecalhoCategoria + '<div style="display:grid;grid-template-columns:60px 1.15fr 1.45fr 110px 90px 1.7fr 110px;gap:10px;padding:12px 14px;border-top:1px solid #e2e8f0;align-items:start;background:' + (status.pontos ? '#ffffff' : '#fffef5') + ';">'
+							var fundoLinha = '#ffffff';
+							if (status.estado === 'pendente') fundoLinha = '#fffef5';
+							if (status.estado === 'penalidade') fundoLinha = '#fff7f7';
+							if (status.estado === 'neutro') fundoLinha = '#f8fafc';
+							var corResultado = '#166534';
+							if (status.estado === 'pendente') corResultado = '#dc2626';
+							if (status.estado === 'penalidade') corResultado = '#991b1b';
+							if (status.estado === 'neutro') corResultado = '#475569';
+							return cabecalhoCategoria + '<div style="display:grid;grid-template-columns:60px 1.15fr 1.45fr 110px 90px 1.7fr 110px;gap:10px;padding:12px 14px;border-top:1px solid #e2e8f0;align-items:start;background:' + fundoLinha + ';">'
 								+ '<div><div style="font-size:.72rem;color:#64748b;font-weight:700">ITEM</div><div style="margin-top:6px;font-size:1rem;font-weight:800;color:#0f172a">' + (indice + 1) + '</div><div style="margin-top:8px;display:inline-block;padding:4px 8px;border-radius:999px;background:' + corCategoria.fundo + ';color:' + corCategoria.texto + ';font-weight:800;font-size:.72rem">' + item.categoria + '</div></div>'
 								+ '<div><div style="font-size:.72rem;color:#64748b;font-weight:700">INDICADOR</div><div style="margin-top:6px;font-weight:800;color:#0f172a;line-height:1.45">' + escaparHtml(item.titulo) + '</div></div>'
 								+ '<div><div style="font-size:.72rem;color:#64748b;font-weight:700">REGRAS</div><div style="margin-top:6px;color:#334155;line-height:1.5;font-size:.86rem">' + escaparHtml(item.regra) + '</div></div>'
@@ -10433,7 +10459,7 @@
 								+ '</div>'
 								+ documentosHtml
 								+ '<textarea onchange="salvarComentarioItemGP(\'' + item.id + '\', this.value)" ' + (usuarioAtualPodeExecutarAcaoModulo('GP', 'criar') ? '' : 'disabled ') + 'style="width:100%;min-height:84px;margin-top:8px;padding:10px;border:1px solid #cbd5e1;border-radius:10px;resize:vertical;font-family:inherit;font-size:.84rem" placeholder="Registre observações, pendências ou comentários deste item...">' + escaparHtml(registro.comentario || '') + '</textarea></div>'
-								+ '<div><div style="font-size:.72rem;color:#64748b;font-weight:700">RESULTADO</div><div style="margin-top:6px;font-size:1.2rem;font-weight:800;color:' + (status.pontos ? '#166534' : '#dc2626') + '">' + status.pontos + '</div><div style="font-size:.78rem;color:#64748b">de ' + item.pontos + ' pts</div></div>'
+								+ '<div><div style="font-size:.72rem;color:#64748b;font-weight:700">RESULTADO</div><div style="margin-top:6px;font-size:1.2rem;font-weight:800;color:' + corResultado + '">' + status.pontos + '</div><div style="font-size:.78rem;color:#64748b">de ' + item.pontos + ' pts</div></div>'
 								+ '</div>';
 						}).join('');
 					}
@@ -10482,7 +10508,7 @@
 							+ '</div>'
 							+ renderLinhasTabelaGP(dados)
 							+ '</div></div>'
-							+ '<div style="margin-top:14px;padding:12px 14px;border:1px solid #dbeafe;border-radius:12px;background:#eff6ff;color:#1d4ed8;font-size:.85rem;line-height:1.55"><b>Nota geral:</b> cada item pontua automaticamente quando possui ao menos um documento anexado. Itens sem documento são destacados como pendentes. Arquivos aceitos: <b>PDF</b>, <b>Word</b> e <b>Excel</b>.</div>'
+							+ '<div style="margin-top:14px;padding:12px 14px;border:1px solid #dbeafe;border-radius:12px;background:#eff6ff;color:#1d4ed8;font-size:.85rem;line-height:1.55"><b>Nota geral:</b> itens positivos pontuam quando possuem ao menos um documento anexado. Itens de <b>Penalties</b> ficam zerados quando não há ocorrência e aplicam desconto automático quando um documento é anexado para registrar a penalidade. Arquivos aceitos: <b>PDF</b>, <b>Word</b> e <b>Excel</b>.</div>'
 							+ '</div>';
 					}
 
