@@ -2474,6 +2474,10 @@
 									<button id="btn-cadastrar-riscos-perigos" type="button" style="background:#dc2626;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:0 2px 4px rgba(0,0,0,0.1)">
 										<span>⚠️</span> Cadastrar Riscos / Perigos
 									</button>
+									<!-- Botão Gerenciamento de Desvios -->
+									<button id="btn-gerenciamento-desvios" type="button" style="background:#d97706;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:0 2px 4px rgba(0,0,0,0.1)">
+										<span>🔧</span> Gerenciamento de Desvios
+									</button>
 								</div>
 							</div>
 						</div>
@@ -3159,6 +3163,41 @@
 					</div>
 				</div>
 			</div>
+
+			<!-- Seção Gerenciamento de Desvios -->
+			<div id="gerenciamento-desvios" style="display:none;padding:20px">
+				<div style="max-width:1200px;margin:0 auto">
+					<!-- Header -->
+					<div style="background:linear-gradient(135deg,#d97706 0%,#f59e0b 100%);border-radius:12px;padding:32px;margin-bottom:24px;color:#fff;text-align:center">
+						<h2 style="margin:0;font-size:2rem;font-weight:700;margin-bottom:8px">Gerenciamento de Desvios</h2>
+						<p style="margin:0;font-size:1.1rem;opacity:0.95">Registre e acompanhe os desvios identificados nas inspeções</p>
+					</div>
+					<!-- Controles -->
+					<div style="background:#fff;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+						<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+							<div style="display:flex;align-items:center;gap:12px">
+								<button id="btn-voltar-inspecao-desvios" style="background:#047857;color:#fff;padding:10px 16px;border:none;border-radius:6px;cursor:pointer;font-weight:500;display:flex;align-items:center;gap:6px;font-size:0.9rem">
+									← Voltar para Inspeção
+								</button>
+								<h3 style="margin:0;font-size:1.2rem;font-weight:600;color:#374151">Desvios Cadastrados</h3>
+							</div>
+							<button id="btn-novo-desvio" style="background:#d97706;color:#fff;padding:10px 16px;border:none;border-radius:6px;cursor:pointer;font-weight:500;display:flex;align-items:center;gap:6px;font-size:0.9rem">
+								🔧 Novo Desvio
+							</button>
+						</div>
+					</div>
+					<!-- Lista de desvios -->
+					<div style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+						<div id="lista-desvios" style="min-height:200px">
+							<div style="padding:60px 20px;text-align:center;color:#9ca3af">
+								<div style="font-size:3rem;margin-bottom:16px;opacity:0.5">🔧</div>
+								<div style="font-size:1.1rem;font-weight:500;margin-bottom:8px">Nenhum desvio cadastrado ainda.</div>
+								<div style="font-size:0.9rem">Clique em "Novo Desvio" para começar.</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 			
 			<!-- Modal Nova Categoria -->
 			<div id="modal-nova-categoria" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1003;justify-content:center;align-items:center;overflow-y:auto">
@@ -3796,6 +3835,7 @@
 						document.getElementById('areas-locais').style.display = 'none';
 						document.getElementById('gerenciamento-tipos-registro').style.display = 'none';
 						document.getElementById('gerenciamento-riscos-perigos').style.display = 'none';
+						document.getElementById('gerenciamento-desvios').style.display = 'none';
 						document.getElementById('empresa').style.display = 'none';
 					}
 
@@ -8373,6 +8413,13 @@
 						inicializarRiscosPerigos();
 						hideSidebarOnMobile();
 					});
+
+					document.getElementById('btn-gerenciamento-desvios').addEventListener('click', function() {
+						hideAllSections();
+						document.getElementById('gerenciamento-desvios').style.display = 'block';
+						inicializarDesvios();
+						hideSidebarOnMobile();
+					});
 					
 					// SISTEMA DE ART (Análise de Risco da Tarefa)
 					
@@ -9291,6 +9338,26 @@
 						document.getElementById('inspecao').style.display = 'block';
 						inicializarInspecao();
 					});
+
+					// Botão voltar para inspeção (Desvios)
+					document.getElementById('btn-voltar-inspecao-desvios') && document.getElementById('btn-voltar-inspecao-desvios').addEventListener('click', function() {
+						hideAllSections();
+						document.getElementById('inspecao').style.display = 'block';
+						inicializarInspecao();
+					});
+
+					// Inicializar seção de desvios
+					var desviosInicializado = false;
+					function inicializarDesvios() {
+						if (desviosInicializado) return;
+						desviosInicializado = true;
+						var btnNovo = document.getElementById('btn-novo-desvio');
+						if (btnNovo) {
+							btnNovo.addEventListener('click', function() {
+								alert('Funcionalidade de cadastro de desvios em desenvolvimento.');
+							});
+						}
+					}
 					
 					// Abrir modal novo risco/perigo
 					function abrirModalNovoRiscoPerigo() {
