@@ -2478,6 +2478,11 @@
 									<button id="btn-gerenciamento-desvios" type="button" style="background:#d97706;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:0 2px 4px rgba(0,0,0,0.1)">
 										<span>🔧</span> Gerenciamento de Desvios
 									</button>
+									<!-- Botão Importar Planilha -->
+									<button id="btn-importar-planilha-inspecao" type="button" style="background:#059669;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:0 2px 4px rgba(0,0,0,0.1)">
+										<span>📊</span> Importar Planilha
+									</button>
+									<input id="input-planilha-inspecao" type="file" accept=".xlsx,.xls" style="display:none" />
 								</div>
 							</div>
 						</div>
@@ -8468,6 +8473,244 @@
 						inicializarDesvios();
 						hideSidebarOnMobile();
 					});
+
+					function normalizarTextoCabecalhoInspecao(texto) {
+						return String(texto || '')
+							.toLowerCase()
+							.normalize('NFD')
+							.replace(/[\u0300-\u036f]/g, '')
+							.replace(/[^a-z0-9]/g, '');
+					}
+
+					function obterValorPorAliasesInspecao(linha, aliases) {
+						var chaves = Object.keys(linha || {});
+						for (var i = 0; i < chaves.length; i++) {
+							var chaveAtual = chaves[i];
+							var chaveNormalizada = normalizarTextoCabecalhoInspecao(chaveAtual);
+							for (var j = 0; j < aliases.length; j++) {
+								if (chaveNormalizada === aliases[j]) {
+									return linha[chaveAtual];
+								}
+							}
+						}
+						return '';
+					}
+
+					function formatarDataIsoInspecao(data) {
+						if (!(data instanceof Date) || isNaN(data.getTime())) {
+							return '';
+						}
+						var ano = data.getFullYear();
+						var mes = String(data.getMonth() + 1).padStart(2, '0');
+						var dia = String(data.getDate()).padStart(2, '0');
+						return ano + '-' + mes + '-' + dia;
+					}
+
+					function converterValorDataInspecao(valor) {
+						if (valor === null || valor === undefined || valor === '') {
+							return '';
+						}
+
+						if (valor instanceof Date) {
+							return formatarDataIsoInspecao(valor);
+						}
+
+						if (typeof valor === 'number' && typeof XLSX !== 'undefined' && XLSX.SSF && XLSX.SSF.parse_date_code) {
+							var dataExcel = XLSX.SSF.parse_date_code(valor);
+							if (dataExcel && dataExcel.y && dataExcel.m && dataExcel.d) {
+								var dataConvertida = new Date(dataExcel.y, dataExcel.m - 1, dataExcel.d);
+								return formatarDataIsoInspecao(dataConvertida);
+							}
+						}
+
+						var texto = String(valor).trim();
+						if (!texto) {
+							return '';
+						}
+
+						var matchBr = texto.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+						if (matchBr) {
+							var dataBr = new Date(Number(matchBr[3]), Number(matchBr[2]) - 1, Number(matchBr[1]));
+							return formatarDataIsoInspecao(dataBr);
+						}
+
+						var matchBrHifen = texto.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+						if (matchBrHifen) {
+							var dataBrHifen = new Date(Number(matchBrHifen[3]), Number(matchBrHifen[2]) - 1, Number(matchBrHifen[1]));
+							return formatarDataIsoInspecao(dataBrHifen);
+						}
+
+						if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
+							return texto;
+						}
+
+						var dataPadrao = new Date(texto);
+						return formatarDataIsoInspecao(dataPadrao);
+					}
+
+					function calcularSemanaIsoImportacaoInspecao(dataIso) {
+						if (!dataIso) {
+							return '';
+						}
+						var data = new Date(dataIso + 'T00:00:00');
+						if (isNaN(data.getTime())) {
+							return '';
+						}
+						var dataUtc = new Date(Date.UTC(data.getFullYear(), data.getMonth(), data.getDate()));
+						var diaSemana = dataUtc.getUTCDay() || 7;
+						dataUtc.setUTCDate(dataUtc.getUTCDate() + 4 - diaSemana);
+						var inicioAno = new Date(Date.UTC(dataUtc.getUTCFullYear(), 0, 1));
+						var semana = Math.ceil((((dataUtc - inicioAno) / 86400000) + 1) / 7);
+						return String(semana);
+					}
+
+					function mapearLinhaImportacaoInspecao(linha, indice) {
+						var data = converterValorDataInspecao(obterValorPorAliasesInspecao(linha, ['data', 'datainspecao', 'dataregistro']));
+						var area = String(obterValorPorAliasesInspecao(linha, ['area', 'setor']) || '').trim();
+						var local = String(obterValorPorAliasesInspecao(linha, ['local', 'localizacao']) || '').trim();
+						var tipo = String(obterValorPorAliasesInspecao(linha, ['tipo', 'tiporegistro']) || '').trim() || 'Inspeção de HSE';
+						var semanaInformada = String(obterValorPorAliasesInspecao(linha, ['semana', 'nsemana']) || '').trim();
+						var categoria = String(obterValorPorAliasesInspecao(linha, ['categoria']) || '').trim();
+						var classificacao = String(obterValorPorAliasesInspecao(linha, ['classificacao']) || '').trim();
+						var severidade = String(obterValorPorAliasesInspecao(linha, ['severidade']) || '').trim();
+						var risco = String(obterValorPorAliasesInspecao(linha, ['risco', 'riscoperigo', 'perigo']) || '').trim();
+						var controlavel = String(obterValorPorAliasesInspecao(linha, ['controlavel', 'controlavelsimnao']) || '').trim() || 'Sim';
+						var interdicao = String(obterValorPorAliasesInspecao(linha, ['interdicao', 'interdicaosimnao']) || '').trim() || 'Não';
+						var responsavel = String(obterValorPorAliasesInspecao(linha, ['responsavel']) || '').trim();
+						var emissor = String(obterValorPorAliasesInspecao(linha, ['emissor']) || '').trim() || 'Importação Planilha';
+						var prazo = converterValorDataInspecao(obterValorPorAliasesInspecao(linha, ['prazo', 'dataprazo']));
+						var conclusao = converterValorDataInspecao(obterValorPorAliasesInspecao(linha, ['conclusao', 'dataconclusao']));
+						var status = String(obterValorPorAliasesInspecao(linha, ['status']) || '').trim() || 'PENDENTE';
+						var descricao = String(obterValorPorAliasesInspecao(linha, ['descricao', 'desvio', 'naoconformidade', 'observacao']) || '').trim();
+						var acoes = String(obterValorPorAliasesInspecao(linha, ['acoes', 'acao', 'planoacao', 'acaocorretiva']) || '').trim();
+
+						if (!data && !area && !local && !categoria && !descricao && !responsavel) {
+							return null;
+						}
+
+						var semana = semanaInformada || calcularSemanaIsoImportacaoInspecao(data);
+
+						return {
+							id: Date.now() + indice + Math.floor(Math.random() * 1000),
+							data: data,
+							area: area,
+							local: local,
+							tipo: tipo,
+							semana: semana,
+							descricao: descricao,
+							acoes: acoes,
+							categoria: categoria,
+							classificacao: classificacao,
+							severidade: severidade,
+							risco: risco,
+							controlavel: controlavel,
+							interdicao: interdicao,
+							emissor: emissor,
+							responsavel: responsavel,
+							prazo: prazo,
+							conclusao: conclusao,
+							status: status,
+							fotoAntes: null,
+							fotoDepois: null,
+							dataCriacao: new Date().toISOString()
+						};
+					}
+
+					var botaoImportarPlanilhaInspecao = document.getElementById('btn-importar-planilha-inspecao');
+					var inputPlanilhaInspecao = document.getElementById('input-planilha-inspecao');
+
+					if (botaoImportarPlanilhaInspecao && inputPlanilhaInspecao) {
+						botaoImportarPlanilhaInspecao.addEventListener('click', function() {
+							inputPlanilhaInspecao.value = '';
+							inputPlanilhaInspecao.click();
+						});
+
+						inputPlanilhaInspecao.addEventListener('change', function(eventoArquivo) {
+							var arquivo = eventoArquivo.target.files && eventoArquivo.target.files[0];
+							if (!arquivo) {
+								return;
+							}
+
+							if (typeof XLSX === 'undefined') {
+								alert('Biblioteca XLSX não está disponível no momento.');
+								return;
+							}
+
+							if (arquivo.size > 10 * 1024 * 1024) {
+								alert('Arquivo muito grande. Limite máximo de 10MB.');
+								return;
+							}
+
+							if (!/\.(xlsx|xls)$/i.test(arquivo.name)) {
+								alert('Selecione um arquivo Excel válido (.xlsx ou .xls).');
+								return;
+							}
+
+							var leitor = new FileReader();
+							leitor.onload = function(e) {
+								try {
+									var dados = new Uint8Array(e.target.result);
+									var workbook = XLSX.read(dados, { type: 'array', cellDates: true });
+									var primeiraAba = workbook.SheetNames[0];
+
+									if (!primeiraAba) {
+										alert('A planilha está vazia.');
+										return;
+									}
+
+									var worksheet = workbook.Sheets[primeiraAba];
+									var linhas = XLSX.utils.sheet_to_json(worksheet, { defval: '', raw: false });
+
+									if (!linhas.length) {
+										alert('Nenhuma linha encontrada na planilha para importar.');
+										return;
+									}
+
+									var registrosImportados = [];
+									var linhasIgnoradas = 0;
+
+									linhas.forEach(function(linha, indice) {
+										var inspeccaoMapeada = mapearLinhaImportacaoInspecao(linha, indice);
+										if (inspeccaoMapeada) {
+											registrosImportados.push(inspeccaoMapeada);
+										} else {
+											linhasIgnoradas++;
+										}
+									});
+
+									if (!registrosImportados.length) {
+										alert('Nenhuma linha válida encontrada para importação. Verifique os cabeçalhos da planilha.');
+										return;
+									}
+
+									var confirmar = confirm(
+										'Deseja importar ' + registrosImportados.length + ' registro(s) para Registros de Inspeção?\n' +
+										(linhasIgnoradas > 0 ? ('Linhas ignoradas: ' + linhasIgnoradas + '\n') : '') +
+										'Esta ação adicionará os dados aos registros atuais.'
+									);
+
+									if (!confirmar) {
+										return;
+									}
+
+									inspecoes = inspecoes.concat(registrosImportados);
+									localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
+									carregarInspecoes();
+
+									alert('Importação concluída com sucesso! ' + registrosImportados.length + ' registro(s) adicionados.');
+								} catch (erroImportacao) {
+									console.error('Erro ao importar planilha de inspeção:', erroImportacao);
+									alert('Não foi possível importar a planilha. Verifique o formato e tente novamente.');
+								}
+							};
+
+							leitor.onerror = function() {
+								alert('Erro ao ler o arquivo selecionado.');
+							};
+
+							leitor.readAsArrayBuffer(arquivo);
+						});
+					}
 					
 					// SISTEMA DE ART (Análise de Risco da Tarefa)
 					
