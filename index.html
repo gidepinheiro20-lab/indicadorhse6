@@ -8751,6 +8751,43 @@
 						return null;
 					}
 
+					function obterImagemEmbutidaPorProximidadeImportacaoInspecao(mapaImagens, linhaNumero, colunaPreferida, distanciaMaxima) {
+						if (!mapaImagens || !linhaNumero || colunaPreferida === null || colunaPreferida === undefined) {
+							return '';
+						}
+
+						var chaveExata = linhaNumero + ':' + colunaPreferida;
+						if (mapaImagens[chaveExata]) {
+							return mapaImagens[chaveExata];
+						}
+
+						var limite = Number(distanciaMaxima);
+						if (!isFinite(limite) || limite < 1) {
+							limite = 2;
+						}
+
+						var melhorImagem = '';
+						var melhorDistancia = Number.MAX_SAFE_INTEGER;
+
+						for (var chave in mapaImagens) {
+							if (!Object.prototype.hasOwnProperty.call(mapaImagens, chave)) continue;
+							var partes = String(chave).split(':');
+							if (partes.length !== 2) continue;
+
+							var linha = parseInt(partes[0], 10);
+							var coluna = parseInt(partes[1], 10);
+							if (isNaN(linha) || isNaN(coluna) || linha !== linhaNumero) continue;
+
+							var distancia = Math.abs(coluna - colunaPreferida);
+							if (distancia <= limite && distancia < melhorDistancia) {
+								melhorDistancia = distancia;
+								melhorImagem = mapaImagens[chave];
+							}
+						}
+
+						return melhorImagem;
+					}
+
 					function normalizarCaminhoZipImportacaoInspecao(basePath, target) {
 						if (!target) return '';
 						var alvo = String(target).trim().replace(/\\/g, '/');
@@ -8962,8 +8999,10 @@
 					}
 
 					var aliasesFotoAntesImportacaoInspecao = [
+						'foto',
 						'foto antes',
 						'fotoantes',
+						'imagem',
 						'imagem antes',
 						'imagemantes',
 						'url foto antes',
@@ -8974,8 +9013,10 @@
 
 					var aliasesFotoDepoisImportacaoInspecao = [
 						'foto depois',
+						'foto_depois',
 						'fotodepois',
 						'imagem depois',
+						'imagem_depois',
 						'imagemdepois',
 						'url foto depois',
 						'urlfotodepois',
@@ -9125,8 +9166,12 @@
 										var colunaFotoDepois = obterColunaPorAliasesImportacaoInspecao(infoCabecalhoImportacao, aliasesFotoDepoisImportacaoInspecao);
 
 										if (!valorFotoAntes && colunaFotoAntes !== null) {
-											var chaveFotoAntes = numeroLinhaPlanilha + ':' + colunaFotoAntes;
-											var fotoEmbutidaAntes = imagensEmbutidasPorCelula[chaveFotoAntes];
+											var fotoEmbutidaAntes = obterImagemEmbutidaPorProximidadeImportacaoInspecao(
+												imagensEmbutidasPorCelula,
+												numeroLinhaPlanilha,
+												colunaFotoAntes,
+												2
+											);
 											if (fotoEmbutidaAntes) {
 												linha['foto antes'] = fotoEmbutidaAntes;
 												valorFotoAntes = fotoEmbutidaAntes;
@@ -9134,8 +9179,12 @@
 										}
 
 										if (!valorFotoDepois && colunaFotoDepois !== null) {
-											var chaveFotoDepois = numeroLinhaPlanilha + ':' + colunaFotoDepois;
-											var fotoEmbutidaDepois = imagensEmbutidasPorCelula[chaveFotoDepois];
+											var fotoEmbutidaDepois = obterImagemEmbutidaPorProximidadeImportacaoInspecao(
+												imagensEmbutidasPorCelula,
+												numeroLinhaPlanilha,
+												colunaFotoDepois,
+												2
+											);
 											if (fotoEmbutidaDepois) {
 												linha['foto depois'] = fotoEmbutidaDepois;
 												valorFotoDepois = fotoEmbutidaDepois;
