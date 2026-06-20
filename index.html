@@ -2475,7 +2475,7 @@
 										<span>📍</span> Cadastrar Área / Local
 									</button>
 									<button id="btn-cadastrar-categoria" type="button" style="background:#059669;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
-										<span>🏷️</span> Cadastrar Categoria
+										<span>🏷️</span> Cadastrar Sub-categoria
 									</button>
 									<!-- Botão para cadastrar novos tipos de registro -->
 									<button id="btn-cadastrar-tipo-registro" type="button" style="background:#7c3aed;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
@@ -2528,7 +2528,7 @@
 										<div>Foto antes</div>
 										<div>Foto depois</div>
 										<div>Ações tomadas</div>
-										<div>Categoria</div>
+										<div>Sub-categoria</div>
 										<div>Severidade</div>
 										<div>Interdição</div>
 										<div>Responsável</div>
@@ -2677,10 +2677,10 @@
 									<textarea id="insp-acoes" placeholder="Descreva as ações tomadas para resolver a situação..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
 								</div>
 								
-								<!-- Sexta linha: Categoria, Classificação, Severidade -->
+								<!-- Sexta linha: Sub-categoria, Categoria, Severidade -->
 								<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
 									<div>
-										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Categoria</label>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Sub-categoria</label>
 										<select id="insp-categoria" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
 											<option value=""></option>
 											<!-- Opções carregadas dinamicamente -->
@@ -2688,7 +2688,7 @@
 									</div>
 									
 									<div>
-										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Classificação</label>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Categoria</label>
 										<select id="insp-classificacao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
 											<option value=""></option>
 											<!-- Opções carregadas dinamicamente -->
@@ -2935,10 +2935,10 @@
 									<textarea id="edit-insp-acoes" placeholder="Descreva as ações tomadas para resolver a situação..." style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;min-height:80px;resize:vertical"></textarea>
 								</div>
 								
-								<!-- Sexta linha: Categoria, Classificação, Severidade -->
+								<!-- Sexta linha: Sub-categoria, Categoria, Severidade -->
 								<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
 									<div>
-										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Categoria</label>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Sub-categoria</label>
 										<select id="edit-insp-categoria" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
 											<option value=""></option>
 											<!-- Opções carregadas dinamicamente -->
@@ -2946,7 +2946,7 @@
 									</div>
 									
 									<div>
-										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Classificação</label>
+										<label style="display:block;font-weight:500;color:#374151;margin-bottom:6px;font-size:0.9rem">Categoria</label>
 										<select id="edit-insp-classificacao" required style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
 											<option value=""></option>
 											<!-- Opções carregadas dinamicamente -->
@@ -3050,16 +3050,16 @@
 						<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
 							<div>
 								<h1 style="margin:0;font-size:1.8rem;font-weight:700;display:flex;align-items:center;gap:10px">
-									<span>🏷️</span> Categorias de HSE
+									<span>🏷️</span> Sub-categorias de HSE
 								</h1>
-								<div style="font-size:1rem;opacity:0.9">Sistema de classificação e categorias para inspeções</div>
+								<div style="font-size:1rem;opacity:0.9">Sistema de categorias e sub-categorias para inspeções</div>
 							</div>
 							<div style="display:flex;gap:12px;flex-wrap:wrap">
 								<button id="btn-voltar-inspecao" type="button" style="background:#047857;color:#fff;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
 									<span>←</span> Voltar
 								</button>
 								<button id="btn-nova-categoria" type="button" style="background:#fff;color:#059669;padding:10px 20px;font-size:0.9rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px">
-									<span>✨</span> Nova Categoria
+									<span>✨</span> Nova Sub-categoria
 								</button>
 							</div>
 						</div>
@@ -3069,7 +3069,7 @@
 					<div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden">
 						<div style="padding:20px;border-bottom:1px solid #f3f4f6">
 							<h3 style="margin:0;color:#374151;font-size:1.2rem;display:flex;align-items:center;gap:8px">
-								<span>📋</span> Classificação e Categoria
+								<span>📋</span> Categoria e Sub-categoria
 							</h3>
 						</div>
 						
@@ -3077,8 +3077,8 @@
 							<!-- Mensagem quando não há categorias -->
 							<div style="padding:60px 20px;text-align:center;color:#9ca3af">
 								<div style="font-size:3rem;margin-bottom:16px;opacity:0.5">🏷️</div>
-								<div style="font-size:1.1rem;font-weight:500;margin-bottom:8px">Nenhuma categoria cadastrada ainda.</div>
-								<div style="font-size:0.9rem">Clique em "Nova Categoria" para começar.</div>
+								<div style="font-size:1.1rem;font-weight:500;margin-bottom:8px">Nenhuma sub-categoria cadastrada ainda.</div>
+								<div style="font-size:0.9rem">Clique em "Nova Sub-categoria" para começar.</div>
 							</div>
 						</div>
 					</div>
@@ -3286,18 +3286,18 @@
 					<button onclick="fecharModalCategoria()" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:1.2rem;color:#6b7280;cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center">×</button>
 					
 					<div style="padding:24px">
-						<h2 style="margin:0 0 24px 0;font-size:1.1rem;font-weight:600;color:#374151">Adicionar Classificação e Categoria</h2>
+						<h2 style="margin:0 0 24px 0;font-size:1.1rem;font-weight:600;color:#374151">Adicionar Categoria e Sub-categoria</h2>
 						
 						<form id="form-nova-categoria">
-							<!-- Campo Classificação -->
+							<!-- Campo Categoria -->
 							<div style="margin-bottom:20px">
-								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Classificação</label>
+								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Categoria</label>
 								<input type="text" id="cat-classificacao" required placeholder="" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
 							</div>
 							
-							<!-- Campo Categoria -->
+							<!-- Campo Sub-categoria -->
 							<div style="margin-bottom:32px">
-								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Categoria</label>
+								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Sub-categoria</label>
 								<input type="text" id="cat-nome" required placeholder="" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
 							</div>
 							
@@ -3338,17 +3338,17 @@
 							
 							<!-- Classificações Existentes -->
 							<div style="margin-bottom:20px">
-								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Classificações Existentes</label>
+								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Categorias Existentes</label>
 								<div id="edit-classificacoes-lista" style="min-height:40px;padding:12px;border:1px solid #d1d5db;border-radius:6px;background:#f9fafb">
 									<!-- Lista será preenchida dinamicamente -->
 								</div>
 							</div>
 							
-							<!-- Adicionar Nova Classificação -->
+							<!-- Adicionar Nova Categoria -->
 							<div style="margin-bottom:32px">
-								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Adicionar Nova Classificação</label>
+								<label style="display:block;font-weight:500;color:#374151;margin-bottom:8px;font-size:0.9rem">Adicionar Nova Categoria</label>
 								<div style="display:flex;gap:8px">
-									<input type="text" id="edit-nova-classificacao" placeholder="Digite uma nova classificação" style="flex:1;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
+									<input type="text" id="edit-nova-classificacao" placeholder="Digite uma nova categoria" style="flex:1;padding:12px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9rem;background:#fff">
 									<button type="button" onclick="adicionarClassificacaoEdicao()" style="background:#10b981;color:#fff;padding:12px 16px;border:none;border-radius:6px;cursor:pointer;font-weight:500">+ Adicionar</button>
 								</div>
 							</div>
@@ -8210,7 +8210,7 @@
 						var categoriasHSEData = JSON.parse(localStorage.getItem('categoriasHSE')) || [];
 						var selectCategoria = document.getElementById('edit-insp-categoria');
 						if (selectCategoria) {
-							selectCategoria.innerHTML = '<option value="">Selecione a categoria...</option>';
+							selectCategoria.innerHTML = '<option value="">Selecione a sub-categoria...</option>';
 							categoriasHSEData.forEach(function(categoria) {
 								var option = document.createElement('option');
 								option.value = categoria.nome;
@@ -8302,9 +8302,9 @@
 						html += '<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:20px;margin-bottom:20px">';
 						html += '<h3 style="margin:0 0 16px 0;color:#374151;font-size:1.2rem;font-weight:600;display:flex;align-items:center;gap:8px">🔍 Detalhes da Inspeção</h3>';
 						html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:16px">';
-						html += '<div><strong style="color:#6b7280">Categoria:</strong><br><span style="color:#374151">' + (inspecao.categoria || 'Não informado') + '</span></div>';
+						html += '<div><strong style="color:#6b7280">Sub-categoria:</strong><br><span style="color:#374151">' + (inspecao.categoria || 'Não informado') + '</span></div>';
 						if (inspecao.classificacao) {
-							html += '<div><strong style="color:#6b7280">Classificação:</strong><br><span style="color:#374151">' + inspecao.classificacao + '</span></div>';
+							html += '<div><strong style="color:#6b7280">Categoria:</strong><br><span style="color:#374151">' + inspecao.classificacao + '</span></div>';
 						}
 						var corSeveridade = getCorSeveridade(inspecao.severidade);
 						html += '<div><strong style="color:#6b7280">Severidade:</strong><br><span style="background:' + corSeveridade + ';color:#fff;padding:4px 12px;border-radius:16px;font-size:0.85rem;font-weight:500">' + (inspecao.severidade || 'Não informado') + '</span></div>';
@@ -9030,8 +9030,8 @@
 						var local = String(obterValorPorAliasesInspecao(linha, ['local', 'localizacao']) || '').trim();
 						var tipo = String(obterValorPorAliasesInspecao(linha, ['tipo', 'tiporegistro']) || '').trim() || 'Inspeção de HSE';
 						var semanaInformada = String(obterValorPorAliasesInspecao(linha, ['semana', 'nsemana']) || '').trim();
-						var categoria = String(obterValorPorAliasesInspecao(linha, ['categoria']) || '').trim();
-						var classificacao = String(obterValorPorAliasesInspecao(linha, ['classificacao']) || '').trim();
+						var categoria = String(obterValorPorAliasesInspecao(linha, ['subcategoria', 'sub-categoria', 'sub categoria', 'categoria']) || '').trim();
+						var classificacao = String(obterValorPorAliasesInspecao(linha, ['classificacao', 'classificação', 'categoria']) || '').trim();
 						var severidade = String(obterValorPorAliasesInspecao(linha, ['severidade']) || '').trim();
 						var risco = String(obterValorPorAliasesInspecao(linha, ['risco', 'riscoperigo', 'perigo']) || '').trim();
 						var controlavel = String(obterValorPorAliasesInspecao(linha, ['controlavel', 'controlavelsimnao']) || '').trim() || 'Sim';
@@ -9476,7 +9476,7 @@
 						var nomeCategoria = document.getElementById('cat-nome').value.trim();
 						
 						if (!nomeClassificacao || !nomeCategoria) {
-							alert('Por favor, preencha tanto a classificação quanto a categoria.');
+							alert('Por favor, preencha tanto a categoria quanto a sub-categoria.');
 							return;
 						}
 						
@@ -9486,17 +9486,17 @@
 						});
 						
 						if (categoriaExistente) {
-							// Adicionar classificação à categoria existente
+							// Adicionar categoria à sub-categoria existente
 							if (!categoriaExistente.classificacoes.includes(nomeClassificacao)) {
 								categoriaExistente.classificacoes.push(nomeClassificacao);
 								localStorage.setItem('categoriasHSE', JSON.stringify(categoriasHSE));
-								alert('Classificação adicionada à categoria existente!');
+								alert('Categoria adicionada à sub-categoria existente!');
 							} else {
-								alert('Esta classificação já existe nesta categoria.');
+								alert('Esta categoria já existe nesta sub-categoria.');
 								return;
 							}
 						} else {
-							// Criar nova categoria
+							// Criar nova sub-categoria
 							var novaCategoria = {
 								id: Date.now(),
 								nome: nomeCategoria,
@@ -9507,7 +9507,7 @@
 							
 							categoriasHSE.push(novaCategoria);
 							localStorage.setItem('categoriasHSE', JSON.stringify(categoriasHSE));
-							alert('Nova categoria criada com sucesso!');
+							alert('Nova sub-categoria criada com sucesso!');
 						}
 						
 						fecharModalCategoria();
@@ -9519,11 +9519,11 @@
 						var lista = document.getElementById('lista-categorias');
 						
 						if (categoriasHSE.length === 0) {
-							lista.innerHTML = '<div style="padding:60px 20px;text-align:center;color:#9ca3af"><div style="font-size:3rem;margin-bottom:16px;opacity:0.5">🏷️</div><div style="font-size:1.1rem;font-weight:500;margin-bottom:8px">Nenhuma categoria cadastrada ainda.</div><div style="font-size:0.9rem">Clique em "Nova Categoria" para começar.</div></div>';
+							lista.innerHTML = '<div style="padding:60px 20px;text-align:center;color:#9ca3af"><div style="font-size:3rem;margin-bottom:16px;opacity:0.5">🏷️</div><div style="font-size:1.1rem;font-weight:500;margin-bottom:8px">Nenhuma sub-categoria cadastrada ainda.</div><div style="font-size:0.9rem">Clique em "Nova Sub-categoria" para começar.</div></div>';
 							return;
 						}
 						
-						// Agrupar categorias por classificação
+						// Agrupar sub-categorias por categoria
 						var grupos = {};
 						
 						categoriasHSE.forEach(function(categoria) {
@@ -9536,12 +9536,12 @@
 								grupos[classificacao].push(categoria);
 							});
 							
-							// Se não tem classificação, colocar em grupo "Sem Classificação"
+							// Se não tem categoria, colocar em grupo "Sem Categoria"
 							if (classificacoes.length === 0) {
-								if (!grupos['Sem Classificação']) {
-									grupos['Sem Classificação'] = [];
+								if (!grupos['Sem Categoria']) {
+									grupos['Sem Categoria'] = [];
 								}
-								grupos['Sem Classificação'].push(categoria);
+								grupos['Sem Categoria'].push(categoria);
 							}
 						});
 						
@@ -9553,10 +9553,10 @@
 						gruposOrdenados.forEach(function(nomeGrupo) {
 							var categorias = grupos[nomeGrupo];
 							
-							// Header do grupo (Classificação)
+							// Header do grupo (Categoria)
 							html += '<div style="margin-bottom:20px">';
 							html += '<div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff;padding:16px 20px;border-radius:8px;margin-bottom:12px">';
-							html += '<div style="font-size:0.8rem;font-weight:500;opacity:0.9;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">🏷️ CLASSIFICAÇÕES:</div>';
+							html += '<div style="font-size:0.8rem;font-weight:500;opacity:0.9;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">🏷️ CATEGORIAS:</div>';
 							html += '<div style="font-size:1.1rem;font-weight:700">' + nomeGrupo + '</div>';
 							html += '</div>';
 							
@@ -9565,11 +9565,11 @@
 								html += '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin-bottom:12px;margin-left:20px">';
 								html += '<div style="display:flex;justify-content:space-between;align-items:center">';
 								
-								// Lado esquerdo - Info da categoria
+								// Lado esquerdo - Info da sub-categoria
 								html += '<div style="display:flex;align-items:center;gap:12px;flex:1">';
 								html += '<div style="width:12px;height:12px;background:' + (categoria.cor || '#10b981') + ';border-radius:50%;flex-shrink:0"></div>';
 								html += '<div>';
-								html += '<div style="font-size:0.75rem;color:#6b7280;font-weight:500;margin-bottom:2px">Categoria:</div>';
+								html += '<div style="font-size:0.75rem;color:#6b7280;font-weight:500;margin-bottom:2px">Sub-categoria:</div>';
 								html += '<div style="font-size:1rem;font-weight:600;color:#374151">' + categoria.nome + '</div>';
 								if (categoria.descricao) {
 									html += '<div style="font-size:0.85rem;color:#6b7280;margin-top:4px">' + categoria.descricao + '</div>';
@@ -9610,7 +9610,7 @@
 						document.getElementById('edit-cat-nome').value = categoriaEditando.nome;
 						document.getElementById('edit-cat-cor').value = categoriaEditando.cor || '#10b981';
 						
-						// Carregar as classificações existentes
+						// Carregar as categorias existentes
 						carregarClassificacoesEdicao();
 						
 						// Abrir o modal
@@ -9622,7 +9622,7 @@
 						var lista = document.getElementById('edit-classificacoes-lista');
 						
 						if (!categoriaEditando.classificacoes || categoriaEditando.classificacoes.length === 0) {
-							lista.innerHTML = '<div style="color:#6b7280;font-style:italic;text-align:center">Nenhuma classificação cadastrada</div>';
+							lista.innerHTML = '<div style="color:#6b7280;font-style:italic;text-align:center">Nenhuma categoria cadastrada</div>';
 							return;
 						}
 						
@@ -9638,18 +9638,18 @@
 						lista.innerHTML = html;
 					}
 					
-					// Função para adicionar nova classificação na edição
+					// Função para adicionar nova categoria na edição
 					function adicionarClassificacaoEdicao() {
 						var novaClassif = document.getElementById('edit-nova-classificacao').value.trim();
 						
 						if (!novaClassif) {
-							alert('Por favor, digite uma classificação.');
+							alert('Por favor, digite uma categoria.');
 							return;
 						}
 						
 						// Verificar se já existe
 						if (categoriaEditando.classificacoes.includes(novaClassif)) {
-							alert('Esta classificação já existe.');
+							alert('Esta categoria já existe.');
 							return;
 						}
 						
@@ -9664,9 +9664,9 @@
 						carregarClassificacoesEdicao();
 					}
 					
-					// Função para remover classificação na edição
+					// Função para remover categoria na edição
 					function removerClassificacaoEdicao(index) {
-						if (confirm('Deseja remover esta classificação?')) {
+						if (confirm('Deseja remover esta categoria?')) {
 							categoriaEditando.classificacoes.splice(index, 1);
 							carregarClassificacoesEdicao();
 						}
