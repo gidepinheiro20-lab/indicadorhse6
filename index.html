@@ -17,6 +17,7 @@
 		<!-- Carregamento de configuração da API -->
 		<script src="config.js" defer></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 
 
@@ -8677,6 +8678,311 @@
 						return null;
 					}
 
+					function obterInfoCabecalhoImportacaoInspecao(worksheet) {
+						if (!worksheet || !worksheet['!ref'] || typeof XLSX === 'undefined' || !XLSX.utils || !XLSX.utils.decode_range) {
+							return { linhaCabecalho: 1, colunas: {} };
+						}
+
+						var range = XLSX.utils.decode_range(worksheet['!ref']);
+						var linhaCabecalhoIdx = range.s.r;
+						var colunas = {};
+
+						for (var coluna = range.s.c; coluna <= range.e.c; coluna++) {
+							var endereco = XLSX.utils.encode_cell({ r: linhaCabecalhoIdx, c: coluna });
+							var celula = worksheet[endereco];
+							var valorCabecalho = celula ? (celula.w || celula.v || '') : '';
+							var chaveNormalizada = normalizarTextoCabecalhoInspecao(valorCabecalho);
+							if (chaveNormalizada) {
+								colunas[chaveNormalizada] = coluna;
+							}
+						}
+
+						return {
+							linhaCabecalho: linhaCabecalhoIdx + 1,
+							colunas: colunas
+						};
+					}
+
+					function obterHyperlinkCelulaImportacaoInspecao(worksheet, linhaNumero, colunaNumero) {
+						if (!worksheet || !linhaNumero || colunaNumero === null || colunaNumero === undefined || typeof XLSX === 'undefined' || !XLSX.utils || !XLSX.utils.encode_cell) {
+							return '';
+						}
+
+						var endereco = XLSX.utils.encode_cell({ r: linhaNumero - 1, c: colunaNumero });
+						var celula = worksheet[endereco];
+						if (celula && celula.l && celula.l.Target) {
+							return String(celula.l.Target || '').trim();
+						}
+						return '';
+					}
+
+					function obterHyperlinkPorAliasesImportacaoInspecao(worksheet, infoCabecalho, linhaNumero, aliases) {
+						if (!infoCabecalho || !infoCabecalho.colunas) {
+							return '';
+						}
+
+						for (var i = 0; i < aliases.length; i++) {
+							var aliasNormalizado = normalizarTextoCabecalhoInspecao(aliases[i]);
+							var coluna = infoCabecalho.colunas[aliasNormalizado];
+							if (coluna === undefined) {
+								continue;
+							}
+							var link = obterHyperlinkCelulaImportacaoInspecao(worksheet, linhaNumero, coluna);
+							if (link) {
+								return link;
+							}
+						}
+
+						return '';
+					}
+
+					function obterColunaPorAliasesImportacaoInspecao(infoCabecalho, aliases) {
+						if (!infoCabecalho || !infoCabecalho.colunas) {
+							return null;
+						}
+
+						for (var i = 0; i < aliases.length; i++) {
+							var aliasNormalizado = normalizarTextoCabecalhoInspecao(aliases[i]);
+							if (infoCabecalho.colunas[aliasNormalizado] !== undefined) {
+								return infoCabecalho.colunas[aliasNormalizado];
+							}
+						}
+
+						return null;
+					}
+
+					function normalizarCaminhoZipImportacaoInspecao(basePath, target) {
+						if (!target) return '';
+						var alvo = String(target).trim().replace(/\\/g, '/');
+						if (!alvo) return '';
+						if (/^https?:\/\//i.test(alvo)) return '';
+						if (/^[a-zA-Z]+:\//.test(alvo)) return '';
+						if (alvo.charAt(0) === '/') {
+							return alvo.replace(/^\/+/, '');
+						}
+
+						var basePartes = String(basePath || '').replace(/\\/g, '/').split('/');
+						basePartes.pop();
+						var partesAlvo = alvo.split('/');
+
+						for (var i = 0; i < partesAlvo.length; i++) {
+							var parte = partesAlvo[i];
+							if (!parte || parte === '.') {
+								continue;
+							}
+							if (parte === '..') {
+								if (basePartes.length) basePartes.pop();
+								continue;
+							}
+							basePartes.push(parte);
+						}
+
+						return basePartes.join('/');
+					}
+
+					function obterMimeImagemImportacaoInspecao(caminhoArquivo) {
+						var caminho = String(caminhoArquivo || '').toLowerCase();
+						if (/\.png$/i.test(caminho)) return 'image/png';
+						if (/\.jpe?g$/i.test(caminho)) return 'image/jpeg';
+						if (/\.gif$/i.test(caminho)) return 'image/gif';
+						if (/\.bmp$/i.test(caminho)) return 'image/bmp';
+						if (/\.webp$/i.test(caminho)) return 'image/webp';
+						if (/\.svg$/i.test(caminho)) return 'image/svg+xml';
+						return 'application/octet-stream';
+					}
+
+					function obterAtributoXmlImportacaoInspecao(elemento, nome) {
+						if (!elemento || !elemento.attributes) return '';
+						var valorDireto = elemento.getAttribute(nome);
+						if (valorDireto) return valorDireto;
+						for (var i = 0; i < elemento.attributes.length; i++) {
+							var attr = elemento.attributes[i];
+							if (attr && attr.name && attr.name.split(':').pop() === nome) {
+								return attr.value || '';
+							}
+						}
+						return '';
+					}
+
+					function obterFilhoPorLocalNameImportacaoInspecao(elementoPai, localName) {
+						if (!elementoPai || !elementoPai.childNodes) return null;
+						for (var i = 0; i < elementoPai.childNodes.length; i++) {
+							var no = elementoPai.childNodes[i];
+							if (no && no.nodeType === 1 && no.localName === localName) {
+								return no;
+							}
+						}
+						return null;
+					}
+
+					function obterDescendentePorLocalNameImportacaoInspecao(elementoPai, localName) {
+						if (!elementoPai || !elementoPai.getElementsByTagName) return null;
+						var todos = elementoPai.getElementsByTagName('*');
+						for (var i = 0; i < todos.length; i++) {
+							if (todos[i] && todos[i].localName === localName) {
+								return todos[i];
+							}
+						}
+						return null;
+					}
+
+					function converterUint8ArrayParaBase64ImportacaoInspecao(bytes) {
+						var binario = '';
+						var tamanhoBloco = 0x8000;
+						for (var i = 0; i < bytes.length; i += tamanhoBloco) {
+							var bloco = bytes.subarray(i, i + tamanhoBloco);
+							binario += String.fromCharCode.apply(null, bloco);
+						}
+						return btoa(binario);
+					}
+
+					async function extrairImagensEmbutidasXlsxImportacaoInspecao(arrayBuffer, nomeAba) {
+						if (typeof JSZip === 'undefined' || !arrayBuffer) {
+							return {};
+						}
+
+						var mapaImagens = {};
+						var zip = await JSZip.loadAsync(arrayBuffer);
+
+						var workbookXmlFile = zip.file('xl/workbook.xml');
+						var workbookRelsFile = zip.file('xl/_rels/workbook.xml.rels');
+						if (!workbookXmlFile || !workbookRelsFile) {
+							return mapaImagens;
+						}
+
+						var workbookXml = await workbookXmlFile.async('string');
+						var workbookRelsXml = await workbookRelsFile.async('string');
+						var parser = new DOMParser();
+						var workbookDoc = parser.parseFromString(workbookXml, 'application/xml');
+						var workbookRelsDoc = parser.parseFromString(workbookRelsXml, 'application/xml');
+
+						var sheetNodes = workbookDoc.getElementsByTagName('*');
+						var sheetRid = '';
+						for (var i = 0; i < sheetNodes.length; i++) {
+							if (!sheetNodes[i] || sheetNodes[i].localName !== 'sheet') continue;
+							var nome = sheetNodes[i].getAttribute('name') || '';
+							if (nome === nomeAba) {
+								sheetRid = obterAtributoXmlImportacaoInspecao(sheetNodes[i], 'id');
+								break;
+							}
+						}
+						if (!sheetRid) return mapaImagens;
+
+						var relNodes = workbookRelsDoc.getElementsByTagName('*');
+						var worksheetPath = '';
+						for (var j = 0; j < relNodes.length; j++) {
+							if (!relNodes[j] || relNodes[j].localName !== 'Relationship') continue;
+							if ((relNodes[j].getAttribute('Id') || '') === sheetRid) {
+								worksheetPath = normalizarCaminhoZipImportacaoInspecao('xl/workbook.xml', relNodes[j].getAttribute('Target') || '');
+								break;
+							}
+						}
+						if (!worksheetPath) return mapaImagens;
+
+						var worksheetFile = zip.file(worksheetPath);
+						if (!worksheetFile) return mapaImagens;
+						var worksheetXml = await worksheetFile.async('string');
+						var worksheetDoc = parser.parseFromString(worksheetXml, 'application/xml');
+
+						var worksheetRelsPath = worksheetPath.replace(/([^\/]+)$/, '_rels/$1.rels');
+						var worksheetRelsFile = zip.file(worksheetRelsPath);
+						if (!worksheetRelsFile) return mapaImagens;
+						var worksheetRelsXml = await worksheetRelsFile.async('string');
+						var worksheetRelsDoc = parser.parseFromString(worksheetRelsXml, 'application/xml');
+
+						var drawingRelsMap = {};
+						var wsRelNodes = worksheetRelsDoc.getElementsByTagName('*');
+						for (var k = 0; k < wsRelNodes.length; k++) {
+							if (!wsRelNodes[k] || wsRelNodes[k].localName !== 'Relationship') continue;
+							drawingRelsMap[wsRelNodes[k].getAttribute('Id') || ''] = wsRelNodes[k].getAttribute('Target') || '';
+						}
+
+						var drawingNodes = worksheetDoc.getElementsByTagName('*');
+						for (var d = 0; d < drawingNodes.length; d++) {
+							if (!drawingNodes[d] || drawingNodes[d].localName !== 'drawing') continue;
+							var drawingRid = obterAtributoXmlImportacaoInspecao(drawingNodes[d], 'id');
+							if (!drawingRid || !drawingRelsMap[drawingRid]) continue;
+
+							var drawingPath = normalizarCaminhoZipImportacaoInspecao(worksheetPath, drawingRelsMap[drawingRid]);
+							var drawingFile = zip.file(drawingPath);
+							if (!drawingFile) continue;
+							var drawingXml = await drawingFile.async('string');
+							var drawingDoc = parser.parseFromString(drawingXml, 'application/xml');
+
+							var drawingRelsPath = drawingPath.replace(/([^\/]+)$/, '_rels/$1.rels');
+							var drawingRelsFile = zip.file(drawingRelsPath);
+							if (!drawingRelsFile) continue;
+							var drawingRelsXml = await drawingRelsFile.async('string');
+							var drawingRelsDoc = parser.parseFromString(drawingRelsXml, 'application/xml');
+
+							var imagemRelsMap = {};
+							var drRelNodes = drawingRelsDoc.getElementsByTagName('*');
+							for (var r = 0; r < drRelNodes.length; r++) {
+								if (!drRelNodes[r] || drRelNodes[r].localName !== 'Relationship') continue;
+								imagemRelsMap[drRelNodes[r].getAttribute('Id') || ''] = drRelNodes[r].getAttribute('Target') || '';
+							}
+
+							var anchorNodes = drawingDoc.getElementsByTagName('*');
+							for (var a = 0; a < anchorNodes.length; a++) {
+								var anchor = anchorNodes[a];
+								if (!anchor || (anchor.localName !== 'oneCellAnchor' && anchor.localName !== 'twoCellAnchor')) continue;
+
+								var fromEl = obterFilhoPorLocalNameImportacaoInspecao(anchor, 'from');
+								if (!fromEl) continue;
+								var colEl = obterFilhoPorLocalNameImportacaoInspecao(fromEl, 'col');
+								var rowEl = obterFilhoPorLocalNameImportacaoInspecao(fromEl, 'row');
+								if (!colEl || !rowEl) continue;
+
+								var colunaIdx = parseInt(colEl.textContent || '', 10);
+								var linhaIdx = parseInt(rowEl.textContent || '', 10);
+								if (isNaN(colunaIdx) || isNaN(linhaIdx)) continue;
+
+								var blipEl = obterDescendentePorLocalNameImportacaoInspecao(anchor, 'blip');
+								if (!blipEl) continue;
+								var imagemRid = obterAtributoXmlImportacaoInspecao(blipEl, 'embed');
+								if (!imagemRid || !imagemRelsMap[imagemRid]) continue;
+
+								var imagemPath = normalizarCaminhoZipImportacaoInspecao(drawingPath, imagemRelsMap[imagemRid]);
+								var imagemFile = zip.file(imagemPath);
+								if (!imagemFile) continue;
+
+								var imagemBytes = await imagemFile.async('uint8array');
+								var mime = obterMimeImagemImportacaoInspecao(imagemPath);
+								var base64 = converterUint8ArrayParaBase64ImportacaoInspecao(imagemBytes);
+								var dataUrl = 'data:' + mime + ';base64,' + base64;
+
+								var chaveCelula = (linhaIdx + 1) + ':' + colunaIdx;
+								if (!mapaImagens[chaveCelula]) {
+									mapaImagens[chaveCelula] = dataUrl;
+								}
+							}
+						}
+
+						return mapaImagens;
+					}
+
+					var aliasesFotoAntesImportacaoInspecao = [
+						'foto antes',
+						'fotoantes',
+						'imagem antes',
+						'imagemantes',
+						'url foto antes',
+						'urlfotoantes',
+						'link foto antes',
+						'linkfotoantes'
+					];
+
+					var aliasesFotoDepoisImportacaoInspecao = [
+						'foto depois',
+						'fotodepois',
+						'imagem depois',
+						'imagemdepois',
+						'url foto depois',
+						'urlfotodepois',
+						'link foto depois',
+						'linkfotodepois'
+					];
+
 					function mapearLinhaImportacaoInspecao(linha, indice) {
 						var data = converterValorDataInspecao(obterValorPorAliasesInspecao(linha, ['data', 'datainspecao', 'dataregistro']));
 						var area = String(obterValorPorAliasesInspecao(linha, ['area', 'setor']) || '').trim();
@@ -8718,26 +9024,8 @@
 							'medidas adotadas',
 							'providencias'
 						]) || '').trim();
-						var fotoAntes = normalizarValorFotoImportacaoInspecao(obterValorPorAliasesInspecao(linha, [
-							'foto antes',
-							'fotoantes',
-							'imagem antes',
-							'imagemantes',
-							'url foto antes',
-							'urlfotoantes',
-							'link foto antes',
-							'linkfotoantes'
-						]));
-						var fotoDepois = normalizarValorFotoImportacaoInspecao(obterValorPorAliasesInspecao(linha, [
-							'foto depois',
-							'fotodepois',
-							'imagem depois',
-							'imagemdepois',
-							'url foto depois',
-							'urlfotodepois',
-							'link foto depois',
-							'linkfotodepois'
-						]));
+						var fotoAntes = normalizarValorFotoImportacaoInspecao(obterValorPorAliasesInspecao(linha, aliasesFotoAntesImportacaoInspecao));
+						var fotoDepois = normalizarValorFotoImportacaoInspecao(obterValorPorAliasesInspecao(linha, aliasesFotoDepoisImportacaoInspecao));
 
 						if (!data && !area && !local && !categoria && !descricao && !responsavel) {
 							return null;
@@ -8802,7 +9090,7 @@
 							}
 
 							var leitor = new FileReader();
-							leitor.onload = function(e) {
+							leitor.onload = async function(e) {
 								try {
 									var dados = new Uint8Array(e.target.result);
 									var workbook = XLSX.read(dados, { type: 'array', cellDates: true });
@@ -8815,6 +9103,11 @@
 
 									var worksheet = workbook.Sheets[primeiraAba];
 									var linhas = XLSX.utils.sheet_to_json(worksheet, { defval: '', raw: false });
+									var infoCabecalhoImportacao = obterInfoCabecalhoImportacaoInspecao(worksheet);
+									var imagensEmbutidasPorCelula = {};
+									if (/\.xlsx$/i.test(arquivo.name)) {
+										imagensEmbutidasPorCelula = await extrairImagensEmbutidasXlsxImportacaoInspecao(e.target.result, primeiraAba);
+									}
 
 									if (!linhas.length) {
 										alert('Nenhuma linha encontrada na planilha para importar.');
@@ -8825,6 +9118,44 @@
 									var linhasIgnoradas = 0;
 
 									linhas.forEach(function(linha, indice) {
+										var numeroLinhaPlanilha = infoCabecalhoImportacao.linhaCabecalho + 1 + indice;
+										var valorFotoAntes = normalizarValorFotoImportacaoInspecao(obterValorPorAliasesInspecao(linha, aliasesFotoAntesImportacaoInspecao));
+										var valorFotoDepois = normalizarValorFotoImportacaoInspecao(obterValorPorAliasesInspecao(linha, aliasesFotoDepoisImportacaoInspecao));
+										var colunaFotoAntes = obterColunaPorAliasesImportacaoInspecao(infoCabecalhoImportacao, aliasesFotoAntesImportacaoInspecao);
+										var colunaFotoDepois = obterColunaPorAliasesImportacaoInspecao(infoCabecalhoImportacao, aliasesFotoDepoisImportacaoInspecao);
+
+										if (!valorFotoAntes && colunaFotoAntes !== null) {
+											var chaveFotoAntes = numeroLinhaPlanilha + ':' + colunaFotoAntes;
+											var fotoEmbutidaAntes = imagensEmbutidasPorCelula[chaveFotoAntes];
+											if (fotoEmbutidaAntes) {
+												linha['foto antes'] = fotoEmbutidaAntes;
+												valorFotoAntes = fotoEmbutidaAntes;
+											}
+										}
+
+										if (!valorFotoDepois && colunaFotoDepois !== null) {
+											var chaveFotoDepois = numeroLinhaPlanilha + ':' + colunaFotoDepois;
+											var fotoEmbutidaDepois = imagensEmbutidasPorCelula[chaveFotoDepois];
+											if (fotoEmbutidaDepois) {
+												linha['foto depois'] = fotoEmbutidaDepois;
+												valorFotoDepois = fotoEmbutidaDepois;
+											}
+										}
+
+										if (!valorFotoAntes) {
+											var linkFotoAntes = obterHyperlinkPorAliasesImportacaoInspecao(worksheet, infoCabecalhoImportacao, numeroLinhaPlanilha, aliasesFotoAntesImportacaoInspecao);
+											if (linkFotoAntes) {
+												linha['foto antes'] = linkFotoAntes;
+											}
+										}
+
+										if (!valorFotoDepois) {
+											var linkFotoDepois = obterHyperlinkPorAliasesImportacaoInspecao(worksheet, infoCabecalhoImportacao, numeroLinhaPlanilha, aliasesFotoDepoisImportacaoInspecao);
+											if (linkFotoDepois) {
+												linha['foto depois'] = linkFotoDepois;
+											}
+										}
+
 										var inspeccaoMapeada = mapearLinhaImportacaoInspecao(linha, indice);
 										if (inspeccaoMapeada) {
 											registrosImportados.push(inspeccaoMapeada);
