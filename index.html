@@ -2514,42 +2514,46 @@
 								
 								<!-- Tabela de Inspeções -->
 								<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;overflow-y:hidden">
-									<div style="min-width:1200px">
+									<div style="min-width:1800px">
 									<!-- Cabeçalho da tabela -->
-									<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;font-weight:600;color:#374151;font-size:0.85rem">
+									<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 180px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;font-weight:600;color:#374151;font-size:0.85rem">
 										<div></div>
 										<div>Data</div>
 										<div>Área</div>
 										<div>Local</div>
 										<div>Tipo</div>
 										<div>Semana</div>
+										<div>Descrição do desvio</div>
+										<div>Foto antes</div>
+										<div>Foto depois</div>
+										<div>Ações tomadas</div>
 										<div>Categoria</div>
 										<div>Severidade</div>
 										<div>Interdição</div>
 										<div>Responsável</div>
 										<div>Status</div>
-										<div>Fotos</div>
 										<div>Ações</div>
 									</div>
 									
 									<!-- Lista de inspeções -->
 									<div id="lista-inspecoes">
 										<!-- Exemplo de inspeção -->
-										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">
+										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 180px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">
 											<div><input type="checkbox" class="inspecao-item-selecao" data-id="1" style="width:16px;height:16px;cursor:pointer"></div>
 											<div style="color:#374151;font-weight:500">04/11/2025</div>
 											<div style="color:#374151">BAP 1B</div>
 											<div style="color:#6b7280">Escavação</div>
 											<div style="color:#6b7280">Inspeção</div>
 											<div style="color:#6b7280">45</div>
+											<div style="color:#6b7280">-</div>
+											<div style="color:#9ca3af;font-size:0.75rem">Sem foto</div>
+											<div style="color:#9ca3af;font-size:0.75rem">Sem foto</div>
+											<div style="color:#6b7280">-</div>
 											<div style="color:#6b7280">Segurança do trabalho</div>
 											<div><span style="background:#10b981;color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">Baixa</span></div>
 											<div><span style="color:#ef4444;font-weight:600">Não</span></div>
 											<div style="color:#6b7280">Ademilcio Ferreira Caldas</div>
 											<div><span style="background:#10b981;color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">CONCLUÍDO</span></div>
-											<div>
-												<button onclick="mostrarFotosInspecao('1')" style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer" title="Ver e baixar fotos">📷 2 Fotos</button>
-											</div>
 											<div style="display:flex;gap:4px">
 												<button onclick="mostrarRelatorioInspecao('1')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer" title="Ver Relatório">📋</button>
 												<button onclick="editarInspecao('1')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>
@@ -2558,21 +2562,22 @@
 										</div>
 										
 										<!-- Segunda inspeção exemplo -->
-										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">
+										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 180px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">
 											<div><input type="checkbox" class="inspecao-item-selecao" data-id="2" style="width:16px;height:16px;cursor:pointer"></div>
 											<div style="color:#374151;font-weight:500">03/11/2025</div>
 											<div style="color:#374151">BAP 1B</div>
 											<div style="color:#6b7280">Escavação</div>
 											<div style="color:#6b7280">Inspeção</div>
 											<div style="color:#6b7280">45</div>
+											<div style="color:#6b7280">-</div>
+											<div style="color:#9ca3af;font-size:0.75rem">Sem foto</div>
+											<div style="color:#9ca3af;font-size:0.75rem">Sem foto</div>
+											<div style="color:#6b7280">-</div>
 											<div style="color:#6b7280">Segurança do trabalho</div>
 											<div><span style="background:#f59e0b;color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">Média</span></div>
 											<div><span style="color:#ef4444;font-weight:600">Não</span></div>
 											<div style="color:#6b7280">Ademilcio Ferreira Caldas</div>
 											<div><span style="background:#10b981;color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">CONCLUÍDO</span></div>
-											<div>
-												<button style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer">📷 Ver Fotos</button>
-											</div>
 											<div style="display:flex;gap:4px">
 												<button onclick="editarInspecao('2')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>
 												<button onclick="excluirInspecao('2')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">🗑️</button>
@@ -7997,29 +8002,22 @@
 							var corSeveridade = getCorSeveridade(inspecao.severidade);
 							var corStatus = getCorStatus(inspecao.status);
 							
-							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">';
+							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 180px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">';
 							html += '<div><input type="checkbox" class="inspecao-item-selecao" data-id="' + inspecao.id + '" style="width:16px;height:16px;cursor:pointer"></div>';
 							html += '<div style="color:#374151;font-weight:500">' + dataFormatada + '</div>';
 							html += '<div style="color:#374151">' + (inspecao.area || '') + '</div>';
 							html += '<div style="color:#6b7280">' + (inspecao.local || '') + '</div>';
 							html += '<div style="color:#6b7280">' + (inspecao.tipo || '') + '</div>';
 							html += '<div style="color:#6b7280">' + (inspecao.semana || '') + '</div>';
+							html += '<div style="color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="' + (inspecao.descricao || '').replace(/"/g,"'") + '">' + (inspecao.descricao ? (inspecao.descricao.length > 40 ? inspecao.descricao.substring(0,40) + '…' : inspecao.descricao) : '-') + '</div>';
+							html += inspecao.fotoAntes ? '<div><img src="' + inspecao.fotoAntes + '" style="width:52px;height:40px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb;cursor:pointer" onclick="abrirImagemModal(\'' + inspecao.fotoAntes + '\',\'Foto Antes\')" title="Ver foto antes"></div>' : '<div style="color:#9ca3af;font-size:0.75rem">Sem foto</div>';
+							html += inspecao.fotoDepois ? '<div><img src="' + inspecao.fotoDepois + '" style="width:52px;height:40px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb;cursor:pointer" onclick="abrirImagemModal(\'' + inspecao.fotoDepois + '\',\'Foto Depois\')" title="Ver foto depois"></div>' : '<div style="color:#9ca3af;font-size:0.75rem">Sem foto</div>';
+							html += '<div style="color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="' + (inspecao.acoes || '').replace(/"/g,"'") + '">' + (inspecao.acoes ? (inspecao.acoes.length > 30 ? inspecao.acoes.substring(0,30) + '…' : inspecao.acoes) : '-') + '</div>';
 							html += '<div style="color:#6b7280">' + (inspecao.categoria || '') + '</div>';
 							html += '<div><span style="background:' + corSeveridade + ';color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">' + (inspecao.severidade || '') + '</span></div>';
 							html += '<div><span style="color:' + (inspecao.interdicao === 'Sim' ? '#ef4444' : '#10b981') + ';font-weight:600">' + (inspecao.interdicao || 'Não') + '</span></div>';
 							html += '<div style="color:#6b7280">' + (inspecao.responsavel || '') + '</div>';
 							html += '<div><span style="background:' + corStatus + ';color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">' + (inspecao.status || '') + '</span></div>';
-							html += '<div>';
-							var totalFotos = 0;
-							if (inspecao.fotoAntes) totalFotos++;
-							if (inspecao.fotoDepois) totalFotos++;
-							
-							if (totalFotos > 0) {
-								html += '<button onclick="mostrarFotosInspecao(\'' + inspecao.id + '\')" style="background:#3b82f6;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer" title="Ver e baixar fotos">📷 ' + totalFotos + ' Foto' + (totalFotos > 1 ? 's' : '') + '</button>';
-							} else {
-								html += '<span style="color:#9ca3af;font-size:0.75rem">Sem fotos</span>';
-							}
-							html += '</div>';
 							html += '<div style="display:flex;gap:4px">';
 							html += '<button onclick="mostrarRelatorioInspecao(\'' + inspecao.id + '\')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer" title="Ver Relatório">📋</button>';
 							html += '<button onclick="editarInspecao(\'' + inspecao.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>';
