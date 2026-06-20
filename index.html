@@ -2500,15 +2500,24 @@
 						<div style="padding:24px">
 							<!-- Registros de Inspeção -->
 							<div id="lista-inspecoes-section">
-								<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+								<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;flex-wrap:wrap">
 									<h3 style="margin:0;color:#374151;font-size:1.3rem">Registros de Inspeção</h3>
+									<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+										<label style="display:flex;align-items:center;gap:8px;font-size:0.9rem;color:#374151;font-weight:600;cursor:pointer">
+											<input id="inspecao-selecionar-todos" type="checkbox" style="width:16px;height:16px;cursor:pointer">
+											Selecionar tudo
+										</label>
+										<span id="inspecao-total-selecionadas" style="font-size:0.85rem;color:#64748b">0 selecionada(s)</span>
+										<button id="btn-inspecao-excluir-selecionadas" type="button" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:600;font-size:0.85rem" disabled>Excluir selecionadas</button>
+									</div>
 								</div>
 								
 								<!-- Tabela de Inspeções -->
 								<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;overflow-y:hidden">
 									<div style="min-width:1200px">
 									<!-- Cabeçalho da tabela -->
-									<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:100px 80px 100px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;font-weight:600;color:#374151;font-size:0.85rem">
+									<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;font-weight:600;color:#374151;font-size:0.85rem">
+										<div></div>
 										<div>Data</div>
 										<div>Área</div>
 										<div>Local</div>
@@ -2526,7 +2535,8 @@
 									<!-- Lista de inspeções -->
 									<div id="lista-inspecoes">
 										<!-- Exemplo de inspeção -->
-										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:100px 80px 100px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">
+										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">
+											<div><input type="checkbox" class="inspecao-item-selecao" data-id="1" style="width:16px;height:16px;cursor:pointer"></div>
 											<div style="color:#374151;font-weight:500">04/11/2025</div>
 											<div style="color:#374151">BAP 1B</div>
 											<div style="color:#6b7280">Escavação</div>
@@ -2548,7 +2558,8 @@
 										</div>
 										
 										<!-- Segunda inspeção exemplo -->
-										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:100px 80px 100px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">
+										<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">
+											<div><input type="checkbox" class="inspecao-item-selecao" data-id="2" style="width:16px;height:16px;cursor:pointer"></div>
 											<div style="color:#374151;font-weight:500">03/11/2025</div>
 											<div style="color:#374151">BAP 1B</div>
 											<div style="color:#6b7280">Escavação</div>
@@ -7976,6 +7987,7 @@
 						
 						if (inspecoes.length === 0) {
 							lista.innerHTML = '<div style="padding:40px;text-align:center;color:#9ca3af;font-style:italic">Nenhuma inspeção cadastrada</div>';
+							atualizarEstadoSelecaoInspecoes();
 							return;
 						}
 						
@@ -7985,7 +7997,8 @@
 							var corSeveridade = getCorSeveridade(inspecao.severidade);
 							var corStatus = getCorStatus(inspecao.status);
 							
-							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:100px 80px 100px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">';
+							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 120px 100px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">';
+							html += '<div><input type="checkbox" class="inspecao-item-selecao" data-id="' + inspecao.id + '" style="width:16px;height:16px;cursor:pointer"></div>';
 							html += '<div style="color:#374151;font-weight:500">' + dataFormatada + '</div>';
 							html += '<div style="color:#374151">' + (inspecao.area || '') + '</div>';
 							html += '<div style="color:#6b7280">' + (inspecao.local || '') + '</div>';
@@ -8016,6 +8029,7 @@
 						});
 						
 						lista.innerHTML = html;
+						atualizarEstadoSelecaoInspecoes();
 					}
 					
 					// Funções auxiliares
@@ -8041,6 +8055,53 @@
 							case 'PENDENTE': return '#ef4444';
 							default: return '#6b7280';
 						}
+					}
+
+					function atualizarEstadoSelecaoInspecoes() {
+						var seletorTodos = document.getElementById('inspecao-selecionar-todos');
+						var botaoExcluir = document.getElementById('btn-inspecao-excluir-selecionadas');
+						var totalSelecionadasEl = document.getElementById('inspecao-total-selecionadas');
+						var checkboxes = Array.from(document.querySelectorAll('#lista-inspecoes .inspecao-item-selecao'));
+
+						var total = checkboxes.length;
+						var selecionadas = checkboxes.filter(function(cb) { return cb.checked; }).length;
+
+						if (seletorTodos) {
+							seletorTodos.checked = total > 0 && selecionadas === total;
+							seletorTodos.indeterminate = selecionadas > 0 && selecionadas < total;
+						}
+
+						if (botaoExcluir) {
+							botaoExcluir.disabled = selecionadas === 0;
+							botaoExcluir.style.opacity = selecionadas === 0 ? '0.6' : '1';
+							botaoExcluir.style.cursor = selecionadas === 0 ? 'not-allowed' : 'pointer';
+						}
+
+						if (totalSelecionadasEl) {
+							totalSelecionadasEl.textContent = selecionadas + ' selecionada(s)';
+						}
+					}
+
+					function excluirInspecoesSelecionadas() {
+						var checkboxes = Array.from(document.querySelectorAll('#lista-inspecoes .inspecao-item-selecao:checked'));
+						if (!checkboxes.length) {
+							alert('Selecione ao menos uma inspeção para excluir.');
+							return;
+						}
+
+						if (!confirm('Deseja excluir ' + checkboxes.length + ' inspeção(ões) selecionada(s)?')) return;
+
+						var idsSelecionados = checkboxes.map(function(cb) {
+							return String(cb.getAttribute('data-id') || '').trim();
+						}).filter(function(id) { return id; });
+
+						inspecoes = inspecoes.filter(function(insp) {
+							return idsSelecionados.indexOf(String(insp.id)) === -1;
+						});
+
+						localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
+						carregarInspecoes();
+						alert('Inspeções selecionadas excluídas com sucesso!');
 					}
 					
 					// Variável global para armazenar ID da inspeção sendo editada
@@ -8188,6 +8249,24 @@
 							carregarInspecoes();
 							alert('Inspeção excluída com sucesso!');
 						}
+					}
+
+					document.addEventListener('change', function(e) {
+						if (e.target && e.target.id === 'inspecao-selecionar-todos') {
+							var marcar = !!e.target.checked;
+							document.querySelectorAll('#lista-inspecoes .inspecao-item-selecao').forEach(function(cb) {
+								cb.checked = marcar;
+							});
+							atualizarEstadoSelecaoInspecoes();
+						}
+						if (e.target && e.target.classList && e.target.classList.contains('inspecao-item-selecao')) {
+							atualizarEstadoSelecaoInspecoes();
+						}
+					});
+
+					var btnExcluirSelecionadasInspecao = document.getElementById('btn-inspecao-excluir-selecionadas');
+					if (btnExcluirSelecionadasInspecao) {
+						btnExcluirSelecionadasInspecao.addEventListener('click', excluirInspecoesSelecionadas);
 					}
 
 					// Funções do Modal de Relatório
