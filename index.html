@@ -317,7 +317,7 @@
 			}
 
 			.checklist-dashboard-weekly-grid {
-				grid-template-columns:repeat(4, minmax(0, 1fr));
+				grid-template-columns:repeat(2, minmax(0, 1fr));
 			}
 
 			.checklist-dashboard-monthly-grid {
@@ -449,7 +449,6 @@
 			}
 
 			@media (max-width:1400px){
-				.checklist-dashboard-weekly-grid,
 				.checklist-dashboard-monthly-grid {
 					grid-template-columns:repeat(2, minmax(0, 1fr));
 				}
@@ -12105,7 +12104,7 @@
 						html += '.checklist-dashboard-kpi span{display:block;font-size:.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.04em}';
 						html += '.checklist-dashboard-kpi strong{display:block;margin-top:6px;font-size:1.35rem;color:#0f172a}';
 						html += '.checklist-dashboard-weekly-grid,.checklist-dashboard-monthly-grid,.checklist-dashboard-side-grid{display:grid;gap:18px}';
-						html += '.checklist-dashboard-weekly-grid{grid-template-columns:repeat(4,minmax(0,1fr))}';
+						html += '.checklist-dashboard-weekly-grid{grid-template-columns:repeat(2,minmax(0,1fr))}';
 						html += '.checklist-dashboard-monthly-grid{grid-template-columns:repeat(4,minmax(0,1fr))}';
 						html += '.checklist-dashboard-side-grid{grid-template-columns:repeat(5,minmax(0,1fr));align-items:start}';
 						html += '.checklist-chart-card,.checklist-dashboard-main-chart{background:#fff;border:1px solid #d7e3f0;border-radius:12px;overflow:hidden}';
@@ -12126,7 +12125,7 @@
 						html += '.checklist-dashboard-table .linha-total{background:#f8fbff}';
 						html += '.checklist-empty-state{padding:48px 20px;text-align:center;color:#64748b;background:#fff;border:1px dashed #cbd5e1;border-radius:12px}';
 						html += '.checklist-empty-state strong{display:block;font-size:1rem;margin-bottom:6px;color:#334155}';
-						html += '@media (max-width:1400px){.checklist-dashboard-weekly-grid,.checklist-dashboard-monthly-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.checklist-dashboard-side-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}';
+						html += '@media (max-width:1400px){.checklist-dashboard-monthly-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.checklist-dashboard-side-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}';
 						html += '@media (max-width:1100px){.checklist-dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.checklist-dashboard-side-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}';
 						html += '@media (max-width:820px){body{padding:12px}.checklist-dashboard-filters,.checklist-dashboard-weekly-grid,.checklist-dashboard-monthly-grid,.checklist-dashboard-kpis,.checklist-dashboard-side-grid{grid-template-columns:1fr}}';
 						html += '</style></head><body>';
