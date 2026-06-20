@@ -8652,6 +8652,31 @@
 						return String(semana);
 					}
 
+					function normalizarValorFotoImportacaoInspecao(valor) {
+						if (valor === null || valor === undefined || valor === '') {
+							return null;
+						}
+
+						var texto = String(valor).trim();
+						if (!texto) {
+							return null;
+						}
+
+						if (/^data:image\/[a-z0-9.+-]+;base64,/i.test(texto)) {
+							return texto;
+						}
+
+						if (/^https?:\/\//i.test(texto)) {
+							return texto;
+						}
+
+						if (/^www\./i.test(texto)) {
+							return 'https://' + texto;
+						}
+
+						return null;
+					}
+
 					function mapearLinhaImportacaoInspecao(linha, indice) {
 						var data = converterValorDataInspecao(obterValorPorAliasesInspecao(linha, ['data', 'datainspecao', 'dataregistro']));
 						var area = String(obterValorPorAliasesInspecao(linha, ['area', 'setor']) || '').trim();
@@ -8693,6 +8718,26 @@
 							'medidas adotadas',
 							'providencias'
 						]) || '').trim();
+						var fotoAntes = normalizarValorFotoImportacaoInspecao(obterValorPorAliasesInspecao(linha, [
+							'foto antes',
+							'fotoantes',
+							'imagem antes',
+							'imagemantes',
+							'url foto antes',
+							'urlfotoantes',
+							'link foto antes',
+							'linkfotoantes'
+						]));
+						var fotoDepois = normalizarValorFotoImportacaoInspecao(obterValorPorAliasesInspecao(linha, [
+							'foto depois',
+							'fotodepois',
+							'imagem depois',
+							'imagemdepois',
+							'url foto depois',
+							'urlfotodepois',
+							'link foto depois',
+							'linkfotodepois'
+						]));
 
 						if (!data && !area && !local && !categoria && !descricao && !responsavel) {
 							return null;
@@ -8720,8 +8765,8 @@
 							prazo: prazo,
 							conclusao: conclusao,
 							status: status,
-							fotoAntes: null,
-							fotoDepois: null,
+							fotoAntes: fotoAntes,
+							fotoDepois: fotoDepois,
 							dataCriacao: new Date().toISOString()
 						};
 					}
