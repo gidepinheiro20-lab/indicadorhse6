@@ -2136,7 +2136,18 @@
 							</div>
 
 							<div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden">
-								<div style="display:grid;grid-template-columns:120px 100px 220px 1.6fr 140px 100px 110px;gap:12px;padding:16px;background:#f9fafb;border-bottom:1px solid #e5e7eb;font-weight:600;color:#374151;font-size:0.9rem;align-items:center">
+								<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;background:#f8fafc;border-bottom:1px solid #e5e7eb;flex-wrap:wrap">
+									<label style="display:flex;align-items:center;gap:8px;font-size:0.9rem;color:#374151;font-weight:600;cursor:pointer">
+										<input id="checklist-selecionar-todos" type="checkbox" style="width:16px;height:16px;cursor:pointer">
+										Selecionar tudo
+									</label>
+									<div style="display:flex;align-items:center;gap:10px">
+										<span id="checklist-total-selecionados" style="font-size:0.85rem;color:#64748b">0 selecionado(s)</span>
+										<button id="btn-checklist-excluir-selecionados" type="button" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:600;font-size:0.85rem" disabled>Excluir selecionados</button>
+									</div>
+								</div>
+								<div style="display:grid;grid-template-columns:36px 120px 100px 220px 1.6fr 140px 100px 110px;gap:12px;padding:16px;background:#f9fafb;border-bottom:1px solid #e5e7eb;font-weight:600;color:#374151;font-size:0.9rem;align-items:center">
+									<div></div>
 									<div>Data</div>
 									<div>Semana</div>
 									<div>Tipo</div>
@@ -11944,9 +11955,9 @@
 							return Math.max(item.meta, item.realizado);
 						})), 4);
 						var largura = Math.max(430, 110 + linhas.length * 92);
-						var altura = 250;
-						var baseY = 170;
-						var alturaArea = 120;
+						var altura = 300;
+						var baseY = 185;
+						var alturaArea = 130;
 
 						var grade = [0, 25, 50, 75, 100].map(function(percentual) {
 							var y = baseY - (percentual / 100) * alturaArea;
@@ -11963,18 +11974,18 @@
 								+ '<rect x="' + (grupoX + 32) + '" y="' + (baseY - alturaMeta) + '" width="28" height="' + alturaMeta + '" rx="4" fill="#d9e4f7"></rect>'
 								+ '<text x="' + (grupoX + 14) + '" y="' + (baseY - alturaRealizado - 7) + '" font-size="12" font-weight="700" text-anchor="middle" fill="#334155">' + item.realizado + '</text>'
 								+ '<text x="' + (grupoX + 46) + '" y="' + (baseY - alturaMeta - 7) + '" font-size="12" font-weight="700" text-anchor="middle" fill="#64748b">' + item.meta + '</text>'
-								+ '<text transform="translate(' + (grupoX + 30) + ',210) rotate(-26)" font-size="11" font-weight="700" text-anchor="end" fill="#475569">' + item.info.tituloSetor + '</text>';
+								+ '<text transform="translate(' + (grupoX + 30) + ',236) rotate(-18)" font-size="10" font-weight="700" text-anchor="middle" fill="#475569">' + item.info.tituloSetor + '</text>';
 						}).join('');
 
 						return '<div class="checklist-chart-card">'
 							+ '<div class="checklist-chart-card-header"><h4>' + setor.toUpperCase() + '</h4></div>'
 							+ '<div class="checklist-chart-card-body">'
-							+ '<svg viewBox="0 0 ' + largura + ' ' + altura + '" width="100%" height="250" aria-hidden="true">'
+							+ '<svg viewBox="0 0 ' + largura + ' ' + altura + '" width="100%" height="300" aria-hidden="true">'
 							+ grade
 							+ '<line x1="34" y1="' + baseY + '" x2="' + (largura - 22) + '" y2="' + baseY + '" stroke="#94a3b8" stroke-width="1.2"></line>'
 							+ barras
 							+ '</svg>'
-							+ '<div class="checklist-chart-legend"><span><i style="background:#4b77c2"></i>Realizado</span><span><i style="background:#d9e4f7"></i>Meta</span></div>'
+							+ '<div class="checklist-chart-legend" style="margin-top:16px"><span><i style="background:#4b77c2"></i>Realizado</span><span><i style="background:#d9e4f7"></i>Meta</span></div>'
 							+ '</div>'
 							+ '</div>';
 					}
@@ -12189,22 +12200,30 @@
 						var corpo = document.getElementById('checklist-tabela-corpo');
 						if (!corpo) return;
 
+						lista = Array.isArray(lista) ? lista : [];
+
 						if (!lista.length) {
 							corpo.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#9ca3af"><div style="font-size:1rem;font-weight:500;margin-bottom:6px">Nenhum checklist aplicado ainda</div><div style="font-size:0.9rem">Clique em "Anexar formulário" para começar</div></div>';
+							atualizarEstadoSelecaoChecklist();
 							return;
 						}
 
-						corpo.innerHTML = lista.map(function(item, idx){
-							return '<div style="display:grid;grid-template-columns:120px 100px 220px 1.6fr 140px 100px 110px;gap:12px;padding:14px 16px;border-bottom:1px solid #f1f5f9;align-items:center">'
+						corpo.innerHTML = lista.map(function(itemRef, idx){
+							var item = itemRef && itemRef.registro ? itemRef.registro : itemRef;
+							var indiceOriginal = itemRef && typeof itemRef.indiceOriginal === 'number' ? itemRef.indiceOriginal : idx;
+							return '<div style="display:grid;grid-template-columns:36px 120px 100px 220px 1.6fr 140px 100px 110px;gap:12px;padding:14px 16px;border-bottom:1px solid #f1f5f9;align-items:center">'
+								+ '<div><input type="checkbox" class="checklist-item-selecao" data-indice="' + indiceOriginal + '" style="width:16px;height:16px;cursor:pointer"></div>'
 								+ '<div>' + formatarDataBR(item.data) + '</div>'
 								+ '<div><span style="background:#dbeafe;color:#0369a1;padding:4px 10px;border-radius:8px;font-weight:600">' + (item.semana || '-') + '</span></div>'
 								+ '<div>' + (item.tipo || '-') + '</div>'
 								+ '<div>' + (item.autor || '-') + '</div>'
 								+ '<div>' + (item.setor || '-') + '</div>'
 								+ '<div style="color:#9ca3af">-</div>'
-								+ '<div><button type="button" onclick="excluirChecklistFacil(' + idx + ')" style="background:#ef4444;color:#fff;border:none;border-radius:8px;padding:8px 10px;cursor:pointer">🗑</button></div>'
+								+ '<div><button type="button" onclick="excluirChecklistFacil(' + indiceOriginal + ')" style="background:#ef4444;color:#fff;border:none;border-radius:8px;padding:8px 10px;cursor:pointer">🗑</button></div>'
 								+ '</div>';
 						}).join('');
+
+						atualizarEstadoSelecaoChecklist();
 					}
 
 					function aplicarFiltrosChecklist() {
@@ -12215,7 +12234,10 @@
 						var inicio = document.getElementById('checklist-filtro-inicio')?.value || '';
 						var fim = document.getElementById('checklist-filtro-fim')?.value || '';
 
-						var filtrada = lista.filter(function(item){
+						var filtrada = lista.map(function(item, indiceOriginal) {
+							return { registro: item, indiceOriginal: indiceOriginal };
+						}).filter(function(itemRef){
+							var item = itemRef.registro;
 							if (empresa && item.empresa !== empresa) return false;
 							if (tipo && item.tipo !== tipo) return false;
 							if (autor && item.autor !== autor) return false;
@@ -12288,6 +12310,57 @@
 						var lista = obterChecklistFacilStorage();
 						if (indice < 0 || indice >= lista.length) return;
 						lista.splice(indice, 1);
+						salvarChecklistFacilStorage(lista);
+						carregarChecklistFacil();
+					}
+
+					function atualizarEstadoSelecaoChecklist() {
+						var seletorTodos = document.getElementById('checklist-selecionar-todos');
+						var botaoExcluir = document.getElementById('btn-checklist-excluir-selecionados');
+						var totalSelecionadosEl = document.getElementById('checklist-total-selecionados');
+						var checkboxes = Array.from(document.querySelectorAll('#checklist-tabela-corpo .checklist-item-selecao'));
+
+						var total = checkboxes.length;
+						var selecionados = checkboxes.filter(function(cb) { return cb.checked; }).length;
+
+						if (seletorTodos) {
+							seletorTodos.checked = total > 0 && selecionados === total;
+							seletorTodos.indeterminate = selecionados > 0 && selecionados < total;
+						}
+
+						if (botaoExcluir) {
+							botaoExcluir.disabled = selecionados === 0;
+							botaoExcluir.style.opacity = selecionados === 0 ? '0.6' : '1';
+							botaoExcluir.style.cursor = selecionados === 0 ? 'not-allowed' : 'pointer';
+						}
+
+						if (totalSelecionadosEl) {
+							totalSelecionadosEl.textContent = selecionados + ' selecionado(s)';
+						}
+					}
+
+					function excluirChecklistsSelecionados() {
+						var checkboxes = Array.from(document.querySelectorAll('#checklist-tabela-corpo .checklist-item-selecao:checked'));
+						if (!checkboxes.length) {
+							alert('Selecione ao menos um checklist para excluir.');
+							return;
+						}
+
+						if (!confirm('Deseja excluir ' + checkboxes.length + ' checklist(s) selecionado(s)?')) return;
+
+						var indices = checkboxes.map(function(cb) {
+							return parseInt(cb.getAttribute('data-indice') || '-1', 10);
+						}).filter(function(indice) {
+							return indice >= 0;
+						}).sort(function(a, b) { return b - a; });
+
+						var lista = obterChecklistFacilStorage();
+						indices.forEach(function(indice) {
+							if (indice >= 0 && indice < lista.length) {
+								lista.splice(indice, 1);
+							}
+						});
+
 						salvarChecklistFacilStorage(lista);
 						carregarChecklistFacil();
 					}
@@ -12546,7 +12619,22 @@
 						if (e.target && e.target.id && e.target.id.indexOf('checklist-dashboard-filtro-') === 0) {
 							renderizarDashboardChecklist();
 						}
+						if (e.target && e.target.id === 'checklist-selecionar-todos') {
+							var marcar = !!e.target.checked;
+							document.querySelectorAll('#checklist-tabela-corpo .checklist-item-selecao').forEach(function(cb) {
+								cb.checked = marcar;
+							});
+							atualizarEstadoSelecaoChecklist();
+						}
+						if (e.target && e.target.classList && e.target.classList.contains('checklist-item-selecao')) {
+							atualizarEstadoSelecaoChecklist();
+						}
 					});
+
+					var btnExcluirSelecionadosChecklist = document.getElementById('btn-checklist-excluir-selecionados');
+					if (btnExcluirSelecionadosChecklist) {
+						btnExcluirSelecionadosChecklist.addEventListener('click', excluirChecklistsSelecionados);
+					}
 					
 					// Verificar se os event listeners de empresa estão funcionando
 					setTimeout(function() {
