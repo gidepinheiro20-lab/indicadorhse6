@@ -8575,7 +8575,8 @@
 							var chaveAtual = chaves[i];
 							var chaveNormalizada = normalizarTextoCabecalhoInspecao(chaveAtual);
 							for (var j = 0; j < aliases.length; j++) {
-								if (chaveNormalizada === aliases[j]) {
+								var aliasNormalizado = normalizarTextoCabecalhoInspecao(aliases[j]);
+								if (chaveNormalizada === aliasNormalizado) {
 									return linha[chaveAtual];
 								}
 							}
@@ -8668,8 +8669,30 @@
 						var prazo = converterValorDataInspecao(obterValorPorAliasesInspecao(linha, ['prazo', 'dataprazo']));
 						var conclusao = converterValorDataInspecao(obterValorPorAliasesInspecao(linha, ['conclusao', 'dataconclusao']));
 						var status = String(obterValorPorAliasesInspecao(linha, ['status']) || '').trim() || 'PENDENTE';
-						var descricao = String(obterValorPorAliasesInspecao(linha, ['descricao', 'desvio', 'naoconformidade', 'observacao']) || '').trim();
-						var acoes = String(obterValorPorAliasesInspecao(linha, ['acoes', 'acao', 'planoacao', 'acaocorretiva']) || '').trim();
+						var descricao = String(obterValorPorAliasesInspecao(linha, [
+							'descricao',
+							'descricao do desvio',
+							'descricao desvio',
+							'desvio',
+							'nao conformidade',
+							'naoconformidade',
+							'observacao',
+							'situacao encontrada',
+							'ocorrencia',
+							'detalhes'
+						]) || '').trim();
+						var acoes = String(obterValorPorAliasesInspecao(linha, [
+							'acoes',
+							'acao',
+							'acoes tomadas',
+							'acao tomada',
+							'plano de acao',
+							'planoacao',
+							'acao corretiva',
+							'acaocorretiva',
+							'medidas adotadas',
+							'providencias'
+						]) || '').trim();
 
 						if (!data && !area && !local && !categoria && !descricao && !responsavel) {
 							return null;
