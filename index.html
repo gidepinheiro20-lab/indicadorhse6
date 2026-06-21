@@ -10284,8 +10284,8 @@
 								mes: dataObj.getMonth() + 1,
 								semana: parseInt(item.semana, 10) || obterSemanaIsoDesvio(dataObj),
 								descricao: item.descricao || 'Desvio sem descrição',
-								categoria: item.categoria || 'Sem categoria',
-								subcategoria: item.risco || item.classificacao || 'Sem subcategoria',
+								categoria: item.classificacao || item.categoria || 'Sem categoria',
+								subcategoria: item.categoria || item.classificacao || item.risco || 'Sem subcategoria',
 								tipoFerramenta: item.tipo || 'Inspeção de HSE',
 								local: item.local || item.area || 'Não informado',
 								responsavel: item.responsavel || 'Não informado',
@@ -10563,7 +10563,7 @@
 						var container = document.getElementById('desvio-card-subcategoria');
 						if (!container) return;
 						if (!lista.length) {
-							container.innerHTML = '<div style="font-weight:800;color:#166534;margin-bottom:8px">SUB CATEGORIA POR LOCAL</div><div style="padding:30px 10px;text-align:center;color:#94a3b8">Sem dados no período</div>';
+							container.innerHTML = '<div style="font-weight:800;color:#166534;margin-bottom:8px">CATEGORIA E SUB-CATEGORIA DE DESVIO POR LOCAL</div><div style="padding:30px 10px;text-align:center;color:#94a3b8">Sem dados no período</div>';
 							return;
 						}
 						var mapa = {};
@@ -10576,7 +10576,7 @@
 							return { categoria: partes[0], subcategoria: partes[1], local: partes[2], total: mapa[chave] };
 						}).sort(function(a, b) { return b.total - a.total; }).slice(0, 7);
 						container.innerHTML = ''
-							+ '<div style="font-weight:800;color:#166534;margin-bottom:10px">SUB CATEGORIA DE DESVIO POR LOCAL E CATEGORIA</div>'
+							+ '<div style="font-weight:800;color:#166534;margin-bottom:10px">CATEGORIA E SUB-CATEGORIA DE DESVIO POR LOCAL</div>'
 							+ '<div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:.7rem">'
 							+ '<thead><tr style="background:#f1f5f9"><th style="border:1px solid #e5e7eb;padding:5px">Categoria</th><th style="border:1px solid #e5e7eb;padding:5px">Subcategoria</th><th style="border:1px solid #e5e7eb;padding:5px">Qtde</th><th style="border:1px solid #e5e7eb;padding:5px">Local</th></tr></thead>'
 							+ '<tbody>' + linhas.map(function(item) {
