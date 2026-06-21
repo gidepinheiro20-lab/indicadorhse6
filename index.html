@@ -2504,6 +2504,10 @@
 								<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;flex-wrap:wrap">
 									<h3 style="margin:0;color:#374151;font-size:1.3rem">Registros de Inspeção</h3>
 									<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+										<div style="position:relative">
+											<button id="btn-inspecao-colunas" type="button" style="background:#e2e8f0;color:#1f2937;border:none;border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:600;font-size:0.85rem">🧩 Colunas</button>
+											<div id="painel-inspecao-colunas" style="display:none;position:absolute;top:38px;right:0;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 10px 20px rgba(0,0,0,0.12);padding:10px;min-width:220px;z-index:30"></div>
+										</div>
 										<label style="display:flex;align-items:center;gap:8px;font-size:0.9rem;color:#374151;font-weight:600;cursor:pointer">
 											<input id="inspecao-selecionar-todos" type="checkbox" style="width:16px;height:16px;cursor:pointer">
 											Selecionar tudo
@@ -2517,7 +2521,7 @@
 								<div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;overflow-x:auto;overflow-y:hidden">
 									<div style="min-width:1800px">
 									<!-- Cabeçalho da tabela -->
-									<div style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 120px 180px 80px 80px 120px 110px 110px 100px 140px 100px 100px 140px;gap:8px;font-weight:600;color:#374151;font-size:0.85rem">
+									<div id="cabecalho-lista-inspecoes" style="background:#f1f5f9;padding:12px 16px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 120px 180px 80px 80px 120px 110px 110px 100px 140px 100px 100px 140px;gap:8px;font-weight:600;color:#374151;font-size:0.85rem">
 										<div></div>
 										<div>Data</div>
 										<div>Área</div>
@@ -7409,6 +7413,121 @@
 					
 					// Array para armazenar inspeções
 					var inspecoes = JSON.parse(localStorage.getItem('inspecoes')) || [];
+					var INSPECAO_COLUNAS_STORAGE_KEY = 'inspecao_colunas_visiveis_v1';
+					var inspecaoSeletorColunasInicializado = false;
+					var INSPECAO_COLUNAS_CONFIG = [
+						{ id: 'selecao', rotulo: '', largura: 36, fixa: true },
+						{ id: 'data', rotulo: 'Data', largura: 100 },
+						{ id: 'area', rotulo: 'Área', largura: 80 },
+						{ id: 'local', rotulo: 'Local', largura: 100 },
+						{ id: 'tipo', rotulo: 'Tipo', largura: 80 },
+						{ id: 'semana', rotulo: 'Semana', largura: 80 },
+						{ id: 'emissor', rotulo: 'Emissor', largura: 120 },
+						{ id: 'descricao', rotulo: 'Descrição do desvio', largura: 180 },
+						{ id: 'fotoAntes', rotulo: 'Foto antes', largura: 80 },
+						{ id: 'fotoDepois', rotulo: 'Foto depois', largura: 80 },
+						{ id: 'acoesTomadas', rotulo: 'Ações tomadas', largura: 120 },
+						{ id: 'categoria', rotulo: 'Categoria', largura: 110 },
+						{ id: 'subcategoria', rotulo: 'Sub-categoria', largura: 110 },
+						{ id: 'severidade', rotulo: 'Severidade', largura: 100 },
+						{ id: 'interdicao', rotulo: 'Interdição', largura: 140 },
+						{ id: 'responsavel', rotulo: 'Responsável', largura: 100 },
+						{ id: 'status', rotulo: 'Status', largura: 100 },
+						{ id: 'acoesLinha', rotulo: 'Ações', largura: 140, fixa: true }
+					];
+
+					function obterIdsColunasOpcionaisInspecao() {
+						return INSPECAO_COLUNAS_CONFIG.filter(function(coluna) { return !coluna.fixa; }).map(function(coluna) { return coluna.id; });
+					}
+
+					function obterColunasVisiveisConfiguradasInspecao() {
+						var padrao = obterIdsColunasOpcionaisInspecao();
+						try {
+							var salvo = JSON.parse(localStorage.getItem(INSPECAO_COLUNAS_STORAGE_KEY) || 'null');
+							if (!Array.isArray(salvo) || !salvo.length) return padrao;
+							var validas = salvo.filter(function(id) { return padrao.indexOf(id) !== -1; });
+							return validas.length ? validas : padrao;
+						} catch (e) {
+							return padrao;
+						}
+					}
+
+					function salvarColunasVisiveisConfiguradasInspecao(ids) {
+						localStorage.setItem(INSPECAO_COLUNAS_STORAGE_KEY, JSON.stringify(ids || []));
+					}
+
+					function obterColunasVisiveisInspecao() {
+						var selecionadas = obterColunasVisiveisConfiguradasInspecao();
+						return INSPECAO_COLUNAS_CONFIG.filter(function(coluna) {
+							return !!coluna.fixa || selecionadas.indexOf(coluna.id) !== -1;
+						});
+					}
+
+					function obterGridTemplateColunasInspecao(colunasVisiveis) {
+						return (colunasVisiveis || []).map(function(coluna) { return coluna.largura + 'px'; }).join(' ');
+					}
+
+					function renderizarCabecalhoListaInspecoes() {
+						var cabecalho = document.getElementById('cabecalho-lista-inspecoes');
+						if (!cabecalho) return;
+						var colunasVisiveis = obterColunasVisiveisInspecao();
+						cabecalho.style.gridTemplateColumns = obterGridTemplateColunasInspecao(colunasVisiveis);
+						cabecalho.innerHTML = colunasVisiveis.map(function(coluna) {
+							return '<div>' + (coluna.rotulo || '') + '</div>';
+						}).join('');
+					}
+
+					function renderizarPainelColunasInspecao() {
+						var painel = document.getElementById('painel-inspecao-colunas');
+						if (!painel) return;
+						var selecionadas = obterColunasVisiveisConfiguradasInspecao();
+						var opcoes = INSPECAO_COLUNAS_CONFIG.filter(function(coluna) { return !coluna.fixa; });
+						painel.innerHTML = '<div style="font-size:0.82rem;font-weight:700;color:#374151;margin-bottom:8px">Mostrar colunas</div>'
+							+ opcoes.map(function(coluna) {
+								var marcado = selecionadas.indexOf(coluna.id) !== -1 ? 'checked' : '';
+								return '<label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#374151;margin-bottom:6px;cursor:pointer">'
+									+ '<input type="checkbox" ' + marcado + ' onchange="alterarVisibilidadeColunaInspecao(\'' + coluna.id + '\', this.checked)" style="width:14px;height:14px;cursor:pointer">'
+									+ coluna.rotulo
+									+ '</label>';
+							}).join('');
+					}
+
+					function alterarVisibilidadeColunaInspecao(colunaId, visivel) {
+						var selecionadas = obterColunasVisiveisConfiguradasInspecao();
+						var indice = selecionadas.indexOf(colunaId);
+						if (visivel && indice === -1) selecionadas.push(colunaId);
+						if (!visivel && indice !== -1) selecionadas.splice(indice, 1);
+						if (!selecionadas.length) {
+							selecionadas = obterIdsColunasOpcionaisInspecao();
+						}
+						salvarColunasVisiveisConfiguradasInspecao(selecionadas);
+						renderizarPainelColunasInspecao();
+						renderizarCabecalhoListaInspecoes();
+						carregarInspecoes();
+					}
+
+					function inicializarSeletorColunasInspecao() {
+						var botao = document.getElementById('btn-inspecao-colunas');
+						var painel = document.getElementById('painel-inspecao-colunas');
+						if (!botao || !painel || inspecaoSeletorColunasInicializado) return;
+
+						botao.addEventListener('click', function(evento) {
+							evento.stopPropagation();
+							painel.style.display = painel.style.display === 'block' ? 'none' : 'block';
+						});
+
+						painel.addEventListener('click', function(evento) {
+							evento.stopPropagation();
+						});
+
+						document.addEventListener('click', function() {
+							painel.style.display = 'none';
+						});
+
+						inspecaoSeletorColunasInicializado = true;
+						renderizarPainelColunasInspecao();
+						renderizarCabecalhoListaInspecoes();
+					}
 					
 					// Inicializar sistema de inspeção
 					function inicializarInspecao() {
@@ -7442,6 +7561,7 @@
 							localStorage.setItem('inspecoes', JSON.stringify(inspecoes));
 						}
 						
+						inicializarSeletorColunasInspecao();
 						carregarInspecoes();
 						configurarSemanaAtual();
 						carregarCategoriasDropdown();
@@ -7996,6 +8116,9 @@
 					// Carregar e exibir inspeções
 					function carregarInspecoes() {
 						var lista = document.getElementById('lista-inspecoes');
+						renderizarCabecalhoListaInspecoes();
+						var colunasVisiveis = obterColunasVisiveisInspecao();
+						var gridTemplate = obterGridTemplateColunasInspecao(colunasVisiveis);
 						
 						if (inspecoes.length === 0) {
 							lista.innerHTML = '<div style="padding:40px;text-align:center;color:#9ca3af;font-style:italic">Nenhuma inspeção cadastrada</div>';
@@ -8009,29 +8132,86 @@
 							var corSeveridade = getCorSeveridade(inspecao.severidade);
 							var corStatus = getCorStatus(inspecao.status);
 							
-							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:36px 100px 80px 100px 80px 80px 120px 180px 80px 80px 120px 110px 110px 100px 140px 100px 100px 140px;gap:8px;align-items:center;font-size:0.8rem">';
-							html += '<div><input type="checkbox" class="inspecao-item-selecao" data-id="' + inspecao.id + '" style="width:16px;height:16px;cursor:pointer"></div>';
-							html += '<div style="color:#374151;font-weight:500">' + dataFormatada + '</div>';
-							html += '<div style="color:#374151">' + (inspecao.area || '') + '</div>';
-							html += '<div style="color:#6b7280">' + (inspecao.local || '') + '</div>';
-							html += '<div style="color:#6b7280">' + (inspecao.tipo || '') + '</div>';
-							html += '<div style="color:#6b7280">' + (inspecao.semana || '') + '</div>';
-							html += '<div style="color:#6b7280">' + (inspecao.emissor || '') + '</div>';
-							html += '<div style="color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="' + (inspecao.descricao || '').replace(/"/g,"'") + '">' + (inspecao.descricao ? (inspecao.descricao.length > 40 ? inspecao.descricao.substring(0,40) + '…' : inspecao.descricao) : '-') + '</div>';
-							html += inspecao.fotoAntes ? '<div><img src="' + inspecao.fotoAntes + '" style="width:52px;height:40px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb;cursor:pointer" onclick="abrirImagemModal(\'' + inspecao.fotoAntes + '\',\'Foto Antes\')" title="Ver foto antes"></div>' : '<div style="color:#9ca3af;font-size:0.75rem">Sem foto</div>';
-							html += inspecao.fotoDepois ? '<div><img src="' + inspecao.fotoDepois + '" style="width:52px;height:40px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb;cursor:pointer" onclick="abrirImagemModal(\'' + inspecao.fotoDepois + '\',\'Foto Depois\')" title="Ver foto depois"></div>' : '<div style="color:#9ca3af;font-size:0.75rem">Sem foto</div>';
-							html += '<div style="color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="' + (inspecao.acoes || '').replace(/"/g,"'") + '">' + (inspecao.acoes ? (inspecao.acoes.length > 30 ? inspecao.acoes.substring(0,30) + '…' : inspecao.acoes) : '-') + '</div>';
-							html += '<div style="color:#6b7280">' + (inspecao.classificacao || '') + '</div>';
-							html += '<div style="color:#6b7280">' + (inspecao.categoria || '') + '</div>';
-							html += '<div><span style="background:' + corSeveridade + ';color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">' + (inspecao.severidade || '') + '</span></div>';
-							html += '<div><span style="color:' + (inspecao.interdicao === 'Sim' ? '#ef4444' : '#10b981') + ';font-weight:600">' + (inspecao.interdicao || 'Não') + '</span></div>';
-							html += '<div style="color:#6b7280">' + (inspecao.responsavel || '') + '</div>';
-							html += '<div><span style="background:' + corStatus + ';color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">' + (inspecao.status || '') + '</span></div>';
-							html += '<div style="display:flex;gap:4px">';
-							html += '<button onclick="mostrarRelatorioInspecao(\'' + inspecao.id + '\')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer" title="Ver Relatório">📋</button>';
-							html += '<button onclick="editarInspecao(\'' + inspecao.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>';
-							html += '<button onclick="excluirInspecao(\'' + inspecao.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">🗑️</button>';
-							html += '</div>';
+							html += '<div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:grid;grid-template-columns:' + gridTemplate + ';gap:8px;align-items:center;font-size:0.8rem">';
+							colunasVisiveis.forEach(function(coluna) {
+								if (coluna.id === 'selecao') {
+									html += '<div><input type="checkbox" class="inspecao-item-selecao" data-id="' + inspecao.id + '" style="width:16px;height:16px;cursor:pointer"></div>';
+									return;
+								}
+								if (coluna.id === 'data') {
+									html += '<div style="color:#374151;font-weight:500">' + dataFormatada + '</div>';
+									return;
+								}
+								if (coluna.id === 'area') {
+									html += '<div style="color:#374151">' + (inspecao.area || '') + '</div>';
+									return;
+								}
+								if (coluna.id === 'local') {
+									html += '<div style="color:#6b7280">' + (inspecao.local || '') + '</div>';
+									return;
+								}
+								if (coluna.id === 'tipo') {
+									html += '<div style="color:#6b7280">' + (inspecao.tipo || '') + '</div>';
+									return;
+								}
+								if (coluna.id === 'semana') {
+									html += '<div style="color:#6b7280">' + (inspecao.semana || '') + '</div>';
+									return;
+								}
+								if (coluna.id === 'emissor') {
+									html += '<div style="color:#6b7280">' + (inspecao.emissor || '') + '</div>';
+									return;
+								}
+								if (coluna.id === 'descricao') {
+									html += '<div style="color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="' + (inspecao.descricao || '').replace(/"/g,"'") + '">' + (inspecao.descricao ? (inspecao.descricao.length > 40 ? inspecao.descricao.substring(0,40) + '…' : inspecao.descricao) : '-') + '</div>';
+									return;
+								}
+								if (coluna.id === 'fotoAntes') {
+									html += inspecao.fotoAntes ? '<div><img src="' + inspecao.fotoAntes + '" style="width:52px;height:40px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb;cursor:pointer" onclick="abrirImagemModal(\'' + inspecao.fotoAntes + '\',\'Foto Antes\')" title="Ver foto antes"></div>' : '<div style="color:#9ca3af;font-size:0.75rem">Sem foto</div>';
+									return;
+								}
+								if (coluna.id === 'fotoDepois') {
+									html += inspecao.fotoDepois ? '<div><img src="' + inspecao.fotoDepois + '" style="width:52px;height:40px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb;cursor:pointer" onclick="abrirImagemModal(\'' + inspecao.fotoDepois + '\',\'Foto Depois\')" title="Ver foto depois"></div>' : '<div style="color:#9ca3af;font-size:0.75rem">Sem foto</div>';
+									return;
+								}
+								if (coluna.id === 'acoesTomadas') {
+									html += '<div style="color:#6b7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="' + (inspecao.acoes || '').replace(/"/g,"'") + '">' + (inspecao.acoes ? (inspecao.acoes.length > 30 ? inspecao.acoes.substring(0,30) + '…' : inspecao.acoes) : '-') + '</div>';
+									return;
+								}
+								if (coluna.id === 'categoria') {
+									html += '<div style="color:#6b7280">' + (inspecao.classificacao || '') + '</div>';
+									return;
+								}
+								if (coluna.id === 'subcategoria') {
+									html += '<div style="color:#6b7280">' + (inspecao.categoria || '') + '</div>';
+									return;
+								}
+								if (coluna.id === 'severidade') {
+									html += '<div><span style="background:' + corSeveridade + ';color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">' + (inspecao.severidade || '') + '</span></div>';
+									return;
+								}
+								if (coluna.id === 'interdicao') {
+									html += '<div><span style="color:' + (inspecao.interdicao === 'Sim' ? '#ef4444' : '#10b981') + ';font-weight:600">' + (inspecao.interdicao || 'Não') + '</span></div>';
+									return;
+								}
+								if (coluna.id === 'responsavel') {
+									html += '<div style="color:#6b7280">' + (inspecao.responsavel || '') + '</div>';
+									return;
+								}
+								if (coluna.id === 'status') {
+									html += '<div><span style="background:' + corStatus + ';color:#fff;padding:2px 8px;border-radius:12px;font-size:0.75rem">' + (inspecao.status || '') + '</span></div>';
+									return;
+								}
+								if (coluna.id === 'acoesLinha') {
+									html += '<div style="display:flex;gap:4px">';
+									html += '<button onclick="mostrarRelatorioInspecao(\'' + inspecao.id + '\')" style="background:#8b5cf6;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer" title="Ver Relatório">📋</button>';
+									html += '<button onclick="editarInspecao(\'' + inspecao.id + '\')" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">✏️</button>';
+									html += '<button onclick="excluirInspecao(\'' + inspecao.id + '\')" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:0.7rem;cursor:pointer">🗑️</button>';
+									html += '</div>';
+									return;
+								}
+								html += '<div></div>';
+							});
 							html += '</div>';
 						});
 						
