@@ -1269,6 +1269,7 @@
 						<p style="margin:0 0 12px 0;color:#6b7280;font-size:14px;line-height:1.4;">
 							Administrador visualiza todos os registros. Técnico visualiza preferencialmente os registros lançados pelo próprio login.
 						</p>
+						<div id="controle-acesso-tecnico" style="padding:14px;border:1px solid #e5e7eb;border-radius:8px;background:#ffffff;margin-bottom:12px;display:none"></div>
 						<button id="btn-sair-sistema" type="button" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:10px 16px;cursor:pointer;">Sair do sistema</button>
 					</div>
 				</div>
@@ -3931,6 +3932,15 @@
 
 					function abrirSecaoDoHash(hash) {
 						const alvo = (hash || '#').replace('#', '');
+						if (!usuarioPodeAcessarHash('#' + alvo)) {
+							alert('Você não possui permissão para acessar este módulo.');
+							if (usuarioPodeAcessarHash('#controle-acesso')) {
+								navegarParaHash('#controle-acesso');
+							} else {
+								navegarParaHash('#');
+							}
+							return;
+						}
 						switch (alvo) {
 							case 'usuario':
 								if (!usuarioAtualEhAdmin()) {
@@ -5216,25 +5226,250 @@
 							return null;
 						}
 					}
+					var PERMISSOES_TECNICO_STORAGE_KEY = 'hsePermissoesTecnico';
+					var PERMISSOES_TECNICO_PADRAO = {
+						menu: {
+							dashboard: true,
+							relatorios: true,
+							empresa: true,
+							'controle-acesso': true,
+							funcionarios: true,
+							frequencia: true,
+							usuario: false,
+							ras: true,
+							inspecao: true,
+							reuniao: true,
+							novatos: true,
+							checklist: true
+						},
+						acoes: {
+							alterar: false,
+							excluir: false
+						}
+					};
+
+					function clonePermissoesTecnicoPadrao() {
+						return JSON.parse(JSON.stringify(PERMISSOES_TECNICO_PADRAO));
+					}
+
+					function carregarPermissoesTecnico() {
+						var permissoes = clonePermissoesTecnicoPadrao();
+						try {
+							var salvas = JSON.parse(localStorage.getItem(PERMISSOES_TECNICO_STORAGE_KEY) || 'null');
+							if (salvas && typeof salvas === 'object') {
+								if (salvas.menu && typeof salvas.menu === 'object') {
+									Object.keys(permissoes.menu).forEach(function(chave) {
+										if (typeof salvas.menu[chave] === 'boolean') permissoes.menu[chave] = salvas.menu[chave];
+									});
+								}
+								if (salvas.acoes && typeof salvas.acoes === 'object') {
+									if (typeof salvas.acoes.alterar === 'boolean') permissoes.acoes.alterar = salvas.acoes.alterar;
+									if (typeof salvas.acoes.excluir === 'boolean') permissoes.acoes.excluir = salvas.acoes.excluir;
+								}
+							}
+						} catch (e) {}
+						return permissoes;
+					}
+
+					function salvarPermissoesTecnico(permissoes) {
+						localStorage.setItem(PERMISSOES_TECNICO_STORAGE_KEY, JSON.stringify(permissoes));
+					}
+
+					function usuarioAtualEhTecnico(){
+						var user = obterUsuarioLogado();
+						return !!(user && user.perfil === 'Técnico');
+					}
+
 					function usuarioAtualEhAdmin(){
 						var user = obterUsuarioLogado();
 						return !!(user && user.perfil === 'Administrador');
 					}
+
+					function obterPermissoesUsuarioAtual() {
+						if (usuarioAtualEhAdmin()) {
+							var total = clonePermissoesTecnicoPadrao();
+							Object.keys(total.menu).forEach(function(chave){ total.menu[chave] = true; });
+							total.acoes.alterar = true;
+							total.acoes.excluir = true;
+							return total;
+						}
+						if (usuarioAtualEhTecnico()) return carregarPermissoesTecnico();
+						return clonePermissoesTecnicoPadrao();
+					}
+
+					function usuarioPodeAcessarHash(hash) {
+						if (usuarioAtualEhAdmin()) return true;
+						var alvo = String(hash || '').replace('#', '');
+						if (!alvo || alvo === 'dashboard') return true;
+						var permissoes = obterPermissoesUsuarioAtual();
+						if (Object.prototype.hasOwnProperty.call(permissoes.menu, alvo)) return !!permissoes.menu[alvo];
+						return true;
+					}
+
+					function usuarioPodeAlterar() {
+						return !!obterPermissoesUsuarioAtual().acoes.alterar;
+					}
+
+					function usuarioPodeExcluir() {
+						return !!obterPermissoesUsuarioAtual().acoes.excluir;
+					}
+
+					function bloquearAcaoSemPermissao(tipo) {
+						if (usuarioAtualEhAdmin()) return false;
+						if (!usuarioAtualEhTecnico()) return false;
+						if (tipo === 'alterar' && usuarioPodeAlterar()) return false;
+						if (tipo === 'excluir' && usuarioPodeExcluir()) return false;
+						alert('Seu perfil não possui permissão para ' + (tipo === 'alterar' ? 'alterar/editar' : 'excluir') + ' registros.');
+						return true;
+					}
+
+					function protegerAcaoGlobal(nomeFuncao, tipo) {
+						var original = window[nomeFuncao];
+						if (typeof original !== 'function' || original.__permWrapped) return;
+						var wrapper = function() {
+							if (bloquearAcaoSemPermissao(tipo)) return;
+							return original.apply(this, arguments);
+						};
+						wrapper.__permWrapped = true;
+						window[nomeFuncao] = wrapper;
+					}
+
+					function aplicarProtecaoAcoesGlobais() {
+						[
+							'editarFuncionario',
+							'editarEmpresa',
+							'editarRAS',
+							'editarInspecao',
+							'editarCategoria',
+							'editarArea',
+							'editarTipoRegistro',
+							'editarRiscoPerigo',
+							'atualizarTipoRegistro',
+							'atualizarRiscoPerigo'
+						].forEach(function(nome){ protegerAcaoGlobal(nome, 'alterar'); });
+
+						[
+							'excluirUsuario',
+							'excluirFuncionario',
+							'excluirEmpresa',
+							'excluirInspecao',
+							'excluirChecklistFacil',
+							'excluirChecklistsSelecionados',
+							'excluirTipoRegistro',
+							'excluirRiscoPerigo',
+							'excluirCategoria',
+							'excluirArea'
+						].forEach(function(nome){ protegerAcaoGlobal(nome, 'excluir'); });
+					}
+
+					document.addEventListener('click', function(event) {
+						if (usuarioAtualEhAdmin() || !usuarioAtualEhTecnico()) return;
+						var alvo = event.target.closest('button,a');
+						if (!alvo) return;
+						var texto = (alvo.textContent || '').toLowerCase();
+						if (!usuarioPodeAlterar() && (texto.indexOf('editar') !== -1 || texto.indexOf('alterar') !== -1)) {
+							event.preventDefault();
+							event.stopImmediatePropagation();
+							bloquearAcaoSemPermissao('alterar');
+							return;
+						}
+						if (!usuarioPodeExcluir() && texto.indexOf('excluir') !== -1) {
+							event.preventDefault();
+							event.stopImmediatePropagation();
+							bloquearAcaoSemPermissao('excluir');
+						}
+					}, true);
+
+					function renderizarPainelPermissoesTecnico() {
+						var container = document.getElementById('controle-acesso-tecnico');
+						if (!container) return;
+						var admin = usuarioAtualEhAdmin();
+						var permissoes = carregarPermissoesTecnico();
+						if (admin) {
+							container.style.display = 'block';
+							container.innerHTML = '' +
+								'<h3 style="margin:0 0 10px 0;font-size:16px">Permissões do perfil Técnico</h3>' +
+								'<p style="margin:0 0 12px 0;color:#6b7280;font-size:13px">Selecione os menus e ações permitidos para todos os usuários com perfil Técnico.</p>' +
+								'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">' +
+									'<div><h4 style="margin:0 0 8px 0;font-size:14px;color:#374151">Principal</h4>' +
+										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-menu="dashboard" ' + (permissoes.menu.dashboard ? 'checked' : '') + '> Dashboard</label>' +
+										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-menu="relatorios" ' + (permissoes.menu.relatorios ? 'checked' : '') + '> Relatórios</label>' +
+										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-menu="empresa" ' + (permissoes.menu.empresa ? 'checked' : '') + '> Empresa</label>' +
+										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-menu="controle-acesso" ' + (permissoes.menu['controle-acesso'] ? 'checked' : '') + '> Controle de acesso</label>' +
+										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-menu="funcionarios" ' + (permissoes.menu.funcionarios ? 'checked' : '') + '> Novo Colaborador</label>' +
+										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-menu="frequencia" ' + (permissoes.menu.frequencia ? 'checked' : '') + '> Frequência</label>' +
+										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-menu="usuario" ' + (permissoes.menu.usuario ? 'checked' : '') + '> Usuário</label>' +
+									'</div>' +
+									'<div><h4 style="margin:0 0 8px 0;font-size:14px;color:#374151">Ferramentas</h4>' +
+										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-menu="ras" ' + (permissoes.menu.ras ? 'checked' : '') + '> RAS</label>' +
+										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-menu="inspecao" ' + (permissoes.menu.inspecao ? 'checked' : '') + '> Inspeção de HSE</label>' +
+										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-menu="reuniao" ' + (permissoes.menu.reuniao ? 'checked' : '') + '> Reunião Mensal</label>' +
+										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-menu="novatos" ' + (permissoes.menu.novatos ? 'checked' : '') + '> Programa de Novatos</label>' +
+										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-menu="checklist" ' + (permissoes.menu.checklist ? 'checked' : '') + '> Check List Fácil</label>' +
+										'<hr style="margin:10px 0;border:none;border-top:1px solid #e5e7eb">' +
+										'<h4 style="margin:0 0 8px 0;font-size:14px;color:#374151">Ações</h4>' +
+										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-acao="alterar" ' + (permissoes.acoes.alterar ? 'checked' : '') + '> Pode alterar/editar</label>' +
+										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-acao="excluir" ' + (permissoes.acoes.excluir ? 'checked' : '') + '> Pode excluir</label>' +
+									'</div>' +
+								'</div>' +
+								'<div style="margin-top:12px"><button type="button" id="btn-salvar-permissoes-tecnico" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer">Salvar permissões do Técnico</button></div>';
+
+							var btnSalvar = document.getElementById('btn-salvar-permissoes-tecnico');
+							if (btnSalvar) {
+								btnSalvar.addEventListener('click', function() {
+									var novasPermissoes = clonePermissoesTecnicoPadrao();
+									container.querySelectorAll('input[data-perm-menu]').forEach(function(input) {
+										novasPermissoes.menu[input.getAttribute('data-perm-menu')] = !!input.checked;
+									});
+									container.querySelectorAll('input[data-perm-acao]').forEach(function(input) {
+										novasPermissoes.acoes[input.getAttribute('data-perm-acao')] = !!input.checked;
+									});
+									salvarPermissoesTecnico(novasPermissoes);
+									aplicarPermissoesMenu();
+									alert('Permissões do perfil Técnico atualizadas com sucesso.');
+								});
+							}
+							return;
+						}
+
+						if (usuarioAtualEhTecnico()) {
+							container.style.display = 'block';
+							container.innerHTML = '<b>Permissões do seu perfil (Técnico):</b><br>' +
+								'Alterar: ' + (permissoes.acoes.alterar ? 'Sim' : 'Não') + ' | Excluir: ' + (permissoes.acoes.excluir ? 'Sim' : 'Não');
+						} else {
+							container.style.display = 'none';
+							container.innerHTML = '';
+						}
+					}
+
 					function atualizarPainelControleAcesso(){
 						var info = document.getElementById('controle-acesso-info');
 						if(!info) return;
 						var user = obterUsuarioLogado();
 						if(!user){
 							info.innerHTML = '<b>Status:</b> nenhum usuário autenticado.';
+							renderizarPainelPermissoesTecnico();
 							return;
 						}
 						info.innerHTML = '<b>Usuário:</b> ' + (user.nome || user.login || '-') + '<br><b>Login:</b> ' + (user.login || '-') + '<br><b>Perfil:</b> ' + (user.perfil || '-');
+						renderizarPainelPermissoesTecnico();
 					}
 					function aplicarPermissoesMenu(){
 						var admin = usuarioAtualEhAdmin();
-						document.querySelectorAll('.nav a[href="#usuario"]').forEach(function(link){
+						var permissoes = obterPermissoesUsuarioAtual();
+						document.querySelectorAll('.nav a[href^="#"]').forEach(function(link){
+							var href = link.getAttribute('href') || '';
+							var alvo = href.replace('#', '');
+							if (!alvo) return;
 							var li = link.closest('li');
-							if(li) li.style.display = admin ? '' : 'none';
+							if (!li) return;
+							if (admin) {
+								li.style.display = '';
+								return;
+							}
+							if (Object.prototype.hasOwnProperty.call(permissoes.menu, alvo)) {
+								li.style.display = permissoes.menu[alvo] ? '' : 'none';
+							}
 						});
 					}
 					function mostrarApp(){
@@ -5242,11 +5477,13 @@
 						var app = document.getElementById('app-sistema');
 						if(loginScreen) loginScreen.style.display = 'none';
 						if(app) app.style.display = 'flex';
+						aplicarProtecaoAcoesGlobais();
 						aplicarPermissoesMenu();
 						atualizarPainelControleAcesso();
 					}
 
 					if(sessionStorage.getItem('hseLogged') === '1'){
+						aplicarProtecaoAcoesGlobais();
 						aplicarPermissoesMenu();
 						mostrarApp();
 					} else {
@@ -7414,7 +7651,11 @@
 					// Array para armazenar inspeções
 					var inspecoes = JSON.parse(localStorage.getItem('inspecoes')) || [];
 					var INSPECAO_COLUNAS_STORAGE_KEY = 'inspecao_colunas_visiveis_v1';
+					var INSPECAO_LARGURAS_COLUNAS_STORAGE_KEY = 'inspecao_colunas_larguras_v1';
 					var inspecaoSeletorColunasInicializado = false;
+					var inspecaoResizeEventosInicializados = false;
+					var inspecaoResizeEstado = null;
+					var inspecaoFiltrosColunas = {};
 					var INSPECAO_COLUNAS_CONFIG = [
 						{ id: 'selecao', rotulo: '', largura: 36, fixa: true },
 						{ id: 'data', rotulo: 'Data', largura: 100 },
@@ -7463,8 +7704,132 @@
 						});
 					}
 
+					function obterMapaLargurasColunasInspecao() {
+						try {
+							var salvo = JSON.parse(localStorage.getItem(INSPECAO_LARGURAS_COLUNAS_STORAGE_KEY) || '{}');
+							return salvo && typeof salvo === 'object' ? salvo : {};
+						} catch (e) {
+							return {};
+						}
+					}
+
+					function obterConfigColunaInspecao(colunaId) {
+						for (var i = 0; i < INSPECAO_COLUNAS_CONFIG.length; i++) {
+							if (INSPECAO_COLUNAS_CONFIG[i].id === colunaId) return INSPECAO_COLUNAS_CONFIG[i];
+						}
+						return null;
+					}
+
+					function obterLarguraColunaInspecao(colunaId) {
+						var config = obterConfigColunaInspecao(colunaId);
+						if (!config) return 100;
+						var mapa = obterMapaLargurasColunasInspecao();
+						var largura = Number(mapa[colunaId]);
+						if (!isFinite(largura) || largura < 50) return config.largura;
+						return largura;
+					}
+
+					function salvarLarguraColunaInspecao(colunaId, largura) {
+						var mapa = obterMapaLargurasColunasInspecao();
+						mapa[colunaId] = Math.max(50, Number(largura) || 50);
+						localStorage.setItem(INSPECAO_LARGURAS_COLUNAS_STORAGE_KEY, JSON.stringify(mapa));
+					}
+
 					function obterGridTemplateColunasInspecao(colunasVisiveis) {
-						return (colunasVisiveis || []).map(function(coluna) { return coluna.largura + 'px'; }).join(' ');
+						return (colunasVisiveis || []).map(function(coluna) { return obterLarguraColunaInspecao(coluna.id) + 'px'; }).join(' ');
+					}
+
+					function normalizarTextoFiltroInspecao(valor) {
+						return String(valor || '').toLowerCase().trim();
+					}
+
+					function obterHtmlFiltroColunaInspecao(coluna) {
+						if (!coluna || coluna.id === 'selecao' || coluna.id === 'acoesLinha') return '';
+						var valor = inspecaoFiltrosColunas[coluna.id] || '';
+						if (coluna.id === 'fotoAntes' || coluna.id === 'fotoDepois') {
+							return '<select onchange="atualizarFiltroColunaInspecao(\'' + coluna.id + '\', this.value)" style="width:100%;margin-top:6px;padding:4px 6px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.72rem;background:#fff">'
+								+ '<option value=""' + (valor === '' ? ' selected' : '') + '>Todos</option>'
+								+ '<option value="com"' + (valor === 'com' ? ' selected' : '') + '>Com foto</option>'
+								+ '<option value="sem"' + (valor === 'sem' ? ' selected' : '') + '>Sem foto</option>'
+								+ '</select>';
+						}
+						return '<input type="text" value="' + String(valor).replace(/"/g, '&quot;') + '" oninput="atualizarFiltroColunaInspecao(\'' + coluna.id + '\', this.value)" placeholder="Filtrar" style="width:100%;margin-top:6px;padding:4px 6px;border:1px solid #cbd5e1;border-radius:6px;font-size:0.72rem">';
+					}
+
+					function atualizarFiltroColunaInspecao(colunaId, valor) {
+						inspecaoFiltrosColunas[colunaId] = String(valor || '');
+						carregarInspecoes();
+					}
+
+					function iniciarResizeColunaInspecao(colunaId, evento) {
+						if (!colunaId || !evento) return;
+						evento.preventDefault();
+						evento.stopPropagation();
+						inspecaoResizeEstado = {
+							colunaId: colunaId,
+							inicioX: evento.clientX,
+							larguraInicial: obterLarguraColunaInspecao(colunaId)
+						};
+						document.body.style.cursor = 'col-resize';
+						document.body.style.userSelect = 'none';
+					}
+
+					function aplicarGridTemplateNasLinhasInspecao(template) {
+						var cabecalho = document.getElementById('cabecalho-lista-inspecoes');
+						if (cabecalho) cabecalho.style.gridTemplateColumns = template;
+						document.querySelectorAll('#lista-inspecoes > div').forEach(function(linha) {
+							linha.style.gridTemplateColumns = template;
+						});
+					}
+
+					function aplicarResizeMovimentoColunaInspecao(evento) {
+						if (!inspecaoResizeEstado) return;
+						var delta = evento.clientX - inspecaoResizeEstado.inicioX;
+						var novaLargura = Math.max(50, inspecaoResizeEstado.larguraInicial + delta);
+						salvarLarguraColunaInspecao(inspecaoResizeEstado.colunaId, novaLargura);
+						var colunasVisiveis = obterColunasVisiveisInspecao();
+						var template = obterGridTemplateColunasInspecao(colunasVisiveis);
+						aplicarGridTemplateNasLinhasInspecao(template);
+					}
+
+					function finalizarResizeColunaInspecao() {
+						if (!inspecaoResizeEstado) return;
+						inspecaoResizeEstado = null;
+						document.body.style.cursor = '';
+						document.body.style.userSelect = '';
+						renderizarCabecalhoListaInspecoes();
+						carregarInspecoes();
+					}
+
+					function inicializarEventosResizeColunasInspecao() {
+						if (inspecaoResizeEventosInicializados) return;
+						document.addEventListener('mousemove', aplicarResizeMovimentoColunaInspecao);
+						document.addEventListener('mouseup', finalizarResizeColunaInspecao);
+						inspecaoResizeEventosInicializados = true;
+					}
+
+					function passaFiltrosInspecao(item) {
+						var filtrosAtivos = Object.keys(inspecaoFiltrosColunas || {});
+						if (!filtrosAtivos.length) return true;
+						for (var i = 0; i < filtrosAtivos.length; i++) {
+							var colunaId = filtrosAtivos[i];
+							var filtro = normalizarTextoFiltroInspecao(inspecaoFiltrosColunas[colunaId]);
+							if (!filtro) continue;
+							if (colunaId === 'fotoAntes' || colunaId === 'fotoDepois') {
+								var temFoto = !!item[colunaId];
+								if (filtro === 'com' && !temFoto) return false;
+								if (filtro === 'sem' && temFoto) return false;
+								continue;
+							}
+							var valor = '';
+							if (colunaId === 'categoria') valor = item.classificacao || '';
+							else if (colunaId === 'subcategoria') valor = item.categoria || '';
+							else if (colunaId === 'acoesTomadas') valor = item.acoes || '';
+							else if (colunaId === 'descricao') valor = item.descricao || '';
+							else valor = item[colunaId] || '';
+							if (normalizarTextoFiltroInspecao(valor).indexOf(filtro) === -1) return false;
+						}
+						return true;
 					}
 
 					function renderizarCabecalhoListaInspecoes() {
@@ -7473,7 +7838,14 @@
 						var colunasVisiveis = obterColunasVisiveisInspecao();
 						cabecalho.style.gridTemplateColumns = obterGridTemplateColunasInspecao(colunasVisiveis);
 						cabecalho.innerHTML = colunasVisiveis.map(function(coluna) {
-							return '<div>' + (coluna.rotulo || '') + '</div>';
+							var html = '<div style="position:relative;padding-right:8px">';
+							html += '<div>' + (coluna.rotulo || '') + '</div>';
+							html += obterHtmlFiltroColunaInspecao(coluna);
+							if (coluna.id !== 'selecao') {
+								html += '<div onmousedown="iniciarResizeColunaInspecao(\'' + coluna.id + '\', event)" style="position:absolute;top:0;right:0;width:6px;height:100%;cursor:col-resize;background:transparent"></div>';
+							}
+							html += '</div>';
+							return html;
 						}).join('');
 					}
 
@@ -7510,6 +7882,7 @@
 						var botao = document.getElementById('btn-inspecao-colunas');
 						var painel = document.getElementById('painel-inspecao-colunas');
 						if (!botao || !painel || inspecaoSeletorColunasInicializado) return;
+						inicializarEventosResizeColunasInspecao();
 
 						botao.addEventListener('click', function(evento) {
 							evento.stopPropagation();
@@ -8116,18 +8489,24 @@
 					// Carregar e exibir inspeções
 					function carregarInspecoes() {
 						var lista = document.getElementById('lista-inspecoes');
-						renderizarCabecalhoListaInspecoes();
 						var colunasVisiveis = obterColunasVisiveisInspecao();
 						var gridTemplate = obterGridTemplateColunasInspecao(colunasVisiveis);
+						var inspecoesFiltradas = (inspecoes || []).filter(passaFiltrosInspecao);
 						
 						if (inspecoes.length === 0) {
 							lista.innerHTML = '<div style="padding:40px;text-align:center;color:#9ca3af;font-style:italic">Nenhuma inspeção cadastrada</div>';
 							atualizarEstadoSelecaoInspecoes();
 							return;
 						}
+
+						if (!inspecoesFiltradas.length) {
+							lista.innerHTML = '<div style="padding:30px;text-align:center;color:#94a3b8;font-style:italic">Nenhum registro encontrado para os filtros aplicados</div>';
+							atualizarEstadoSelecaoInspecoes();
+							return;
+						}
 						
 						var html = '';
-						inspecoes.forEach(function(inspecao) {
+						inspecoesFiltradas.forEach(function(inspecao) {
 							var dataFormatada = formatarData(inspecao.data);
 							var corSeveridade = getCorSeveridade(inspecao.severidade);
 							var corStatus = getCorStatus(inspecao.status);
