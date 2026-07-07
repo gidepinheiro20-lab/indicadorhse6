@@ -235,6 +235,31 @@ async function deleteRow(table, id) {
 }
 
 // Rotas da API com suporte a aliases de tabela
+// Endpoints to read/save permissions for the 'Técnico' profile
+app.get('/api/permissoes', async (req, res) => {
+  try {
+    const user = getRequestUser(req);
+    if (!user) return res.status(401).json({ error: 'Usuário não autenticado' });
+    const data = await getAppStorage('permissoes_tecnico');
+    if (!data) return res.json(null);
+    return res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/permissoes', async (req, res) => {
+  try {
+    const user = getRequestUser(req);
+    if (!isAdmin(user)) return res.status(403).json({ error: 'Permissão negada' });
+    const payload = req.body || {};
+    await setAppStorage('permissoes_tecnico', payload);
+    res.json({ message: 'Permissões salvas' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/api/:table', async (req, res) => {
   try {
     const table = resolveTableName(req.params.table);
@@ -304,31 +329,6 @@ app.delete('/api/:table/:id', async (req, res) => {
     }
     await deleteRow(table, id);
     res.json({ message: 'Deleted' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Endpoints to read/save permissions for the 'Técnico' profile
-app.get('/api/permissoes', async (req, res) => {
-  try {
-    const user = getRequestUser(req);
-    if (!user) return res.status(401).json({ error: 'Usuário não autenticado' });
-    const data = await getAppStorage('permissoes_tecnico');
-    if (!data) return res.json(null);
-    return res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.put('/api/permissoes', async (req, res) => {
-  try {
-    const user = getRequestUser(req);
-    if (!isAdmin(user)) return res.status(403).json({ error: 'Permissão negada' });
-    const payload = req.body || {};
-    await setAppStorage('permissoes_tecnico', payload);
-    res.json({ message: 'Permissões salvas' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
