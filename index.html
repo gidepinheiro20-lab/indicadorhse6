@@ -5254,6 +5254,7 @@
 
 					function carregarPermissoesTecnico() {
 						var permissoes = clonePermissoesTecnicoPadrao();
+						// load from localStorage first for immediate UI
 						try {
 							var salvas = JSON.parse(localStorage.getItem(PERMISSOES_TECNICO_STORAGE_KEY) || 'null');
 							if (salvas && typeof salvas === 'object') {
@@ -5268,12 +5269,73 @@
 								}
 							}
 						} catch (e) {}
+
+						// try to fetch server-side permissions and merge (async). Keep local copy as fallback.
+						try {
+							var user = obterUsuarioLogado();
+							if (user && window.fetch) {
+								var headers = { 'Content-Type': 'application/json' };
+								if (user.login) headers['x-user-login'] = user.login;
+								if (user.perfil) headers['x-user-perfil'] = user.perfil;
+								var base = (typeof BASE_URL !== 'undefined' && BASE_URL) ? BASE_URL.replace(/\/$/, '') : '';
+								fetch(base + '/api/permissoes', { method: 'GET', headers: headers })
+									.then(function(resp){ if (!resp.ok) throw new Error('no-perms'); return resp.json(); })
+									.then(function(serverPerms){
+										if (serverPerms && typeof serverPerms === 'object') {
+											// merge server into current and persist locally
+											try {
+												localStorage.setItem(PERMISSOES_TECNICO_STORAGE_KEY, JSON.stringify(serverPerms));
+											} catch(e){}
+											permissoes = serverPerms;
+											aplicarPermissoesMenu();
+											renderizarPainelPermissoesTecnico();
+										}
+									})
+									.catch(function(){ /* ignore fetch errors, keep local */ });
+							}
+						} catch (e) {}
+
 						return permissoes;
 					}
 
 					function salvarPermissoesTecnico(permissoes) {
-						localStorage.setItem(PERMISSOES_TECNICO_STORAGE_KEY, JSON.stringify(permissoes));
+						// persist locally for immediate use
+						try { localStorage.setItem(PERMISSOES_TECNICO_STORAGE_KEY, JSON.stringify(permissoes)); } catch(e){}
+						// if current user is Admin, try to save server-side as well
+						try {
+							var user = obterUsuarioLogado();
+							if (user && user.perfil === 'Administrador' && window.fetch) {
+								var headers = { 'Content-Type': 'application/json' };
+								if (user.login) headers['x-user-login'] = user.login;
+								if (user.perfil) headers['x-user-perfil'] = user.perfil;
+								var base = (typeof BASE_URL !== 'undefined' && BASE_URL) ? BASE_URL.replace(/\/$/, '') : '';
+								fetch(base + '/api/permissoes', { method: 'PUT', headers: headers, body: JSON.stringify(permissoes) })
+									.then(function(resp){ if (!resp.ok) throw new Error('save-failed'); return resp.json(); })
+									.then(function(){ /* saved server-side */ })
+									.catch(function(){ mostrarStatusPermissoesTecnico('Falha ao salvar permissões no servidor. As alterações foram salvas localmente.', 'erro'); });
+							}
+						} catch(e){}
 					}
+
+				function mostrarStatusPermissoesTecnico(mensagem, tipo) {
+					var status = document.getElementById('status-permissoes-tecnico');
+					if (!status) return;
+					status.textContent = mensagem || '';
+					status.style.display = mensagem ? 'block' : 'none';
+					status.style.padding = '8px 10px';
+					status.style.borderRadius = '8px';
+					status.style.marginTop = '10px';
+					status.style.fontSize = '13px';
+					if (tipo === 'erro') {
+						status.style.background = '#fef2f2';
+						status.style.border = '1px solid #fecaca';
+						status.style.color = '#991b1b';
+					} else {
+						status.style.background = '#ecfdf5';
+						status.style.border = '1px solid #bbf7d0';
+						status.style.color = '#166534';
+					}
+				}
 
 					function usuarioAtualEhTecnico(){
 						var user = obterUsuarioLogado();
@@ -5412,7 +5474,8 @@
 										'<label style="display:block;margin:4px 0"><input type="checkbox" data-perm-acao="excluir" ' + (permissoes.acoes.excluir ? 'checked' : '') + '> Pode excluir</label>' +
 									'</div>' +
 								'</div>' +
-								'<div style="margin-top:12px"><button type="button" id="btn-salvar-permissoes-tecnico" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer">Salvar permissões do Técnico</button></div>';
+								'<div style="margin-top:12px"><button type="button" id="btn-salvar-permissoes-tecnico" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer">Salvar permissões do Técnico</button></div>' +
+								'<div id="status-permissoes-tecnico" style="display:none"></div>';
 
 							var btnSalvar = document.getElementById('btn-salvar-permissoes-tecnico');
 							if (btnSalvar) {
@@ -5426,7 +5489,7 @@
 									});
 									salvarPermissoesTecnico(novasPermissoes);
 									aplicarPermissoesMenu();
-									alert('Permissões do perfil Técnico atualizadas com sucesso.');
+									mostrarStatusPermissoesTecnico('Permissões do perfil Técnico atualizadas com sucesso.', 'sucesso');
 								});
 							}
 							return;
